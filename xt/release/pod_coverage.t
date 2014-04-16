@@ -20,6 +20,8 @@ my $config;
 $config = LoadFile($config_filename)
   if -r $config_filename;
 
+plan skip_all => 'disabled' if $config->{pod_coverage}->{skip};
+
 chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
 
 my @private_classes;
