@@ -1,9 +1,12 @@
 language: perl
 
-#install:
-#  - cpanm -n Foo::Bar
+install:
+  - cpanm -n Dist::Zilla
+  - dzil authordeps --missing | cpanm -n
+  - cpanm -n Test::CPAN::Changes Test::EOL Test::Fixme Test::NoTabs Test::Pod::Spelling::CommonMistakes Test::Spelling Test::Strict Test::Version || true
 
 perl:
+  - "5.8"
   - "5.10"
   - "5.12"
   - "5.14"
@@ -12,6 +15,6 @@ perl:
 
 #before_script: /bin/true
 
-script: HARNESS_IS_VERBOSE=1 prove -lv t xt
+script: dzip test -v
 
 #after_script: /bin/true
