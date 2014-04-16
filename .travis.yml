@@ -15,6 +15,6 @@ perl:
 
 #before_script: /bin/true
 
-script: dzip test -v
+script: dzil test -v
 
 #after_script: /bin/true
