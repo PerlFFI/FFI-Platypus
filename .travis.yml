@@ -3,7 +3,7 @@ language: perl
 install:
   - cpanm -n Dist::Zilla
   - dzil authordeps --missing | cpanm -n
-  - cpanm -n Test::CPAN::Changes Test::EOL Test::Fixme Test::NoTabs Test::Pod::Spelling::CommonMistakes Test::Spelling Test::Strict Test::Version || true
+  - cpanm -n Test::CPAN::Changes Test::EOL Test::Fixme Test::NoTabs Test::Pod::Spelling::CommonMistakes Test::Spelling Test::Strict Test::Version Test::Vars || true
 
 perl:
   - "5.8"
