@@ -3,7 +3,7 @@
 #include "XSUB.h"
 #include "ppport.h"
 
-XS_INTERNAL(ffi_function)
+XS(ffi_function)
 {
   dVAR; dXSARGS;
   printf("ffi_function cv = %p\n", cv);
