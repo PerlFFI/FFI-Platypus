@@ -25,8 +25,9 @@ typedef struct _ffi_pl_signature {
   ffi_pl_type  *return_type;
   int           argument_count;
   ffi_pl_type **argument_types;
+  ffi_cif       ffi_cif;
+  ffi_type    **ffi_type;
   int           refcount;
-  /* todo the cif type */
 } ffi_pl_signature;
 
 typedef struct _ffi_pl_lib {
@@ -45,6 +46,7 @@ typedef struct _ffi_pl_sub {
   ffi_pl_signature *signature;
   ffi_pl_lib       *lib;
   CV               *cv;
+  void             *function;
 } ffi_pl_sub;
 
 static ffi_pl_type *ffi_pl_type_inc(ffi_pl_type *type)
@@ -80,6 +82,7 @@ static void ffi_pl_signature_dec(ffi_pl_signature *signature)
   if(signature->refcount)
     return;
   Safefree(signature->argument_types);
+  Safefree(signature->ffi_type);
   Safefree(signature);
 }
 
@@ -117,6 +120,10 @@ XS(ffi_pl_sub_call)
   char key[16];
   ffi_pl_sub *sub;
   SV **sv;
+  int i;
+  void *argument;
+  void **arguments;
+  ffi_arg result;
   
   dVAR; dXSARGS;
   
@@ -129,11 +136,32 @@ XS(ffi_pl_sub_call)
   else
   {
     sub = INT2PTR(ffi_pl_sub*, SvIV(*sv));
-    printf("lib_name  = %s\n", sub->lib_name);
-    printf("perl_name = %s\n", sub->perl_name);
+    
+    if(sub->signature->argument_count != items)
+      croak("Wrong number of arguments");
+    
+    /* TODO: maybe use alloca when available */
+    Newx(arguments, sub->signature->argument_count, void*);
+      
+    for(i=0; i < sub->signature->argument_count; i++)
+    {
+      Newx(arguments[i], sub->signature->argument_types[i]->ffi_type->size, char);
+      *((int*)arguments[i]) = SvIV(ST(i)); /* TODO: non-integer types */
+    }
+    
+    ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
+    
+    
+    for(i=0; i < sub->signature->argument_count; i++)
+    {
+      Safefree(arguments[i]);
+    }
+    Safefree(arguments);
   }
-  
-  XSRETURN_EMPTY;
+
+  ST(0) = sv_newmortal();
+  sv_setiv(ST(0), (int)result);
+  XSRETURN(1);
 }
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus
@@ -148,26 +176,42 @@ _ffi_sub(lib, lib_name, perl_name, signature)
     char key[16];
     CV *new_cv;
     ffi_pl_sub *new_sub;
+    void *function;
   CODE:
-    Newx(new_sub, 1, ffi_pl_sub);
-    /* TODO: hook onto the destruction of the cv to free this stuff */
-    new_sub->cv        = newXS(perl_name, ffi_pl_sub_call, lib->path_name != NULL ? lib->path_name : "perl_exe");
-    /* TODO: undef for perl_name should be anonymous sub */
-    new_sub->perl_name = savepv(perl_name);
-    new_sub->lib_name  = savepv(lib_name);
-    new_sub->signature = ffi_pl_signature_inc(signature);
-    new_sub->lib       = ffi_pl_lib_inc(lib);
-    
-    if(meta == NULL)
+#if defined(_WIN32) || defined (__CYGWIN__)
+# error "todo"
+#else
+    function = dlsym(lib->handle, lib_name);
+#endif
+
+    if(function != NULL)
     {
-      meta = get_hv("FFI::Platypus::_meta", GV_ADD);
-    }
-    snprintf(key, sizeof(key), "%p", new_sub->cv);
+      Newx(new_sub, 1, ffi_pl_sub);
+      /* TODO: hook onto the destruction of the cv to free this stuff */
+      new_sub->cv        = newXS(perl_name, ffi_pl_sub_call, lib->path_name != NULL ? lib->path_name : "perl_exe");
+      /* TODO: undef for perl_name should be anonymous sub */
+      new_sub->perl_name = savepv(perl_name);
+      new_sub->lib_name  = savepv(lib_name);
+      new_sub->signature = ffi_pl_signature_inc(signature);
+      new_sub->lib       = ffi_pl_lib_inc(lib);
+      new_sub->function  = function;
+    
+      if(meta == NULL)
+      {
+        meta = get_hv("FFI::Platypus::_meta", GV_ADD);
+      }
+      snprintf(key, sizeof(key), "%p", new_sub->cv);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-value"
-    hv_store(meta, key, strlen(key), newSViv(PTR2IV(new_sub)), 0);
+      hv_store(meta, key, strlen(key), newSViv(PTR2IV(new_sub)), 0);
 #pragma clang diagnostic pop
-    RETVAL = new_sub;
+      RETVAL = new_sub;
+    }
+    else
+    {
+      /* TODO: include lib name in this diagnostic */
+      croak("unable to find symbol %s", lib_name);
+    }
   OUTPUT:
     RETVAL
 
@@ -235,8 +279,10 @@ ffi_signature(return_type, ...)
     ffi_pl_signature *new_signature;
     int i;
     int bad;
+    ffi_status status;
   CODE:
     bad = 0;
+    /* TODO: argument shouldn't be void */
     for(i = 1; i < items; i++)
     {
       if(!sv_isobject(ST(i)) || !sv_derived_from(ST(i), "FFI::Platypus::Type"))
@@ -254,11 +300,33 @@ ffi_signature(return_type, ...)
       new_signature->return_type = ffi_pl_type_inc(return_type);
       new_signature->argument_count = items - 1;
       Newx(new_signature->argument_types, new_signature->argument_count, ffi_pl_type*);
+      Newx(new_signature->ffi_type, new_signature->argument_count, ffi_type*);
       for(i=0; i < new_signature->argument_count; i++)
       {
         new_signature->argument_types[i] = ffi_pl_type_inc(INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(ST(i+1)))));
+        new_signature->ffi_type[i] = new_signature->argument_types[i]->ffi_type;
       }
-      RETVAL = new_signature;
+      status = ffi_prep_cif(
+        &new_signature->ffi_cif,              /* ffi_cif* */
+        FFI_DEFAULT_ABI,                      /* ffi_abi */
+        new_signature->argument_count,        /* unsigned int */
+        new_signature->return_type->ffi_type, /* ffi_type *rtype */
+        new_signature->ffi_type               /* ffi_type **atype */
+      );
+      if(status != FFI_OK)
+      {
+        ffi_pl_signature_dec(new_signature);
+        if(status == FFI_BAD_TYPEDEF)
+          croak("bad typedef");
+        else if(status == FFI_BAD_ABI)
+          croak("invalid ABI");
+        else
+          croak("unknown error with ffi_prep_cif");
+      }
+      else
+      {
+        RETVAL = new_signature;
+      }
     }
   OUTPUT:
     RETVAL
