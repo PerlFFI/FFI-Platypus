@@ -3,6 +3,7 @@ ffi_pl_type *      T_FFI_PL_TYPE
 ffi_pl_signature * T_FFI_PL_SIGNATURE
 ffi_pl_lib *       T_FFI_PL_LIB
 ffi_pl_sub *       T_FFI_PL_SUB
+ffi_pl_string      T_FFI_PL_STRING
 
 OUTPUT
 T_FFI_PL_LANGUAGE
@@ -13,6 +14,9 @@ T_FFI_PL_LANGUAGE
   else
     Perl_croak(aTHX_ \"illegal language type for $arg\");
     
+T_FFI_PL_STRING
+  $var != NULL ? sv_setpv((SV*)$arg, $var) : sv_setsv((SV*)$arg, &PL_sv_undef);
+
 T_FFI_PL_TYPE
   sv_setref_pv($arg, \"FFI::Platypus::Type\", (void *) $var);
 T_FFI_PL_SIGNATURE
@@ -37,6 +41,9 @@ T_FFI_PL_LANGUAGE
   {
     $var = FFI_PL_LANGUAGE_NONE;
   }
+
+T_FFI_PL_STRING
+  $var = SvOK($arg) ? ($type)SvPV_nolen($arg) : NULL;
 
 T_FFI_PL_TYPE
   if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::Type\"))

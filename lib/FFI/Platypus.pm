@@ -3,7 +3,7 @@ package FFI::Platypus;
 use strict;
 use warnings;
 use Exporter::Tidy
-  default => [ qw( ffi_type ffi_signature ) ];
+  default => [ qw( ffi_type ffi_signature ffi_lib ) ];
 
 BEGIN {
 

@@ -5,6 +5,13 @@
 
 #include <ffi.h>
 
+#if defined(_WIN32) || defined (__CYGWIN__)
+# error "todo"
+#else
+#include <dlfcn.h>
+#endif
+
+typedef const char *ffi_pl_string;
 typedef enum { FFI_PL_LANGUAGE_NONE, FFI_PL_LANGUAGE_C } ffi_pl_language;
 
 typedef struct _ffi_pl_type {
@@ -29,6 +36,7 @@ typedef struct _ffi_pl_lib {
 #else
   void *handle;
 #endif
+  int refcount;
 } ffi_pl_lib;
 
 typedef struct _ffi_pl_sub {
@@ -70,6 +78,33 @@ static void ffi_pl_signature_dec(ffi_pl_signature *signature)
     return;
   Safefree(signature->argument_types);
   Safefree(signature);
+}
+
+static ffi_pl_lib *ffi_pl_lib_inc(ffi_pl_lib *lib)
+{
+  lib->refcount++;
+  return lib;
+}
+
+static int ffi_pl_lib_dec(ffi_pl_lib *lib)
+{
+  int ret;
+  
+  lib->refcount--;
+  if(lib->refcount)
+    return 0;
+
+#if defined(_WIN32) || defined (__CYGWIN__)
+# error "TODO"
+#else
+  ret = dlclose(lib->handle);
+#endif
+  
+  if(lib->path_name != NULL)
+    Safefree(lib->path_name);
+  Safefree(lib);
+  
+  return ret;
 }
 
 XS(ffi_pl_function)
@@ -140,7 +175,7 @@ _ffi_type(language, name, code)
     }
     else
     {
-      new_type->language = 0;
+      new_type->language = language;
       new_type->name     = savepv(name);
       new_type->refcount = 1;
       RETVAL = new_type;
@@ -182,6 +217,40 @@ ffi_signature(return_type, ...)
     }
   OUTPUT:
     RETVAL
+
+ffi_pl_lib *
+ffi_lib(filename, ...)
+    ffi_pl_string filename;
+  PREINIT:
+#if defined(_WIN32) || defined (__CYGWIN__)
+# error "todo"
+#else
+    int flags;
+    void *handle;
+#endif
+    ffi_pl_lib *new_lib;
+  CODE:
+#if defined(_WIN32) || defined (__CYGWIN__)
+# error "todo"
+#else
+    flags = RTLD_LAZY;
+    handle = dlopen(filename, flags);
+    if(handle == NULL)
+    {
+      croak("error in dlopen(%s,%d): %s", filename != NULL ? filename : "undef", flags, dlerror()); 
+    }
+    else
+    {
+      Newx(new_lib, 1, ffi_pl_lib);
+      new_lib->refcount = 1;
+      new_lib->path_name = filename != NULL ? savepv(filename) : NULL;
+      new_lib->handle = handle;
+      RETVAL = new_lib;
+    }
+#endif
+  OUTPUT:
+    RETVAL
+    
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus::Type
 
@@ -276,4 +345,40 @@ DESTROY(self)
     ffi_pl_signature_dec(self);
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus::Lib
+
+ffi_pl_string
+path_name(self)
+    ffi_pl_lib *self
+  CODE:
+    RETVAL = self->path_name;
+  OUTPUT:
+    RETVAL
+
+int
+_refcount(self)
+    ffi_pl_lib *self
+  CODE:
+    RETVAL = self->refcount;
+  OUTPUT:
+    RETVAL
+
+void *
+_handle(self)
+    ffi_pl_lib *self
+  CODE:
+#if defined(_WIN32) || defined (__CYGWIN__)
+# error "todo"
+#else
+    RETVAL = self->handle;
+#endif
+  OUTPUT:
+    RETVAL
+
+void
+DESTROY(self)
+    ffi_pl_lib *self
+  CODE:
+    /* TODO: check return value */
+    ffi_pl_lib_dec(self);
+
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus::Sub
