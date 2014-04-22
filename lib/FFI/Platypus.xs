@@ -40,8 +40,11 @@ typedef struct _ffi_pl_lib {
 } ffi_pl_lib;
 
 typedef struct _ffi_pl_sub {
-  const char *name;
+  const char       *perl_name;
+  const char       *lib_name;
   ffi_pl_signature *signature;
+  ffi_pl_lib       *lib;
+  CV               *cv;
 } ffi_pl_sub;
 
 static ffi_pl_type *ffi_pl_type_inc(ffi_pl_type *type)
@@ -114,7 +117,66 @@ XS(ffi_pl_function)
   XSRETURN_EMPTY;
 }
 
+static HV *meta = NULL;
+
+XS(ffi_pl_sub_call)
+{
+  char key[16];
+  ffi_pl_sub *sub;
+  SV **sv;
+  
+  dVAR; dXSARGS;
+  
+  snprintf(key, sizeof(key), "%p", cv);
+  sv = hv_fetch(meta, key, strlen(key), 0);
+  if(sv == NULL)
+  {
+    croak("error finding metadata for %p", cv);
+  }
+  else
+  {
+    sub = INT2PTR(ffi_pl_sub*, SvIV(*sv));
+    printf("lib_name  = %s\n", sub->lib_name);
+    printf("perl_name = %s\n", sub->perl_name);
+  }
+  
+  XSRETURN_EMPTY;
+}
+
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus
+
+ffi_pl_sub *
+_ffi_sub(lib, lib_name, perl_name, signature)
+    ffi_pl_lib *lib
+    const char *lib_name
+    const char *perl_name
+    ffi_pl_signature *signature
+  PREINIT:
+    char key[16];
+    CV *new_cv;
+    ffi_pl_sub *new_sub;
+  CODE:
+    Newx(new_sub, 1, ffi_pl_sub);
+    /* TODO: hook onto the destruction of the cv to free this stuff */
+    new_sub->cv        = newXS(perl_name, ffi_pl_sub_call, lib->path_name != NULL ? lib->path_name : "perl_exe");
+    /* TODO: undef for perl_name should be anonymous sub */
+    new_sub->perl_name = savepv(perl_name);
+    new_sub->lib_name  = savepv(lib_name);
+    new_sub->signature = ffi_pl_signature_inc(signature);
+    new_sub->lib       = ffi_pl_lib_inc(lib);
+    
+    if(meta == NULL)
+    {
+      meta = get_hv("FFI::Platypus::_meta", GV_ADD);
+    }
+    snprintf(key, sizeof(key), "%p", new_sub->cv);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
+    hv_store(meta, key, strlen(key), newSViv(PTR2IV(new_sub)), 0);
+#pragma clang diagnostic pop
+    RETVAL = new_sub;
+  OUTPUT:
+    RETVAL
 
 void
 ffi_attach_function(function_name)
@@ -233,7 +295,7 @@ ffi_lib(filename, ...)
 #if defined(_WIN32) || defined (__CYGWIN__)
 # error "todo"
 #else
-    flags = RTLD_LAZY;
+    flags = RTLD_LAZY; /* TODO: additional arguments can specify flags */
     handle = dlopen(filename, flags);
     if(handle == NULL)
     {

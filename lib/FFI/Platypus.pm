@@ -3,7 +3,7 @@ package FFI::Platypus;
 use strict;
 use warnings;
 use Exporter::Tidy
-  default => [ qw( ffi_type ffi_signature ffi_lib ) ];
+  default => [ qw( ffi_type ffi_signature ffi_lib ffi_sub ) ];
 
 BEGIN {
 
@@ -37,6 +37,11 @@ sub ffi_type ($$@)
   }
   
   wantarray ? ($type, @_) : $type;
+}
+
+sub ffi_sub
+{
+  return _ffi_sub(@_);
 }
 
 1;
