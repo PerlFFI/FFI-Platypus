@@ -4,6 +4,7 @@
 #include "ppport.h"
 
 #include <ffi.h>
+#include <ffi_pl.h>
 
 #if defined(_WIN32) || defined (__CYGWIN__)
 # error "todo"
