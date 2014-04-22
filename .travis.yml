@@ -5,6 +5,8 @@ install:
   - dzil authordeps --missing | cpanm -n
   - cpanm -n Test::CPAN::Changes Test::EOL Test::Fixme Test::NoTabs Test::Pod::Spelling::CommonMistakes Test::Spelling Test::Strict Test::Version Test::Vars || true
   - cpanm Exporter::Tidy
+  - cpanm ExtUtils::CChecker
+  - cpanm Capture::Tiny
 
 perl:
   - "5.8"
