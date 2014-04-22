@@ -2,6 +2,7 @@ package FFI::Platypus;
 
 use strict;
 use warnings;
+use Carp qw( croak );
 use Exporter::Tidy
   default => [ qw( ffi_type ffi_signature ffi_lib ffi_sub ) ];
 
@@ -39,9 +40,38 @@ sub ffi_type ($$@)
   wantarray ? ($type, @_) : $type;
 }
 
-sub ffi_sub
+my $default_lib;
+
+sub ffi_sub ($$$)
 {
-  return _ffi_sub(@_);
+  my($lib, $name, $sig) = @_;
+  my($lib_name, $perl_name) = ref($name) eq 'ARRAY' ? (@$name) : ($name, $name);
+  my $package = caller;
+  $perl_name = join '::', $package, $perl_name
+    unless $perl_name =~ /::/;
+
+  if(ref($lib) eq 'ARRAY')
+  {
+    if(@$lib == 0)
+    {
+      $lib = $default_lib ||= ffi_lib undef;
+    }
+    else
+    {
+      for(@$lib)
+      {
+        if($_->has_symbol($lib_name))
+        {
+          $lib = $_;
+          last;
+        }
+      }
+      croak "$lib_name not found in list of lib"
+        if ref($lib) eq 'ARRAY';
+    }
+  }
+
+  return _ffi_sub($lib, $lib_name, $perl_name, $sig);
 }
 
 1;

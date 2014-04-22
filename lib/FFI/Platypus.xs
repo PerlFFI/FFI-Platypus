@@ -399,6 +399,19 @@ path_name(self)
   OUTPUT:
     RETVAL
 
+void *
+has_symbol(self, name)
+    ffi_pl_lib *self
+    const char *name
+  CODE:
+#if defined(_WIN32) || defined (__CYGWIN__)
+# error "todo"
+#else
+    RETVAL = dlsym(self->handle, name);
+#endif
+  OUTPUT:
+    RETVAL
+
 int
 _refcount(self)
     ffi_pl_lib *self
