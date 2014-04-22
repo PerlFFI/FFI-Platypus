@@ -110,13 +110,6 @@ static int ffi_pl_lib_dec(ffi_pl_lib *lib)
   return ret;
 }
 
-XS(ffi_pl_function)
-{
-  dVAR; dXSARGS;
-  printf("ffi_pl_function cv = %p\n", cv);
-  XSRETURN_EMPTY;
-}
-
 static HV *meta = NULL;
 
 XS(ffi_pl_sub_call)
@@ -177,16 +170,6 @@ _ffi_sub(lib, lib_name, perl_name, signature)
     RETVAL = new_sub;
   OUTPUT:
     RETVAL
-
-void
-ffi_attach_function(function_name)
-    const char *function_name
-  PREINIT:
-    CV *function_cv;
-  CODE:
-    function_cv = newXS(function_name, ffi_pl_function, "somedll.dll");
-    printf("ffi_attach_function function_name = %s\n", function_name);
-    printf("ffi_attach_function cv            = %p\n", function_cv);	
 
 ffi_pl_type *
 _ffi_type(language, name, code)
