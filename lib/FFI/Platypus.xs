@@ -140,7 +140,8 @@ XS(ffi_pl_sub_call)
     if(sub->signature->argument_count != items)
       croak("Wrong number of arguments");
     
-    /* TODO: maybe use alloca when available */
+    /* TODO: maybe use alloca when available                         */
+    /*       problem: detecting when we have a usable implementation */
     Newx(arguments, sub->signature->argument_count, void*);
       
     for(i=0; i < sub->signature->argument_count; i++)
