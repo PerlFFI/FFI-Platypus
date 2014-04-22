@@ -8,6 +8,7 @@ sub new
 {
   my($class, %args) = @_;
   $args{c_source} = 'xs';
+  $args{extra_linker_flags} = '-lffi';
   my $self = $class->SUPER::new(%args);
   $self;
 }
