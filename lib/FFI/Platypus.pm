@@ -66,6 +66,13 @@ sub ffi_sub ($$$)
         if ref($lib) eq 'ARRAY';
     }
   }
+  
+  if(ref($sig) eq 'ARRAY')
+  {
+    # todo: recognize duplicate signatures
+    # and reuse them
+    $sig = ffi_signature @$sig;
+  }
 
   return _ffi_sub($lib, $lib_name, $perl_name, $sig);
 }

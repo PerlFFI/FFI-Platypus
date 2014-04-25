@@ -15,30 +15,20 @@ BEGIN {
   my $short = ffi_type c => 'short';
   my $int   = ffi_type c => 'int';
   my $long  = ffi_type c => 'long';
-  my $sig1  = ffi_signature $int, $int;
 
-  $isalpha = ffi_sub([], 'isalpha', $sig1);
+  $isalpha = ffi_sub([], 'isalpha', [$int, $int] );
 
   my $config = FFI::TestLib->config;
   my $testlib = ffi_lib $config->{lib};
   
-  $return_passed_integer_value = ffi_sub([$testlib], 'return_passed_integer_value', $sig1);
+  $return_passed_integer_value = ffi_sub([$testlib], 'return_passed_integer_value', [$int, $int]);
   
-  my $sig2 = ffi_signature $long, $char;
-  my $sig3 = ffi_signature $long, $short;
-  my $sig4 = ffi_signature $long, $int;
-  my $sig5 = ffi_signature $long, $long;
-  
-  ffi_sub [$testlib], 'char_to_long', $sig2;
-  ffi_sub [$testlib], 'short_to_long', $sig3;
-  ffi_sub [$testlib], 'int_to_long', $sig4;
-  ffi_sub [$testlib], 'long_to_long', $sig5;
-  
-  my $sig6 = ffi_signature $int, map { $int } 1..10;
-  ffi_sub [$testlib], 'sum_integer_values10', $sig6;
-  
-  my $sig7 = ffi_signature $int, $int, $int;
-  ffi_sub [$testlib], 'add_integer_value', $sig7;
+  ffi_sub [$testlib], 'char_to_long',  [$long, $char];
+  ffi_sub [$testlib], 'short_to_long', [$long, $short];
+  ffi_sub [$testlib], 'int_to_long',   [$long, $int];
+  ffi_sub [$testlib], 'long_to_long',  [$long, $long];
+  ffi_sub [$testlib], 'sum_integer_values10', [$int, map { $int } 1..10];  
+  ffi_sub [$testlib], 'add_integer_value', [$int, $int, $int];
 }
 
 isa_ok $isalpha, 'FFI::Platypus::Sub';
