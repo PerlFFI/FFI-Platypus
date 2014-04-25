@@ -67,6 +67,12 @@ static void ffi_pl_type_dec(ffi_pl_type *type)
 
 static ffi_pl_signature *ffi_pl_signature_inc(ffi_pl_signature *signature)
 {
+  int i;
+  
+  ffi_pl_type_inc(signature->return_type);
+  for(i=0; i<signature->argument_count; i++)
+    ffi_pl_type_inc(signature->argument_types[i]);
+
   signature->refcount++;
   return signature;
 }
