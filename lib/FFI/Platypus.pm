@@ -26,7 +26,7 @@ sub ffi_type ($$@)
   
   if($language =~ /^(none|c)$/)
   {
-    $type = _ffi_type($language, $name, $name);
+    $type = _ffi_type($language, $name);
   }
   else
   {

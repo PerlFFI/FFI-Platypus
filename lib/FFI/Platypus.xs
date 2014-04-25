@@ -61,7 +61,6 @@ static void ffi_pl_type_dec(ffi_pl_type *type)
   type->refcount--;
   if(type->refcount)
     return;
-  Safefree(type->name);
   Safefree(type);
 }
 
@@ -225,10 +224,9 @@ _ffi_sub(lib, lib_name, perl_name, signature)
     RETVAL
 
 ffi_pl_type *
-_ffi_type(language, name, code)
+_ffi_type(language, name)
     ffi_pl_language language
     const char *name
-    const char *code
   PREINIT:
     ffi_pl_type *new_type;
     int bad;
@@ -238,41 +236,11 @@ _ffi_type(language, name, code)
     
     if(language == FFI_PL_LANGUAGE_NONE)
     {
-      if(!strcmp(code, "void"))
-        new_type->ffi_type = &ffi_type_void;
-      else if(!strcmp(code, "uint8"))
-        new_type->ffi_type = &ffi_type_uint8;
-      else if(!strcmp(code, "sint8"))
-        new_type->ffi_type = &ffi_type_sint8;
-      else if(!strcmp(code, "uint16"))
-        new_type->ffi_type = &ffi_type_uint16;
-      else if(!strcmp(code, "sint16"))
-        new_type->ffi_type = &ffi_type_sint16;
-      else if(!strcmp(code, "uint32"))
-        new_type->ffi_type = &ffi_type_uint32;
-      else if(!strcmp(code, "sint32"))
-        new_type->ffi_type = &ffi_type_sint32;
-      else if(!strcmp(code, "uint64"))
-        new_type->ffi_type = &ffi_type_uint64;
-      else if(!strcmp(code, "sint64"))
-        new_type->ffi_type = &ffi_type_sint64;
-      else if(!strcmp(code, "float"))
-        new_type->ffi_type = &ffi_type_float;
-      else if(!strcmp(code, "double"))
-        new_type->ffi_type = &ffi_type_double;
-      else if(!strcmp(code, "longdouble"))
-        new_type->ffi_type = &ffi_type_longdouble;
-      else if(!strcmp(code, "pointer"))
-        new_type->ffi_type = &ffi_type_pointer;
-      else
-      {
-        croak("No such type: %s", code);
-        bad = 1;
-      }
+      ffi_pl_str_type2ffi_type(new_type, name);
     }
     else if(language == FFI_PL_LANGUAGE_C)
     {
-      ffi_pl_str2ffi_type(new_type, code);
+      ffi_pl_str_c_type2ffi_type(new_type, name);
     }
     else
     {
@@ -288,7 +256,6 @@ _ffi_type(language, name, code)
     else
     {
       new_type->language = language;
-      new_type->name     = savepv(name);
       new_type->refcount = 1;
       RETVAL = new_type;
     }

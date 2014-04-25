@@ -14,6 +14,12 @@ use Config;
 my $cc;
 my %types;
 
+sub macro_line ($)
+{
+  my($code) = @_;
+  sprintf("%-78s\\\n", $code);
+}
+
 sub new
 {
   my($class, %args) = @_;
@@ -76,36 +82,63 @@ sub new
       }
     }
     
-    print $config2_fh   "#define ffi_pl_sv2ffi(_target, _source, _type)                  \\\n";
-    print $config2_fh   "          switch(_type->ffi_type->type)                         \\\n";
-    print $config2_fh   "          {                                                     \\\n";
+    print $config2_fh   macro_line "#define ffi_pl_sv2ffi(_target, _source, _type)";
+    print $config2_fh   macro_line "          switch(_type->ffi_type->type)";
+    print $config2_fh   macro_line "          {";
     foreach my $ffi_type (sort keys %r)
     {
       my $c_type = $r{$ffi_type};
-      print $config2_fh "            case FFI_TYPE_" . sprintf("%-6s", uc($ffi_type)) . ":                               \\\n";
-      print $config2_fh "              *((" . sprintf("%-14s", $c_type) . " *)_target) = SvIV(_source);     \\\n";
-      print $config2_fh "              break;                                            \\\n";
+      print $config2_fh macro_line "            case FFI_TYPE_" . sprintf("%-6s", uc($ffi_type)) . ":";
+      print $config2_fh macro_line "              *((" . sprintf("%-14s", $c_type) . " *)_target) = SvIV(_source);";
+      print $config2_fh macro_line "              break;";
     }
-    print $config2_fh   "            case FFI_TYPE_FLOAT:                                \\\n";
-    print $config2_fh   "              *((float *)_target) = SvNV(_source);              \\\n";
-    print $config2_fh   "              break;                                            \\\n";
-    print $config2_fh   "            case FFI_TYPE_DOUBLE:                               \\\n";
-    print $config2_fh   "              *((double *)_target) = SvNV(_source);             \\\n";
-    print $config2_fh   "              break;                                            \\\n";
-    print $config2_fh   "          }\n\n";  
+    print $config2_fh   macro_line "            case FFI_TYPE_FLOAT:";
+    print $config2_fh   macro_line "              *((float *)_target) = SvNV(_source);";
+    print $config2_fh   macro_line "              break;";
+    print $config2_fh   macro_line "            case FFI_TYPE_DOUBLE:";
+    print $config2_fh   macro_line "              *((double *)_target) = SvNV(_source);";
+    print $config2_fh   macro_line "              break;";
+    print $config2_fh              "          }\n\n";  
     
-    print $config2_fh   "#define ffi_pl_str2ffi_type(_target, _name)                           \\\n";
-    print $config2_fh   "          if(!strcmp(_name, \"void\"))                                \\\n";
-    print $config2_fh   "            _target->ffi_type = &ffi_type_void;                       \\\n";
+    print $config2_fh   macro_line "#define ffi_pl_str_type2ffi_type(_target, _name)";
+    print $config2_fh   macro_line "          if(!strcmp(_name, \"void\"))";
+    print $config2_fh   macro_line "          {";
+    print $config2_fh   macro_line "            _target->ffi_type = &ffi_type_void;";
+    print $config2_fh   macro_line "            _target->name = \"void\";";
+    print $config2_fh   macro_line "          }";
+    foreach my $ffi_type ((map { ("uint$_", "sint$_") } qw( 8 16 32 64)), qw( double float longdouble ) )
+    {
+      print $config2_fh macro_line "          else if(!strcmp(_name, \"$ffi_type\"))";
+      print $config2_fh macro_line "          {";
+      print $config2_fh macro_line "            _target->ffi_type = &ffi_type_$ffi_type;";
+      print $config2_fh macro_line "            _target->name = \"$ffi_type\";";
+      print $config2_fh macro_line "          }";
+    } 
+    print $config2_fh   macro_line "          else";
+    print $config2_fh   macro_line "          {";
+    print $config2_fh   macro_line "            croak(\"No such type: %s\", _name);";
+    print $config2_fh   macro_line "            bad = 1;";
+    print $config2_fh              "          }\n\n";
+    
+    print $config2_fh   macro_line "#define ffi_pl_str_c_type2ffi_type(_target, _name)";
+    print $config2_fh   macro_line "          if(!strcmp(_name, \"void\"))";
+    print $config2_fh   macro_line "          {";
+    print $config2_fh   macro_line "            _target->ffi_type = &ffi_type_void;";
+    print $config2_fh   macro_line "            _target->name = \"void\";";
+    print $config2_fh   macro_line "          }";
     foreach my $c_type (sort keys %types) {
       my $ffi_type = $types{$c_type};
-      print $config2_fh "          else if(!strcmp(_name, \"$c_type\"))                        \\\n";
-      print $config2_fh "            _target->ffi_type = &ffi_type_" . $ffi_type . ";          \\\n";
+      print $config2_fh macro_line "          else if(!strcmp(_name, \"$c_type\"))";
+      print $config2_fh macro_line "          {";
+      print $config2_fh macro_line "            _target->ffi_type = &ffi_type_" . $ffi_type . ";";
+      print $config2_fh macro_line "            _target->name = \"$c_type\";";
+      print $config2_fh macro_line "          }";
     }
-    print $config2_fh   "          else {                                                      \\\n";
-    print $config2_fh   "            croak(\"No such type: %s\", _name);                     \\\n";
-    print $config2_fh   "            bad = 1;                                                \\\n";
-    print $config2_fh   "          }\n\n";
+    print $config2_fh   macro_line "          else";
+    print $config2_fh   macro_line "          {";
+    print $config2_fh   macro_line "            croak(\"No such type: %s\", _name);";
+    print $config2_fh   macro_line "            bad = 1;";
+    print $config2_fh              "          }\n\n";
   };
   
   $class->c_try('alloca',
@@ -341,6 +374,30 @@ main(int argc, char *argv[])
   print(int64_t);
   print(unsigned int64_t);
 #endif
+
+  /* should be synonyms for various shorts */
+  print(signed short);
+  print(signed short int);
+  print(unsigned short int);
+  
+  /* should be synonym for int */
+  print(signed int);
+  
+  /* should be synonyms for various longs */
+  print(signed long);
+  print(signed long int);
+  print(unsigned long int);
+#if HAS_LONG_LONG
+  print(signed long long);
+  print(signed long long int);
+  print(unsigned long long int);
+#endif
+
+  /* should be synonyms for int64_t */
+#if HAS_INT64_T
+  print(signed int64_t);
+#endif
+  
   return 0;
 }
 
