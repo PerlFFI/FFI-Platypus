@@ -39,4 +39,10 @@ typedef unsigned __int64 uint64_t;
 
 #endif
 
+#ifdef _MSC_VER
+# define EXPORT __declspec(dllexport)
+#else
+# define EXPORT
+#endif
+
 #endif

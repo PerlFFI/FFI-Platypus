@@ -3,10 +3,13 @@ package My::ModuleBuild;
 use strict;
 use warnings;
 use base qw( Module::Build );
+use ExtUtils::CBuilder;
 use ExtUtils::CChecker;
 use Capture::Tiny qw( capture_merged );
 use File::Spec;
+use Data::Dumper qw( Dumper );
 use FindBin ();
+use Config;
 
 my $cc;
 my %types;
@@ -69,6 +72,11 @@ sub new
     '*.core',
     'test-*',
     'xs/ffi_pl_config.h',
+    'testlib/*.o',
+    'testlib/*.so',
+    'testlib/*.dll',
+    'testlib/*.bundle',
+    'testlib/ffi_testlib.txt',
   );
   
   $self;
@@ -162,6 +170,81 @@ sub c_tests
   $_tests->{$name} = $code;
   
   $_tests;
+}
+
+sub ACTION_build
+{
+  my $self = shift;
+  
+  my $config_fn = File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.txt');
+  if(-r $config_fn)
+  {
+    return $self->SUPER::ACTION_build(@_);
+  }
+
+  print "Building FFI-Platypus testlib\n";
+  
+  my $b = ExtUtils::CBuilder->new;
+  
+  my @c_source = do {
+    opendir my $dh, 'testlib';
+    my @file_list = readdir $dh;
+    closedir $dh;
+    grep /\.c$/, @file_list;
+  };
+  
+  my @obj;
+  
+  foreach my $c_source_file (@c_source)
+  {
+    push @obj, $b->compile(
+      source       => File::Spec->catfile($FindBin::Bin, 'testlib', $c_source_file),
+      include_dirs => [
+        File::Spec->catdir($FindBin::Bin, 'xs'),
+        File::Spec->catdir($FindBin::Bin, 'testlib'),
+      ],
+    );
+  }
+
+  my %config;
+
+  if($^O ne 'MSWin32')
+  {
+    $config{lib} = $b->link(
+      lib_file => $b->lib_file(File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.o')),
+      objects  => \@obj,
+    );
+  }
+  else
+  {
+    # On windows we can't depend on MM::CBuilder to make the .dll file because it creates dlls
+    # that export only one symbol (which is used for bootstrapping XS modules).
+    $config{lib} = File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.dll');
+    $config{lib} =~ s{\\}{/}g;
+    my @cmd;
+    if($Config{cc} !~ /cl(\.exe)?$/)
+    {
+      my $lddlflags = $Config{lddlflags};
+      $lddlflags =~ s{\\}{/}g;
+      @cmd = ($Config{cc}, shellwords($lddlflags), -o => $config{lib}, "-Wl,--export-all-symbols", @obj);
+    }
+    else
+    {
+      @cmd = ($Config{cc}, @obj, '/link', '/dll', '/out:' . $config{lib});
+    }
+    print "@cmd\n";
+    system @cmd;
+    exit 2 if $?;
+  }
+  
+  do {
+    my $fh;
+    open($fh, '>', $config_fn) or die "unable to write $config_fn: $!";
+    print $fh Dumper(\%config);
+    close $fh;
+  };
+
+  $self->SUPER::ACTION_build(@_);
 }
 
 1;
