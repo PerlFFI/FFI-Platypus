@@ -3,6 +3,7 @@ Exporter::Tidy
 ExtUtils::CChecker
 File::Spec
 FindBin
+Math::Int64
 Module::Build
 Test::More
 lib

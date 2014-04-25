@@ -3,6 +3,10 @@
 #include "XSUB.h"
 #include "ppport.h"
 
+#define MATH_INT64_NATIVE_IF_AVAILABLE
+#include "perl_math_int64.h"
+
+
 #include <ffi.h>
 #include <ffi_pl.h>
 
@@ -173,6 +177,9 @@ XS(ffi_pl_sub_call)
 }
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus
+
+BOOT:
+     PERL_MATH_INT64_LOAD_OR_CROAK;
 
 ffi_pl_sub *
 _ffi_sub(lib, lib_name, perl_name, signature)
