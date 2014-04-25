@@ -282,14 +282,21 @@ ffi_signature(return_type, ...)
     int i;
     int bad;
     ffi_status status;
+    ffi_pl_type *tmp;
   CODE:
     bad = 0;
-    /* TODO: argument shouldn't be void */
     for(i = 1; i < items; i++)
     {
       if(!sv_isobject(ST(i)) || !sv_derived_from(ST(i), "FFI::Platypus::Type"))
       {
         croak("ffi_signature takes a list of ffi_type");
+        bad = 0;
+        break;
+      }
+      tmp = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(ST(i))));
+      if(tmp->ffi_type->type == FFI_TYPE_VOID)
+      {
+        croak("void is an illegal argument type");
         bad = 0;
         break;
       }

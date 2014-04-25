@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More tests => 2;
 use FFI::Platypus qw( ffi_type ffi_signature );
 
 subtest 'void return type' => sub {
@@ -21,4 +21,14 @@ subtest 'void return type' => sub {
   isa_ok $sig->argument_type(0), 'FFI::Platypus::Type';
   is $sig->argument_type(0)->language, 'none', 'argument 1 type language = none';
   is $sig->argument_type(0)->name, 'sint32', 'argument 1 type name = sint32';
+};
+
+subtest 'void argument type' => sub {
+
+  plan tests => 1;
+
+  eval { ffi_signature ffi_type none => 'void', ffi_type none => 'void' };
+  
+  like $@, qr{void is an illegal argument type}, "void argument is illegal: $@";
+
 };
