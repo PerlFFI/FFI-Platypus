@@ -148,7 +148,8 @@ XS(ffi_pl_sub_call)
     for(i=0; i < sub->signature->argument_count; i++)
     {
       Newx(arguments[i], sub->signature->argument_types[i]->ffi_type->size, char);
-      *((int*)arguments[i]) = SvIV(ST(i)); /* TODO: non-integer types */
+      /* *((int*)arguments[i]) = SvIV(ST(i)); */
+      ffi_pl_sv2ffi(arguments[i], ST(i), sub->signature->argument_types[i]);
     }
     
     ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
@@ -228,37 +229,51 @@ _ffi_type(language, name, code)
   CODE:
     bad = 0;
     Newx(new_type, 1, ffi_pl_type);
-    if(!strcmp(code, "void"))
-      new_type->ffi_type = &ffi_type_void;
-    else if(!strcmp(code, "uint8"))
-      new_type->ffi_type = &ffi_type_uint8;
-    else if(!strcmp(code, "sint8"))
-      new_type->ffi_type = &ffi_type_sint8;
-    else if(!strcmp(code, "uint16"))
-      new_type->ffi_type = &ffi_type_uint16;
-    else if(!strcmp(code, "sint16"))
-      new_type->ffi_type = &ffi_type_sint16;
-    else if(!strcmp(code, "uint32"))
-      new_type->ffi_type = &ffi_type_uint32;
-    else if(!strcmp(code, "sint32"))
-      new_type->ffi_type = &ffi_type_sint32;
-    else if(!strcmp(code, "uint64"))
-      new_type->ffi_type = &ffi_type_uint64;
-    else if(!strcmp(code, "sint64"))
-      new_type->ffi_type = &ffi_type_sint64;
-    else if(!strcmp(code, "float"))
-      new_type->ffi_type = &ffi_type_float;
-    else if(!strcmp(code, "double"))
-      new_type->ffi_type = &ffi_type_double;
-    else if(!strcmp(code, "longdouble"))
-      new_type->ffi_type = &ffi_type_longdouble;
-    else if(!strcmp(code, "pointer"))
-      new_type->ffi_type = &ffi_type_pointer;
+    
+    if(language == FFI_PL_LANGUAGE_NONE)
+    {
+      if(!strcmp(code, "void"))
+        new_type->ffi_type = &ffi_type_void;
+      else if(!strcmp(code, "uint8"))
+        new_type->ffi_type = &ffi_type_uint8;
+      else if(!strcmp(code, "sint8"))
+        new_type->ffi_type = &ffi_type_sint8;
+      else if(!strcmp(code, "uint16"))
+        new_type->ffi_type = &ffi_type_uint16;
+      else if(!strcmp(code, "sint16"))
+        new_type->ffi_type = &ffi_type_sint16;
+      else if(!strcmp(code, "uint32"))
+        new_type->ffi_type = &ffi_type_uint32;
+      else if(!strcmp(code, "sint32"))
+        new_type->ffi_type = &ffi_type_sint32;
+      else if(!strcmp(code, "uint64"))
+        new_type->ffi_type = &ffi_type_uint64;
+      else if(!strcmp(code, "sint64"))
+        new_type->ffi_type = &ffi_type_sint64;
+      else if(!strcmp(code, "float"))
+        new_type->ffi_type = &ffi_type_float;
+      else if(!strcmp(code, "double"))
+        new_type->ffi_type = &ffi_type_double;
+      else if(!strcmp(code, "longdouble"))
+        new_type->ffi_type = &ffi_type_longdouble;
+      else if(!strcmp(code, "pointer"))
+        new_type->ffi_type = &ffi_type_pointer;
+      else
+      {
+        croak("No such type: %s", code);
+        bad = 1;
+      }
+    }
+    else if(language == FFI_PL_LANGUAGE_C)
+    {
+      ffi_pl_str2ffi_type(new_type, code);
+    }
     else
     {
-      croak("No such type: %s", code);
+      croak("Unknown language");
       bad = 1;
     }
+    
     if(bad)
     {
       Safefree(new_type);

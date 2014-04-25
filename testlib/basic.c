@@ -17,3 +17,27 @@ sum_integer_values10(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int
 {
   return a1+a2+a3+a4+a5+a6+a7+a8+a9+a10;
 }
+
+extern EXPORT long
+char_to_long(char input)
+{
+  return (long) input;
+}
+
+extern EXPORT long
+short_to_long(short input)
+{
+  return (long) input;
+}
+
+extern EXPORT long
+int_to_long(int input)
+{
+  return (long) input;
+}
+
+extern EXPORT long
+long_to_long(long input)
+{
+  return (long) input;
+}

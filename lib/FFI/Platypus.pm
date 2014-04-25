@@ -24,13 +24,9 @@ sub ffi_type ($$@)
   
   my $type;
   
-  if($language eq 'none')
+  if($language =~ /^(none|c)$/)
   {
-    $type = _ffi_type('none', $name, $name);
-  }
-  elsif($language eq 'c')
-  {
-    die "TODO";
+    $type = _ffi_type($language, $name, $name);
   }
   else
   {

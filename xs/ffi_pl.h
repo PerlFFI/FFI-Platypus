@@ -1,7 +1,8 @@
 #ifndef FFI_PL_H
 #define FFI_PL_H
 
-#include "ffi_pl_config.h"
+#include "ffi_pl_config1.h"
+#include "ffi_pl_config2.h"
 
 #ifdef HAS_STDLIB_H
 #include <stdlib.h>
