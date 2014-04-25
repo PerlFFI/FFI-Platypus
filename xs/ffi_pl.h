@@ -18,7 +18,9 @@
 #ifdef HAS_UNISTD_H
 #include <unistd.h>
 #endif
-
+#ifdef HAS_ALLOCA_H
+#include <alloca.h>
+#endif
 
 #ifdef _MSC_VER
 typedef __int64 int64_t;

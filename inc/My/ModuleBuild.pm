@@ -37,23 +37,27 @@ sub new
     }
   }
   
-  $class->c_try('int64',
-    define => "HAS_INT64_T",
-  );
-  
-  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd ))
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca ))
   {
     my $source = $class->c_tests->{header};
     $source =~ s/<>/<$header.h>/;
-    $class->c_tests->{$header} = $source;
+    $class->c_tests->{"header_$header"} = $source;
     
     my $define = uc $header;
     $define =~ s/\//_/g;
     
-    $class->c_try($header,
+    $class->c_try("header_$header",
       define => "HAS_$define\_H",
     );
   }
+  
+  $class->c_try('int64',
+    define => "HAS_INT64_T",
+  );
+  
+  $class->c_try('alloca',
+    define => 'HAS_ALLOCA',
+  );
   
   my $has_system_ffi = $class->c_try('system_ffi',
     extra_linker_flags => [ '-lffi' ],
@@ -278,7 +282,7 @@ main(int argc, char *argv[])
 
 |int64|
 #define HAS_INT64_T
-#include <ffi_pl_int64.h>
+#include <ffi_pl.h>
 int
 main(int argc, char *argv[])
 {
@@ -311,4 +315,23 @@ main(int argc, char *argv[])
     return 0;
   else
     return 2;
+}
+
+|alloca|
+#include <ffi_pl.h>
+
+int
+main(int argc, char *argv[])
+{
+  void *ptr;
+  size_t size;
+  
+  size = 512;
+  
+  ptr = alloca(size);
+  
+  if(ptr != NULL)
+    return 0;
+  else
+    return 1;
 }
