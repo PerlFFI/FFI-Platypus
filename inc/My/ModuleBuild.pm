@@ -18,7 +18,7 @@ use File::Copy qw( copy );
 use File::Temp qw( tempdir );
 
 my $cc;
-my %types;
+my %types = ( float => 'float', double => 'double' );
 
 sub macro_line ($)
 {
@@ -48,7 +48,7 @@ sub new
   
   $class->c_assert('basic_compiler');
 
-  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits ))
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar ))
   {
     my $source = $class->c_tests->{header};
     $source =~ s/<>/<$header.h>/;
@@ -85,9 +85,39 @@ sub new
       if($line =~ /\|(.*?)\|(.*?)\|/)
       {
         $types{$1} = $2;
-        $r{$2} = $1
-          unless $1 eq 'size_t'
-          ||     defined $r{$2};
+        $r{$2} = $1 unless defined $r{$2};
+      }
+    }
+    
+    my $has_long_double = $class->c_try('long_double',
+      define => 'HAS_LONG_DOUBLE',
+    );
+    
+    $types{'long double'} = 'longdouble';
+    
+    my @other_types = qw(
+      dev_t ino_t mode_t nlink_t uid_t gid_t dev_t off_t blksize_t blkcnt_t time_t
+      int8_t int16_t int32_t uint8_t uint16_t uint32_t intptr_t uintptr_t
+      int_least8_t int_least16_t int_least16_t int_least64_t 
+      uint_least8_t uint_least16_t uint_least16_t uint_least64_t 
+      ptrdiff_t wchar_t size_t
+      wint_t
+    );
+    
+    my $template = $class->c_tests->{type};
+
+    foreach my $type (@other_types)
+    {
+      my $code = $template;
+      $code =~ s{TEST_TYPE}{$type};
+      $class->c_tests->{type} = $code;
+      $class->c_try('type',
+        comment => $type,
+      );
+      
+      foreach my $line ($class->c_output)
+      {
+        $types{$1} = $2 if $line =~ /\|(.*?)\|(.*?)\|/;
       }
     }
     
@@ -314,8 +344,11 @@ sub c_try
     print "ok\n";
     print $log "ok\n$out";
     
-    $cc->push_extra_linker_flags(@{ $args{extra_linker_flags} }) if defined $args{extra_linker_flags};
-    $cc->push_extra_compiler_flags(@{ $args{extra_compiler_flags} }) if defined $args{extra_compiler_flags};
+    unless($args{no_alter_flags})
+    {
+      $cc->push_extra_linker_flags(@{ $args{extra_linker_flags} }) if defined $args{extra_linker_flags};
+      $cc->push_extra_compiler_flags(@{ $args{extra_compiler_flags} }) if defined $args{extra_compiler_flags};
+    }
     
   }
   else
@@ -553,6 +586,16 @@ main(int argc, char *argv[])
   return 0;
 }
 
+|type|
+#include <ffi_pl_type_detect.h>
+#include <ffi_pl.h>
+
+int
+main(int args, char *argv[])
+{
+  print(TEST_TYPE);
+  return 0;
+}
 |int64|
 #define HAS_INT64_T
 #include <ffi_pl.h>
@@ -659,4 +702,12 @@ main(int argc, char *argv[])
     printf("is not big endian, guessing little endian then\n");
     return 1;
   }
+}
+
+|long_double|
+int
+main(int argc, char *argv[])
+{
+  long double var;
+  return 0;
 }

@@ -28,6 +28,12 @@
 #ifdef HAS_LIMITS_H
 #include <limits.h>
 #endif
+#ifdef HAS_STDDEF_H
+#include <stddef.h>
+#endif
+#ifdef HAS_WCHAR_H
+#include <wchar.h>
+#endif
 
 #ifdef _MSC_VER
 typedef __int64 int64_t;
