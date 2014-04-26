@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 15;
 use FindBin ();
 use File::Spec;
 use lib File::Spec->catdir($FindBin::Bin, File::Spec->updir, 'testlib');
@@ -11,7 +11,7 @@ my $isalpha;
 my $return_passed_integer_value;
 
 BEGIN {
-  my $char  = ffi_type c => 'char';
+  my $char  = ffi_type c => 'signed char';
   my $short = ffi_type c => 'short';
   my $int   = ffi_type c => 'int';
   my $long  = ffi_type c => 'long';
@@ -39,10 +39,18 @@ ok !isalpha(ord '0'), "isalpha('0') = false";
 is return_passed_integer_value(1), 1, 'return_passed_integer_value(1) = 1';
 is return_passed_integer_value(42), 42, 'return_passed_integer_value(1) = 42';
 
-is char_to_long(42),    42, 'char_to_long';
+is char_to_long (42),   42, 'char_to_long';
 is short_to_long(100), 100, 'short_to_long';
-is int_to_long(200),   200, 'int_to_long';
-is long_to_long(500),  500, 'long_to_long';
+is int_to_long  (200), 200, 'int_to_long';
+is long_to_long (500), 500, 'long_to_long';
+
+TODO: {
+  local $TODO = 'coming back wrong';
+is char_to_long (-42),   -42, 'char_to_long neg';
+is short_to_long(-100), -100, 'short_to_long neg';
+}
+is int_to_long  (-200), -200, 'int_to_long neg';
+is long_to_long (-500), -500, 'long_to_long neg';
 
 is sum_integer_values10(1,2,3,4,5,6,7,8,9,10), 1+2+3+4+5+6+7+8+9+10, 'sum_integer_values10';
 

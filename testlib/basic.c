@@ -3,7 +3,7 @@
 extern EXPORT int
 return_passed_integer_value(int input)
 {
-  return input;
+  return (int) input;
 }
 
 extern EXPORT int
@@ -19,7 +19,7 @@ sum_integer_values10(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int
 }
 
 extern EXPORT long
-char_to_long(char input)
+char_to_long(signed char input)
 {
   return (long) input;
 }

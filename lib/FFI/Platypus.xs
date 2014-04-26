@@ -128,6 +128,7 @@ XS(ffi_pl_sub_call)
   if(sv == NULL)
   {
     croak("error finding metadata for %p", cv);
+    XSRETURN_EMPTY;
   }
   else
   {
@@ -152,16 +153,23 @@ XS(ffi_pl_sub_call)
     
     ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
     
-    
 #ifndef HAS_ALLOCA
     Safefree(arguments);
     Safefree(scratch);
 #endif
+
+    if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
+    {
+      XSRETURN_EMPTY;
+    }
+    else
+    {
+      ST(0) = sv_newmortal();
+      ffi_pl_ffi2sv(ST(0), (&result), sub->signature->return_type);
+      XSRETURN(1);
+    }
   }
 
-  ST(0) = sv_newmortal();
-  sv_setiv(ST(0), (int)result);
-  XSRETURN(1);
 }
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus

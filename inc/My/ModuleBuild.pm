@@ -130,11 +130,12 @@ sub new
     foreach my $ffi_type (sort keys %r)
     {
       my $c_type = $r{$ffi_type};
-      my $SvIV = 'SvIV';
+      $ffi_type =~ /^([su])/;
+      my $SvIV = $1 eq 's' ? 'SvIV' : 'SvUV';
       $SvIV = 'SvI64' if $ffi_type eq 'sint64';
       $SvIV = 'SvU64' if $ffi_type eq 'uint64';
-      print $config2_fh macro_line "            case FFI_TYPE_" . sprintf("%-6s", uc($ffi_type)) . ":";
-      print $config2_fh macro_line "              *((" . sprintf("%-14s", $c_type) . " *)_target) = $SvIV(_source);";
+      print $config2_fh macro_line "            case FFI_TYPE_" . uc($ffi_type) . ":";
+      print $config2_fh macro_line "              *(($c_type *)_target) = $SvIV(_source);";
       print $config2_fh macro_line "              break;";
     }
     print $config2_fh   macro_line "            case FFI_TYPE_FLOAT:";
@@ -143,7 +144,49 @@ sub new
     print $config2_fh   macro_line "            case FFI_TYPE_DOUBLE:";
     print $config2_fh   macro_line "              *((double *)_target) = SvNV(_source);";
     print $config2_fh   macro_line "              break;";
+    if($has_long_double)
+    {
+      # TODO: check to see if our Perl supports long doubles
+      print $config2_fh macro_line "            case FFI_TYPE_LONGDOUBLE:";
+      print $config2_fh macro_line "              *((long double *)_target) = SvNV(_source);";
+      print $config2_fh macro_line "              break;";
+    }
     print $config2_fh              "          }\n\n";  
+
+    print $config2_fh   macro_line "#define ffi_pl_ffi2sv(_target, _source, _type)";
+    print $config2_fh   macro_line "          switch(_type->ffi_type->type)";
+    print $config2_fh   macro_line "          {";
+    foreach my $ffi_type (sort keys %r)
+    {
+      my $c_type = $r{$ffi_type};
+      print $config2_fh macro_line "            case FFI_TYPE_" . uc($ffi_type) . ":";
+      $ffi_type =~ /^([su])/;
+      my $sign = $1 eq 's' ? 'i' : 'u';
+      if($ffi_type =~ /int64$/)
+      {
+        # TODO: pretty sure less copying can be done here
+        print $config2_fh macro_line "              sv_setsv(_target, sv_2mortal(newSV${sign}64(*(($c_type*)_source))));"
+      }
+      else
+      {
+        print $config2_fh macro_line "              sv_set${sign}v(_target, *(($c_type *) _source));";
+      }
+      print $config2_fh macro_line "              break;";
+    }
+    print $config2_fh   macro_line "            case FFI_TYPE_FLOAT:";
+    print $config2_fh   macro_line "              sv_setnv(_target, *((float *) _source));";
+    print $config2_fh   macro_line "              break;";
+    print $config2_fh   macro_line "            case FFI_TYPE_DOUBLE:";
+    print $config2_fh   macro_line "              sv_setnv(_target, *((double *) _source));";
+    print $config2_fh   macro_line "              break;";
+    if($has_long_double)
+    {
+      # TODO: check to see if our Perl supports long doubles
+      print $config2_fh   macro_line "            case FFI_TYPE_LONGDOUBLE:";
+      print $config2_fh   macro_line "              sv_setnv(_target, *((long double *)_source));";
+      print $config2_fh   macro_line "              break;";
+    }
+    print $config2_fh              "          }\n\n";
     
     print $config2_fh   macro_line "#define ffi_pl_str_type2ffi_type(_target, _name)";
     print $config2_fh   macro_line "          if(!strcmp(_name, \"void\"))";
