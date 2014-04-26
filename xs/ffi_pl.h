@@ -22,6 +22,9 @@
 #ifdef HAS_ALLOCA_H
 #include <alloca.h>
 #endif
+#ifdef HAS_DLFCN_H
+#include <dlfcn.h>
+#endif
 
 #ifdef _MSC_VER
 typedef __int64 int64_t;
@@ -66,7 +69,7 @@ int ffi_pl_windows_dlclose(ffi_pl_system_library_handle *handle);
 
 #else
 
-typedef ffi_pl_system_library_handle void;
+typedef void ffi_pl_system_library_handle;
 
 #endif
 

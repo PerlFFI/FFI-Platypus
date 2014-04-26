@@ -186,7 +186,7 @@ ffi_pl_windows_dlclose(ffi_pl_system_library_handle *handle)
 #else
 
 int
-ffi_pl_windows_dlsym_win32_meta(const char **mod_name, ffi_pl_system_library_handle **mod_handle)
+ffi_pl_windows_dlsym_win32_meta(const char **mod_name, void **mod_handle)
 {
   return 0;
 }
