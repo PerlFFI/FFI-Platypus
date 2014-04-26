@@ -1,3 +1,6 @@
 [submodule "inc/PkgConfig"]
 	path = inc/PkgConfig
 	url = https://github.com/mnunberg/perl-PkgConfig.git
+[submodule "inc/libffi"]
+	path = inc/libffi
+	url = https://github.com/atgreen/libffi.git
