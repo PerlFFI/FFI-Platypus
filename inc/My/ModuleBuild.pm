@@ -5,11 +5,15 @@ use warnings;
 use base qw( Module::Build );
 use ExtUtils::CBuilder;
 use ExtUtils::CChecker;
-use Capture::Tiny qw( capture_merged );
+use Capture::Tiny qw( capture_merged capture );
 use File::Spec;
 use Data::Dumper qw( Dumper );
 use FindBin ();
 use Config;
+use FindBin ();
+use lib File::Spec->catdir($FindBin::Bin, 'inc', 'PkgConfig', 'lib');
+use PkgConfig;
+use Text::ParseWords qw( shellwords );
 
 my $cc;
 my %types;
@@ -153,13 +157,43 @@ sub new
   
   my $has_system_ffi = $class->c_try('system_ffi',
     extra_linker_flags => [ '-lffi' ],
-    libs => [ '', 'ffi' ],
     define => 'HAS_SYSTEM_FFI',
-  );
+    comment => 'try -lffi',
+  ) || do {
+
+    my $libs;
+    my $cflags;
+    my $bad;
+    my $ignore;
+    
+    # tried using ExtUtils::PkgConfig, but it is too noisy on failure
+    # and we have other options so don't want to freek peoples out
+    ($libs,   $ignore, $bad) = capture { system 'pkg-config', 'libffi', '--libs' };
+    ($cflags, $ignore, $bad) = capture { system 'pkg-config', 'libffi', '--cflags' };
   
-  # TODO: if !$has_system_ffi then build it from source a la FFI::Raw
+    $class->c_try('system_ffi',
+      extra_linker_flags   => [ shellwords $libs ],
+      extra_compiler_flags => [ shellwords $cflags ],
+      define => 'HAS_SYSTEM_FFI',
+      comment => 'pkg-config',
+    ) || do {
+    
+      my $pkg = PkgConfig->find('libffi');
+      
+      $class->c_try('system_ffi',
+        extra_linker_flags => [$pkg->get_ldflags],
+        extra_compiler_flags => [$pkg->get_cflags],
+        define => 'HAS_SYSTEM_FFI',
+        comment => 'ppkg-config',
+      );
+      
+    };
+  };
+
+  die 'TODO: if no system ffi then build from source!' unless $has_system_ffi;
 
   $args{extra_linker_flags} = join ' ', @{ $cc->extra_linker_flags };
+  $args{extra_compiler_flags} = join ' ', @{ $cc->extra_compiler_flags };
   
   my $self = $class->SUPER::new(%args);
 
@@ -206,7 +240,9 @@ sub c_try
   print $log "\n\n\n";
   
   print "check $diag ";
+  print "($args{comment}) " if $args{comment};
   print $log "check $diag ";
+  print $log "($args{comment}) " if $args{comment};
   
   my $source = $class->c_tests->{$name};
   
