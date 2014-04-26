@@ -48,7 +48,7 @@ sub new
   
   $class->c_assert('basic_compiler');
 
-  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn ))
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits ))
   {
     my $source = $class->c_tests->{header};
     $source =~ s/<>/<$header.h>/;
@@ -70,6 +70,9 @@ sub new
   );
   $class->c_try('long_long',
     define => "HAS_LONG_LONG",
+  );
+  $class->c_try('big_endian',
+    define => "HAS_BIG_ENDIAN",
   );
   
   $class->c_assert('basic_int_types');
@@ -623,4 +626,34 @@ main(int argc, char *argv[])
     return 0;
   else
     return 1;
+}
+
+|big_endian|
+#include <stdio.h>
+#include <ffi_pl.h>
+
+/*
+  MY_LITTLE_ENDIAN = 0x03020100ul,
+  MY_BIG_ENDIAN = 0x00010203ul,
+*/
+
+static const union
+{
+  unsigned char bytes[4];
+  uint32_t value;
+} host_order = { { 0, 1, 2, 3 } };
+
+int
+main(int argc, char *argv[])
+{
+  if(host_order.value == 0x00010203ul)
+  {
+    printf("looks like big endian\n");
+    return 0;
+  }
+  else
+  {
+    printf("is not big endian, guessing little endian then\n");
+    return 1;
+  }
 }

@@ -25,6 +25,9 @@
 #ifdef HAS_DLFCN_H
 #include <dlfcn.h>
 #endif
+#ifdef HAS_LIMITS_H
+#include <limits.h>
+#endif
 
 #ifdef _MSC_VER
 typedef __int64 int64_t;
