@@ -100,8 +100,11 @@ sub new
     foreach my $ffi_type (sort keys %r)
     {
       my $c_type = $r{$ffi_type};
+      my $SvIV = 'SvIV';
+      $SvIV = 'SvI64' if $ffi_type eq 'sint64';
+      $SvIV = 'SvU64' if $ffi_type eq 'uint64';
       print $config2_fh macro_line "            case FFI_TYPE_" . sprintf("%-6s", uc($ffi_type)) . ":";
-      print $config2_fh macro_line "              *((" . sprintf("%-14s", $c_type) . " *)_target) = SvIV(_source);";
+      print $config2_fh macro_line "              *((" . sprintf("%-14s", $c_type) . " *)_target) = $SvIV(_source);";
       print $config2_fh macro_line "              break;";
     }
     print $config2_fh   macro_line "            case FFI_TYPE_FLOAT:";
