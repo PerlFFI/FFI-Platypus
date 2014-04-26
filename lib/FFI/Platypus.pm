@@ -79,6 +79,25 @@ sub ffi_sub ($$$)
 
 1;
 
+=head1 ENVIRONMENT VARIABLES
+
+The following is a (probably incomplete) list of environment variables
+recognized by L<FFI::Platypus>:
+
+=over 4
+
+=item C<FFI_PLATYPUS_BUILD_VERBOSE>
+
+Be more verbose to stdout during the configuration / build step.  All
+of this verbosity may be viewed in the C<build.log>, but you may want
+to see it spew as it happens.
+
+=item C<FFI_PLATYPUS_TEST_LIBARCHIVE>
+
+Full path to C<libarchive.so> or C<archive.dll> used optionally during test.
+
+=back
+
 =head1 BUNDLED SOFTWARE
 
 This distribution comes with this bundled software:

@@ -2,6 +2,21 @@
 
 Kinda like gluing a duckbill to an adorable mammal
 
+# ENVIRONMENT VARIABLES
+
+The following is a (probably incomplete) list of environment variables
+recognized by [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus):
+
+- `FFI_PLATYPUS_TEST_LIBARCHIVE`
+
+    Full path to `libarchive.so` or `archive.dll` used optionally during test.
+
+- `FFI_PLATYPUS_BUILD_VERBOSE`
+
+    Be more verbose to stdout during the configuration / build step.  All
+    of this verbosity may be viewed in the `build.log`, but you may want
+    to see it spew as it happens.
+
 # BUNDLED SOFTWARE
 
 This distribution comes with this bundled software:
