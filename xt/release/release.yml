@@ -6,6 +6,7 @@ pod_spelling_system:
   stopwords:
     - Nunberg
     - libffi
+    - ffi
 
 pod_coverage:
   skip: 1

@@ -22,3 +22,7 @@ perl:
 script: dzil test -v
 
 #after_script: /bin/true
+
+env:
+  - FFI_PLATYPUS_BUILD_ALLOCA=0
+  - FFI_PLATYPUS_BUILD_ALLOCA=1

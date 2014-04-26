@@ -153,7 +153,7 @@ sub new
   
   $class->c_try('alloca',
     define => 'HAS_ALLOCA',
-  );
+  ) if !(defined $ENV{FFI_PLATYPUS_BUILD_ALLOCA}) || $ENV{FFI_PLATYPUS_BUILD_ALLOCA};
   
   my $has_system_ffi = $class->c_try('system_ffi',
     extra_linker_flags => [ '-lffi' ],

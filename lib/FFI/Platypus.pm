@@ -86,6 +86,14 @@ recognized by L<FFI::Platypus>:
 
 =over 4
 
+=item C<FFI_PLATYPUS_BUILD_ALLOCA>
+
+L<FFI::Platypus> may use the non standard and sometimes controversial C<alloca>
+function to allocate very small amounts of memory during ffi calls.  I
+test whether or not it works on your platform during build, and use it in
+moderation, so I believe it to be safe.  You may turn it off by setting
+this environment variable to C<0> when you run C<Build.PL>.
+
 =item C<FFI_PLATYPUS_BUILD_VERBOSE>
 
 Be more verbose to stdout during the configuration / build step.  All
