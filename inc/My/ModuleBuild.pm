@@ -209,18 +209,27 @@ sub new
     else
     {
       unlink $fn;
-      if($^O ne 'MSWin32' || $Config{cc} !~ /cl(\.exe)?$/)
+      my $include = File::Spec->catdir(qw( inc libffi include ));
+      $include =~ s{\\}{/}g;
+      $cc->push_extra_compiler_flags( "-I$include" );
+
+      if($^O eq 'MSWin32' && $Config{cc} !~ /cl(\.exe)?$/)
       {
-        my $include = File::Spec->catdir(qw( inc libffi include ));
-        my $lib     = File::Spec->catdir(qw( inc libffi .libs ));
-        $include =~ s{\\}{/}g;
+        my $lib = File::Spec->catfile(qw( inc libffi .libs libffi.lib ));
         $lib =~ s{\\}{/}g;
-        $cc->push_extra_compiler_flags( "-I$include" );
-        $cc->push_extra_linker_flags( "-L$lib", '-lffi');
+        $cc->push_extra_linker_flags( $lib, 'psapi.lib' );
+        $cc->push_extra_compiler_flags( "-DFFI_BUILDING" );
       }
       else
       {
-        die 'TODO: MSWin32 visual c++ support';
+        my $lib = File::Spec->catdir(qw( inc libffi .libs ));
+        $lib =~ s{\\}{/}g;
+        $cc->push_extra_linker_flags( "-L$lib", '-lffi');
+        if($^O =~ /^(MSWin32|cygwin)$/)
+        {
+          $cc->push_extra_linker_flags('-L/usr/lib/w32api') if $^O eq 'cygwin';
+          $cc->push_extra_linker_flags('-lpsapi');
+        }
       }
     }
   };
@@ -383,7 +392,7 @@ sub build_libffi
   }
   else
   {
-    system qw( ./configure MAKEINFO=true --disable-builddir --with-pic );
+    system qw( ./configure MAKEINFO=true --enable-static --disable-shared --disable-builddir --with-pic );
     die if $?;
     # TODO: should we use gmake if avail?
     system $Config{make}, 'all';
