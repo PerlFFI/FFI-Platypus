@@ -48,4 +48,29 @@ typedef unsigned __int64 uint64_t;
 # define EXPORT
 #endif
 
+
+#if defined(_WIN32) || defined(__CYGWIN__)
+
+struct _ffi_pl_system_library_handle;
+typedef struct _ffi_pl_system_library_handle ffi_pl_system_library_handle;
+
+ffi_pl_system_library_handle *ffi_pl_windows_dlopen(const char *filename, int flags);
+void *ffi_pl_windows_dlsym(ffi_pl_system_library_handle *handle, const char *symbol);
+const char * ffi_pl_windows_dlerror(void);
+int ffi_pl_windows_dlclose(ffi_pl_system_library_handle *handle);
+
+#define dlopen(_filename, _flags)        ffi_pl_windows_dlopen(_filename, _flags)
+#define dlsym(_handle, _symbol)          ffi_pl_windows_dlsym(_handle, _symbol)
+#define dlerror()                        ffi_pl_windows_dlerror()
+#define dlclose(_handle)                 ffi_pl_windows_dlclose(_handle)
+
+#else
+
+typedef ffi_pl_system_library_handle void;
+
+#endif
+
+int ffi_pl_windows_dlsym_win32_meta(const char **mod_name, void **mod_handle);
+#define dlsym_win32_meta(_name, _handle) ffi_pl_windows_dlsym_win32_meta(_name, _handle)
+
 #endif

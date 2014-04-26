@@ -217,7 +217,7 @@ sub new
       {
         my $lib = File::Spec->catfile(qw( inc libffi .libs libffi.lib ));
         $lib =~ s{\\}{/}g;
-        $cc->push_extra_linker_flags( $lib, 'psapi.lib' );
+        $cc->push_extra_linker_flags( $lib );
         $cc->push_extra_compiler_flags( "-DFFI_BUILDING" );
       }
       else
@@ -225,14 +225,19 @@ sub new
         my $lib = File::Spec->catdir(qw( inc libffi .libs ));
         $lib =~ s{\\}{/}g;
         $cc->push_extra_linker_flags( "-L$lib", '-lffi');
-        if($^O =~ /^(MSWin32|cygwin)$/)
-        {
-          $cc->push_extra_linker_flags('-L/usr/lib/w32api') if $^O eq 'cygwin';
-          $cc->push_extra_linker_flags('-lpsapi');
-        }
       }
     }
   };
+  
+  if($^O eq 'MSWin32' && $Config{cc} !~ /cl(\.exe)?$/)
+  {
+    $cc->push_extra_linker_flags( 'psapi.lib' );
+  }
+  elsif($^O =~ /^(MSWin32|cygwin)$/)
+  {
+    $cc->push_extra_linker_flags('-L/usr/lib/w32api') if $^O eq 'cygwin';
+    $cc->push_extra_linker_flags('-lpsapi');
+  }
 
   $args{extra_linker_flags} = join ' ', @{ $cc->extra_linker_flags };
   $args{extra_compiler_flags} = join ' ', @{ $cc->extra_compiler_flags };
@@ -304,6 +309,7 @@ sub c_try
     print $log "ok\n$out";
     
     $cc->push_extra_linker_flags(@{ $args{extra_linker_flags} }) if defined $args{extra_linker_flags};
+    $cc->push_extra_compiler_flags(@{ $args{extra_compiler_flags} }) if defined $args{extra_compiler_flags};
     
   }
   else
@@ -493,8 +499,8 @@ main(int argc, char *argv[])
 }
 
 |basic_int_types|
-#include <ffi_pl.h>
 #include <ffi_pl_type_detect.h>
+#include <ffi_pl.h>
 
 int
 main(int argc, char *argv[])

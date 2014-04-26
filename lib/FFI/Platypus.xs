@@ -6,15 +6,8 @@
 #define MATH_INT64_NATIVE_IF_AVAILABLE
 #include "perl_math_int64.h"
 
-
 #include <ffi.h>
 #include <ffi_pl.h>
-
-#if defined(_WIN32) || defined (__CYGWIN__)
-# error "todo"
-#else
-#include <dlfcn.h>
-#endif
 
 typedef const char *ffi_pl_string;
 typedef enum { FFI_PL_LANGUAGE_NONE, FFI_PL_LANGUAGE_C } ffi_pl_language;
@@ -37,11 +30,7 @@ typedef struct _ffi_pl_signature {
 
 typedef struct _ffi_pl_lib {
   const char *path_name;
-#if defined(_WIN32) || defined (__CYGWIN__)
-# error "todo"
-#else
-  void *handle;
-#endif
+  ffi_pl_system_library_handle *handle;
   int refcount;
 } ffi_pl_lib;
 
@@ -52,6 +41,7 @@ typedef struct _ffi_pl_sub {
   ffi_pl_lib       *lib;
   CV               *cv;
   void             *function;
+  void             *mswin32_real_library_handle;
 } ffi_pl_sub;
 
 static ffi_pl_type *ffi_pl_type_inc(ffi_pl_type *type)
@@ -110,11 +100,7 @@ static int ffi_pl_lib_dec(ffi_pl_lib *lib)
   if(lib->refcount)
     return 0;
 
-#if defined(_WIN32) || defined (__CYGWIN__)
-# error "TODO"
-#else
-  ret = dlclose(lib->handle);
-#endif
+  dlclose(lib->handle);
   
   if(lib->path_name != NULL)
     Safefree(lib->path_name);
@@ -192,18 +178,26 @@ _ffi_sub(lib, lib_name, perl_name, signature)
     CV *new_cv;
     ffi_pl_sub *new_sub;
     void *function;
+    const char *path_name;
   CODE:
-#if defined(_WIN32) || defined (__CYGWIN__)
-# error "todo"
-#else
     function = dlsym(lib->handle, lib_name);
-#endif
 
     if(function != NULL)
     {
       Newx(new_sub, 1, ffi_pl_sub);
+
+      if(dlsym_win32_meta(&path_name, &new_sub->mswin32_real_library_handle))
+      {
+        /* nothing */
+      }
+      else
+      {
+        path_name = lib->path_name != NULL ? lib->path_name : "perl_exe";
+        new_sub->mswin32_real_library_handle = NULL;
+      }
+    
       /* TODO: hook onto the destruction of the cv to free this stuff */
-      new_sub->cv        = newXS(perl_name, ffi_pl_sub_call, lib->path_name != NULL ? lib->path_name : "perl_exe");
+      new_sub->cv        = newXS(perl_name, ffi_pl_sub_call, path_name);
       /* TODO: undef for perl_name should be anonymous sub */
       new_sub->perl_name = savepv(perl_name);
       new_sub->lib_name  = savepv(lib_name);
@@ -339,18 +333,15 @@ ffi_pl_lib *
 ffi_lib(filename, ...)
     ffi_pl_string filename;
   PREINIT:
-#if defined(_WIN32) || defined (__CYGWIN__)
-# error "todo"
-#else
     int flags;
     void *handle;
-#endif
     ffi_pl_lib *new_lib;
   CODE:
 #if defined(_WIN32) || defined (__CYGWIN__)
-# error "todo"
+    flags = 0;
 #else
     flags = RTLD_LAZY; /* TODO: additional arguments can specify flags */
+#endif
     handle = dlopen(filename, flags);
     if(handle == NULL)
     {
@@ -364,7 +355,6 @@ ffi_lib(filename, ...)
       new_lib->handle = handle;
       RETVAL = new_lib;
     }
-#endif
   OUTPUT:
     RETVAL
     
@@ -476,11 +466,8 @@ has_symbol(self, name)
     ffi_pl_lib *self
     const char *name
   CODE:
-#if defined(_WIN32) || defined (__CYGWIN__)
-# error "todo"
-#else
     RETVAL = dlsym(self->handle, name);
-#endif
+    dlsym_win32_meta(NULL,NULL);
   OUTPUT:
     RETVAL
 
@@ -496,11 +483,8 @@ void *
 _handle(self)
     ffi_pl_lib *self
   CODE:
-#if defined(_WIN32) || defined (__CYGWIN__)
-# error "todo"
-#else
+    dlclose(self->handle);
     RETVAL = self->handle;
-#endif
   OUTPUT:
     RETVAL
 
