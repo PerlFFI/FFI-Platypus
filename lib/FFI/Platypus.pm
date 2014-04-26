@@ -94,6 +94,12 @@ test whether or not it works on your platform during build, and use it in
 moderation, so I believe it to be safe.  You may turn it off by setting
 this environment variable to C<0> when you run C<Build.PL>.
 
+=item C<FFI_PLATYPUS_BUILD_SYSTEM_FFI>
+
+If your system does not provide C<libffi>, then L<FFI::Platypus> will attempt
+to build it from bundled source.  Setting this environment variable to C<0>
+will skip the check for a system C<libffi> and build it from source regardless.
+
 =item C<FFI_PLATYPUS_BUILD_VERBOSE>
 
 Be more verbose to stdout during the configuration / build step.  All
@@ -111,6 +117,35 @@ Full path to C<libarchive.so> or C<archive.dll> used optionally during test.
 This distribution comes with this bundled software:
 
 =over 4
+
+=item L<libffi>
+
+If your system provides a version of C<libffi> that can be guessed or
+discovered using C<pkg-config> or L<PkgConfig>, then it will be used.
+
+If not, then a bundled version of libffi will be used.
+
+ libffi - Copyright (c) 1996-2014  Anthony Green, Red Hat, Inc and others.
+ See source files for details.
+ 
+ Permission is hereby granted, free of charge, to any person obtaining
+ a copy of this software and associated documentation files (the
+ ``Software''), to deal in the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+ 
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 =item L<PkgConfig>
 

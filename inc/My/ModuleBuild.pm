@@ -14,6 +14,8 @@ use FindBin ();
 use lib File::Spec->catdir($FindBin::Bin, 'inc', 'PkgConfig', 'lib');
 use PkgConfig;
 use Text::ParseWords qw( shellwords );
+use File::Copy qw( copy );
+use File::Temp qw( tempdir );
 
 my $cc;
 my %types;
@@ -28,6 +30,7 @@ sub new
 {
   my($class, %args) = @_;
   $args{c_source} = 'xs';
+  $args{requires}->{'Alien::MSYS'} = '0.04' if $^O eq 'MSWin32';
   
   $cc ||= ExtUtils::CChecker->new(
     quiet => 0,
@@ -154,43 +157,73 @@ sub new
   $class->c_try('alloca',
     define => 'HAS_ALLOCA',
   ) if !(defined $ENV{FFI_PLATYPUS_BUILD_ALLOCA}) || $ENV{FFI_PLATYPUS_BUILD_ALLOCA};
-  
-  my $has_system_ffi = $class->c_try('system_ffi',
-    extra_linker_flags => [ '-lffi' ],
-    define => 'HAS_SYSTEM_FFI',
-    comment => 'try -lffi',
-  ) || do {
 
-    my $libs;
-    my $cflags;
-    my $bad;
-    my $ignore;
-    
-    # tried using ExtUtils::PkgConfig, but it is too noisy on failure
-    # and we have other options so don't want to freek peoples out
-    ($libs,   $ignore, $bad) = capture { system 'pkg-config', 'libffi', '--libs' };
-    ($cflags, $ignore, $bad) = capture { system 'pkg-config', 'libffi', '--cflags' };
+  my $has_system_ffi;
   
-    $class->c_try('system_ffi',
-      extra_linker_flags   => [ shellwords $libs ],
-      extra_compiler_flags => [ shellwords $cflags ],
+  if(!(defined $ENV{FFI_PLATYPUS_BUILD_SYSTEM_FFI}) || $ENV{FFI_PLATYPUS_BUILD_SYSTEM_FFI})
+  {
+  
+    $has_system_ffi = $class->c_try('system_ffi',
+      extra_linker_flags => [ '-lffi' ],
       define => 'HAS_SYSTEM_FFI',
-      comment => 'pkg-config',
+      comment => 'try -lffi',
     ) || do {
-    
-      my $pkg = PkgConfig->find('libffi');
-      
-      $class->c_try('system_ffi',
-        extra_linker_flags => [$pkg->get_ldflags],
-        extra_compiler_flags => [$pkg->get_cflags],
-        define => 'HAS_SYSTEM_FFI',
-        comment => 'ppkg-config',
-      );
-      
-    };
-  };
 
-  die 'TODO: if no system ffi then build from source!' unless $has_system_ffi;
+      my $libs;
+      my $cflags;
+      my $bad;
+      my $ignore;
+    
+      # tried using ExtUtils::PkgConfig, but it is too noisy on failure
+      # and we have other options so don't want to freek peoples out
+      ($libs,   $ignore, $bad) = capture { system 'pkg-config', 'libffi', '--libs' };
+      ($cflags, $ignore, $bad) = capture { system 'pkg-config', 'libffi', '--cflags' };
+  
+      $class->c_try('system_ffi',
+        extra_linker_flags   => [ shellwords $libs ],
+        extra_compiler_flags => [ shellwords $cflags ],
+        define => 'HAS_SYSTEM_FFI',
+        comment => 'pkg-config',
+      ) || do {
+    
+        my $pkg = PkgConfig->find('libffi');
+      
+        $class->c_try('system_ffi',
+          extra_linker_flags => [$pkg->get_ldflags],
+          extra_compiler_flags => [$pkg->get_cflags],
+          define => 'HAS_SYSTEM_FFI',
+          comment => 'ppkg-config',
+        );
+        
+      };
+    };
+  }
+  
+  do {
+    my $fn = File::Spec->catfile(qw( xs flag-systemffi.txt ));
+    if($has_system_ffi)
+    {
+      open my $fh, '>', $fn;
+      close $fh;
+    }
+    else
+    {
+      unlink $fn;
+      if($^O ne 'MSWin32' || $Config{cc} !~ /cl(\.exe)?$/)
+      {
+        my $include = File::Spec->catdir(qw( inc libffi include ));
+        my $lib     = File::Spec->catdir(qw( inc libffi .libs ));
+        $include =~ s{\\}{/}g;
+        $lib =~ s{\\}{/}g;
+        $cc->push_extra_compiler_flags( "-I$include" );
+        $cc->push_extra_linker_flags( "-L$lib", '-lffi');
+      }
+      else
+      {
+        die 'TODO: MSWin32 visual c++ support';
+      }
+    }
+  };
 
   $args{extra_linker_flags} = join ' ', @{ $cc->extra_linker_flags };
   $args{extra_compiler_flags} = join ' ', @{ $cc->extra_compiler_flags };
@@ -207,7 +240,8 @@ sub new
     'testlib/*.so',
     'testlib/*.dll',
     'testlib/*.bundle',
-    'testlib/ffi_testlib.txt',
+    'testlib/ffi_testlib.txt', # TODO: move this to xs dir
+    'xs/flag-*.txt',
   );
   
   $self;
@@ -308,12 +342,73 @@ sub c_tests
 sub ACTION_build
 {
   my $self = shift;
+  $self->build_testlib unless -r File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.txt');
+  $self->build_libffi  unless -r File::Spec->catfile($FindBin::Bin, 'xs', 'flag-libffi.txt');
+  $self->SUPER::ACTION_build(@_);
+}
+
+sub build_libffi
+{
+  my $self = shift;
+  return if -r File::Spec->catfile($FindBin::Bin, 'xs', 'flag-systemffi.txt');
+  
+  chdir(File::Spec->catdir(qw( inc libffi ))) || die "unable to chdir";
+  
+  if($^O eq 'MSWin32')
+  {
+    my $configure_args = 'MAKEILFO=true --disable-builddir --with-pic';
+    if($Config{archname} =~ /^MSWin32-x64/)
+    {
+      $configure_args .= ' --build=x86_64-pc-mingw64';
+    }
+    if($Config{cc} =~ /cl(\.exe)?$/)
+    {
+      my $dir = tempdir( CLEANUP => 1 );
+      copy('msvcc.sh', "$dir/msvcc.sh");
+      $ENV{PATH} = join($Config{path_sep}, $dir, $ENV{PATH});
+      $configure_args .= ' --enable-static --disable-shared';
+      if ($Config{archname} =~ /^MSWin32-x64/)
+      {
+        $configure_args .= ' CC="msvcc.sh -m64"';
+      }
+      else
+      {
+        $configure_args .= ' CC=msvcc.sh';
+      }
+      $configure_args .= ' LD=link';
+    }
+    require Alien::MSYS;
+    Alien::MSYS::msys_run("sh configure $configure_args");
+    Alien::MSYS::msys_run("make all");
+  }
+  else
+  {
+    system qw( ./configure MAKEINFO=true --disable-builddir --with-pic );
+    die if $?;
+    # TODO: should we use gmake if avail?
+    system $Config{make}, 'all';
+    die if $?;
+  }
+  
+  opendir my $dh, '.libs';
+  my @list = readdir $dh;
+  closedir $dh;
+  
+  # remove the dynamic libs just to be sure
+  foreach my $file (@list)
+  {
+    unlink(File::Spec->catfile('.libs', $file))
+      if $file =~ /\.so$/ || $file =~ /\.so\./;
+  }
+  
+  chdir(File::Spec->catdir(File::Spec->updir, File::Spec->updir)) || die "unable to chdir";
+}
+
+sub build_testlib
+{
+  my $self = shift;
   
   my $config_fn = File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.txt');
-  if(-r $config_fn)
-  {
-    return $self->SUPER::ACTION_build(@_);
-  }
 
   print "Building FFI-Platypus testlib\n";
   
@@ -376,8 +471,6 @@ sub ACTION_build
     print $fh Dumper(\%config);
     close $fh;
   };
-
-  $self->SUPER::ACTION_build(@_);
 }
 
 1;
