@@ -150,6 +150,7 @@ ffi_pl_windows_dlsym(ffi_pl_system_library_handle *handle, const char *symbol_na
           {
             error = NULL;
             /* TODO: FreeLibrary never gets called on handle */
+            /* TODO: Probably need to do a strdup for mod_name ? */
             last_mod_name = mod_name;
             last_library_handle = handle;
             last_flag = 1;

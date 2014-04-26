@@ -117,8 +117,8 @@ XS(ffi_pl_sub_call)
   ffi_pl_sub *sub;
   SV **sv;
   int i;
-  void *argument;
   void **arguments;
+  char *scratch;
   ffi_arg result;
   
   dVAR; dXSARGS;
@@ -135,26 +135,28 @@ XS(ffi_pl_sub_call)
     
     if(sub->signature->argument_count != items)
       croak("Wrong number of arguments");
-    
-    /* TODO: maybe use alloca when available                         */
-    /*       problem: detecting when we have a usable implementation */
+
+#ifdef HAS_ALLOCA
+    arguments = alloca(sub->signature->argument_count * sizeof(void*));
+    scratch   = alloca(sub->signature->argument_count * FFI_SIZEOF_ARG);
+#else    
     Newx(arguments, sub->signature->argument_count, void*);
+    Newx(scratch,   sub->signature->argument_count * FFI_SIZEOF_ARG, char);
+#endif
       
     for(i=0; i < sub->signature->argument_count; i++)
     {
-      Newx(arguments[i], sub->signature->argument_types[i]->ffi_type->size, char);
-      /* *((int*)arguments[i]) = SvIV(ST(i)); */
+      arguments[i] = &scratch[i*FFI_SIZEOF_ARG];
       ffi_pl_sv2ffi(arguments[i], ST(i), sub->signature->argument_types[i]);
     }
     
     ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
     
     
-    for(i=0; i < sub->signature->argument_count; i++)
-    {
-      Safefree(arguments[i]);
-    }
+#ifndef HAS_ALLOCA
     Safefree(arguments);
+    Safefree(scratch);
+#endif
   }
 
   ST(0) = sv_newmortal();
