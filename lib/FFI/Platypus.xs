@@ -11,12 +11,14 @@
 
 typedef const char *ffi_pl_string;
 typedef enum { FFI_PL_LANGUAGE_NONE, FFI_PL_LANGUAGE_C } ffi_pl_language;
+typedef enum { FFI_PL_REF_NONE, FFI_PL_REF_POINTER } ffi_pl_ref_type;;
 
 typedef struct _ffi_pl_type {
   ffi_pl_language  language;
   const char      *name;
   ffi_type        *ffi_type;
   int              refcount;
+  ffi_pl_ref_type  reftype;
 } ffi_pl_type;
 
 typedef struct _ffi_pl_signature {
@@ -148,25 +150,83 @@ XS(ffi_pl_sub_call)
     for(i=0; i < sub->signature->argument_count; i++)
     {
       arguments[i] = &scratch[i*FFI_SIZEOF_ARG];
-      ffi_pl_sv2ffi(arguments[i], ST(i), sub->signature->argument_types[i]);
+      switch(sub->signature->argument_types[i]->reftype)
+      {
+        case FFI_PL_REF_NONE:
+          ffi_pl_sv2ffi(arguments[i], ST(i), sub->signature->argument_types[i]);
+          break;
+        case FFI_PL_REF_POINTER:
+          if(!SvOK(ST(i)))
+          {
+            *((void**)arguments[i]) = NULL;
+          }
+          else if(SvROK(ST(i)))
+          {
+            void *ptr;
+#ifdef HAS_ALLOCA
+            ptr = alloca(FFI_SIZEOF_ARG);
+#else
+            Newx(ptr, FFI_SIZEOF_ARG, char); /* TODO: memory leak */
+#endif
+            ffi_pl_sv2ffi(ptr, SvRV(ST(i)), sub->signature->argument_types[i]);
+            *((void**)arguments[i]) = ptr;
+          }
+          else
+          {
+            *((void**)arguments[i]) = INT2PTR(void *, SvIV(ST(i)));
+          }
+        break;
+      }
     }
     
     ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
+    
+    for(i=0; i < sub->signature->argument_count; i++)
+    {
+      switch(sub->signature->argument_types[i]->reftype)
+      {
+        case FFI_PL_REF_NONE:
+          /* do nothing */
+          break;
+        case FFI_PL_REF_POINTER:
+          /* TODO */
+          break;
+      }
+    }
     
 #ifndef HAS_ALLOCA
     Safefree(arguments);
     Safefree(scratch);
 #endif
 
-    if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
+    if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID
+    && sub->signature->return_type->reftype == FFI_PL_REF_NONE)
     {
       XSRETURN_EMPTY;
     }
     else
     {
-      ST(0) = sv_newmortal();
-      ffi_pl_ffi2sv(ST(0), (&result), sub->signature->return_type);
-      XSRETURN(1);
+      switch(sub->signature->return_type->reftype)
+      {
+        case FFI_PL_REF_NONE:
+          ST(0) = sv_newmortal();
+          ffi_pl_ffi2sv(ST(0), (&result), sub->signature->return_type);
+          XSRETURN(1);
+          break;
+        case FFI_PL_REF_POINTER:
+          if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
+          {
+            void *ptr = ((void*)result);
+            if(ptr == NULL)
+              ST(0) = &PL_sv_undef;
+            else
+            {
+              ST(0) = sv_2mortal(newSViv(PTR2IV(ptr)));
+            }
+          }
+          /* TODO */
+          break;
+      }
     }
   }
 
@@ -202,6 +262,7 @@ _ffi_sub(lib, lib_name, perl_name, signature)
       }
       else
       {
+        /* TODO: "perl_exe" should be $ARGV[0] */
         path_name = lib->path_name != NULL ? lib->path_name : "perl_exe";
         new_sub->mswin32_real_library_handle = NULL;
       }
@@ -244,6 +305,16 @@ _ffi_type(language, name)
   CODE:
     bad = 0;
     Newx(new_type, 1, ffi_pl_type);
+    new_type->reftype = FFI_PL_REF_NONE;
+    if(name[0]=='*')
+    {
+      /* 
+        TODO: the name method should return
+              with the pointer prefix (?)
+      */
+      name++;
+      new_type->reftype = FFI_PL_REF_POINTER;
+    }
     
     if(language == FFI_PL_LANGUAGE_NONE)
     {
@@ -282,6 +353,7 @@ ffi_signature(return_type, ...)
     int bad;
     ffi_status status;
     ffi_pl_type *tmp;
+    ffi_type *libffi_return_type;
   CODE:
     bad = 0;
     for(i = 1; i < items; i++)
@@ -289,14 +361,14 @@ ffi_signature(return_type, ...)
       if(!sv_isobject(ST(i)) || !sv_derived_from(ST(i), "FFI::Platypus::Type"))
       {
         croak("ffi_signature takes a list of ffi_type");
-        bad = 0;
+        bad = 1;
         break;
       }
       tmp = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(ST(i))));
-      if(tmp->ffi_type->type == FFI_TYPE_VOID)
+      if(tmp->ffi_type->type == FFI_TYPE_VOID && tmp->reftype != FFI_PL_REF_POINTER)
       {
         croak("void is an illegal argument type");
-        bad = 0;
+        bad = 1;
         break;
       }
     }
@@ -312,13 +384,30 @@ ffi_signature(return_type, ...)
       for(i=0; i < new_signature->argument_count; i++)
       {
         new_signature->argument_types[i] = ffi_pl_type_inc(INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(ST(i+1)))));
-        new_signature->ffi_type[i] = new_signature->argument_types[i]->ffi_type;
+        switch(new_signature->argument_types[i]->reftype)
+        {
+          case FFI_PL_REF_NONE:
+            new_signature->ffi_type[i] = new_signature->argument_types[i]->ffi_type;
+            break;
+          case FFI_PL_REF_POINTER:
+            new_signature->ffi_type[i] = &ffi_type_pointer;
+            break;
+        }
+      }
+      switch(new_signature->return_type->reftype)
+      {
+        case FFI_PL_REF_NONE:
+          libffi_return_type = new_signature->return_type->ffi_type;
+          break;
+        case FFI_PL_REF_POINTER:
+          libffi_return_type = &ffi_type_pointer;
+          break;
       }
       status = ffi_prep_cif(
         &new_signature->ffi_cif,              /* ffi_cif* */
         FFI_DEFAULT_ABI,                      /* ffi_abi */
         new_signature->argument_count,        /* unsigned int */
-        new_signature->return_type->ffi_type, /* ffi_type *rtype */
+        libffi_return_type,                   /* ffi_type *rtype */
         new_signature->ffi_type               /* ffi_type **atype */
       );
       if(status != FFI_OK)
