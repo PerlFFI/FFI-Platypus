@@ -120,7 +120,7 @@ XS(ffi_pl_sub_call)
   SV **sv;
   int i;
   void **arguments;
-  char *scratch;
+  char *scratch1;
   char *scratch2;
   ffi_arg result;
   void *ptr;
@@ -145,19 +145,19 @@ XS(ffi_pl_sub_call)
 
 #ifdef HAS_ALLOCA
   arguments = alloca(sub->signature->argument_count * sizeof(void*));
-  scratch   = alloca(sub->signature->argument_count * FFI_SIZEOF_ARG);
+  scratch1  = alloca(sub->signature->argument_count * FFI_SIZEOF_ARG);
 #else    
   Newx(arguments, sub->signature->argument_count, void*);
-  Newx(scratch,   sub->signature->argument_count * FFI_SIZEOF_ARG, char);
+  Newx(scratch1,  sub->signature->argument_count * FFI_SIZEOF_ARG, char);
 #endif
 #ifdef FFI_PLATYPUS_DEBUG
   memset(arguments, 0, sub->signature->argument_count * sizeof(void*));
-  memset(scratch,   0, sub->signature->argument_count * FFI_SIZEOF_ARG);
+  memset(scratch1,  0, sub->signature->argument_count * FFI_SIZEOF_ARG);
 #endif
       
   for(i=0; i < sub->signature->argument_count; i++)
   {
-    arguments[i] = &scratch[i*FFI_SIZEOF_ARG];
+    arguments[i] = &scratch1[i*FFI_SIZEOF_ARG];
     switch(sub->signature->argument_types[i]->reftype)
     {
       case FFI_PL_REF_NONE:
@@ -174,7 +174,7 @@ XS(ffi_pl_sub_call)
           {
 #ifndef HAS_ALLOCA
             Safefree(arguments);
-            Safefree(scratch);
+            Safefree(scratch1);
             if(scratch2 != NULL)
               Safefree(scratch2);
 #endif
@@ -207,7 +207,7 @@ XS(ffi_pl_sub_call)
   fprintf(stderr,   "# ffi_call:\n");
   for(i=0; i < sub->signature->argument_count; i++)
   {
-    fprintf(stderr, "#   arg %02d = %016lx [%p]\n", i, *((unsigned long int*)((void*)&scratch[i*FFI_SIZEOF_ARG])), &scratch[i*FFI_SIZEOF_ARG]);
+    fprintf(stderr, "#   arg %02d = %016lx [%p]\n", i, *((unsigned long int*)((void*)&scratch1[i*FFI_SIZEOF_ARG])), &scratch1[i*FFI_SIZEOF_ARG]);
   }
 #endif
     
@@ -232,7 +232,7 @@ XS(ffi_pl_sub_call)
     
 #ifndef HAS_ALLOCA
   Safefree(arguments);
-  Safefree(scratch);
+  Safefree(scratch1);
   if(scratch2 != NULL)
     Safefree(scratch2);
 #endif
