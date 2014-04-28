@@ -132,124 +132,121 @@ XS(ffi_pl_sub_call)
   snprintf(key, sizeof(key), "%p", cv);
   sv = hv_fetch(meta, key, strlen(key), 0);
   if(sv == NULL)
-  {
     croak("error finding metadata for %p", cv);
+
+  sub = INT2PTR(ffi_pl_sub*, SvIV(*sv));
+    
+  if(sub->signature->argument_count != items)
+    croak("Wrong number of arguments");
+
+#ifdef HAS_ALLOCA
+  arguments = alloca(sub->signature->argument_count * sizeof(void*));
+  scratch   = alloca(sub->signature->argument_count * FFI_SIZEOF_ARG);
+#else    
+  Newx(arguments, sub->signature->argument_count, void*);
+  Newx(scratch,   sub->signature->argument_count * FFI_SIZEOF_ARG, char);
+#endif
+#ifdef FFI_PLATYPUS_DEBUG
+  memset(arguments, 0, sub->signature->argument_count * sizeof(void*));
+  memset(scratch,   0, sub->signature->argument_count * FFI_SIZEOF_ARG);
+#endif
+      
+  for(i=0; i < sub->signature->argument_count; i++)
+  {
+    arguments[i] = &scratch[i*FFI_SIZEOF_ARG];
+    switch(sub->signature->argument_types[i]->reftype)
+    {
+      case FFI_PL_REF_NONE:
+        ffi_pl_sv2ffi(arguments[i], ST(i), sub->signature->argument_types[i]);
+        break;
+      case FFI_PL_REF_POINTER:
+        if(!SvOK(ST(i)))
+        {
+          *((void**)arguments[i]) = NULL;
+        }
+        else if(SvROK(ST(i)))
+        {
+          void *ptr;
+#ifdef HAS_ALLOCA
+          ptr = alloca(FFI_SIZEOF_ARG);
+#else
+          Newx(ptr, FFI_SIZEOF_ARG, char); /* TODO: memory leak */
+#endif
+          ffi_pl_sv2ffi(ptr, SvRV(ST(i)), sub->signature->argument_types[i]);
+          *((void**)arguments[i]) = ptr;
+        }
+        else
+        {
+          *((void**)arguments[i]) = INT2PTR(void *, SvIV(ST(i)));
+        }
+      break;
+    }
+  }
+
+#ifdef FFI_PLATYPUS_DEBUG
+  fprintf(stderr,   "# ffi_call:\n");
+  for(i=0; i < sub->signature->argument_count; i++)
+  {
+    fprintf(stderr, "#   arg %02d = %016lx [%p]\n", i, *((unsigned long int*)((void*)&scratch[i*FFI_SIZEOF_ARG])), &scratch[i*FFI_SIZEOF_ARG]);
+  }
+#endif
+    
+  ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
+    
+#ifdef FFI_PLATYPUS_DEBUG
+  fprintf(stderr,   "#   ret =    %016lx [%p]\n", *((unsigned long int*)((void*)&result)), &result);
+#endif
+
+  for(i=0; i < sub->signature->argument_count; i++)
+  {
+    switch(sub->signature->argument_types[i]->reftype)
+    {
+      case FFI_PL_REF_NONE:
+        /* do nothing */
+        break;
+      case FFI_PL_REF_POINTER:
+        /* TODO */
+        break;
+    }
+  }
+    
+#ifndef HAS_ALLOCA
+  Safefree(arguments);
+  Safefree(scratch);
+#endif
+
+  if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID
+  && sub->signature->return_type->reftype == FFI_PL_REF_NONE)
+  {
     XSRETURN_EMPTY;
   }
   else
   {
-    sub = INT2PTR(ffi_pl_sub*, SvIV(*sv));
-    
-    if(sub->signature->argument_count != items)
-      croak("Wrong number of arguments");
-
-#ifdef HAS_ALLOCA
-    arguments = alloca(sub->signature->argument_count * sizeof(void*));
-    scratch   = alloca(sub->signature->argument_count * FFI_SIZEOF_ARG);
-#else    
-    Newx(arguments, sub->signature->argument_count, void*);
-    Newx(scratch,   sub->signature->argument_count * FFI_SIZEOF_ARG, char);
-#endif
-#ifdef FFI_PLATYPUS_DEBUG
-    memset(arguments, 0, sub->signature->argument_count * sizeof(void*));
-    memset(scratch,   0, sub->signature->argument_count * FFI_SIZEOF_ARG);
-#endif
-      
-    for(i=0; i < sub->signature->argument_count; i++)
+    switch(sub->signature->return_type->reftype)
     {
-      arguments[i] = &scratch[i*FFI_SIZEOF_ARG];
-      switch(sub->signature->argument_types[i]->reftype)
-      {
-        case FFI_PL_REF_NONE:
-          ffi_pl_sv2ffi(arguments[i], ST(i), sub->signature->argument_types[i]);
-          break;
-        case FFI_PL_REF_POINTER:
-          if(!SvOK(ST(i)))
-          {
-            *((void**)arguments[i]) = NULL;
-          }
-          else if(SvROK(ST(i)))
-          {
-            void *ptr;
-#ifdef HAS_ALLOCA
-            ptr = alloca(FFI_SIZEOF_ARG);
-#else
-            Newx(ptr, FFI_SIZEOF_ARG, char); /* TODO: memory leak */
-#endif
-            ffi_pl_sv2ffi(ptr, SvRV(ST(i)), sub->signature->argument_types[i]);
-            *((void**)arguments[i]) = ptr;
-          }
+      case FFI_PL_REF_NONE:
+        ST(0) = sv_newmortal();
+        ffi_pl_ffi2sv(ST(0), (&result), sub->signature->return_type);
+        XSRETURN(1);
+        break;
+      case FFI_PL_REF_POINTER:
+        if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
+        {
+          void *ptr = ((void*)result);
+          if(ptr == NULL)
+            ST(0) = &PL_sv_undef;
           else
           {
-            *((void**)arguments[i]) = INT2PTR(void *, SvIV(ST(i)));
+            ST(0) = sv_2mortal(newSViv(PTR2IV(ptr)));
           }
+        }
+        else
+        {
+          /* TODO */
+        }
         break;
-      }
-    }
-
-#ifdef FFI_PLATYPUS_DEBUG
-    fprintf(stderr,   "# ffi_call:\n");
-    for(i=0; i < sub->signature->argument_count; i++)
-    {
-      fprintf(stderr, "#   arg %02d = %016lx [%p]\n", i, *((unsigned long int*)((void*)&scratch[i*FFI_SIZEOF_ARG])), &scratch[i*FFI_SIZEOF_ARG]);
-    }
-#endif
-    
-    ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
-    
-#ifdef FFI_PLATYPUS_DEBUG
-    fprintf(stderr,   "#   ret =    %016lx [%p]\n", *((unsigned long int*)((void*)&result)), &result);
-#endif
-
-    for(i=0; i < sub->signature->argument_count; i++)
-    {
-      switch(sub->signature->argument_types[i]->reftype)
-      {
-        case FFI_PL_REF_NONE:
-          /* do nothing */
-          break;
-        case FFI_PL_REF_POINTER:
-          /* TODO */
-          break;
-      }
-    }
-    
-#ifndef HAS_ALLOCA
-    Safefree(arguments);
-    Safefree(scratch);
-#endif
-
-    if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID
-    && sub->signature->return_type->reftype == FFI_PL_REF_NONE)
-    {
-      XSRETURN_EMPTY;
-    }
-    else
-    {
-      switch(sub->signature->return_type->reftype)
-      {
-        case FFI_PL_REF_NONE:
-          ST(0) = sv_newmortal();
-          ffi_pl_ffi2sv(ST(0), (&result), sub->signature->return_type);
-          XSRETURN(1);
-          break;
-        case FFI_PL_REF_POINTER:
-          if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
-          {
-            void *ptr = ((void*)result);
-            if(ptr == NULL)
-              ST(0) = &PL_sv_undef;
-            else
-            {
-              ST(0) = sv_2mortal(newSViv(PTR2IV(ptr)));
-            }
-          }
-          /* TODO */
-          break;
-      }
     }
   }
-
 }
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus
@@ -346,21 +343,13 @@ _ffi_type(language, name)
     }
     else
     {
+      Safefree(new_type);
       croak("Unknown language");
-      bad = 1;
     }
     
-    if(bad)
-    {
-      Safefree(new_type);
-      RETVAL = NULL;
-    }
-    else
-    {
-      new_type->language = language;
-      new_type->refcount = 1;
-      RETVAL = new_type;
-    }
+    new_type->language = language;
+    new_type->refcount = 1;
+    RETVAL = new_type;
   OUTPUT:
     RETVAL
 
@@ -370,81 +359,69 @@ ffi_signature(return_type, ...)
   PREINIT:
     ffi_pl_signature *new_signature;
     int i;
-    int bad;
     ffi_status status;
     ffi_pl_type *tmp;
     ffi_type *libffi_return_type;
   CODE:
-    bad = 0;
     for(i = 1; i < items; i++)
     {
       if(!sv_isobject(ST(i)) || !sv_derived_from(ST(i), "FFI::Platypus::Type"))
-      {
         croak("ffi_signature takes a list of ffi_type");
-        bad = 1;
-        break;
-      }
       tmp = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(ST(i))));
       if(tmp->ffi_type->type == FFI_TYPE_VOID && tmp->reftype != FFI_PL_REF_POINTER)
-      {
         croak("void is an illegal argument type");
-        bad = 1;
-        break;
-      }
     }
     
-    if(!bad)
+    Newx(new_signature, 1, ffi_pl_signature);
+    new_signature->refcount = 1;
+    new_signature->return_type = ffi_pl_type_inc(return_type);
+    new_signature->argument_count = items - 1;
+    Newx(new_signature->argument_types, new_signature->argument_count, ffi_pl_type*);
+    Newx(new_signature->ffi_type, new_signature->argument_count, ffi_type*);
+    for(i=0; i < new_signature->argument_count; i++)
     {
-      Newx(new_signature, 1, ffi_pl_signature);
-      new_signature->refcount = 1;
-      new_signature->return_type = ffi_pl_type_inc(return_type);
-      new_signature->argument_count = items - 1;
-      Newx(new_signature->argument_types, new_signature->argument_count, ffi_pl_type*);
-      Newx(new_signature->ffi_type, new_signature->argument_count, ffi_type*);
-      for(i=0; i < new_signature->argument_count; i++)
-      {
-        new_signature->argument_types[i] = ffi_pl_type_inc(INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(ST(i+1)))));
-        switch(new_signature->argument_types[i]->reftype)
-        {
-          case FFI_PL_REF_NONE:
-            new_signature->ffi_type[i] = new_signature->argument_types[i]->ffi_type;
-            break;
-          case FFI_PL_REF_POINTER:
-            new_signature->ffi_type[i] = &ffi_type_pointer;
-            break;
-        }
-      }
-      switch(new_signature->return_type->reftype)
+      new_signature->argument_types[i] = ffi_pl_type_inc(INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(ST(i+1)))));
+      switch(new_signature->argument_types[i]->reftype)
       {
         case FFI_PL_REF_NONE:
-          libffi_return_type = new_signature->return_type->ffi_type;
+          new_signature->ffi_type[i] = new_signature->argument_types[i]->ffi_type;
           break;
         case FFI_PL_REF_POINTER:
-          libffi_return_type = &ffi_type_pointer;
+          new_signature->ffi_type[i] = &ffi_type_pointer;
           break;
       }
-      status = ffi_prep_cif(
-        &new_signature->ffi_cif,              /* ffi_cif* */
-        FFI_DEFAULT_ABI,                      /* ffi_abi */
-        new_signature->argument_count,        /* unsigned int */
-        libffi_return_type,                   /* ffi_type *rtype */
-        new_signature->ffi_type               /* ffi_type **atype */
-      );
-      if(status != FFI_OK)
-      {
-        ffi_pl_signature_dec(new_signature);
-        if(status == FFI_BAD_TYPEDEF)
-          croak("bad typedef");
-        else if(status == FFI_BAD_ABI)
-          croak("invalid ABI");
-        else
-          croak("unknown error with ffi_prep_cif");
-      }
-      else
-      {
-        RETVAL = new_signature;
-      }
     }
+
+    switch(new_signature->return_type->reftype)
+    {
+      case FFI_PL_REF_NONE:
+        libffi_return_type = new_signature->return_type->ffi_type;
+        break;
+      case FFI_PL_REF_POINTER:
+        libffi_return_type = &ffi_type_pointer;
+        break;
+    }
+
+    status = ffi_prep_cif(
+      &new_signature->ffi_cif,              /* ffi_cif* */
+      FFI_DEFAULT_ABI,                      /* ffi_abi */
+      new_signature->argument_count,        /* unsigned int */
+      libffi_return_type,                   /* ffi_type *rtype */
+      new_signature->ffi_type               /* ffi_type **atype */
+    );
+
+    if(status != FFI_OK)
+    {
+      ffi_pl_signature_dec(new_signature);
+      if(status == FFI_BAD_TYPEDEF)
+        croak("bad typedef");
+      else if(status == FFI_BAD_ABI)
+        croak("invalid ABI");
+      else
+        croak("unknown error with ffi_prep_cif");
+    }
+
+    RETVAL = new_signature;
   OUTPUT:
     RETVAL
 
@@ -463,17 +440,13 @@ ffi_lib(filename, ...)
 #endif
     handle = dlopen(filename, flags);
     if(handle == NULL)
-    {
       croak("error in dlopen(%s,%d): %s", filename != NULL ? filename : "undef", flags, dlerror()); 
-    }
-    else
-    {
-      Newx(new_lib, 1, ffi_pl_lib);
-      new_lib->refcount = 1;
-      new_lib->path_name = filename != NULL ? savepv(filename) : NULL;
-      new_lib->handle = handle;
-      RETVAL = new_lib;
-    }
+
+    Newx(new_lib, 1, ffi_pl_lib);
+    new_lib->refcount = 1;
+    new_lib->path_name = filename != NULL ? savepv(filename) : NULL;
+    new_lib->handle = handle;
+    RETVAL = new_lib;
   OUTPUT:
     RETVAL
     
@@ -551,8 +524,7 @@ argument_type(self, index)
   CODE:
     if(index >= self->argument_count)
       croak("no such argument index %d (max is %d)", index, self->argument_count-1);
-    else
-      RETVAL = ffi_pl_type_inc(self->argument_types[index]);
+    RETVAL = ffi_pl_type_inc(self->argument_types[index]);
   OUTPUT:
     RETVAL
 
