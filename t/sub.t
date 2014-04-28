@@ -44,11 +44,8 @@ is short_to_long(100), 100, 'short_to_long';
 is int_to_long  (200), 200, 'int_to_long';
 is long_to_long (500), 500, 'long_to_long';
 
-TODO: {
-  local $TODO = 'coming back wrong';
 is char_to_long (-42),   -42, 'char_to_long neg';
 is short_to_long(-100), -100, 'short_to_long neg';
-}
 is int_to_long  (-200), -200, 'int_to_long neg';
 is long_to_long (-500), -500, 'long_to_long neg';
 
