@@ -225,7 +225,15 @@ XS(ffi_pl_sub_call)
         /* do nothing */
         break;
       case FFI_PL_REF_POINTER:
-        /* TODO */
+        if(SvROK(ST(i)))
+        {
+          SV *value = SvRV(ST(i));
+          if(!SvREADONLY(value))
+          {
+            ptr = *((void**)arguments[i]);
+            ffi_pl_ffi2sv(value, ptr, sub->signature->argument_types[i]);
+          }
+        }
         break;
     }
   }

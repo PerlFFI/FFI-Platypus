@@ -8,12 +8,24 @@ integer_pointer_in(int *input)
   return (*input)+1;
 }
 
+extern void EXPORT
+integer_pointer_out(int *input)
+{
+  (*input)++;
+}
+
 extern double EXPORT
 double_pointer_in(double *input)
 {
   if(input == NULL)
     return 12.34;
   return *input;
+}
+
+extern void EXPORT
+double_pointer_out(double *input)
+{
+  *input = -(*input);
 }
 
 int EXPORT *

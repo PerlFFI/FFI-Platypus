@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 10;
 use FindBin ();
 use File::Spec;
 use lib File::Spec->catdir($FindBin::Bin, File::Spec->updir, 'testlib');
@@ -13,6 +13,8 @@ BEGIN {
 
   ffi_sub [$testlib], integer_pointer_in =>   [ ffi_type c => 'int',    ffi_type c => '*int'    ];
   ffi_sub [$testlib], double_pointer_in  =>   [ ffi_type c => 'double', ffi_type c => '*double' ];
+  ffi_sub [$testlib], integer_pointer_out =>  [ ffi_type c => 'void',   ffi_type c => '*int'    ];
+  ffi_sub [$testlib], double_pointer_out =>   [ ffi_type c => 'void',   ffi_type c => '*double' ];
   ffi_sub [$testlib], int_to_int_ptr =>       [ ffi_type c => '*void',  ffi_type c => 'int'     ];
   ffi_sub [$testlib], double_to_double_ptr => [ ffi_type c => '*void',  ffi_type c => 'double'  ];
 }
@@ -26,3 +28,12 @@ is double_pointer_in(\1.50),  1.50, 'double 1.50     => 1.50';
 
 is integer_pointer_in(int_to_int_ptr(100)), 101, 'pointer argument (integer)';
 is double_pointer_in(double_to_double_ptr(2.50)), 2.50, 'pointer argument (double)';
+
+
+my $foo = 50;
+integer_pointer_out(\$foo);
+is $foo, 51, 'integer pointer out';
+
+$foo = 12.34;
+double_pointer_out(\$foo);
+is $foo, -12.34, 'double pointer out';
