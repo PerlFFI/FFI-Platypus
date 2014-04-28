@@ -48,7 +48,7 @@ sub new
   
   $class->c_assert('basic_compiler');
 
-  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar ))
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal ))
   {
     my $source = $class->c_tests->{header};
     $source =~ s/<>/<$header.h>/;

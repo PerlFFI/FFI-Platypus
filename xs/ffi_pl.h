@@ -34,6 +34,9 @@
 #ifdef HAS_WCHAR_H
 #include <wchar.h>
 #endif
+#ifdef HAS_SIGNAL_H
+#include <signal.h>
+#endif
 
 #ifdef _MSC_VER
 typedef __int64 int64_t;
@@ -84,5 +87,7 @@ typedef void ffi_pl_system_library_handle;
 
 int ffi_pl_windows_dlsym_win32_meta(const char **mod_name, void **mod_handle);
 #define dlsym_win32_meta(_name, _handle) ffi_pl_windows_dlsym_win32_meta(_name, _handle)
+
+#define ffi_pl_debug_break() kill(getpid(), 2)
 
 #endif
