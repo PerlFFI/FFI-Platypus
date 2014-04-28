@@ -43,3 +43,19 @@ double_to_double_ptr(double input)
   *ptr = input;
   return ptr;
 }
+
+int *
+integer_pointer_ret(int input)
+{
+  int *tmp = malloc(sizeof(int));
+  *tmp = input;
+  return tmp;
+}
+
+double *
+double_pointer_ret(double input)
+{
+  double *tmp = malloc(sizeof(double));
+  *tmp = input;
+  return tmp;
+}

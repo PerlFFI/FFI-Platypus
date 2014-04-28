@@ -118,6 +118,7 @@ XS(ffi_pl_sub_call)
   char key[16];
   ffi_pl_sub *sub;
   SV **sv;
+  SV *tmp;
   int i;
   void **arguments;
   char *scratch1;
@@ -260,19 +261,19 @@ XS(ffi_pl_sub_call)
         XSRETURN(1);
         break;
       case FFI_PL_REF_POINTER:
-        if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
         {
-          void *ptr = ((void*)result);
+          ptr = ((void*)result);
           if(ptr == NULL)
             ST(0) = &PL_sv_undef;
+          else if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
+            ST(0) = sv_2mortal(newSViv(PTR2IV(ptr)));
           else
           {
-            ST(0) = sv_2mortal(newSViv(PTR2IV(ptr)));
+            tmp = sv_newmortal();
+            ffi_pl_ffi2sv(tmp, ((void*)result), sub->signature->return_type);
+            ST(0) = newRV_inc(tmp);
+            XSRETURN(1);
           }
-        }
-        else
-        {
-          /* TODO */
         }
         break;
     }
