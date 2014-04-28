@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 8;
 use FindBin ();
 use File::Spec;
 use lib File::Spec->catdir($FindBin::Bin, File::Spec->updir, 'testlib');
@@ -25,5 +25,4 @@ is double_pointer_in(0),     12.34, 'double 0        => NULL';
 is double_pointer_in(\1.50),  1.50, 'double 1.50     => 1.50';
 
 is integer_pointer_in(int_to_int_ptr(100)), 101, 'pointer argument (integer)';
-# TODO: this dumps core
-#is double_pointer_in(double_pointer_in(2.50)), 2.50, 'pointer argument (double)';
+is double_pointer_in(double_to_double_ptr(2.50)), 2.50, 'pointer argument (double)';
