@@ -31,6 +31,9 @@ sub new
   my($class, %args) = @_;
   $args{c_source} = 'xs';
   $args{requires}->{'Alien::MSYS'} = '0.04' if $^O eq 'MSWin32';
+
+  unlink(File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.txt'));
+  unlink(File::Spec->catfile($FindBin::Bin, 'xs', 'flag-libffi.txt'));
   
   $cc ||= ExtUtils::CChecker->new(
     quiet => 0,
@@ -444,6 +447,24 @@ sub c_tests
 sub ACTION_build
 {
   my $self = shift;
+  
+  do {
+    opendir my $dh, 'testlib';
+    my @list = readdir $dh;
+    closedir $dh;
+    my $fn = File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.txt');
+    foreach my $file (@list)
+    {
+      last unless -e $fn;
+      next if $file =~ /^\./;
+      next unless $file =~ /\.[ch]$/;
+      if((stat($fn))[9] < (stat(File::Spec->catfile($FindBin::Bin, 'testlib', $file)))[9])
+      {
+        unlink $fn;
+      }
+    }
+  };
+  
   $self->build_testlib unless -r File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.txt');
   $self->build_libffi  unless -r File::Spec->catfile($FindBin::Bin, 'xs', 'flag-libffi.txt');
   $self->SUPER::ACTION_build(@_);
