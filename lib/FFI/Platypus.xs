@@ -150,6 +150,10 @@ XS(ffi_pl_sub_call)
     Newx(arguments, sub->signature->argument_count, void*);
     Newx(scratch,   sub->signature->argument_count * FFI_SIZEOF_ARG, char);
 #endif
+#ifdef FFI_PLATYPUS_DEBUG
+    memset(arguments, 0, sub->signature->argument_count * sizeof(void*));
+    memset(scratch,   0, sub->signature->argument_count * FFI_SIZEOF_ARG);
+#endif
       
     for(i=0; i < sub->signature->argument_count; i++)
     {
@@ -182,9 +186,21 @@ XS(ffi_pl_sub_call)
         break;
       }
     }
+
+#ifdef FFI_PLATYPUS_DEBUG
+    fprintf(stderr,   "# ffi_call:\n");
+    for(i=0; i < sub->signature->argument_count; i++)
+    {
+      fprintf(stderr, "#   arg %02d = %016lx [%p]\n", i, *((unsigned long int*)((void*)&scratch[i*FFI_SIZEOF_ARG])), &scratch[i*FFI_SIZEOF_ARG]);
+    }
+#endif
     
     ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
     
+#ifdef FFI_PLATYPUS_DEBUG
+    fprintf(stderr,   "#   ret =    %016lx [%p]\n", *((unsigned long int*)((void*)&result)), &result);
+#endif
+
     for(i=0; i < sub->signature->argument_count; i++)
     {
       switch(sub->signature->argument_types[i]->reftype)
