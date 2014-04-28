@@ -10,7 +10,7 @@
 #include <ffi_pl.h>
 
 typedef const char *ffi_pl_string;
-typedef enum { FFI_PL_LANGUAGE_NONE, FFI_PL_LANGUAGE_C } ffi_pl_language;
+typedef enum { FFI_PL_LANGUAGE_FFI, FFI_PL_LANGUAGE_C } ffi_pl_language;
 typedef enum { FFI_PL_REF_NONE, FFI_PL_REF_POINTER } ffi_pl_ref_type;;
 
 typedef struct _ffi_pl_type {
@@ -336,7 +336,7 @@ _ffi_type(language, name)
       new_type->reftype = FFI_PL_REF_POINTER;
     }
     
-    if(language == FFI_PL_LANGUAGE_NONE)
+    if(language == FFI_PL_LANGUAGE_FFI)
     {
       ffi_pl_str_type2ffi_type(new_type, name);
     }
