@@ -121,7 +121,9 @@ XS(ffi_pl_sub_call)
   int i;
   void **arguments;
   char *scratch;
+  char *scratch2;
   ffi_arg result;
+  void *ptr;
   
   dVAR; dXSARGS;
 
@@ -135,6 +137,8 @@ XS(ffi_pl_sub_call)
     croak("error finding metadata for %p", cv);
 
   sub = INT2PTR(ffi_pl_sub*, SvIV(*sv));
+  
+  scratch2 = NULL;
     
   if(sub->signature->argument_count != items)
     croak("Wrong number of arguments");
@@ -166,11 +170,27 @@ XS(ffi_pl_sub_call)
         }
         else if(SvROK(ST(i)))
         {
-          void *ptr;
+          if(sub->signature->argument_types[i]->ffi_type->type == FFI_TYPE_VOID)
+          {
+#ifndef HAS_ALLOCA
+            Safefree(arguments);
+            Safefree(scratch);
+            if(scratch2 != NULL)
+              Safefree(scratch2);
+#endif
+            croak("cannot pass reference in as void pointer type");
+          }
 #ifdef HAS_ALLOCA
           ptr = alloca(FFI_SIZEOF_ARG);
 #else
-          Newx(ptr, FFI_SIZEOF_ARG, char); /* TODO: memory leak */
+          if(scratch2 == NULL)
+          {
+            Newx(scratch2, sub->signature->argument_count * FFI_SIZEOF_ARG, char);
+#ifdef FFI_PLATYPUS_DEBUG
+            memset(scratch2, 0, sub->signature->argument_count * FFI_SIZEOF_ARG);
+#endif
+          }
+          ptr = &scratch2[i*FFI_SIZEOF_ARG];
 #endif
           ffi_pl_sv2ffi(ptr, SvRV(ST(i)), sub->signature->argument_types[i]);
           *((void**)arguments[i]) = ptr;
@@ -213,6 +233,8 @@ XS(ffi_pl_sub_call)
 #ifndef HAS_ALLOCA
   Safefree(arguments);
   Safefree(scratch);
+  if(scratch2 != NULL)
+    Safefree(scratch2);
 #endif
 
   if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID
