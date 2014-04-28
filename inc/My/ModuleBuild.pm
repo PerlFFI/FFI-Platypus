@@ -286,6 +286,10 @@ sub new
     };
   }
   
+  $has_system_ffi = $class->c_try('bad_clang_libffi_debian',
+    define => 'HAS_SYSTEM_FFI_BAD',
+  ) if $has_system_ffi;
+  
   do {
     my $fn = File::Spec->catfile(qw( xs flag-systemffi.txt ));
     if($has_system_ffi)
@@ -780,3 +784,72 @@ main(int argc, char *argv[])
   long double var;
   return 0;
 }
+
+|bad_clang_libffi_debian|
+#include <ffi.h>
+#include <stdio.h>
+
+/*
+ * this tests for a bug that seems to be present in some combination of
+ * libffi 3.0.10-b
+ * clang 3.0-6.2
+ * on Debian 7.4
+ * that expresses itself in the testlib that comes with FFI::Platypus.
+ * using gcc instead of clang, or building libffi from source seems
+ * to make this go away.
+ */
+
+long
+char_to_long(signed char input)
+{
+  return input;
+}
+
+long
+short_to_long(short input)
+{
+  return input;
+}
+
+int
+main(int argc, char *argv[])
+{
+  ffi_cif  cif;
+  ffi_type *arg_types[1];
+  long result;
+  signed char c;
+  void *arguments[1];
+  ffi_status status;
+  
+  arg_types[0] = &ffi_type_sint8;
+
+  status = ffi_prep_cif(
+    &cif,
+    FFI_DEFAULT_ABI,
+    1,
+    sizeof(long) == 8 ? &ffi_type_sint64 : &ffi_type_sint32,
+    arg_types
+  );
+  
+  if(status != FFI_OK)
+  {
+    printf("prep failed\n");
+    return 2;
+  }
+  
+  c = -42;
+  arguments[0] = &c;
+  
+  ffi_call(&cif, (void*)char_to_long, &result, arguments);
+
+  if(result == -42)
+  {
+    return 0;
+  }
+  else
+  {
+    printf("result = %ld\n", result);
+    return 2;
+  }
+}
+
