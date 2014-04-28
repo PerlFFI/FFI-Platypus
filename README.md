@@ -15,6 +15,15 @@ recognized by [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus):
     moderation, so I believe it to be safe.  You may turn it off by setting
     this environment variable to `0` when you run `Build.PL`.
 
+- `FFI_PLATYPUS_BUILD_CFLAGS`
+
+    Extra c flags to include during the build of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).  Useful for
+    including debug flags like `-g3`.
+
+- `FFI_PLATYPUS_BUILD_LDFLAGS`
+
+    Extra linker flags to include during the build of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
+
 - `FFI_PLATYPUS_BUILD_SYSTEM_FFI`
 
     If your system does not provide `libffi`, then [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) will attempt

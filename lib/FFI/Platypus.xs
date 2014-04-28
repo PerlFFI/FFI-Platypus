@@ -124,6 +124,10 @@ XS(ffi_pl_sub_call)
   ffi_arg result;
   
   dVAR; dXSARGS;
+
+  /* uncomment to send a signal 2 to debug
+     this call */
+  /* ffi_pl_debug_break(); */
   
   snprintf(key, sizeof(key), "%p", cv);
   sv = hv_fetch(meta, key, strlen(key), 0);

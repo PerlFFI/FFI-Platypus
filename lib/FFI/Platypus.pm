@@ -94,6 +94,15 @@ test whether or not it works on your platform during build, and use it in
 moderation, so I believe it to be safe.  You may turn it off by setting
 this environment variable to C<0> when you run C<Build.PL>.
 
+=item C<FFI_PLATYPUS_BUILD_CFLAGS>
+
+Extra c flags to include during the build of L<FFI::Platypus>.  Useful for
+including debug flags like C<-g3>.
+
+=item C<FFI_PLATYPUS_BUILD_LDFLAGS>
+
+Extra linker flags to include during the build of L<FFI::Platypus>.
+
 =item C<FFI_PLATYPUS_BUILD_SYSTEM_FFI>
 
 If your system does not provide C<libffi>, then L<FFI::Platypus> will attempt

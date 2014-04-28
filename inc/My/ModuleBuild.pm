@@ -43,6 +43,11 @@ sub new
     open($fh, '>', $fn) or die "unable to write $fn: $!";
     $fh;
   };
+
+  $cc->push_extra_compiler_flags( shellwords $ENV{FFI_PLATYPUS_BUILD_CFLAGS} )
+    if defined $ENV{FFI_PLATYPUS_BUILD_CFLAGS};
+  $cc->push_extra_linker_flags( shellwords $ENV{FFI_PLATYPUS_BUILD_LDFLAGS} )
+    if defined $ENV{FFI_PLATYPUS_BUILD_LDFLAGS};
   
   $cc->push_include_dirs( File::Spec->catdir($FindBin::Bin, 'xs') );
   
