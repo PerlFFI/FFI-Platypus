@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 15;
+use Test::More tests => 16;
 use FindBin ();
 use File::Spec;
 use lib File::Spec->catdir($FindBin::Bin, File::Spec->updir, 'testlib');
@@ -38,6 +38,10 @@ ok !isalpha(ord '0'), "isalpha('0') = false";
 
 is return_passed_integer_value(1), 1, 'return_passed_integer_value(1) = 1';
 is return_passed_integer_value(42), 42, 'return_passed_integer_value(1) = 42';
+
+do { no warnings; 
+is char_to_long ("hello"), 0, 'string becomes integer';
+};
 
 is char_to_long (42),   42, 'char_to_long';
 is short_to_long(100), 100, 'short_to_long';
