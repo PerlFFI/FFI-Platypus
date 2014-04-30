@@ -38,11 +38,20 @@ typedef struct _ffi_pl_sub {
   void             *mswin32_real_library_handle;
 } ffi_pl_sub;
 
+typedef struct _ffi_pl_closure {
+  SV               *coderef;
+  ffi_closure      *ffi_closure;
+  ffi_pl_signature *signature;
+  const char       *string_return_value;
+  void             *function_pointer;
+} ffi_pl_closure;
+
 ffi_pl_type *ffi_pl_type_inc(ffi_pl_type *type);
 void ffi_pl_type_dec(ffi_pl_type *type);
 ffi_pl_signature *ffi_pl_signature_inc(ffi_pl_signature *signature);
 void ffi_pl_signature_dec(ffi_pl_signature *signature);
 ffi_pl_lib *ffi_pl_lib_inc(ffi_pl_lib *lib);
 int ffi_pl_lib_dec(ffi_pl_lib *lib);
+void ffi_pl_closure_call(ffi_cif *cif, void *result, void **arguments, void *user);
 
 #endif

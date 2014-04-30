@@ -70,30 +70,38 @@ XS(ffi_pl_sub_call)
         }
         else if(SvROK(ST(i)))
         {
-          if(sub->signature->argument_types[i]->ffi_type->type == FFI_TYPE_VOID)
+          if(sv_isobject(ST(i)) && sv_derived_from(ST(i), "FFI::Platypus::Closure"))
           {
+            ffi_pl_closure *closure = INT2PTR(ffi_pl_closure *, SvIV((SV *) SvRV(ST(i))));
+            *((void**)arguments[i]) = closure->function_pointer;
+          }
+          else
+          {
+            if(sub->signature->argument_types[i]->ffi_type->type == FFI_TYPE_VOID)
+            {
 #ifndef HAS_ALLOCA
-            Safefree(arguments);
-            Safefree(scratch1);
-            if(scratch2 != NULL)
-              Safefree(scratch2);
+              Safefree(arguments);
+              Safefree(scratch1);
+              if(scratch2 != NULL)
+                Safefree(scratch2);
 #endif
-            croak("cannot pass reference in as void pointer type");
-          }
+              croak("cannot pass reference in as void pointer type");
+            }
 #ifdef HAS_ALLOCA
-          ptr = alloca(FFI_SIZEOF_ARG);
+            ptr = alloca(FFI_SIZEOF_ARG);
 #else
-          if(scratch2 == NULL)
-          {
-            Newx(scratch2, sub->signature->argument_count * FFI_SIZEOF_ARG, char);
+            if(scratch2 == NULL)
+            {
+              Newx(scratch2, sub->signature->argument_count * FFI_SIZEOF_ARG, char);
 #ifdef FFI_PLATYPUS_DEBUG
-            memset(scratch2, 0, sub->signature->argument_count * FFI_SIZEOF_ARG);
+              memset(scratch2, 0, sub->signature->argument_count * FFI_SIZEOF_ARG);
 #endif
+            }
+            ptr = &scratch2[i*FFI_SIZEOF_ARG];
+#endif
+            ffi_pl_sv2ffi(ptr, SvRV(ST(i)), sub->signature->argument_types[i]);
+            *((void**)arguments[i]) = ptr;
           }
-          ptr = &scratch2[i*FFI_SIZEOF_ARG];
-#endif
-          ffi_pl_sv2ffi(ptr, SvRV(ST(i)), sub->signature->argument_types[i]);
-          *((void**)arguments[i]) = ptr;
         }
         else
         {
@@ -379,7 +387,42 @@ ffi_lib(filename, ...)
     RETVAL = new_lib;
   OUTPUT:
     RETVAL
+
+ffi_pl_closure *
+ffi_closure(signature, coderef)
+    ffi_pl_signature *signature
+    SV *coderef
+  PREINIT:
+    ffi_pl_closure *new_closure;
+    ffi_closure *closure;
+    ffi_status status;
+    void *function_pointer;
+  CODE:
+    closure = ffi_closure_alloc(sizeof(ffi_closure), &function_pointer);
+    if(closure == NULL)
+      croak("unable to allocate memory for closure");
     
+    Newx(new_closure, 1, ffi_pl_closure);
+    new_closure->coderef             = SvREFCNT_inc(coderef);
+    new_closure->signature           = ffi_pl_signature_inc(signature);
+    new_closure->string_return_value = NULL;
+    new_closure->ffi_closure         = closure;
+    new_closure->function_pointer    = function_pointer;
+    
+    status = ffi_prep_closure_loc(closure, &new_closure->signature->ffi_cif, ffi_pl_closure_call, new_closure, new_closure->function_pointer);
+    
+    if(status != FFI_OK)
+    {
+      ffi_closure_free(new_closure->ffi_closure);
+      SvREFCNT_dec(new_closure->coderef);
+      ffi_pl_signature_dec(new_closure->signature);
+      Safefree(new_closure);
+      croak("unable to create closure");
+    }
+    
+    RETVAL = new_closure;
+  OUTPUT:
+    RETVAL
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus::Type
 
@@ -517,3 +560,17 @@ DESTROY(self)
     ffi_pl_lib_dec(self);
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus::Sub
+
+MODULE = FFI::Platypus   PACKAGE = FFI::Platypus::Closure
+
+void
+DESTROY(self)
+    ffi_pl_closure *self;
+  CODE:
+    ffi_closure_free(self->ffi_closure);
+    ffi_pl_signature_dec(self->signature);
+    SvREFCNT_dec(self->coderef);
+    if(self->string_return_value == NULL)
+      Safefree(self->string_return_value);
+    Safefree(self);
+    

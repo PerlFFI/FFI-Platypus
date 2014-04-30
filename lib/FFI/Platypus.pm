@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp qw( croak );
 use Exporter::Tidy
-  default => [ qw( ffi_type ffi_signature ffi_lib ffi_sub ) ];
+  default => [ qw( ffi_type ffi_signature ffi_lib ffi_sub ffi_closure ) ];
 
 BEGIN {
 
