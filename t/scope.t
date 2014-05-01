@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More skip_all => 'needs fixing!';
+#use Test::More skip_all => 'needs fixing!';
 use Test::More tests => 2;
 use FindBin ();
 use File::Spec;

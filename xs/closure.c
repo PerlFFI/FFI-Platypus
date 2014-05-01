@@ -33,30 +33,35 @@ ffi_pl_closure_call(ffi_cif *cif, void *result, void **arguments, void *user)
     PUTBACK;
   }
 
-  /* TODO: eval ? */
+  /* TODO: what to do in the event of die ? */
   count = call_sv(closure->coderef, closure->flags);
 
-  if(closure->flags & G_DISCARD)
-    return;
-
-  SPAGAIN;
-
-  if(count != 1)
-    sv_result = &PL_sv_undef;
-  else
-    sv_result= POPs;
-
-  switch(closure->signature->return_type->reftype)
+  if(!(closure->flags & G_DISCARD))
   {
-    case FFI_PL_REF_NONE:
-      ffi_pl_sv2ffi(result, sv_result, closure->signature->return_type);
-      break;
-    case FFI_PL_REF_POINTER:
-      /* TODO */
-      break;
+    SPAGAIN;
+
+    if(count != 1)
+      sv_result = &PL_sv_undef;
+    else
+      sv_result= POPs;
+
+    switch(closure->signature->return_type->reftype)
+    {
+      case FFI_PL_REF_NONE:
+        ffi_pl_sv2ffi(result, sv_result, closure->signature->return_type);
+        break;
+      case FFI_PL_REF_POINTER:
+        /* TODO */
+        break;
+    }
+
+    PUTBACK;
   }
 
-  FREETMPS;
-  LEAVE;
+  if(!(closure->flags & G_NOARGS))
+  {
+    FREETMPS;
+    LEAVE;
+  }
 }
 

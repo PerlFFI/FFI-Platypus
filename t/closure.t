@@ -33,7 +33,7 @@ my $cb2 = ffi_closure(ffi_signature($int), sub { 42 });
 isa_ok $cb2, 'FFI::Platypus::Closure';
 is call_int_function($cb2), 42, 'call_int_function';
 
-my $cb3 = ffi_closure(ffi_signature(ffi_type c => 'int'), sub {});
+my $cb3 = ffi_closure(ffi_signature($int), sub {});
 isa_ok $cb3, 'FFI::Platypus::Closure';
 do { no warnings;
   is call_int_function($cb3), 0, 'call_int_function with empty list';
