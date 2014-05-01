@@ -403,12 +403,12 @@ ffi_closure(signature, coderef)
       croak("unable to allocate memory for closure");
     
     Newx(new_closure, 1, ffi_pl_closure);
-    new_closure->coderef             = SvREFCNT_inc(coderef);
-    new_closure->signature           = ffi_pl_signature_inc(signature);
-    new_closure->string_return_value = NULL;
-    new_closure->ffi_closure         = closure;
-    new_closure->function_pointer    = function_pointer;
-    new_closure->flags               = 0;
+    new_closure->coderef                  = SvREFCNT_inc(coderef);
+    new_closure->signature                = ffi_pl_signature_inc(signature);
+    new_closure->most_recent_return_value = NULL;
+    new_closure->ffi_closure              = closure;
+    new_closure->function_pointer         = function_pointer;
+    new_closure->flags                    = 0;
     
     if(new_closure->signature->argument_count == 0)
       new_closure->flags |= G_NOARGS;
@@ -584,7 +584,7 @@ DESTROY(self)
     ffi_closure_free(self->ffi_closure);
     ffi_pl_signature_dec(self->signature);
     SvREFCNT_dec(self->coderef);
-    if(self->string_return_value == NULL)
-      Safefree(self->string_return_value);
+    if(self->most_recent_return_value == NULL)
+      Safefree(self->most_recent_return_value);
     Safefree(self);
     

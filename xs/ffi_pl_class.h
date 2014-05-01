@@ -43,7 +43,7 @@ typedef struct _ffi_pl_closure {
   I32               flags;
   ffi_closure      *ffi_closure;
   ffi_pl_signature *signature;
-  const char       *string_return_value;
+  const char       *most_recent_return_value;
   void             *function_pointer;
 } ffi_pl_closure;
 
