@@ -40,6 +40,7 @@ typedef struct _ffi_pl_sub {
 
 typedef struct _ffi_pl_closure {
   SV               *coderef;
+  I32               flags;
   ffi_closure      *ffi_closure;
   ffi_pl_signature *signature;
   const char       *string_return_value;

@@ -408,6 +408,20 @@ ffi_closure(signature, coderef)
     new_closure->string_return_value = NULL;
     new_closure->ffi_closure         = closure;
     new_closure->function_pointer    = function_pointer;
+    new_closure->flags               = 0;
+    
+    if(new_closure->signature->argument_count == 0)
+      new_closure->flags |= G_NOARGS;
+      
+    if(new_closure->signature->return_type->ffi_type->type == FFI_TYPE_VOID
+    && new_closure->signature->return_type->reftype == FFI_PL_REF_NONE)
+    {
+      new_closure->flags |= G_DISCARD | G_VOID;
+    }
+    else
+    {
+      new_closure->flags |= G_SCALAR;
+    }
     
     status = ffi_prep_closure_loc(closure, &new_closure->signature->ffi_cif, ffi_pl_closure_call, new_closure, new_closure->function_pointer);
     
