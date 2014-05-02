@@ -13,3 +13,11 @@ call_int_function(int_function *f)
 {
   return f();
 }
+
+typedef void *(ptr_function)(void);
+
+void *
+call_ptr_function(ptr_function *f)
+{
+  return f();
+}

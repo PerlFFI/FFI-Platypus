@@ -41,3 +41,9 @@ long_to_long(long input)
 {
   return input;
 }
+
+extern EXPORT void *
+return_passed_pointer_value(void *input)
+{
+  return input;
+}

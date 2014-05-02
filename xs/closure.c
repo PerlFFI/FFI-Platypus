@@ -51,7 +51,30 @@ ffi_pl_closure_call(ffi_cif *cif, void *result, void **arguments, void *user)
         ffi_pl_sv2ffi(result, sv_result, closure->signature->return_type);
         break;
       case FFI_PL_REF_POINTER:
-        /* TODO */
+        if(!SvOK(sv_result))
+        {
+          *((void**)result) = NULL;
+        }
+        else if(SvROK(sv_result))
+        {
+          if(sv_isobject(sv_result) && sv_derived_from(sv_result, "FFI::Platypus::Closure"))
+          {
+            /* TODO: warning/fail if this isn't a void * */
+            ffi_pl_closure *closure = INT2PTR(ffi_pl_closure *, SvIV((SV *) SvRV(sv_result)));
+            *((void**)result) = closure->function_pointer;
+          }
+          else
+          {
+            /* TODO: warn/fail if type is void * */
+            Renew(closure->most_recent_return_value, FFI_SIZEOF_ARG, char);
+            ffi_pl_sv2ffi(*((void**)result), SvRV(sv_result), closure->signature->return_type);
+            *((void**)result) = &closure->most_recent_return_value;
+          }
+        }
+        else
+        {
+          *((void**)result) = INT2PTR(void *, SvIV(sv_result));
+        }
         break;
     }
 
