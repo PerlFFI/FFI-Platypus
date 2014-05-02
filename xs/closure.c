@@ -63,12 +63,15 @@ ffi_pl_closure_call(ffi_cif *cif, void *result, void **arguments, void *user)
             ffi_pl_closure *closure = INT2PTR(ffi_pl_closure *, SvIV((SV *) SvRV(sv_result)));
             *((void**)result) = closure->function_pointer;
           }
+          else if(closure->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
+          {
+            /* TODO: fail if type is void * */
+          }
           else
           {
-            /* TODO: warn/fail if type is void * */
             Renew(closure->most_recent_return_value, FFI_SIZEOF_ARG, char);
-            ffi_pl_sv2ffi(*((void**)result), SvRV(sv_result), closure->signature->return_type);
             *((void**)result) = &closure->most_recent_return_value;
+            ffi_pl_sv2ffi(*((void**)result), SvRV(sv_result), closure->signature->return_type);
           }
         }
         else

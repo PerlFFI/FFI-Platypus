@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 15;
+use Test::More tests => 17;
 use FindBin ();
 use File::Spec;
 use lib File::Spec->catdir($FindBin::Bin, File::Spec->updir, 'testlib');
@@ -21,9 +21,10 @@ BEGIN {
   my $config  = FFI::TestLib->config;
   my $testlib = ffi_lib $config->{lib};
 
-  ffi_sub [$testlib], call_void_function => [$void, $ptr];
-  ffi_sub [$testlib], call_int_function  => [$int,  $ptr];
-  ffi_sub [$testlib], call_ptr_function  => [$ptr,  $ptr];
+  ffi_sub [$testlib], call_void_function    => [$void, $ptr];
+  ffi_sub [$testlib], call_int_function     => [$int,  $ptr];
+  ffi_sub [$testlib], call_ptr_function     => [$ptr,  $ptr];
+  ffi_sub [$testlib], call_int_ptr_function => [$int,  $ptr];
   
   ffi_sub [], malloc => [$ptr, $size_t];
   ffi_sub [], free   => [$void, $ptr];
@@ -66,3 +67,8 @@ free($foo);
 $foo = $cb1;
 call_void_function(call_ptr_function($cb7));
 is $counter, 2, 'counter = 2';
+
+$foo = 22;
+my $cb8 = ffi_closure(ffi_signature(ffi_type c => '*int'), sub { \$foo });
+isa_ok $cb8, 'FFI::Platypus::Closure';
+is call_int_ptr_function($cb8), 22, 'call_int_ptr_function';
