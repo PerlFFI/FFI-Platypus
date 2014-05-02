@@ -15,7 +15,8 @@ ffi_pl_closure_call(ffi_cif *cif, void *result, void **arguments, void *user)
 {
   dSP;
   int count;
-  SV *sv_result;
+  SV *sv;
+  int i;
 
   ffi_pl_closure *closure = (ffi_pl_closure*) user;
 
@@ -30,6 +31,21 @@ ffi_pl_closure_call(ffi_cif *cif, void *result, void **arguments, void *user)
   if(!(closure->flags & G_NOARGS))
   {
     /* TODO: push args */
+    for(i=0; i < closure->signature->argument_count; i++)
+    {
+      switch(closure->signature->argument_types[i]->reftype)
+      {
+        case FFI_PL_REF_NONE:
+          sv = sv_newmortal();
+          ffi_pl_ffi2sv(sv, arguments[i], closure->signature->argument_types[i]);
+          XPUSHs(sv);
+          break;
+        case FFI_PL_REF_POINTER:
+          /* TODO */
+          XPUSHs(&PL_sv_undef);
+          break;
+      }
+    }
     PUTBACK;
   }
 
@@ -41,26 +57,26 @@ ffi_pl_closure_call(ffi_cif *cif, void *result, void **arguments, void *user)
     SPAGAIN;
 
     if(count != 1)
-      sv_result = &PL_sv_undef;
+      sv = &PL_sv_undef;
     else
-      sv_result= POPs;
+      sv = POPs;
 
     switch(closure->signature->return_type->reftype)
     {
       case FFI_PL_REF_NONE:
-        ffi_pl_sv2ffi(result, sv_result, closure->signature->return_type);
+        ffi_pl_sv2ffi(result, sv, closure->signature->return_type);
         break;
       case FFI_PL_REF_POINTER:
-        if(!SvOK(sv_result))
+        if(!SvOK(sv))
         {
           *((void**)result) = NULL;
         }
-        else if(SvROK(sv_result))
+        else if(SvROK(sv))
         {
-          if(sv_isobject(sv_result) && sv_derived_from(sv_result, "FFI::Platypus::Closure"))
+          if(sv_isobject(sv) && sv_derived_from(sv, "FFI::Platypus::Closure"))
           {
             /* TODO: warning/fail if this isn't a void * */
-            ffi_pl_closure *closure = INT2PTR(ffi_pl_closure *, SvIV((SV *) SvRV(sv_result)));
+            ffi_pl_closure *closure = INT2PTR(ffi_pl_closure *, SvIV((SV *) SvRV(sv)));
             *((void**)result) = closure->function_pointer;
           }
           else if(closure->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
@@ -71,12 +87,12 @@ ffi_pl_closure_call(ffi_cif *cif, void *result, void **arguments, void *user)
           {
             Renew(closure->most_recent_return_value, FFI_SIZEOF_ARG, char);
             *((void**)result) = &closure->most_recent_return_value;
-            ffi_pl_sv2ffi(*((void**)result), SvRV(sv_result), closure->signature->return_type);
+            ffi_pl_sv2ffi(*((void**)result), SvRV(sv), closure->signature->return_type);
           }
         }
         else
         {
-          *((void**)result) = INT2PTR(void *, SvIV(sv_result));
+          *((void**)result) = INT2PTR(void *, SvIV(sv));
         }
         break;
     }

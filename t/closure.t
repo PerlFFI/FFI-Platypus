@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 17;
+use Test::More tests => 19;
 use FindBin ();
 use File::Spec;
 use lib File::Spec->catdir($FindBin::Bin, File::Spec->updir, 'testlib');
@@ -21,10 +21,11 @@ BEGIN {
   my $config  = FFI::TestLib->config;
   my $testlib = ffi_lib $config->{lib};
 
-  ffi_sub [$testlib], call_void_function    => [$void, $ptr];
-  ffi_sub [$testlib], call_int_function     => [$int,  $ptr];
-  ffi_sub [$testlib], call_ptr_function     => [$ptr,  $ptr];
-  ffi_sub [$testlib], call_int_ptr_function => [$int,  $ptr];
+  ffi_sub [$testlib], call_void_function               => [$void, $ptr];
+  ffi_sub [$testlib], call_int_function                => [$int,  $ptr];
+  ffi_sub [$testlib], call_ptr_function                => [$ptr,  $ptr];
+  ffi_sub [$testlib], call_int_ptr_function            => [$int,  $ptr];
+  ffi_sub [$testlib], call_void_function_iiiiiiiiii    => [$void, $ptr, map { $int } 1..10];
   
   ffi_sub [], malloc => [$ptr, $size_t];
   ffi_sub [], free   => [$void, $ptr];
@@ -72,3 +73,9 @@ $foo = 22;
 my $cb8 = ffi_closure(ffi_signature(ffi_type c => '*int'), sub { \$foo });
 isa_ok $cb8, 'FFI::Platypus::Closure';
 is call_int_ptr_function($cb8), 22, 'call_int_ptr_function';
+
+my @save;
+my $cb9 = ffi_closure(ffi_signature($void, map { $int } 1..10), sub { @save = @_ });
+isa_ok $cb9, 'FFI::Platypus::Closure';
+call_void_function_iiiiiiiiii($cb9, 1,2,3,4,5,6,7,8,9,10);
+is_deeply \@save, [1,2,3,4,5,6,7,8,9,10], 'save = [1,2,3,4,5,6,7,8,9,10]';

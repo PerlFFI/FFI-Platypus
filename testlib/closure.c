@@ -31,3 +31,11 @@ call_ptr_function(ptr_function *f)
 {
   return f();
 }
+
+typedef void (void_function_iiiiiiiiii)(int,int,int,int,int,int,int,int,int,int);
+
+void
+call_void_function_iiiiiiiiii(void_function_iiiiiiiiii *f, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10)
+{
+  f(i1,i2,i3,i4,i5,i6,i7,i8,i9,i10);
+}
