@@ -10,34 +10,23 @@
 #include <ffi_pl.h>
 #include <ffi_pl_class.h>
 
-static HV *meta = NULL;
-
 XS(ffi_pl_sub_call)
 {
-  char key[16];
+  dVAR; dXSARGS;
+
   ffi_pl_sub *sub;
-  SV **sv;
-  SV *tmp;
-  int i;
   void **arguments;
   char *scratch1;
   char *scratch2;
   ffi_arg result;
-  void *ptr;
+  int i;
   
-  dVAR; dXSARGS;
-
   /* uncomment to send a signal 2 to debug
      this call */
   /* ffi_pl_debug_break(); */
   
-  snprintf(key, sizeof(key), "%p", cv);
-  sv = hv_fetch(meta, key, strlen(key), 0);
-  if(sv == NULL)
-    croak("error finding metadata for %p", cv);
+  sub = (ffi_pl_sub*) CvXSUBANY(cv).any_ptr;
 
-  sub = INT2PTR(ffi_pl_sub*, SvIV(*sv));
-  
   scratch2 = NULL;
     
   if(sub->signature->argument_count != items)
@@ -77,6 +66,8 @@ XS(ffi_pl_sub_call)
           }
           else
           {
+            void *ptr;
+            
             if(sub->signature->argument_types[i]->ffi_type->type == FFI_TYPE_VOID)
             {
 #ifndef HAS_ALLOCA
@@ -138,7 +129,7 @@ XS(ffi_pl_sub_call)
           SV *value = SvRV(ST(i));
           if(!SvREADONLY(value))
           {
-            ptr = *((void**)arguments[i]);
+            void *ptr = *((void**)arguments[i]);
             ffi_pl_ffi2sv(value, ptr, sub->signature->argument_types[i]);
           }
         }
@@ -169,14 +160,14 @@ XS(ffi_pl_sub_call)
         break;
       case FFI_PL_REF_POINTER:
         {
-          ptr = ((void*)result);
+          void *ptr = ((void*)result);
           if(ptr == NULL)
             ST(0) = &PL_sv_undef;
           else if(sub->signature->return_type->ffi_type->type == FFI_TYPE_VOID)
             ST(0) = sv_2mortal(newSViv(PTR2IV(ptr)));
           else
           {
-            tmp = sv_newmortal();
+            SV* tmp = sv_newmortal();
             ffi_pl_ffi2sv(tmp, ((void*)result), sub->signature->return_type);
             ST(0) = newRV_inc(tmp);
             XSRETURN(1);
@@ -231,15 +222,8 @@ _ffi_sub(lib, lib_name, perl_name, signature)
       new_sub->lib       = ffi_pl_lib_inc(lib);
       new_sub->function  = function;
     
-      if(meta == NULL)
-      {
-        meta = get_hv("FFI::Platypus::_meta", GV_ADD);
-      }
-      snprintf(key, sizeof(key), "%p", new_sub->cv);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-value"
-      hv_store(meta, key, strlen(key), newSViv(PTR2IV(new_sub)), 0);
-#pragma clang diagnostic pop
+      CvXSUBANY(new_sub->cv).any_ptr      = new_sub;
+
       RETVAL = new_sub;
     }
     else
