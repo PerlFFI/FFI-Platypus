@@ -40,14 +40,22 @@ sub ffi_type ($$@)
 }
 
 my $default_lib;
+my $anon_counter = 0;
 
 sub ffi_sub ($$$)
 {
   my($lib, $name, $sig) = @_;
   my($lib_name, $perl_name) = ref($name) eq 'ARRAY' ? (@$name) : ($name, $name);
-  my $package = caller;
-  $perl_name = join '::', $package, $perl_name
-    unless $perl_name =~ /::/;
+  
+  if(!defined $perl_name)
+  {
+    $perl_name = sprintf "FFI::Platypus::_anon_f%03d", $anon_counter++;
+  }
+  elsif($perl_name !~ /::/)
+  {
+    my $package = caller;
+    $perl_name = join '::', $package, $perl_name;
+  }
 
   if(ref($lib) eq 'ARRAY')
   {

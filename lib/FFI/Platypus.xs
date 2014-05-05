@@ -207,39 +207,33 @@ _ffi_sub(lib, lib_name, perl_name, signature)
   CODE:
     function_pointer = dlsym(lib->handle, lib_name);
 
-    if(function_pointer != NULL)
+    if(function_pointer == NULL)
+      croak("unable to find symbol %s", lib_name);
+
+    Newx(new_sub, 1, ffi_pl_sub);
+
+    if(dlsym_win32_meta(&path_name, &new_sub->mswin32_real_library_handle))
     {
-      Newx(new_sub, 1, ffi_pl_sub);
-
-      if(dlsym_win32_meta(&path_name, &new_sub->mswin32_real_library_handle))
-      {
-        /* nothing */
-      }
-      else
-      {
-        /* TODO: "perl_exe" should be $ARGV[0] */
-        path_name = lib->path_name != NULL ? lib->path_name : "perl_exe";
-        new_sub->mswin32_real_library_handle = NULL;
-      }
-    
-      /* TODO: hook onto the destruction of the cv to free this stuff */
-      new_sub->cv                = newXS(perl_name, ffi_pl_sub_call, path_name);
-      /* TODO: undef for perl_name should be anonymous sub */
-      new_sub->perl_name         = savepv(perl_name);
-      new_sub->lib_name          = savepv(lib_name);
-      new_sub->signature         = ffi_pl_signature_inc(signature);
-      new_sub->lib               = ffi_pl_lib_inc(lib);
-      new_sub->function_pointer  = function_pointer;
-
-      CvXSUBANY(new_sub->cv).any_ptr      = new_sub;    
-      
-      RETVAL = new_sub;
+      /* nothing */
     }
     else
     {
-      /* TODO: include lib name in this diagnostic */
-      croak("unable to find symbol %s", lib_name);
+      /* TODO: "perl_exe" should be $ARGV[0] */
+      path_name = lib->path_name != NULL ? lib->path_name : "perl_exe";
+      new_sub->mswin32_real_library_handle = NULL;
     }
+    
+    /* TODO: hook onto the destruction of the cv to free this stuff */
+    new_sub->cv                = newXS(perl_name, ffi_pl_sub_call, path_name);
+    new_sub->perl_name         = savepv(perl_name);
+    new_sub->lib_name          = savepv(lib_name);
+    new_sub->signature         = ffi_pl_signature_inc(signature);
+    new_sub->lib               = ffi_pl_lib_inc(lib);
+    new_sub->function_pointer  = function_pointer;
+
+    CvXSUBANY(new_sub->cv).any_ptr      = new_sub;    
+      
+    RETVAL = new_sub;
   OUTPUT:
     RETVAL
 
@@ -597,6 +591,15 @@ lib(self)
     ffi_pl_sub *self
   CODE:
     RETVAL = ffi_pl_lib_inc(self->lib);
+  OUTPUT:
+    RETVAL
+
+
+SV *
+coderef(self)
+    ffi_pl_sub *self
+  CODE:
+    RETVAL = newRV_inc((SV*)self->cv);
   OUTPUT:
     RETVAL
 
