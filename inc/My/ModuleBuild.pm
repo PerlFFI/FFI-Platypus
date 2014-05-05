@@ -34,6 +34,18 @@ sub new
   unlink(File::Spec->catfile($FindBin::Bin, 'testlib', 'ffi_testlib.txt'));
   unlink(File::Spec->catfile($FindBin::Bin, 'xs', 'flag-libffi.txt'));
   
+  # set this to remove optimize flag from build
+  # undocumented because there are lots of ways it could not work
+  if($ENV{FFI_PLATYPUS_BUILD_REMOVE_OPT})
+  {
+    my $lddlflags = $Config{lddlflags};
+    $lddlflags =~ s/-O\d//g;
+    $args{config}->{lddlflags} = $lddlflags;
+    $args{config}->{optimize}  = '';
+  }
+  
+  # TODO: it would be nice to put our (possibly) modified
+  # lddlflags or optimize into ExtUtils::CChecker
   $cc ||= ExtUtils::CChecker->new(
     quiet => 0,
     defines_to => File::Spec->catfile($FindBin::Bin, 'xs', 'ffi_pl_config1.h'),
@@ -538,7 +550,12 @@ sub build_testlib
 
   print "Building FFI-Platypus testlib\n";
   
-  my $b = ExtUtils::CBuilder->new;
+  my $b = ExtUtils::CBuilder->new(
+    config => {
+      lddlflags => $self->config('lddlflags'),
+      optimize  => $self->config('optimize'),
+    },
+  );
   
   my @c_source = do {
     opendir my $dh, 'testlib';
