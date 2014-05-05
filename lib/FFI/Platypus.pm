@@ -49,6 +49,7 @@ sub ffi_sub ($$$)
   
   if(!defined $perl_name)
   {
+    # TODO: true anonymous subroutines ?
     $perl_name = sprintf "FFI::Platypus::_anon_f%03d", $anon_counter++;
   }
   elsif($perl_name !~ /::/)
