@@ -22,7 +22,7 @@ XS(ffi_pl_sub_call)
   void **arguments;
   char *scratch1;
   char *scratch2;
-  ffi_arg result;
+  ffi_arg result;    /* TODO: could be a long double, which is larger than ffi_arg */
   void *ptr;
   
   dVAR; dXSARGS;
@@ -40,6 +40,7 @@ XS(ffi_pl_sub_call)
 
 #ifdef HAS_ALLOCA
   arguments = alloca(sub->signature->argument_count * sizeof(void*));
+  /* TODO: sizeof(long double) could be larger than FFI_SIZEOF_ARG */
   scratch1  = alloca(sub->signature->argument_count * FFI_SIZEOF_ARG);
 #else    
   Newx(arguments, sub->signature->argument_count, void*);

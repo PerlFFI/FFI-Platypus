@@ -22,4 +22,15 @@ BEGIN {
 
 is pass_thru_float(0.0), 0.0, 'pass_thru_float';
 is pass_thru_double(12.34), 12.34, 'pass_thru_double';
+
+SKIP: {
+
+  if(ffi_type(c => 'long double')->size > 8)
+  {
+    diag "long double not yet supported!";
+    skip "long double not yet supported!", 1;
+  }
+
 is pass_thru_long_double(1.0), 1.0, 'pass_thru_long_double';
+
+}
