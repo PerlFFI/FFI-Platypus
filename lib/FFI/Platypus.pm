@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp qw( croak );
 use Exporter::Tidy
-  default => [ qw( ffi_type ffi_signature ffi_lib ffi_sub ffi_closure ) ];
+  default => [ qw( ffi_type ffi_signature ffi_lib ffi_sub ffi_closure ffi_meta ) ];
 
 BEGIN {
 
@@ -14,6 +14,11 @@ BEGIN {
   require XSLoader;
   XSLoader::load('FFI::Platypus', $VERSION);
 
+}
+
+sub ffi_meta ($)
+{
+  ref($_[0]) eq 'CODE' ? _ffi_meta($_[0]) : $_[0];
 }
 
 sub ffi_type ($$@)
@@ -100,6 +105,13 @@ including debug flags like C<-g3>.
 =item C<FFI_PLATYPUS_BUILD_LDFLAGS>
 
 Extra linker flags to include during the build of L<FFI::Platypus>.
+
+=item C<FFI_PLATYPUS_BUILD_REMOVE_OPT>
+
+If true then L<FFI::Platypus> will attempt to remove optimization c flags
+during the build step.  Normally the same flags used in building Perl
+are used by default.  This option may be helpful when debugging the XS code,
+but it is also quite simplistic and may break in some environments.
 
 =item C<FFI_PLATYPUS_BUILD_SYSTEM_FFI>
 

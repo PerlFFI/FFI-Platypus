@@ -34,7 +34,7 @@ typedef struct _ffi_pl_sub {
   ffi_pl_signature *signature;
   ffi_pl_lib       *lib;
   CV               *cv;
-  void             *function;
+  void             *function_pointer;
   void             *mswin32_real_library_handle;
 } ffi_pl_sub;
 

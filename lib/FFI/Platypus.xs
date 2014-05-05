@@ -110,7 +110,7 @@ XS(ffi_pl_sub_call)
   }
 #endif
     
-  ffi_call(&sub->signature->ffi_cif, sub->function, &result, arguments);
+  ffi_call(&sub->signature->ffi_cif, sub->function_pointer, &result, arguments);
     
 #ifdef FFI_PLATYPUS_DEBUG
   fprintf(stderr,   "#   ret =    %016lx [%p]\n", *((unsigned long int*)((void*)&result)), &result);
@@ -184,6 +184,16 @@ BOOT:
      PERL_MATH_INT64_LOAD_OR_CROAK;
 
 ffi_pl_sub *
+_ffi_meta(sv)
+    SV *sv
+  CODE:
+    /* TODO: check that this really is an XSUB,
+       or even better that it really is a ffi_sub */
+    RETVAL = CvXSUBANY((CV*)SvRV(sv)).any_ptr;
+  OUTPUT:
+    RETVAL
+
+ffi_pl_sub *
 _ffi_sub(lib, lib_name, perl_name, signature)
     ffi_pl_lib *lib
     const char *lib_name
@@ -192,12 +202,12 @@ _ffi_sub(lib, lib_name, perl_name, signature)
   PREINIT:
     CV *new_cv;
     ffi_pl_sub *new_sub;
-    void *function;
+    void *function_pointer;
     const char *path_name;
   CODE:
-    function = dlsym(lib->handle, lib_name);
+    function_pointer = dlsym(lib->handle, lib_name);
 
-    if(function != NULL)
+    if(function_pointer != NULL)
     {
       Newx(new_sub, 1, ffi_pl_sub);
 
@@ -213,13 +223,13 @@ _ffi_sub(lib, lib_name, perl_name, signature)
       }
     
       /* TODO: hook onto the destruction of the cv to free this stuff */
-      new_sub->cv        = newXS(perl_name, ffi_pl_sub_call, path_name);
+      new_sub->cv                = newXS(perl_name, ffi_pl_sub_call, path_name);
       /* TODO: undef for perl_name should be anonymous sub */
-      new_sub->perl_name = savepv(perl_name);
-      new_sub->lib_name  = savepv(lib_name);
-      new_sub->signature = ffi_pl_signature_inc(signature);
-      new_sub->lib       = ffi_pl_lib_inc(lib);
-      new_sub->function  = function;
+      new_sub->perl_name         = savepv(perl_name);
+      new_sub->lib_name          = savepv(lib_name);
+      new_sub->signature         = ffi_pl_signature_inc(signature);
+      new_sub->lib               = ffi_pl_lib_inc(lib);
+      new_sub->function_pointer  = function_pointer;
 
       CvXSUBANY(new_sub->cv).any_ptr      = new_sub;    
       
@@ -557,6 +567,54 @@ DESTROY(self)
     ffi_pl_lib_dec(self);
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus::Sub
+
+const char *
+perl_name(self)
+    ffi_pl_sub *self
+  CODE:
+    RETVAL = self->perl_name;
+  OUTPUT:
+    RETVAL
+
+const char *
+lib_name(self)
+    ffi_pl_sub *self
+  CODE:
+    RETVAL = self->lib_name;
+  OUTPUT:
+    RETVAL
+
+ffi_pl_signature *
+signature(self)
+    ffi_pl_sub *self
+  CODE:
+    RETVAL = ffi_pl_signature_inc(self->signature);
+  OUTPUT:
+    RETVAL
+
+ffi_pl_lib *
+lib(self)
+    ffi_pl_sub *self
+  CODE:
+    RETVAL = ffi_pl_lib_inc(self->lib);
+  OUTPUT:
+    RETVAL
+
+void *
+_function_pointer(self)
+    ffi_pl_sub *self
+  CODE:
+    RETVAL = self->function_pointer;
+  OUTPUT:
+    RETVAL
+
+void *
+_mswin32_real_library_handle(self)
+    ffi_pl_sub *self
+  CODE:
+    RETVAL = self->mswin32_real_library_handle;
+  OUTPUT:
+    RETVAL
 
 MODULE = FFI::Platypus   PACKAGE = FFI::Platypus::Closure
 

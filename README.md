@@ -24,6 +24,13 @@ recognized by [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus):
 
     Extra linker flags to include during the build of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
 
+- `FFI_PLATYPUS_BUILD_REMOVE_OPT`
+
+    If true then [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) will attempt to remove optimization c flags
+    during the build step.  Normally the same flags used in building Perl
+    are used by default.  This option may be helpful when debugging the XS code,
+    but it is also quite simplistic and may break in some environments.
+
 - `FFI_PLATYPUS_BUILD_SYSTEM_FFI`
 
     If your system does not provide `libffi`, then [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) will attempt

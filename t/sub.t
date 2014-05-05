@@ -1,11 +1,11 @@
 use strict;
 use warnings;
-use Test::More tests => 16;
+use Test::More tests => 22;
 use FindBin ();
 use File::Spec;
 use lib File::Spec->catdir($FindBin::Bin, File::Spec->updir, 'testlib');
 use FFI::TestLib;
-use FFI::Platypus qw( ffi_type ffi_signature ffi_lib ffi_sub );
+use FFI::Platypus qw( ffi_type ffi_signature ffi_lib ffi_sub ffi_meta );
 
 my $isalpha;
 my $return_passed_integer_value;
@@ -32,6 +32,12 @@ BEGIN {
 }
 
 isa_ok $isalpha, 'FFI::Platypus::Sub';
+is $isalpha->perl_name, 'main::isalpha', 'perl_name';
+is $isalpha->lib_name,  'isalpha', 'lib_name';
+is ffi_meta(\&isalpha)->perl_name, 'main::isalpha', 'perl_name';
+is ffi_meta(\&isalpha)->lib_name,  'isalpha', 'lib_name';
+isa_ok $isalpha->signature, 'FFI::Platypus::Signature';
+isa_ok $isalpha->lib, 'FFI::Platypus::Lib';
 
 ok  isalpha(ord 'f'), "isalpha('f') = true";
 ok !isalpha(ord '0'), "isalpha('0') = false";
