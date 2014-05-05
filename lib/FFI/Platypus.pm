@@ -16,8 +16,6 @@ BEGIN {
 
 }
 
-our %_meta;
-
 sub ffi_type ($$@)
 {
   my($language, $name) = (shift, shift);
