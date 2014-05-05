@@ -8,7 +8,6 @@ use ExtUtils::CChecker;
 use Capture::Tiny qw( capture_merged capture );
 use File::Spec;
 use Data::Dumper qw( Dumper );
-use FindBin ();
 use Config;
 use FindBin ();
 use lib File::Spec->catdir($FindBin::Bin, 'inc', 'PkgConfig', 'lib');
