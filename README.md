@@ -90,6 +90,18 @@ This distribution comes with this bundled software:
 
     This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
 
+# SEE ALSO
+
+- Foreign Function Interface (FFI): Never Need to Write XS Again
+
+    I talked at YAPC::NA 2014 about [FFI::Raw](https://metacpan.org/pod/FFI::Raw), [FFI::Sweet](https://metacpan.org/pod/FFI::Sweet) and about
+    some of the experimental features that I was working on for this
+    distribution.
+
+    - [YAPC::NA talk](http://www.yapcna.org/yn2014/talk/5335)
+    - [Video](https://t.co/42KVIhfap6)
+    - [Slides](https://t.co/NsCKNUZWke)
+
 # AUTHOR
 
 Graham Ollis <plicease@cpan.org>

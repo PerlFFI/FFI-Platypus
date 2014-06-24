@@ -187,5 +187,27 @@ This is free software; you can redistribute it and/or modify it under the same t
 
 =back
 
+=head1 SEE ALSO
+
+=over 4
+
+=item Foreign Function Interface (FFI): Never Need to Write XS Again
+
+I talked at YAPC::NA 2014 about L<FFI::Raw>, L<FFI::Sweet> and about
+some of the experimental features that I was working on for this
+distribution.
+
+=over 4
+
+=item L<YAPC::NA talk|http://www.yapcna.org/yn2014/talk/5335>
+
+=item L<Video|https://t.co/42KVIhfap6>
+
+=item L<Slides|https://t.co/NsCKNUZWke>
+
+=back
+
+=back
+
 =cut
 
