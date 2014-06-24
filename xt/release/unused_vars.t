@@ -8,7 +8,7 @@ BEGIN { plan skip_all => 'test requires YAML' unless eval q{ use YAML; 1 } }
 my $dir = Path::Class::Dir->new(__FILE__)->parent->parent->parent;
 my $config = YAML::LoadFile($dir->file(qw( xt release release.yml )));
 
-plan skip_all => 'disabled' if $config->{unused_vars}->{skip};
+plan skip_all => 'disabled' unless defined $config->{unused_vars}->{skip} && !$config->{unused_vars}->{skip};
 
 my @modules;
 recurse($dir->subdir('lib'));
