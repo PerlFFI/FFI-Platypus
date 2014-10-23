@@ -11,10 +11,12 @@ BEGIN {
   } || die $@;
   do {
     my $fh;
-    open($fh, '<', File::Spec->catfile($FindBin::Bin, '00_diag.pre.txt'));
-    @modules = <$fh>;
-    close $fh;
-    chomp @modules;
+    if(open($fh, '<', File::Spec->catfile($FindBin::Bin, '00_diag.pre.txt')))
+    {
+      @modules = <$fh>;
+      close $fh;
+      chomp @modules;
+    }
   };
   eval qq{ require $_ } for @modules;
 };
