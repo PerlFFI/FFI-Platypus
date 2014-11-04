@@ -27,6 +27,9 @@ chdir(File::Spec->catdir($FindBin::Bin, File::Spec->updir, File::Spec->updir));
 my @private_classes;
 my %private_methods;
 
+push @{ $config->{pod_coverage}->{private} },
+  'Alien::.*::Install::Files#Inline';
+
 foreach my $private (@{ $config->{pod_coverage}->{private} })
 {
   my($class,$method) = split /#/, $private;
