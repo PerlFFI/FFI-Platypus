@@ -200,7 +200,6 @@ _ffi_sub(lib, lib_name, perl_name, signature)
     const char *perl_name
     ffi_pl_signature *signature
   PREINIT:
-    CV *new_cv;
     ffi_pl_sub *new_sub;
     void *function_pointer;
     const char *path_name;
