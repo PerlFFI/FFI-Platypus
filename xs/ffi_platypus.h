@@ -22,22 +22,18 @@ int ffi_platypus_dlclose(void *handle);
 
 #endif
 
-/*
- * out of the box types:
- * - all the integers/floats you can think of
- * - strings
- * - pointer to integer/float (in)
- * - pointer to integer/float (out)
- * - pointer to integer/float (in/out)
- * - fixed array of integer/float (in)
- * - fixed array of integer/float (out)
- * - fixed array of integer/float (in/out)
- * - buffer (size pointer pair) (in)
- * - buffer (size pointer pair) (out)
- * - buffer (size pointer pair) (in/out)
- * custom types:
- * - translator written in Perl (code ref)
- * - translator written in C (function pointer)
- */
+typedef enum _ffi_tr_type {
+  FFI_TR_NONE = 0,
+  FFI_TR_XSUB,
+  FFI_TR_C
+} ffi_tr_type;
+
+typedef struct _ffi_pl_type {
+  ffi_type ffi_type;
+  ffi_tr_type input_type;
+  ffi_tr_type output_type;
+  void *input_detail;
+  void *output_detail;
+} ffi_pl_type;
 
 #endif

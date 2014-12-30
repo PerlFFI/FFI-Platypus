@@ -15,6 +15,36 @@ my $prologue = <<EOF;
 #endif
 EOF
 
+my @probe_types = split /\n/, <<EOF;
+char
+short
+int
+long
+long long
+size_t
+dev_t
+ino_t
+mode_t
+nlink_t
+uid_t
+gid_t
+off_t
+blksize_t
+blkcnt_t
+time_t
+int_least8_t
+int_least16_t
+int_least32_t
+int_least64_t
+uint_least8_t
+uint_least16_t
+uint_least32_t
+uint_least64_t
+ptrdiff_t
+wchar_t
+wint_t
+EOF
+
 sub build_configure
 {
   my($mb) = @_;
@@ -22,7 +52,11 @@ sub build_configure
   my $ac = Config::AutoConf->new;
 
   $ac->check_prog_cc;
-  $ac->check_header('dlfcn.h');
+  
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal ))
+  {
+    $ac->check_header("$header.h");
+  }
   
   if($ac->check_decl('RTLD_LAZY', { prologue => $prologue }))
   {
@@ -37,7 +71,19 @@ sub build_configure
       last;
     }
   }
+
+  my %size;
+  
+  foreach my $type (@probe_types)
+  {
+    my $size = $ac->check_sizeof_type($type);
+    $size{$type} = $size if $size;
+  }
+  
   $ac->write_config_h( File::Spec->rel2abs( File::Spec->catfile( 'xs', 'ffi_platypus_config.h' )));
+  
+  use YAML ();
+  print YAML::Dump(\%size);
 }
 
 1;
