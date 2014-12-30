@@ -6,3 +6,4 @@
 /blib
 /FFI-Platypus-*
 /.build
+/config.log
