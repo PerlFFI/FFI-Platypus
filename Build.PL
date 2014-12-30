@@ -1,6 +1,6 @@
 BEGIN {
-  unless(eval q{ use 5.006; 1}) {
-    print "Perl 5.006 or better required\n";
+  unless(eval q{ use 5.008001; 1}) {
+    print "Perl 5.008001 or better required\n";
     exit;
   }
 }
@@ -10,13 +10,15 @@ use strict;
 use warnings;
 
 use Module::Build 0.28;
-
+use lib qw{inc}; use My::ModuleBuild;
 
 my %module_build_args = (
   "build_requires" => {
     "Module::Build" => "0.28"
   },
   "configure_requires" => {
+    "Alien::FFI" => "0.02",
+    "ExtUtils::CBuilder" => 0,
     "Module::Build" => "0.28",
     "perl" => "5.006"
   },
@@ -31,12 +33,12 @@ my %module_build_args = (
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
-    "perl" => "5.006"
+    "perl" => "5.008001"
   },
   "script_files" => [],
   "test_requires" => {
     "Test::More" => "0.94",
-    "perl" => "5.006"
+    "perl" => "5.008001"
   }
 );
 
@@ -44,7 +46,7 @@ my %module_build_args = (
 my %fallback_build_requires = (
   "Module::Build" => "0.28",
   "Test::More" => "0.94",
-  "perl" => "5.006"
+  "perl" => "5.008001"
 );
 
 
@@ -53,6 +55,6 @@ unless ( eval { Module::Build->VERSION(0.4004) } ) {
   $module_build_args{build_requires} = \%fallback_build_requires;
 }
 
-my $build = Module::Build->new(%module_build_args);
+my $build = My::ModuleBuild->new(%module_build_args);
 
 $build->create_build_script;

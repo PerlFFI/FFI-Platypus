@@ -1,2 +1,4 @@
+Alien::FFI
+ExtUtils::CBuilder
 Module::Build
 Test::More
