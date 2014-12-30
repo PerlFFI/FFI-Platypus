@@ -1,4 +1,5 @@
 Alien::FFI
+Config::AutoConf
 ExtUtils::CBuilder
 FFI::CheckLib
 Module::Build

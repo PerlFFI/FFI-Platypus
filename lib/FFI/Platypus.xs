@@ -3,8 +3,12 @@
 #include "XSUB.h"
 #include "ppport.h"
 
+#include "ffi_platypus.h"
+
 #include <ffi.h>
+#ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
+#endif
 
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 

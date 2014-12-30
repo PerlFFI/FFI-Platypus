@@ -12,6 +12,7 @@ on 'test' => sub {
 
 on 'configure' => sub {
   requires "Alien::FFI" => "0.02";
+  requires "Config::AutoConf" => "0";
   requires "ExtUtils::CBuilder" => "0";
   requires "Module::Build" => "0.28";
   requires "perl" => "5.006";

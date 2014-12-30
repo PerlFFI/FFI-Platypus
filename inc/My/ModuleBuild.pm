@@ -3,7 +3,8 @@ package My::ModuleBuild;
 use strict;
 use warnings;
 use Alien::FFI;
-use My::Util;
+use My::LibTest;
+use My::AutoConf;
 use base qw( Module::Build );
 
 sub new
@@ -22,20 +23,35 @@ sub new
     'libtest/*.so',
     'libtest/*.dll',
     'libtest/*.bundle',
+    'xs/ffi_platypus_config.h',
+    'config.log',
   );
   
   $self;
 }
 
-sub ACTION_build_libtest
+sub ACTION_build_configure
 {
-  My::Util->build_libtest;
+  My::AutoConf->build_configure(shift);
 }
 
-sub ACTION_test {
+sub ACTION_build
+{
+  my $self = shift;
+  $self->depends_on('build_configure');
+  $self->SUPER::ACTION_build(@_);
+}
+
+sub ACTION_build_libtest
+{
+  My::LibTest->build_libtest(shift);
+}
+
+sub ACTION_test
+{
   my $self = shift;
   $self->depends_on('build_libtest');
-  $self->SUPER::ACTION_test;
+  $self->SUPER::ACTION_test(@_);
 }
 
 1;

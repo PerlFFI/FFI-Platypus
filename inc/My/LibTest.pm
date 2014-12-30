@@ -1,4 +1,4 @@
-package My::Util;
+package My::LibTest;
 
 use strict;
 use warnings;
