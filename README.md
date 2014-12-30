@@ -1,6 +1,31 @@
 # FFI::Platypus
 
-Kinda like gluing a duckbill to an adorable mammal
+Glue a duckbill to an adorable aquatic mammal
+
+# CONSTRUCTORS
+
+## new
+
+    my $ffi = FFI::Platypus->new;
+
+Create a new instance of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
+
+# ATTRIBUTES
+
+## lib
+
+    $ffi->lib($path1, $path2, ...);
+    my @paths = $ffi->lib;
+
+The list of libraries to search for symbols in.
+
+# METHODS
+
+## find\_symbol
+
+    my $address = $ffi->find_symbol($name);
+
+Return the address of the given symbol (usually function).
 
 # AUTHOR
 

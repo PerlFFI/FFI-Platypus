@@ -5,6 +5,7 @@ on 'build' => sub {
 };
 
 on 'test' => sub {
+  requires "FFI::CheckLib" => "0";
   requires "Test::More" => "0.94";
   requires "perl" => "5.008001";
 };

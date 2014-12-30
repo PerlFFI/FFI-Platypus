@@ -1,4 +1,5 @@
 Alien::FFI
 ExtUtils::CBuilder
+FFI::CheckLib
 Module::Build
 Test::More

@@ -22,7 +22,7 @@ my %module_build_args = (
     "Module::Build" => "0.28",
     "perl" => "5.006"
   },
-  "dist_abstract" => "Kinda like gluing a duckbill to an adorable mammal",
+  "dist_abstract" => "Glue a duckbill to an adorable aquatic mammal",
   "dist_author" => [
     "Graham Ollis <plicease\@cpan.org>"
   ],
@@ -37,6 +37,7 @@ my %module_build_args = (
   },
   "script_files" => [],
   "test_requires" => {
+    "FFI::CheckLib" => 0,
     "Test::More" => "0.94",
     "perl" => "5.008001"
   }
@@ -44,6 +45,7 @@ my %module_build_args = (
 
 
 my %fallback_build_requires = (
+  "FFI::CheckLib" => 0,
   "Module::Build" => "0.28",
   "Test::More" => "0.94",
   "perl" => "5.008001"
