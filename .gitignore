@@ -1,2 +1,7 @@
+/Build
+/META.yml
+/MYMETA.*
+/_build
+/blib
 /FFI-Platypus-*
 /.build
