@@ -1,5 +1,6 @@
 /Build
 /META.yml
+/META.json
 /MYMETA.*
 /_build
 /blib
