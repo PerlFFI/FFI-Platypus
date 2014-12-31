@@ -7,3 +7,11 @@
 /FFI-Platypus-*
 /.build
 /config.log
+/lib/FFI/Platypus.c
+/xs/ppport.h
+/xs/ffi_platypus_config.h
+*.o
+*.obj
+*.dll
+*.so
+*.bundle

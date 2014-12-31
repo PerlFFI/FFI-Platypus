@@ -32,7 +32,10 @@ sub new
 
 sub ACTION_build_configure
 {
-  My::AutoConf->build_configure(shift);
+  my($self) = @_;
+  return if $self->config_data('done_build_configure');
+  My::AutoConf->build_configure($self);
+  $self->config_data('done_build_configure' => 1);
 }
 
 sub ACTION_build
@@ -44,7 +47,10 @@ sub ACTION_build
 
 sub ACTION_build_libtest
 {
+  my($self) = @_;
+  return if $self->config_data('done_build_libtest');
   My::LibTest->build_libtest(shift);
+  $self->config_data('done_build_libtest' => 1);
 }
 
 sub ACTION_test

@@ -17,3 +17,5 @@ unused_vars:
     ignore_vars: []
   module: {}
 
+version:
+  dir: lib

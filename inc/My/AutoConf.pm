@@ -80,10 +80,7 @@ sub build_configure
     $size{$type} = $size if $size;
   }
   
-  $ac->write_config_h( File::Spec->rel2abs( File::Spec->catfile( 'xs', 'ffi_platypus_config.h' )));
-  
-  use YAML ();
-  print YAML::Dump(\%size);
+  $ac->write_config_h( File::Spec->rel2abs( File::Spec->catfile( 'xs', 'ffi_platypus_config.h' )));  
 }
 
 1;

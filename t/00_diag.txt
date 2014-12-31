@@ -2,5 +2,6 @@ Alien::FFI
 Config::AutoConf
 ExtUtils::CBuilder
 FFI::CheckLib
+JSON::PP
 Module::Build
 Test::More

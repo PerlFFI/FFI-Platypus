@@ -1,3 +1,4 @@
+requires "JSON::PP" => "0";
 requires "perl" => "5.008001";
 
 on 'build' => sub {

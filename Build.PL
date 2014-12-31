@@ -34,6 +34,7 @@ my %module_build_args = (
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
+    "JSON::PP" => 0,
     "perl" => "5.008001"
   },
   "script_files" => [],

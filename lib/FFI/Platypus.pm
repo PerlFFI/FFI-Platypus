@@ -8,7 +8,19 @@ use 5.008001;
 # VERSION
 
 require XSLoader;
-XSLoader::load('FFI::Platypus', $VERSION);
+XSLoader::load(
+  'FFI::Platypus', eval q{ $VERSION } || do {
+    # this is for testing without dzil
+    # it expects MYMETA.json for FFI::Platypus
+    # to be in the current working directory.
+    require JSON::PP;
+    my $fh;
+    open($fh, '<', 'MYMETA.json') || die "unable to read MYMETA.json";
+    my $config = JSON::PP::decode_json(do { local $/; <$fh> });
+    close $fh;
+    $config->{version};
+  }
+);
 
 =head1 CONSTRUCTORS
 
