@@ -76,12 +76,12 @@ sub find_symbol
 
   foreach my $path (@{ $self->{lib} })
   {
-    my $handle = $self->{handles}->{$path} || FFI::Platypus::dl::dlopen($path);
+    my $handle = do { no warnings; $self->{handles}->{$path||0} } || FFI::Platypus::dl::dlopen($path);
     next unless $handle;
     my $address = FFI::Platypus::dl::dlsym($handle, $name);
     if($address)
     {
-      $self->{handles}->{$path} = $handle;
+      $self->{handles}->{$path||0} = $handle;
       return $address;
     }
     else

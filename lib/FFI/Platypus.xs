@@ -9,13 +9,15 @@
 #include <dlfcn.h>
 #endif
 
+typedef const char *ffi_pl_string;
+
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::dl
 
 void *
 dlopen(filename);
-    const char *filename
+    ffi_pl_string filename
   CODE:
     RETVAL = dlopen(filename, RTLD_LAZY);
   OUTPUT:
