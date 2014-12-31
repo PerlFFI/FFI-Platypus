@@ -4,6 +4,28 @@
 #include <ffi.h>
 #include "ffi_platypus_config.h"
 
+#ifdef HAVE_DLFCN_H
+#include <dlfcn.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#ifdef HAVE_STDDEF_H
+#include <stddef.h>
+#endif
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
+
 #ifndef HAVE_RTLD_LAZY
 #define RTLD_LAZY 0
 #endif
@@ -39,9 +61,12 @@ typedef struct _ffi_pl_type {
 
 typedef struct _ffi_pl_function {
   void *address;
+  void *sv;  /* really a Perl SV* */
   ffi_cif ffi_cif;
   ffi_pl_type *return_type;
   ffi_pl_type *argument_types[0];
 } ffi_pl_function;
+
+typedef const char *ffi_pl_string;
 
 #endif

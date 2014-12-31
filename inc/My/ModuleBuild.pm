@@ -27,6 +27,9 @@ sub new
     'config.log',
   );
   
+  $self->config_data(done_build_libtest   => 0);
+  $self->config_data(done_build_configure => 0);
+
   $self;
 }
 

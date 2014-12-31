@@ -13,6 +13,9 @@ my $prologue = <<EOF;
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #endif
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
 EOF
 
 my @probe_types = split /\n/, <<EOF;
@@ -32,6 +35,14 @@ off_t
 blksize_t
 blkcnt_t
 time_t
+uint8_t
+int8_t
+uint16_t
+int16_t
+uint32_t
+int32_t
+uint64_t
+int64_t
 int_least8_t
 int_least16_t
 int_least32_t
@@ -43,6 +54,9 @@ uint_least64_t
 ptrdiff_t
 wchar_t
 wint_t
+float
+double
+long double
 EOF
 
 sub build_configure
@@ -53,7 +67,7 @@ sub build_configure
 
   $ac->check_prog_cc;
   
-  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal ))
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes ))
   {
     $ac->check_header("$header.h");
   }
@@ -61,6 +75,11 @@ sub build_configure
   if($ac->check_decl('RTLD_LAZY', { prologue => $prologue }))
   {
     $ac->define_var( HAVE_RTLD_LAZY => 1 );
+  }
+  
+  if($ac->check_decl('alloca', { prologue => $prologue }))
+  {
+    $ac->define_var( HAVE_ALLOCA => 1 );
   }
   
   foreach my $lib (map { s/^-l//; $_ } split /\s+/, $Config{perllibs})
