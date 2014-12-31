@@ -29,7 +29,7 @@ typedef enum _platypus_type {
 } platypus_type;
 
 typedef struct _ffi_pl_type {
-  ffi_type ffi_type;
+  ffi_type *ffi_type;
   platypus_type platypus_type;
   void *arg_ffi2pl;
   void *arg_pl2ffi;

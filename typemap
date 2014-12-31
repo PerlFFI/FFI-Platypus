@@ -1,9 +1,19 @@
-ffi_pl_string T_FFI_PL_STRING
+ffi_pl_string  T_FFI_PL_STRING
+ffi_pl_type*   T_FFI_PL_TYPE
 
 OUTPUT
 T_FFI_PL_STRING
   $var != NULL ? sv_setpv((SV*)$arg, $var) : sv_setsv((SV*)$arg, &PL_sv_undef);
 
+T_FFI_PL_TYPE
+  sv_setref_pv($arg, \"FFI::Platypus::type\", (void *) $var);
+
 INPUT
 T_FFI_PL_STRING
   $var = SvOK($arg) ? ($type)SvPV_nolen($arg) : NULL;
+
+T_FFI_PL_TYPE
+  if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::type\"))
+    $var = INT2PTR($type, SvIV((SV *) SvRV($arg)));
+  else
+    Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::type\");
