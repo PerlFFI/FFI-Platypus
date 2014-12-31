@@ -24,7 +24,7 @@ int ffi_platypus_dlclose(void *handle);
 
 typedef enum _platypus_type {
   FFI_PL_FFI = 0,
-  FFI_PL_STR,
+  FFI_PL_STRING,
   FFI_PL_CUSTOM
 } platypus_type;
 
@@ -36,5 +36,12 @@ typedef struct _ffi_pl_type {
   void *ret_ffi2pl;
   void *ret_pl2ffi;
 } ffi_pl_type;
+
+typedef struct _ffi_pl_function {
+  void *address;
+  ffi_cif ffi_cif;
+  ffi_pl_type *return_type;
+  ffi_pl_type *argument_types[0];
+} ffi_pl_function;
 
 #endif
