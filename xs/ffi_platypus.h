@@ -22,18 +22,19 @@ int ffi_platypus_dlclose(void *handle);
 
 #endif
 
-typedef enum _ffi_tr_type {
-  FFI_TR_NONE = 0,
-  FFI_TR_XSUB,
-  FFI_TR_C
-} ffi_tr_type;
+typedef enum _platypus_type {
+  FFI_PL_FFI = 0,
+  FFI_PL_STR,
+  FFI_PL_CUSTOM
+} platypus_type;
 
 typedef struct _ffi_pl_type {
   ffi_type ffi_type;
-  ffi_tr_type input_type;
-  ffi_tr_type output_type;
-  void *input_detail;
-  void *output_detail;
+  platypus_type platypus_type;
+  void *arg_ffi2pl;
+  void *arg_pl2ffi;
+  void *ret_ffi2pl;
+  void *ret_pl2ffi;
 } ffi_pl_type;
 
 #endif
