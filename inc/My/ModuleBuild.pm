@@ -60,4 +60,12 @@ sub ACTION_test
   $self->SUPER::ACTION_test(@_);
 }
 
+sub ACTION_clean
+{
+  my $self = shift;
+  $self->config_data(done_build_libtest   => 0);
+  $self->config_data(done_build_configure => 0);
+  $self->SUPER::ACTION_clean(@_);
+}
+
 1;
