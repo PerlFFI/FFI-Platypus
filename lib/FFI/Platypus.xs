@@ -255,6 +255,18 @@ call(self, ...)
           case FFI_TYPE_SINT8:
             ffi_pl_arguments_set_sint8(arguments, i, SvIV(arg));
             break;
+          case FFI_TYPE_UINT16:
+            ffi_pl_arguments_set_uint16(arguments, i, SvUV(arg));
+            break;
+          case FFI_TYPE_SINT16:
+            ffi_pl_arguments_set_sint16(arguments, i, SvIV(arg));
+            break;
+          case FFI_TYPE_UINT32:
+            ffi_pl_arguments_set_uint32(arguments, i, SvUV(arg));
+            break;
+          case FFI_TYPE_SINT32:
+            ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg));
+            break;
           case FFI_TYPE_POINTER:
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;
@@ -295,6 +307,18 @@ call(self, ...)
             break;
           case FFI_TYPE_SINT8:
             sv_setiv(arg, (int8_t) result);
+            break;
+          case FFI_TYPE_UINT16:
+            sv_setuv(arg, (uint16_t) result);
+            break;
+          case FFI_TYPE_SINT16:
+            sv_setiv(arg, (int16_t) result);
+            break;
+          case FFI_TYPE_UINT32:
+            sv_setuv(arg, (uint32_t) result);
+            break;
+          case FFI_TYPE_SINT32:
+            sv_setiv(arg, (int32_t) result);
             break;
           case FFI_TYPE_POINTER:
             sv_setiv(arg, PTR2IV((void*) result));

@@ -16,14 +16,25 @@ my $prologue = <<EOF;
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+#define signed(type)  (((type)-1) < 0) ? 1 : 0
 EOF
 
 my @probe_types = split /\n/, <<EOF;
 char
+signed char
+unsigned char
 short
+signed short
+unsigned short
 int
+signed int
+unsigned int
 long
+signed long
+unsigned long
 long long
+signed long long
+unsigned long long
 size_t
 dev_t
 ino_t
@@ -61,10 +72,10 @@ EOF
 
 sub build_configure
 {
-  my($mb) = @_;
+  my($self, $mb) = @_;
   
   my $ac = Config::AutoConf->new;
-
+  
   $ac->check_prog_cc;
   
   foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes ))
@@ -91,15 +102,40 @@ sub build_configure
     }
   }
 
-  my %size;
-  
+  my %type_map = map { $_ => $_ } qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double );
+
   foreach my $type (@probe_types)
   {
     my $size = $ac->check_sizeof_type($type);
-    $size{$type} = $size if $size;
+    if($size)
+    {
+      if($type !~ /^(float|double|long double)$/)
+      {
+        my $signed;
+        if($type =~ /^signed / || $type =~ /^(int[0-9]+_t|int_least[0-9]+_t)$/)
+        {
+          $signed = 1;
+        }
+        elsif($type =~ /^unsigned / || $type =~ /^(uint[0-9]+_t|uint_least[0-9]+_t)$/)
+        {
+          $signed = 0;
+        }
+        $signed = $ac->compute_int("signed($type)", { prologue => $prologue })
+          unless defined $signed;
+        $type_map{$type} = sprintf "%sint%d", ($signed ? 's' : 'u'), $size*8;
+      }
+      else
+      {
+        if($type eq 'long double' && $size)
+        {
+          $type_map{'long double'} = $type_map{'longdouble'} = 'longdouble';
+        }
+      }
+    }
   }
   
-  $ac->write_config_h( File::Spec->rel2abs( File::Spec->catfile( 'xs', 'ffi_platypus_config.h' )));  
+  $ac->write_config_h( File::Spec->rel2abs( File::Spec->catfile( 'xs', 'ffi_platypus_config.h' )));
+  $mb->config_data( type_map => \%type_map);
 }
 
 1;
