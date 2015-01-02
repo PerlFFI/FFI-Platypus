@@ -69,4 +69,36 @@ typedef struct _ffi_pl_function {
 
 typedef const char *ffi_pl_string;
 
+typedef union _ffi_pl_argument {
+  void    *pointer;
+  char    *string;
+  int8_t   sint8;
+  uint8_t  uint8;
+  int16_t  sint16;
+  uint16_t uint16;
+  int32_t  sint32;
+  uint32_t uint32;
+  int64_t  sint64;
+  uint64_t uint64;
+  float    xfloat;
+  double   xdouble;
+} ffi_pl_argument;
+
+typedef struct _ffi_pl_arguments {
+  int count;
+  ffi_pl_argument slot[0];
+} ffi_pl_arguments;
+
+#define ffi_pl_arguments_count(arguments)                 (arguments->count)
+#define ffi_pl_arguments_set_pointer(arguments, i, value) (arguments->slot[i].pointer = value)
+#define ffi_pl_arguments_set_string(arguments, i, value)  (arguments->slot[i].string = value)
+
+#define ffi_pl_arguments_set_sint8(arguments, i, value)   (arguments->slot[i].sint8   = value)
+#define ffi_pl_arguments_get_sint8(arguments, i, value)   (arguments->slot[i].sint8)
+
+#define ffi_pl_arguments_set_uint8(arguments, i, value)   (arguments->slot[i].uint8   = value)
+#define ffi_pl_arguments_get_uint8(arguments, i, value)   (arguments->slot[i].uint8)
+
+#define ffi_pl_arguments_pointers(arguments) ((void**)&arguments->slot[arguments->count])
+
 #endif

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More tests => 3;
 use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
 
@@ -13,3 +13,5 @@ my $uint8   = FFI::Platypus::type->new('uint8');
 my $function = eval { FFI::Platypus::function->new($ffi, $address, $uint8, $uint8) };
 is $@, '', 'FFI::Platypus::function->new';
 isa_ok $function, 'FFI::Platypus::function';
+
+is $function->call(22), 22, 'function.call(22) = 22';

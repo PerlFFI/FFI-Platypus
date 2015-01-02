@@ -218,83 +218,51 @@ call(self, ...)
     char *buffer;
     size_t buffer_size;
     int i;
-    void **pointers;
-    void *arguments;
     SV *arg;
     ffi_arg result;
+    ffi_pl_arguments *arguments;
   CODE:
     if(items-1 != self->ffi_cif.nargs)
       croak("wrong number of arguments");
   
-    buffer_size = (FFI_SIZEOF_ARG + sizeof(void*)) * self->ffi_cif.nargs;
+    buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs * 2 + sizeof(ffi_pl_arguments);
 #ifdef HAVE_ALLOCA
     buffer = alloca(buffer_size);
 #else
     Newx(buffer, buffer_size, char);
 #endif
-    pointers  = (void**) buffer;
-    arguments =  (char*) &buffer[sizeof(void*)*self->ffi_cif.nargs];
+    arguments = (ffi_pl_arguments*) buffer;
+    
+    arguments->count = self->ffi_cif.nargs;
+    for(i=0; i<items-1; i++)
+    {
+      ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
+    }
 
     for(i=0; i<items-1; i++)
     {
-      pointers[i] = (void*) &arguments[FFI_SIZEOF_ARG*i];
-      
+      arg = ST(i+1);
       if(self->argument_types[i]->platypus_type == FFI_PL_FFI)
       {
-        arg = ST(i+1);
         switch(self->argument_types[i]->ffi_type->type)
         {
           case FFI_TYPE_VOID:
             /* do nothing?  probably not what you want */
             break;
-          case FFI_TYPE_FLOAT:
-            *((float*)pointers[i]) = SvNV(arg);
-            break;
-          case FFI_TYPE_DOUBLE:
-            *((double*)pointers[i]) = SvNV(arg);
-            break;
-          case FFI_TYPE_LONGDOUBLE:
-            /* FIXME */
-            break;
           case FFI_TYPE_UINT8:
-            *((uint8_t*)pointers[i]) = SvIV(arg);
+            ffi_pl_arguments_set_uint8(arguments, i, SvUV(arg));
             break;
           case FFI_TYPE_SINT8:
-            *((int8_t*)pointers[i]) = SvIV(arg);
-            break;
-          case FFI_TYPE_UINT16:
-            *((uint16_t*)pointers[i]) = SvIV(arg);
-            break;
-          case FFI_TYPE_SINT16:
-            *((int16_t*)pointers[i]) = SvIV(arg);
-            break;
-          case FFI_TYPE_UINT32:
-            *((uint32_t*)pointers[i]) = SvIV(arg);
-            break;
-          case FFI_TYPE_SINT32:
-            *((int32_t*)pointers[i]) = SvIV(arg);
-            break;
-          case FFI_TYPE_UINT64:
-            /* FIXME */
-            break;
-          case FFI_TYPE_SINT64:
-            /* FIXME */
+            ffi_pl_arguments_set_sint8(arguments, i, SvIV(arg));
             break;
           case FFI_TYPE_POINTER:
-            if(!SvOK(arg))
-            {
-              *((void**)pointers[i]) = NULL;
-            }
-            else
-            {
-              *((void**)pointers[i]) = INT2PTR(void*, SvIV(arg));
-            }
+            ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;
         }
       }
       else if(self->argument_types[i]->platypus_type == FFI_PL_STRING)
       {
-        *((char**)pointers[i]) = SvPV_nolen(ST(i+1));
+        ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
       }
       else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM)
       {
@@ -302,38 +270,54 @@ call(self, ...)
       }
     }
     
-    ffi_call(&self->ffi_cif, self->address, &result, pointers);    
+    ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
 #ifndef HAVE_ALLOCA
     Safefree(buffer);
 #endif
 
-    if(self->return_type->platypus_type == FFI_PL_FFI)
+    if(self->return_type->platypus_type == FFI_PL_FFI && self->return_type->ffi_type->type == FFI_TYPE_VOID)
     {
-      switch(self->return_type->ffi_type->type)
+      XSRETURN_EMPTY;
+    }
+    else if(self->return_type->platypus_type == FFI_PL_FFI)
+    {
+      if(self->return_type->ffi_type->type == FFI_TYPE_POINTER && ((void*) result) == NULL)
       {
-        case FFI_TYPE_VOID:
-          XSRETURN_EMPTY;
-          break;
-        case FFI_TYPE_FLOAT:
-        case FFI_TYPE_DOUBLE:
-        case FFI_TYPE_LONGDOUBLE:
-        case FFI_TYPE_UINT8:
-        case FFI_TYPE_SINT8:
-        case FFI_TYPE_UINT16:
-        case FFI_TYPE_SINT16:
-        case FFI_TYPE_UINT32:
-        case FFI_TYPE_SINT32:
-        case FFI_TYPE_UINT64:
-        case FFI_TYPE_SINT64:
-        case FFI_TYPE_POINTER:
-          break;
+        XSRETURN_EMPTY;
+      }
+      else
+      {
+        arg = ST(0) = sv_newmortal();
+        switch(self->return_type->ffi_type->type)
+        {
+          case FFI_TYPE_UINT8:
+            sv_setuv(arg, (uint8_t) result);
+            break;
+          case FFI_TYPE_SINT8:
+            sv_setiv(arg, (int8_t) result);
+            break;
+          case FFI_TYPE_POINTER:
+            sv_setiv(arg, PTR2IV((void*) result));
+            break;
+        }
+        XSRETURN(1);
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_STRING)
     {
+      if( ((char*)result) == NULL )
+      {
+        XSRETURN_EMPTY;
+      }
+      else
+      {
+        arg = ST(0) = sv_newmortal();
+        sv_setpv(arg, (char*)result);
+      }
     }
     else if(self->return_type->platypus_type == FFI_PL_CUSTOM)
     {
+      croak("TODO");
     }
 
 void

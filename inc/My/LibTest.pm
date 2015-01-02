@@ -5,6 +5,7 @@ use warnings;
 use File::Spec;
 use ExtUtils::CBuilder;
 use FindBin ();
+use Alien::FFI;
 
 my $root = $FindBin::Bin;
 
@@ -21,6 +22,7 @@ sub build_libtest
         File::Spec->catdir($root, 'libtest'),
         File::Spec->catdir($root, 'xs'),
       ],
+      extra_compiler_flags => Alien::FFI->cflags,
     );
   } do {
     my $dh;
@@ -35,6 +37,7 @@ sub build_libtest
     $b->link(
       lib_file => $b->lib_file(File::Spec->catfile($root, 'libtest', 'libtest.o')),
       objects  => \@obj,
+      extra_linker_flags => Alien::FFI->libs,
     );
   }
   else

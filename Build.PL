@@ -20,6 +20,7 @@ my %module_build_args = (
     "Alien::FFI" => "0.02",
     "Config::AutoConf" => 0,
     "ExtUtils::CBuilder" => 0,
+    "FFI::CheckLib" => "0.04",
     "Module::Build" => "0.28",
     "perl" => "5.006"
   },
