@@ -8,6 +8,7 @@ pod_spelling_system:
     - sint
     - uint
     - parentheticals
+    - ffi
 
 pod_coverage:
   skip: 0
