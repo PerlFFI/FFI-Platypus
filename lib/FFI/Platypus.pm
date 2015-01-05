@@ -176,7 +176,7 @@ sub type
   my $type_map = FFI::Platypus::ConfigData->config("type_map");
   croak "unknown type: $name" unless defined $type_map->{$name};
   croak "alias conflicts with existing type" if defined $alias && defined $type_map->{$alias};
-  $self->{types}->{$name} = FFI::Platypus::Type->new($name);
+  $self->{types}->{$name} = $self->{types}->{$type_map->{$name}} ||= FFI::Platypus::Type->new($type_map->{$name});
   if(defined $alias)
   {
     $self->{types}->{$alias} = $self->{types}->{$name};

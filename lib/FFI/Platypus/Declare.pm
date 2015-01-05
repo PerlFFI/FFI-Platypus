@@ -3,22 +3,18 @@ package FFI::Platypus::Declare;
 use strict;
 use warnings;
 use FFI::Platypus;
-use base qw( Exporter );
 
 # ABSTRACT: Declarative interface to FFI::Platypus
 # VERSION
 
-our @EXPORT = qw( ffi lib type function );
-
 =head1 SYNOPSIS
 
  use FFI::CheckLib;
- use FFI::Platypus::Declare;
- use constant u8 => 'u8';
- use constant string => 'string';
+ use FFI::Platypus::Declare
+   [ uint8 => 'u8' ],
+   'string';
  
  lib find_lib lib => 'mylib', symbol => 'my_function';
- type 'uint8' => 'u8';
  function my_function => [ u8 ] => 'string';
 
 =head1 DESCRIPTION
@@ -29,7 +25,8 @@ power, and a little more namespace pollution.
 
 =cut
 
-our $ffi;
+our $ffi    = {};
+our $types  = {};
 
 sub _ffi_object
 {
@@ -96,6 +93,34 @@ sub function ($$$)
   my $function = _ffi_object->function($symbol_name, $args, $ret);
   no strict 'refs';
   *{join '::', $caller, $perl_name} = sub { $function->call(@_) };
+}
+
+sub import
+{
+  my $caller = caller;
+  my $class = shift;
+  
+  foreach my $arg (@_)
+  {
+    if(ref $arg)
+    {
+      _ffi_object->type(@$arg);
+      no strict 'refs';
+      *{join '::', $caller, $arg->[1]} = sub () { $arg->[0] };
+    }
+    else
+    {
+      _ffi_object->type($arg);
+      no strict 'refs';
+      *{join '::', $caller, $arg} = sub () { $arg };
+    }
+  }
+  
+  no strict 'refs';
+  *{join '::', $caller, 'ffi'} = \&ffi;
+  *{join '::', $caller, 'lib'} = \&lib;
+  *{join '::', $caller, 'type'} = \&type;
+  *{join '::', $caller, 'function'} = \&function;
 }
 
 1;
