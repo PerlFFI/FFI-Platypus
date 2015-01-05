@@ -298,4 +298,22 @@ use overload '&{}' => sub {
   sub { $ffi->call(@_) };
 };
 
+package
+  FFI::Platypus::Type;
+
+sub new
+{
+  my($class, $ffi_type, $platypus_type) = @_;
+  
+  if($ffi_type eq 'string')
+  {
+    $ffi_type = 'pointer';
+    $platypus_type = 'string';
+  }
+  
+  $platypus_type ||= 'ffi';
+  
+  $class->_new($ffi_type, $platypus_type);
+}
+
 1;

@@ -50,21 +50,39 @@ dlclose(handle);
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type
 
 ffi_pl_type *
-new(class, type)
+_new(class, type, platypus_type)
     const char *class
     const char *type
+    const char *platypus_type
   PREINIT:
     ffi_pl_type *self;
   CODE:
-    Newx(self, 1, ffi_pl_type);
-    if(!strcmp(type, "string"))
+    self = NULL;
+    if(!strcmp(platypus_type, "string"))
     {
-      self->ffi_type = &ffi_type_pointer;
+      Newx(self, 1, ffi_pl_type);
+      self->ffi_type = NULL;
       self->platypus_type = FFI_PL_STRING;
+    }
+    else if(!strcmp(platypus_type, "ffi"))
+    {
+      Newx(self, 1, ffi_pl_type);
+      self->ffi_type = NULL;
+      self->platypus_type = FFI_PL_FFI;
+    }
+    else if(!strcmp(platypus_type, "pointer"))
+    {
+      Newx(self, 1, ffi_pl_type);
+      self->ffi_type = NULL;
+      self->platypus_type = FFI_PL_POINTER;
     }
     else
     {
-      self->platypus_type = FFI_PL_FFI;
+      croak("unknown ffi/platypus type: %s/%s", type, platypus_type);
+    }
+
+    if(self != NULL && self->ffi_type == NULL)
+    {
       if(!strcmp(type, "void"))
       { self->ffi_type = &ffi_type_void; }
       else if(!strcmp(type, "uint8"))
@@ -94,13 +112,11 @@ new(class, type)
       else
       {
         Safefree(self);
-        croak("unknown platypus/ffi type: %s", type);
+        self = NULL;
+        croak("unknown ffi/platypus type: %s/%s", type, platypus_type);
       }
     }
-    self->arg_ffi2pl = NULL;
-    self->arg_pl2ffi = NULL;
-    self->ret_ffi2pl = NULL;
-    self->ret_pl2ffi = NULL;
+
     RETVAL = self;
   OUTPUT:
     RETVAL

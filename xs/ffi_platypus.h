@@ -47,16 +47,34 @@ int ffi_platypus_dlclose(void *handle);
 typedef enum _platypus_type {
   FFI_PL_FFI = 0,
   FFI_PL_STRING,
+  FFI_PL_POINTER,
+  FFI_PL_ARRAY,
+  FFI_PL_BUFFER,
   FFI_PL_CUSTOM
 } platypus_type;
+
+typedef struct _ffi_pl_type_extra_custom {
+  void *custom[6]; /* really, these are SV* pointing to a coderef */
+} ffi_pl_type_extra_custom;
+
+typedef struct _ffi_pl_type_extra_array {
+  int element_count;
+} ffi_pl_type_extra_array;
+
+typedef struct _ffi_pl_type_extra_buffer {
+  int argument_order;
+} ffi_pl_type_extra_buffer;
+
+typedef struct _ffi_pl_type_extra {
+  ffi_pl_type_extra_custom custom;
+  ffi_pl_type_extra_array  array;
+  ffi_pl_type_extra_custom buffer;
+} ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {
   ffi_type *ffi_type;
   platypus_type platypus_type;
-  void *arg_ffi2pl;
-  void *arg_pl2ffi;
-  void *ret_ffi2pl;
-  void *ret_pl2ffi;
+  ffi_pl_type_extra extra[0];
 } ffi_pl_type;
 
 typedef struct _ffi_pl_function {
