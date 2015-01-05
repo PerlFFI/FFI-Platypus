@@ -183,6 +183,23 @@ sub type
   $self;
 }
 
+sub _type_lookup
+{
+  my($self, $name) = @_;
+  
+  unless(defined $self->{types}->{$name})
+  {
+    require FFI::Platypus::ConfigData;
+    my $type_map = FFI::Platypus::ConfigData->config("type_map");
+    if(defined $type_map->{$name})
+    {
+      $self->{types}->{$name} = FFI::Platypus::Type->new($name);
+    }
+  }
+  
+  $self->{types}->{$name};
+}
+
 =head2 types
 
  my @types = $ffi->types;
@@ -203,6 +220,33 @@ sub types
   my %types = map { $_ => 1 } keys %{ FFI::Platypus::ConfigData->config("type_map") };
   $types{$_} ||= 1 foreach keys %{ $self->{types} };
   sort keys %types;
+}
+
+=head2 function
+
+ my $function = $ffi->function('my_function_name', ['int', 'string'] => 'string');
+ my $return_value = $function->(1, "hi there");
+
+Returns an object that is simular to a code reference in that it can be called like one.
+
+Caveat: many situations require a real code reference, at the price of a performance
+penalty you can get one like this:
+
+ my $coderef = sub { $function->(@_) };
+
+It may be better, and faster to create a real Perl function using the L</#attach|attach> method.
+
+=cut
+
+sub function
+{
+  my($self, $name, $args, $ret) = @_;
+  croak "usage \$ffi->function( name, [ arguments ], return_type)" unless @_ == 4;
+  my @args = map { $self->_type_lookup($_) || croak "unknown type: $_" } @$args;
+  $ret = $self->_type_lookup($ret) || croak "unknown type: $ret";
+  my $address = $self->find_symbol($name);
+  croak "unable to find $name" unless $address;
+  FFI::Platypus::Function->new($self, $address, $ret, @args);
 }
 
 sub DESTROY
