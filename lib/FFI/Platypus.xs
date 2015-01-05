@@ -29,7 +29,7 @@ int
 dlclose(handle);
     void *handle
 
-MODULE = FFI::Platypus PACKAGE = FFI::Platypus::type
+MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type
 
 ffi_pl_type *
 new(class, type)
@@ -145,7 +145,7 @@ DESTROY(self)
   CODE:
     Safefree(self);
 
-MODULE = FFI::Platypus PACKAGE = FFI::Platypus::function
+MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Function
 
 ffi_pl_function *
 new(class, platypus, address, return_type, ...)
@@ -165,7 +165,7 @@ new(class, platypus, address, return_type, ...)
     for(i=0; i<(items-4); i++)
     {
       arg = ST(i+4);
-      if(!(sv_isobject(arg) && sv_derived_from(arg, "FFI::Platypus::type")))
+      if(!(sv_isobject(arg) && sv_derived_from(arg, "FFI::Platypus::Type")))
       {
         croak("non-type parameter passed in as type");
       }

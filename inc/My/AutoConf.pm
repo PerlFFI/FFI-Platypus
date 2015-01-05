@@ -102,7 +102,7 @@ sub build_configure
     }
   }
 
-  my %type_map = map { $_ => $_ } qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double );
+  my %type_map = map { $_ => $_ } qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string pointer );
 
   foreach my $type (@probe_types)
   {

@@ -4,7 +4,7 @@ use Test::More tests => 14;
 use FFI::Platypus;
 
 # this tests the private OO type API used only internally
-# to FFI::Platypus.  DO NOT USE FFI::Platypus::type
+# to FFI::Platypus.  DO NOT USE FFI::Platypus::Type
 # its interface can and WILL change.
 
 my @names = qw(
@@ -27,17 +27,17 @@ foreach my $name (@names)
 {
   subtest $name => sub {
     plan tests => 3;
-    my $type = eval { FFI::Platypus::type->new($name) };
-    is $@, '', "type = FFI::Platypus::type->new($name)";
-    isa_ok $type, 'FFI::Platypus::type';
+    my $type = eval { FFI::Platypus::Type->new($name) };
+    is $@, '', "type = FFI::Platypus::Type->new($name)";
+    isa_ok $type, 'FFI::Platypus::Type';
     is eval { $type->ffi_type }, $name;
   }
 }
 
 subtest string => sub {
   plan tests => 3;
-  my $type = eval { FFI::Platypus::type->new('string') };
-  is $@, '', "type = FFI::Platypus::type->new(string)";
-  isa_ok $type, 'FFI::Platypus::type';
+  my $type = eval { FFI::Platypus::Type->new('string') };
+  is $@, '', "type = FFI::Platypus::Type->new(string)";
+  isa_ok $type, 'FFI::Platypus::Type';
   is eval { $type->ffi_type }, 'pointer';
 };

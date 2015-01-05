@@ -7,23 +7,23 @@ T_FFI_PL_STRING
   $var != NULL ? sv_setpv((SV*)$arg, $var) : sv_setsv((SV*)$arg, &PL_sv_undef);
 
 T_FFI_PL_TYPE
-  sv_setref_pv($arg, \"FFI::Platypus::type\", (void *) $var);
+  sv_setref_pv($arg, \"FFI::Platypus::Type\", (void *) $var);
 
 T_FFI_PL_FUNCTION
-  sv_setref_pv($arg, \"FFI::Platypus::function\", (void *) $var);
+  sv_setref_pv($arg, \"FFI::Platypus::Function\", (void *) $var);
 
 INPUT
 T_FFI_PL_STRING
   $var = SvOK($arg) ? ($type)SvPV_nolen($arg) : NULL;
 
 T_FFI_PL_TYPE
-  if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::type\"))
+  if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::Type\"))
     $var = INT2PTR($type, SvIV((SV *) SvRV($arg)));
   else
-    Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::type\");
+    Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::Type\");
 
 T_FFI_PL_FUNCTION
-  if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::function\"))
+  if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::Function\"))
     $var = INT2PTR($type, SvIV((SV *) SvRV($arg)));
   else
-    Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::function\");
+    Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::Function\");
