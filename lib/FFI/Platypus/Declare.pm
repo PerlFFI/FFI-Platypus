@@ -87,12 +87,11 @@ array reference to install the function with a different name in perl space.
 
 sub function ($$$)
 {
-  my $caller = caller;
+  my($caller, $filename, $line) = caller;
   my($name, $args, $ret) = @_;
   my($symbol_name, $perl_name) = ref $name ? (@$name) : ($name, $name);
   my $function = _ffi_object->function($symbol_name, $args, $ret);
-  no strict 'refs';
-  *{join '::', $caller, $perl_name} = sub { $function->call(@_) };
+  $function->attach(join('::', $caller, $perl_name), "$filename:$line");
 }
 
 sub import

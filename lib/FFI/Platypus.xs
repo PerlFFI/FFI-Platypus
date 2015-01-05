@@ -5,6 +5,24 @@
 
 #include "ffi_platypus.h"
 
+XS(ffi_pl_sub_call)
+{
+  ffi_pl_function *self;
+  char *buffer;
+  size_t buffer_size;
+  int i;
+  SV *arg;
+  ffi_arg result;
+  ffi_pl_arguments *arguments;
+  
+  dVAR; dXSARGS;
+  
+  self = (ffi_pl_function*) CvXSUBANY(cv).any_ptr;
+
+#define EXTRA_ARGS 0
+#include "ffi_platypus_call.h"
+}
+
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::dl
@@ -222,127 +240,31 @@ call(self, ...)
     ffi_arg result;
     ffi_pl_arguments *arguments;
   CODE:
-    if(items-1 != self->ffi_cif.nargs)
-      croak("wrong number of arguments");
-  
-    buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs * 2 + sizeof(ffi_pl_arguments);
-#ifdef HAVE_ALLOCA
-    buffer = alloca(buffer_size);
-#else
-    Newx(buffer, buffer_size, char);
-#endif
-    arguments = (ffi_pl_arguments*) buffer;
-    
-    arguments->count = self->ffi_cif.nargs;
-    for(i=0; i<items-1; i++)
-    {
-      ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
-    }
+#define EXTRA_ARGS 1
+#include "ffi_platypus_call.h"
 
-    for(i=0; i<items-1; i++)
-    {
-      arg = ST(i+1);
-      if(self->argument_types[i]->platypus_type == FFI_PL_FFI)
-      {
-        switch(self->argument_types[i]->ffi_type->type)
-        {
-          case FFI_TYPE_VOID:
-            /* do nothing?  probably not what you want */
-            break;
-          case FFI_TYPE_UINT8:
-            ffi_pl_arguments_set_uint8(arguments, i, SvUV(arg));
-            break;
-          case FFI_TYPE_SINT8:
-            ffi_pl_arguments_set_sint8(arguments, i, SvIV(arg));
-            break;
-          case FFI_TYPE_UINT16:
-            ffi_pl_arguments_set_uint16(arguments, i, SvUV(arg));
-            break;
-          case FFI_TYPE_SINT16:
-            ffi_pl_arguments_set_sint16(arguments, i, SvIV(arg));
-            break;
-          case FFI_TYPE_UINT32:
-            ffi_pl_arguments_set_uint32(arguments, i, SvUV(arg));
-            break;
-          case FFI_TYPE_SINT32:
-            ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg));
-            break;
-          case FFI_TYPE_POINTER:
-            ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
-            break;
-        }
-      }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_STRING)
-      {
-        ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
-      }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM)
-      {
-        croak("TODO");
-      }
-    }
-    
-    ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
-#ifndef HAVE_ALLOCA
-    Safefree(buffer);
-#endif
+void
+attach(self, perl_name, path_name)
+    SV *self
+    const char *perl_name
+    ffi_pl_string path_name
+  PREINIT:
+    CV* cv;
+  CODE:
+    if(!(sv_isobject(self) && sv_derived_from(self, "FFI::Platypus::Function")))
+      croak(aTHX_ "self is not of type FFI::Platypus::Function");
 
-    if(self->return_type->platypus_type == FFI_PL_FFI && self->return_type->ffi_type->type == FFI_TYPE_VOID)
-    {
-      XSRETURN_EMPTY;
-    }
-    else if(self->return_type->platypus_type == FFI_PL_FFI)
-    {
-      if(self->return_type->ffi_type->type == FFI_TYPE_POINTER && ((void*) result) == NULL)
-      {
-        XSRETURN_EMPTY;
-      }
-      else
-      {
-        arg = ST(0) = sv_newmortal();
-        switch(self->return_type->ffi_type->type)
-        {
-          case FFI_TYPE_UINT8:
-            sv_setuv(arg, (uint8_t) result);
-            break;
-          case FFI_TYPE_SINT8:
-            sv_setiv(arg, (int8_t) result);
-            break;
-          case FFI_TYPE_UINT16:
-            sv_setuv(arg, (uint16_t) result);
-            break;
-          case FFI_TYPE_SINT16:
-            sv_setiv(arg, (int16_t) result);
-            break;
-          case FFI_TYPE_UINT32:
-            sv_setuv(arg, (uint32_t) result);
-            break;
-          case FFI_TYPE_SINT32:
-            sv_setiv(arg, (int32_t) result);
-            break;
-          case FFI_TYPE_POINTER:
-            sv_setiv(arg, PTR2IV((void*) result));
-            break;
-        }
-        XSRETURN(1);
-      }
-    }
-    else if(self->return_type->platypus_type == FFI_PL_STRING)
-    {
-      if( ((char*)result) == NULL )
-      {
-        XSRETURN_EMPTY;
-      }
-      else
-      {
-        arg = ST(0) = sv_newmortal();
-        sv_setpv(arg, (char*)result);
-      }
-    }
-    else if(self->return_type->platypus_type == FFI_PL_CUSTOM)
-    {
-      croak("TODO");
-    }
+    if(path_name == NULL)
+      path_name = "unknown";
+
+    cv = newXS(perl_name, ffi_pl_sub_call, path_name);
+    CvXSUBANY(cv).any_ptr = (void *) INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
+    /*
+     * No coresponding decrement !!
+     * once attached, you can never free the function object, or the FFI::Platypus
+     * it was created from.
+     */
+    SvREFCNT_inc(self);
 
 void
 DESTROY(self)

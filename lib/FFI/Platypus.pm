@@ -250,6 +250,33 @@ sub function
   FFI::Platypus::Function->new($self, $address, $ret, @args);
 }
 
+=head2 attach
+
+ $ffi->attach('my_functon_name', ['int', 'string'] => 'string');
+ $ffi->attach(['my_c_functon_name' => 'my_perl_function_name'], ['int', 'string'] => 'string');
+
+Find and attach the given C function as the given perl function name as a real live xsub.
+The advantage of attaching a function over using the L<FFI::Platypus#function|function> method
+is that it is much much faster since no object resulution needs to be done.  The disadvantage
+is that it locks the function and the L<FFI::Platypus> instance into memory perminently, since
+there is no way to deallocate an xsub.
+
+=cut
+
+sub attach
+{
+  my($self, $name, $args, $ret) = @_;
+  my($c_name, $perl_name) = ref($name) ? @$name : ($name, $name);
+  
+  my $function = $self->function($c_name, $args, $ret);
+  
+  my($caller, $filename, $line) = caller;
+  $perl_name = join '::', $caller, $perl_name
+    unless $perl_name =~ /::/;
+    
+  $function->attach($perl_name, "$filename:$line");
+}
+
 sub DESTROY
 {
   my($self) = @_;

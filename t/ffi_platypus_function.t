@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More tests => 2;
 use FFI::Platypus;
-use FFI::CheckLib qw( find_lib );
+use FFI::CheckLib;
 
 subtest 'built in type' => sub {
   plan tests => 4;

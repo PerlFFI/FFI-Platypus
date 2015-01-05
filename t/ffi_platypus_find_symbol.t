@@ -3,7 +3,7 @@ use warnings;
 use Test::More tests => 2;
 use File::Spec;
 use FFI::Platypus;
-use FFI::CheckLib qw( find_lib );
+use FFI::CheckLib;
 
 subtest external => sub {
   plan tests => 2;

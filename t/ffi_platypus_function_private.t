@@ -1,8 +1,8 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More tests => 4;
 use FFI::Platypus;
-use FFI::CheckLib qw( find_lib );
+use FFI::CheckLib;
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 'libtest');
@@ -15,3 +15,7 @@ is $@, '', 'FFI::Platypus::Function->new';
 isa_ok $function, 'FFI::Platypus::Function';
 
 is $function->call(22), 22, 'function.call(22) = 22';
+
+$function->attach('main::fooble', 'whatever.c');
+
+is fooble(22), 22, 'fooble(22) = 22';
