@@ -24,7 +24,6 @@ sub ffi (&)
 
 sub lib (@)
 {
-  $DB::single = 1;
   _ffi_object->lib(@_);
 }
 
