@@ -206,7 +206,7 @@ sub _type_lookup
  my @types = FFI::Platypus->types;
 
 Returns the list of types that FFI knows about.  This may be either built in FFI types (example: I<sint32>) or
-detected C types (example: I<signed int>), or types that you have defined using the L</#type|type> method.
+detected C types (example: I<signed int>), or types that you have defined using the L<FFI::Platypus#type|type> method.
 
 It can also be called as a class method, in which case, not user defined types will be included.
 
@@ -227,14 +227,14 @@ sub types
  my $function = $ffi->function('my_function_name', ['int', 'string'] => 'string');
  my $return_value = $function->(1, "hi there");
 
-Returns an object that is simular to a code reference in that it can be called like one.
+Returns an object that is similar to a code reference in that it can be called like one.
 
 Caveat: many situations require a real code reference, at the price of a performance
 penalty you can get one like this:
 
  my $coderef = sub { $function->(@_) };
 
-It may be better, and faster to create a real Perl function using the L</#attach|attach> method.
+It may be better, and faster to create a real Perl function using the L<FFI::Platypus#attach|attach> method.
 
 =cut
 

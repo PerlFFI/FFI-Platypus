@@ -3,7 +3,11 @@ pod_spelling_system:
   skip: 0
   # list of words that are spelled correctly
   # (regardless of what spell check thinks)
-  stopwords: []
+  stopwords:
+    - longdouble
+    - sint
+    - uint
+    - parentheticals
 
 pod_coverage:
   skip: 0
