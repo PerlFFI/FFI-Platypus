@@ -171,6 +171,7 @@ sub type
 {
   my($self, $name, $alias) = @_;
   croak "usage: \$ffi->type(name => alias) (alias is optional)" unless defined $self && defined $name;
+  croak "spaces not allowed in alias" if defined $alias && $alias =~ /\s/;
   require FFI::Platypus::ConfigData;
   my $type_map = FFI::Platypus::ConfigData->config("type_map");
   croak "unknown type: $name" unless defined $type_map->{$name};
@@ -261,5 +262,13 @@ sub DESTROY
     FFI::Platypus::dl::dlclose($handle);
   }
 }
+
+package
+  FFI::Platypus::Function;
+
+use overload '&{}' => sub {
+  my $ffi = shift;
+  sub { $ffi->call(@_) };
+};
 
 1;
