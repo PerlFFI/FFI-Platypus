@@ -98,7 +98,7 @@ sub function ($$$)
 sub import
 {
   my $caller = caller;
-  my $class = shift;
+  shift; # class
   
   foreach my $arg (@_)
   {
