@@ -14,7 +14,7 @@ XS(ffi_pl_sub_call)
   ffi_pl_function *self;
   char *buffer;
   size_t buffer_size;
-  int i;
+  int i,n;
   SV *arg;
   ffi_arg result;
   ffi_pl_arguments *arguments;
@@ -298,7 +298,7 @@ call(self, ...)
   PREINIT:
     char *buffer;
     size_t buffer_size;
-    int i;
+    int i, n;
     SV *arg;
     ffi_arg result;
     ffi_pl_arguments *arguments;

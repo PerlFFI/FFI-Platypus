@@ -121,7 +121,6 @@
       {
         void *ptr;
         int count = self->argument_types[i]->extra[0].array.element_count;
-        int n;
         if(SvROK(arg)) /* TODO: and an array ref */
         {
           AV *av = (AV*) SvRV(arg);
@@ -234,7 +233,6 @@
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         int count = self->argument_types[i]->extra[0].array.element_count;
-        int n;
         arg = ST(i+(EXTRA_ARGS));
         if(SvROK(arg)) /* TODO: and a list reference */
         {

@@ -19,7 +19,7 @@ if(-e 'Build')
 
 foreach my $file (map { File::Spec->catfile(@$_) } @inc::My::CopyList::list)
 {
-  if(-e $file)
+  if(-e $file && @ARGV > 0)
   {
     unlink $file;
   }
