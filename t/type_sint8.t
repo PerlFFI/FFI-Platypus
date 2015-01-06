@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 9;
+use Test::More tests => 10;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'sint8', 'void', 'int',
@@ -35,6 +35,7 @@ is_deeply \@list, [-4,-3,-2,-1,0,1,2,3,4,5], 'array increment';
 
 is null(), undef, 'null() == undef';
 is is_null(undef), 1, 'is_null(undef) == 1';
+is is_null(\22), 0, 'is_null(22) == 0';
 
 is_deeply static_array(), [-1,2,-3,4,-5,6,-7,8,-9,10], 'static_array = [-1,2,-3,4,-5,6,-7,8,-9,10]';
 
