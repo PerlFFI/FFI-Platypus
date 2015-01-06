@@ -172,11 +172,21 @@ sub type
   my($self, $name, $alias) = @_;
   croak "usage: \$ffi->type(name => alias) (alias is optional)" unless defined $self && defined $name;
   croak "spaces not allowed in alias" if defined $alias && $alias =~ /\s/;
+  croak "allowed characters for alias: [A-Za-z0-9_]+" if defined $alias && $alias =~ /[^A-Za-z0-9_]/;
   require FFI::Platypus::ConfigData;
   my $type_map = FFI::Platypus::ConfigData->config("type_map");
-  croak "unknown type: $name" unless defined $type_map->{$name};
+  
+  my $basic = $name;
+  my $extra = '';
+  if($basic =~ s/\s+((\*|\[|\<).*)$//)
+  {
+    $extra = " $1";
+  }
+  
+  croak "unknown type: $basic" unless defined $type_map->{$basic};
   croak "alias conflicts with existing type" if defined $alias && defined $type_map->{$alias};
-  $self->{types}->{$name} = $self->{types}->{$type_map->{$name}} ||= FFI::Platypus::Type->new($type_map->{$name});
+  
+  $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= FFI::Platypus::Type->new($type_map->{$basic}.$extra);
   if(defined $alias)
   {
     $self->{types}->{$alias} = $self->{types}->{$name};
@@ -303,15 +313,43 @@ package
 
 sub new
 {
-  my($class, $ffi_type, $platypus_type) = @_;
+  my($class, $type) = @_;
   
-  if($ffi_type eq 'string')
+  my $ffi_type;
+  my $platypus_type;
+  
+  if($type eq 'string')
   {
     $ffi_type = 'pointer';
     $platypus_type = 'string';
   }
-  
-  $platypus_type ||= 'ffi';
+  elsif($type =~ s/\s+\*$//)
+  {
+    $ffi_type = $type;
+    $platypus_type = 'pointer';
+  }
+  elsif($type =~ s/\s+\[[0-9]+\]$//)
+  {
+    $ffi_type = $type;
+    $platypus_type = 'array';
+    # TODO: size
+  }
+  elsif($type =~ s/\s+\<buffer\>//)
+  {
+    $ffi_type = $type;
+    $platypus_type = 'buffer';
+    # TODO: order
+  }
+  elsif($type =~ s/\s+\<custom\>//)
+  {
+    $ffi_type = $type;
+    $platypus_type = 'custom';
+  }
+  else
+  {
+    $ffi_type = $type;
+    $platypus_type = 'ffi';
+  }
   
   $class->_new($ffi_type, $platypus_type);
 }

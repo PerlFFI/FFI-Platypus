@@ -194,6 +194,7 @@ new(class, platypus, address, return_type, ...)
     SV* arg;
     ffi_type **signature;
     void *buffer;
+    ffi_type *ffi_return_type;
   CODE:
   
     for(i=0; i<(items-4); i++)
@@ -212,19 +213,35 @@ new(class, platypus, address, return_type, ...)
     self->address = address;
     self->return_type = return_type;
     
+    if(self->return_type->platypus_type == FFI_PL_FFI)
+    {
+      ffi_return_type = self->return_type->ffi_type;
+    }
+    else
+    {
+      ffi_return_type = &ffi_type_pointer;
+    }
+    
     for(i=0; i<(items-4); i++)
     {
       arg = ST(i+4);
       self->argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
-      signature[i] = self->argument_types[i]->ffi_type;
+      if(self->argument_types[i]->platypus_type == FFI_PL_FFI)
+      {
+        signature[i] = self->argument_types[i]->ffi_type;
+      }
+      else
+      {
+        signature[i] = &ffi_type_pointer;
+      }
     }
     
     status = ffi_prep_cif(
-      &self->ffi_cif,            /* ffi_cif */
-      FFI_DEFAULT_ABI,           /* ffi_abi */
-      items-4,                   /* argument count */
-      return_type->ffi_type,     /* return type */
-      signature
+      &self->ffi_cif,            /* ffi_cif     | */
+      FFI_DEFAULT_ABI,           /* ffi_abi     | */
+      items-4,                   /* int         |argument count */
+      ffi_return_type,           /* ffi_type *  | return type */
+      signature                  /* ffi_type ** | argument types */
     );
     
     if(status != FFI_OK)

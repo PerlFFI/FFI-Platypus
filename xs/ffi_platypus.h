@@ -109,20 +109,21 @@ typedef struct _ffi_pl_arguments {
 
 #define ffi_pl_arguments_count(arguments)                 (arguments->count)
 #define ffi_pl_arguments_set_pointer(arguments, i, value) (arguments->slot[i].pointer = value)
+#define ffi_pl_arguments_get_pointer(arguments, i)        (arguments->slot[i].pointer)
 #define ffi_pl_arguments_set_string(arguments, i, value)  (arguments->slot[i].string  = value)
 
 #define ffi_pl_arguments_set_sint8(arguments, i, value)   (arguments->slot[i].sint8   = value)
-#define ffi_pl_arguments_get_sint8(arguments, i, value)   (arguments->slot[i].sint8)
+#define ffi_pl_arguments_get_sint8(arguments, i)          (arguments->slot[i].sint8)
 #define ffi_pl_arguments_set_uint8(arguments, i, value)   (arguments->slot[i].uint8   = value)
-#define ffi_pl_arguments_get_uint8(arguments, i, value)   (arguments->slot[i].uint8)
+#define ffi_pl_arguments_get_uint8(arguments, i)          (arguments->slot[i].uint8)
 #define ffi_pl_arguments_set_sint16(arguments, i, value)  (arguments->slot[i].sint16  = value)
-#define ffi_pl_arguments_get_sint16(arguments, i, value)  (arguments->slot[i].sint16)
+#define ffi_pl_arguments_get_sint16(arguments, i)         (arguments->slot[i].sint16)
 #define ffi_pl_arguments_set_uint16(arguments, i, value)  (arguments->slot[i].uint16  = value)
-#define ffi_pl_arguments_get_uint16(arguments, i, value)  (arguments->slot[i].uint16)
+#define ffi_pl_arguments_get_uint16(arguments, i)         (arguments->slot[i].uint16)
 #define ffi_pl_arguments_set_sint32(arguments, i, value)  (arguments->slot[i].sint32  = value)
-#define ffi_pl_arguments_get_sint32(arguments, i, value)  (arguments->slot[i].sint32)
+#define ffi_pl_arguments_get_sint32(arguments, i)         (arguments->slot[i].sint32)
 #define ffi_pl_arguments_set_uint32(arguments, i, value)  (arguments->slot[i].uint32  = value)
-#define ffi_pl_arguments_get_uint32(arguments, i, value)  (arguments->slot[i].uint32)
+#define ffi_pl_arguments_get_uint32(arguments, i)         (arguments->slot[i].uint32)
 
 #define ffi_pl_arguments_pointers(arguments) ((void**)&arguments->slot[arguments->count])
 

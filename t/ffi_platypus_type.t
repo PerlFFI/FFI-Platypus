@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More tests => 4;
 use FFI::Platypus;
 
 subtest 'simple type' => sub {
@@ -26,18 +26,37 @@ subtest 'aliased type' => sub {
   ok scalar(grep { $_ eq 'my_integer_8' } $ffi->types), 'ffi.types returns my_integer_8';
 };
 
-subtest 'ffi basic types' => sub {
+my @list = qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double pointer string );
 
-  foreach my $name (qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double pointer string ))
+subtest 'ffi basic types' => sub {
+  plan tests => scalar @list;
+
+  foreach my $name (@list)
   {
     subtest $name => sub {
-    
+      plan tests => 2;
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
       is $@, '', "ffi.type($name)";
       isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
-    
     };
+  }
+
+};
+
+subtest 'ffi pointer types' => sub {
+  plan tests => scalar @list;
+
+  foreach my $name (map { "$_ *" } qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double pointer string ))
+  {
+    subtest $name => sub {
+      plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE POINTER' if $name eq 'string *';
+      plan tests => 2;
+      my $ffi = FFI::Platypus->new;
+      eval { $ffi->type($name) };
+      is $@, '', "ffi.type($name)";
+      isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
+    }
   }
 
 };

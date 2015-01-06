@@ -10,21 +10,16 @@
     arguments = (ffi_pl_arguments*) buffer;
 
     arguments->count = self->ffi_cif.nargs;
-    for(i=0; i<items-(EXTRA_ARGS); i++)
-    {
-      ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
-    }
 
     for(i=0; i<items-(EXTRA_ARGS); i++)
     {
+      ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
+
       arg = ST(i+(EXTRA_ARGS));
       if(self->argument_types[i]->platypus_type == FFI_PL_FFI)
       {
         switch(self->argument_types[i]->ffi_type->type)
         {
-          case FFI_TYPE_VOID:
-            /* do nothing?  probably not what you want */
-            break;
           case FFI_TYPE_UINT8:
             ffi_pl_arguments_set_uint8(arguments, i, SvUV(arg));
             break;
@@ -52,13 +47,56 @@
       {
         ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM)
+      else if(self->argument_types[i]->platypus_type == FFI_PL_POINTER)
       {
-        croak("TODO");
+        void *ptr;
+        if(SvROK(arg))
+        {
+          switch(self->argument_types[i]->ffi_type->type)
+          {
+            case FFI_TYPE_UINT8:
+#ifdef HAVE_ALLOCA
+              ptr = alloca(sizeof(uint8_t));
+#else
+              Newx(ptr, buffer_size, uint8_t);
+#endif
+              *((uint8_t*)ptr) = SvUV(SvRV(arg));
+              break;
+          }
+        }
+        else
+        {
+          ptr = NULL;
+        }
+        ffi_pl_arguments_set_pointer(arguments, i, ptr);
       }
     }
 
     ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
+
+    for(i=0; i<items-(EXTRA_ARGS); i++)
+    {
+      if(self->argument_types[i]->platypus_type == FFI_PL_POINTER)
+      {
+        void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
+        if(ptr != NULL)
+        {
+          arg = ST(i+(EXTRA_ARGS));
+          if(!SvREADONLY(SvRV(arg)))
+          {
+            switch(self->argument_types[i]->ffi_type->type)
+            {
+              case FFI_TYPE_UINT8:
+                sv_setuv(SvRV(arg), *((uint8_t*)ptr));
+                break;
+            }
+          }
+        }
+#ifndef HAVE_ALLOCA
+        Safefree(ptr);
+#endif
+      }
+    }
 #ifndef HAVE_ALLOCA
     Safefree(buffer);
 #endif
@@ -115,9 +153,25 @@
         sv_setpv(arg, (char*)result);
       }
     }
-    else if(self->return_type->platypus_type == FFI_PL_CUSTOM)
+    else if(self->return_type->platypus_type == FFI_PL_POINTER)
     {
-      croak("TODO");
+      void *ptr = (void*) result;
+      if(ptr == NULL)
+      {
+        XSRETURN_EMPTY;
+      }
+      else
+      {
+        SV *value = sv_newmortal();
+        switch(self->return_type->ffi_type->type)
+        {
+          case FFI_TYPE_UINT8:
+            sv_setuv(value, *((uint8_t*) result));
+            break;
+        }
+        arg = ST(0) = newRV_inc(value);
+        XSRETURN(1);
+      }
     }
 
 

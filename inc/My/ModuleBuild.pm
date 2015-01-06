@@ -5,6 +5,7 @@ use warnings;
 use Alien::FFI;
 use My::LibTest;
 use My::AutoConf;
+use Config;
 use base qw( Module::Build );
 
 sub new
@@ -14,9 +15,28 @@ sub new
   $args{c_source}             = 'xs';  
   $args{extra_compiler_flags} = Alien::FFI->cflags;
   $args{extra_linker_flags}   = Alien::FFI->libs;
-  
+
   my $self = $class->SUPER::new(%args);
 
+  if($ENV{FFI_PLATYPUS_DEBUG})
+  {
+    my $config = $self->config;
+    print "\n\n";
+    print "DEBUG:\n";
+    foreach my $key (keys %Config)
+    {
+      my $value = $Config{$key};
+      next unless defined $value;
+      if($value =~ s/-O[0-9]/-g3/g)
+      {
+        print "  + \$Config{$key} = ", $config->{$key}, "\n";
+        print "  - \$Config{$key} = $Config{$key}\n";
+        $self->config($key, $value);
+      }
+    }
+    print "\n\n";
+  }
+  
   $self->add_to_cleanup(
     'libtest/*.o',
     'libtest/*.obj',
