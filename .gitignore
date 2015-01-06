@@ -14,3 +14,4 @@
 *.dll
 *.so
 *.bundle
+*.tmp
