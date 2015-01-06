@@ -257,8 +257,8 @@ sub function
 
 Find and attach the given C function as the given perl function name as a real live xsub.
 The advantage of attaching a function over using the L<FFI::Platypus#function|function> method
-is that it is much much faster since no object resulution needs to be done.  The disadvantage
-is that it locks the function and the L<FFI::Platypus> instance into memory perminently, since
+is that it is much much faster since no object resolution needs to be done.  The disadvantage
+is that it locks the function and the L<FFI::Platypus> instance into memory permanently, since
 there is no way to deallocate an xsub.
 
 =cut

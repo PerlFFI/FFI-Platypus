@@ -115,6 +115,17 @@ penalty you can get one like this:
 
 It may be better, and faster to create a real Perl function using the [FFI::Platypus#attach](https://metacpan.org/pod/attach) method.
 
+## attach
+
+    $ffi->attach('my_functon_name', ['int', 'string'] => 'string');
+    $ffi->attach(['my_c_functon_name' => 'my_perl_function_name'], ['int', 'string'] => 'string');
+
+Find and attach the given C function as the given perl function name as a real live xsub.
+The advantage of attaching a function over using the [FFI::Platypus#function](https://metacpan.org/pod/function) method
+is that it is much much faster since no object resolution needs to be done.  The disadvantage
+is that it locks the function and the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance into memory permanently, since
+there is no way to deallocate an xsub.
+
 # AUTHOR
 
 Graham Ollis <plicease@cpan.org>

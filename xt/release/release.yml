@@ -9,6 +9,7 @@ pod_spelling_system:
     - uint
     - parentheticals
     - ffi
+    - xsub
 
 pod_coverage:
   skip: 0
