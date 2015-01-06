@@ -262,7 +262,7 @@
       {
         int count = self->return_type->extra[0].array.element_count;
         AV *av;
-        SV *sv[count]; /* TODO: fix for platoforms that don't support this */
+        SV *sv[count]; /* TODO: could be large shouldn't alloate on the stack */
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
