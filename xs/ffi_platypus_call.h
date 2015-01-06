@@ -112,7 +112,8 @@
         }
         else
         {
-          ptr = NULL;
+          warn("passing non array reference into ffi/platypus array argument type");
+          Newxz(ptr, count*self->argument_types[i]->ffi_type->size, char);
         }
         ffi_pl_arguments_set_pointer(arguments, i, ptr);
       }
@@ -151,7 +152,8 @@
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         int count = self->argument_types[i]->extra[0].array.element_count;
         int n;
-        if(ptr != NULL)
+        arg = ST(i+(EXTRA_ARGS));
+        if(SvROK(arg)) /* TODO: and a list reference */
         {
           AV *av = (AV*) SvRV(arg);
           switch(self->argument_types[i]->ffi_type->type)
@@ -245,7 +247,7 @@
             sv_setiv(value, *((int8_t*) result));
             break;
         }
-        arg = ST(0) = newRV_inc(value);
+        ST(0) = newRV_inc(value);
         XSRETURN(1);
       }
     }
@@ -260,15 +262,25 @@
       {
         int count = self->return_type->extra[0].array.element_count;
         AV *av;
+        SV *sv[count]; /* TODO: fix for platoforms that don't support this */
         switch(self->return_type->ffi_type->type)
         {
-          croak("todo");
           case FFI_TYPE_UINT8:
             for(i=0; i<count; i++)
             {
+              sv[i] = newSVuv( ((uint8_t*)result)[i] );
+            }
+            break;
+          case FFI_TYPE_SINT8:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSViv( ((int8_t*)result)[i] );
             }
             break;
         }
+        av = av_make(count, sv);
+        ST(0) = newRV_inc((SV*)av);
+        XSRETURN(1);
       }
     }
 

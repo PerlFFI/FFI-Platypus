@@ -48,7 +48,7 @@ sub new
     'config.log',
   );
   
-  $self->config_data(done_build_libtest   => 0);
+  $self->config_data(done_libtest   => 0);
   $self->config_data(done_build_configure => 0);
 
   $self;
@@ -79,24 +79,24 @@ sub ACTION_build
   $self->SUPER::ACTION_build(@_);
 }
 
-sub ACTION_build_libtest
+sub ACTION_libtest
 {
   my($self) = @_;
   My::LibTest->build_libtest(shift);
-  $self->config_data('done_build_libtest' => 1);
+  $self->config_data('done_libtest' => 1);
 }
 
 sub ACTION_test
 {
   my $self = shift;
-  $self->depends_on('build_libtest') unless $self->config_data('done_build_libtest');
+  $self->depends_on('libtest') unless $self->config_data('done_libtest');
   $self->SUPER::ACTION_test(@_);
 }
 
 sub ACTION_clean
 {
   my $self = shift;
-  $self->config_data(done_build_libtest   => 0);
+  $self->config_data(done_libtest   => 0);
   $self->config_data(done_build_configure => 0);
   $self->SUPER::ACTION_clean(@_);
 }
