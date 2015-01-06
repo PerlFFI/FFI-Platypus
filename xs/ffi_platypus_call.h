@@ -76,6 +76,39 @@
             case FFI_TYPE_SINT8:
               Newx_or_alloca(ptr, int8_t);
               *((int8_t*)ptr) = SvIV(SvRV(arg));
+              break;
+            case FFI_TYPE_UINT16:
+              Newx_or_alloca(ptr, uint16_t);
+              *((uint16_t*)ptr) = SvUV(SvRV(arg));
+              break;
+            case FFI_TYPE_SINT16:
+              Newx_or_alloca(ptr, int16_t);
+              *((int16_t*)ptr) = SvIV(SvRV(arg));
+              break;
+            case FFI_TYPE_UINT32:
+              Newx_or_alloca(ptr, uint32_t);
+              *((uint32_t*)ptr) = SvUV(SvRV(arg));
+              break;
+            case FFI_TYPE_SINT32:
+              Newx_or_alloca(ptr, int32_t);
+              *((int32_t*)ptr) = SvIV(SvRV(arg));
+              break;
+            case FFI_TYPE_UINT64:
+              Newx_or_alloca(ptr, uint64_t);
+#ifdef HAVE_IV_IS_64
+              *((uint64_t*)ptr) = SvUV(SvRV(arg));
+#else
+              *((uint64_t*)ptr) = SvU64(SvRV(arg));
+#endif
+              break;
+            case FFI_TYPE_SINT64:
+              Newx_or_alloca(ptr, int64_t);
+#ifdef HAVE_IV_IS_64
+              *((int64_t*)ptr) = SvIV(SvRV(arg));
+#else
+              *((int64_t*)ptr) = SvI64(SvRV(arg));
+#endif
+              break;
           }
         }
         else
@@ -106,6 +139,56 @@
               for(n=0; n<count; n++)
               {
                 ((int8_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+              }
+              break;
+            case FFI_TYPE_UINT16:
+              Newx(ptr, count, uint16_t);
+              for(n=0; n<count; n++)
+              {
+                ((uint16_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
+              }
+              break;
+            case FFI_TYPE_SINT16:
+              Newx(ptr, count, int16_t);
+              for(n=0; n<count; n++)
+              {
+                ((int16_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+              }
+              break;
+            case FFI_TYPE_UINT32:
+              Newx(ptr, count, uint32_t);
+              for(n=0; n<count; n++)
+              {
+                ((uint32_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
+              }
+              break;
+            case FFI_TYPE_SINT32:
+              Newx(ptr, count, int32_t);
+              for(n=0; n<count; n++)
+              {
+                ((int32_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+              }
+              break;
+            case FFI_TYPE_UINT64:
+              Newx(ptr, count, uint64_t);
+              for(n=0; n<count; n++)
+              {
+#ifdef HAVE_IV_IS_64
+                ((uint64_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
+#else
+                ((uint64_t*)ptr)[n] = SvU64(*av_fetch(av, n, 1));
+#endif
+              }
+              break;
+            case FFI_TYPE_SINT64:
+              Newx(ptr, count, int64_t);
+              for(n=0; n<count; n++)
+              {
+#ifdef HAVE_IV_IS_64
+                ((int64_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+#else
+                ((int64_t*)ptr)[n] = SvI64(*av_fetch(av, n, 1));
+#endif
               }
               break;
           }
@@ -168,6 +251,50 @@
               for(n=0; n<count; n++)
               {
                 sv_setiv(*av_fetch(av, n, 1), ((int8_t*)ptr)[n]);
+              }
+              break;
+            case FFI_TYPE_UINT16:
+              for(n=0; n<count; n++)
+              {
+                sv_setuv(*av_fetch(av, n, 1), ((uint16_t*)ptr)[n]);
+              }
+              break;
+            case FFI_TYPE_SINT16:
+              for(n=0; n<count; n++)
+              {
+                sv_setiv(*av_fetch(av, n, 1), ((int16_t*)ptr)[n]);
+              }
+              break;
+            case FFI_TYPE_UINT32:
+              for(n=0; n<count; n++)
+              {
+                sv_setuv(*av_fetch(av, n, 1), ((uint32_t*)ptr)[n]);
+              }
+              break;
+            case FFI_TYPE_SINT32:
+              for(n=0; n<count; n++)
+              {
+                sv_setiv(*av_fetch(av, n, 1), ((int32_t*)ptr)[n]);
+              }
+              break;
+            case FFI_TYPE_UINT64:
+              for(n=0; n<count; n++)
+              {
+#ifdef HAVE_IV_IS_64
+                sv_setuv(*av_fetch(av, n, 1), ((uint64_t*)ptr)[n]);
+#else
+                sv_setu64(*av_fetch(av, n, 1), ((uint64_t*)ptr)[n]);
+#endif
+              }
+              break;
+            case FFI_TYPE_SINT64:
+              for(n=0; n<count; n++)
+              {
+#ifdef HAVE_IV_IS_64
+                sv_setiv(*av_fetch(av, n, 1), ((int64_t*)ptr)[n]);
+#else
+                sv_seti64(*av_fetch(av, n, 1), ((int64_t*)ptr)[n]);
+#endif
               }
               break;
           }
@@ -246,6 +373,32 @@
           case FFI_TYPE_SINT8:
             sv_setiv(value, *((int8_t*) result));
             break;
+          case FFI_TYPE_UINT16:
+            sv_setuv(value, *((uint16_t*) result));
+            break;
+          case FFI_TYPE_SINT16:
+            sv_setiv(value, *((int16_t*) result));
+            break;
+          case FFI_TYPE_UINT32:
+            sv_setuv(value, *((uint32_t*) result));
+            break;
+          case FFI_TYPE_SINT32:
+            sv_setiv(value, *((int32_t*) result));
+            break;
+          case FFI_TYPE_UINT64:
+#ifdef HAVE_IV_IS_64
+            sv_setuv(value, *((uint64_t*) result));
+#else
+            sv_seti64(value, *((int64_t*) result));
+#endif
+            break;
+          case FFI_TYPE_SINT64:
+#ifdef HAVE_IV_IS_64
+            sv_setiv(value, *((int64_t*) result));
+#else
+            sv_seti64(value, *((int64_t*) result));
+#endif
+            break;
         }
         ST(0) = newRV_inc(value);
         XSRETURN(1);
@@ -275,6 +428,50 @@
             for(i=0; i<count; i++)
             {
               sv[i] = newSViv( ((int8_t*)result)[i] );
+            }
+            break;
+          case FFI_TYPE_UINT16:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSVuv( ((uint16_t*)result)[i] );
+            }
+            break;
+          case FFI_TYPE_SINT16:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSViv( ((int16_t*)result)[i] );
+            }
+            break;
+          case FFI_TYPE_UINT32:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSVuv( ((uint32_t*)result)[i] );
+            }
+            break;
+          case FFI_TYPE_SINT32:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSViv( ((int32_t*)result)[i] );
+            }
+            break;
+          case FFI_TYPE_UINT64:
+            for(i=0; i<count; i++)
+            {
+#ifdef HAVE_IV_IS_64
+              sv[i] = newSVuv( ((uint64_t*)result)[i] );
+#else
+              sv[i] = newSVu64( ((uint64_t*)result)[i] );
+#endif
+            }
+            break;
+          case FFI_TYPE_SINT64:
+            for(i=0; i<count; i++)
+            {
+#ifdef HAVE_IV_IS_64
+              sv[i] = newSViv( ((int64_t*)result)[i] );
+#else
+              sv[i] = newSVi64( ((int64_t*)result)[i] );
+#endif
             }
             break;
         }
