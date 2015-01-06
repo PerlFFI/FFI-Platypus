@@ -64,6 +64,17 @@ sub ACTION_build_configure
 sub ACTION_build
 {
   my $self = shift;
+  
+  if(-e "lib/FFI/Platypus.c"
+  && -e "lib/FFI/Platypus.o")
+  {
+    if((stat "lib/FFI/Platypus.c")[9] < (stat "xs/ffi_platypus_call.h")[9])
+    {
+      unlink "lib/FFI/Platypus.c";
+      unlink "lib/FFI/Platypus.o";
+    }
+  }
+  
   $self->depends_on('build_configure') unless $self->config_data('done_build_configure');
   $self->SUPER::ACTION_build(@_);
 }
