@@ -50,7 +50,7 @@
       else if(self->argument_types[i]->platypus_type == FFI_PL_POINTER)
       {
         void *ptr;
-        if(SvROK(arg))
+        if(SvROK(arg)) /* TODO: and a scalar ref */
         {
           switch(self->argument_types[i]->ffi_type->type)
           {
@@ -61,6 +61,38 @@
             case FFI_TYPE_SINT8:
               Newx_or_alloca(ptr, int8_t);
               *((int8_t*)ptr) = SvIV(SvRV(arg));
+          }
+        }
+        else
+        {
+          ptr = NULL;
+        }
+        ffi_pl_arguments_set_pointer(arguments, i, ptr);
+      }
+      else if(self->argument_types[i]->platypus_type == FFI_PL_ARRAY)
+      {
+        void *ptr;
+        int count = self->argument_types[i]->extra[0].array.element_count;
+        int n;
+        if(SvROK(arg)) /* TODO: and an array ref */
+        {
+          AV *av = (AV*) SvRV(arg);
+          switch(self->argument_types[i]->ffi_type->type)
+          {
+            case FFI_TYPE_UINT8:
+              Newx(ptr, count, uint8_t);
+              for(n=0; n<count; n++)
+              {
+                ((uint8_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
+              }
+              break;
+            case FFI_TYPE_SINT8:
+              Newx(ptr, count, int8_t);
+              for(n=0; n<count; n++)
+              {
+                ((int8_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+              }
+              break;
           }
         }
         else
@@ -98,49 +130,73 @@
         Safefree(ptr);
 #endif
       }
+
+      if(self->argument_types[i]->platypus_type == FFI_PL_ARRAY)
+      {
+        void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
+        int count = self->argument_types[i]->extra[0].array.element_count;
+        int n;
+        if(ptr != NULL)
+        {
+          AV *av = (AV*) SvRV(arg);
+          switch(self->argument_types[i]->ffi_type->type)
+          {
+            case FFI_TYPE_UINT8:
+              for(n=0; n<count; n++)
+              {
+                sv_setuv(*av_fetch(av, n, 1), ((uint8_t*)ptr)[n]);
+              }
+              break;
+            case FFI_TYPE_SINT8:
+              for(n=0; n<count; n++)
+              {
+                sv_setiv(*av_fetch(av, n, 1), ((int8_t*)ptr)[n]);
+              }
+              break;
+          }
+        }
+#ifndef HAVE_ALLOCA
+        Safefree(ptr);
+#endif
+      }
     }
 #ifndef HAVE_ALLOCA
     Safefree(buffer);
 #endif
 
-    if(self->return_type->platypus_type == FFI_PL_FFI && self->return_type->ffi_type->type == FFI_TYPE_VOID)
+    if(self->return_type->platypus_type == FFI_PL_FFI)
     {
-      XSRETURN_EMPTY;
-    }
-    else if(self->return_type->platypus_type == FFI_PL_FFI)
-    {
-      if(self->return_type->ffi_type->type == FFI_TYPE_POINTER && ((void*) result) == NULL)
+      int type = self->return_type->ffi_type->type;
+      if(type == FFI_TYPE_VOID || (type == FFI_TYPE_POINTER && ((void*) result) == NULL))
       {
         XSRETURN_EMPTY;
       }
       else
       {
-        arg = ST(0) = sv_newmortal();
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
-            sv_setuv(arg, (uint8_t) result);
+            XSRETURN_UV((uint8_t) result);
             break;
           case FFI_TYPE_SINT8:
-            sv_setiv(arg, (int8_t) result);
+            XSRETURN_IV((int8_t) result);
             break;
           case FFI_TYPE_UINT16:
-            sv_setuv(arg, (uint16_t) result);
+            XSRETURN_UV((uint16_t) result);
             break;
           case FFI_TYPE_SINT16:
-            sv_setiv(arg, (int16_t) result);
+            XSRETURN_IV((int16_t) result);
             break;
           case FFI_TYPE_UINT32:
-            sv_setuv(arg, (uint32_t) result);
+            XSRETURN_UV((uint32_t) result);
             break;
           case FFI_TYPE_SINT32:
-            sv_setiv(arg, (int32_t) result);
+            XSRETURN_IV((int32_t) result);
             break;
           case FFI_TYPE_POINTER:
-            sv_setiv(arg, PTR2IV((void*) result));
+            XSRETURN_IV(PTR2IV((void*)result));
             break;
         }
-        XSRETURN(1);
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_STRING)
@@ -176,6 +232,28 @@
         }
         arg = ST(0) = newRV_inc(value);
         XSRETURN(1);
+      }
+    }
+    else if(self->return_type->platypus_type == FFI_PL_ARRAY)
+    {
+      void *ptr = (void*) result;
+      if(ptr == NULL)
+      {
+        XSRETURN_EMPTY;
+      }
+      else
+      {
+        int count = self->return_type->extra[0].array.element_count;
+        AV *av;
+        switch(self->return_type->ffi_type->type)
+        {
+          croak("todo");
+          case FFI_TYPE_UINT8:
+            for(i=0; i<count; i++)
+            {
+            }
+            break;
+        }
       }
     }
 

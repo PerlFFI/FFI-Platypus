@@ -317,6 +317,7 @@ sub new
   
   my $ffi_type;
   my $platypus_type;
+  my $array_size = 0;
   
   if($type eq 'string')
   {
@@ -328,11 +329,11 @@ sub new
     $ffi_type = $type;
     $platypus_type = 'pointer';
   }
-  elsif($type =~ s/\s+\[[0-9]+\]$//)
+  elsif($type =~ s/\s+\[([0-9]+)\]$//)
   {
     $ffi_type = $type;
     $platypus_type = 'array';
-    # TODO: size
+    $array_size = $1;
   }
   elsif($type =~ s/\s+\<buffer\>//)
   {
@@ -351,7 +352,7 @@ sub new
     $platypus_type = 'ffi';
   }
   
-  $class->_new($ffi_type, $platypus_type);
+  $class->_new($ffi_type, $platypus_type, $array_size);
 }
 
 1;

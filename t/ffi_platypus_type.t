@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 4;
+use Test::More tests => 5;
 use FFI::Platypus;
 
 subtest 'simple type' => sub {
@@ -57,6 +57,31 @@ subtest 'ffi pointer types' => sub {
       is $@, '', "ffi.type($name)";
       isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
     }
+  }
+
+};
+
+subtest 'ffi array types' => sub {
+  plan tests => scalar @list;
+
+  my $size = 5;
+
+  foreach my $basic (qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double pointer string ))
+  {
+    my $name = "$basic [$size]";
+  
+    subtest $name => sub {
+      plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE ARRAY' if $name =~ /^string \[[0-9]+\]$/; # TODO: actually this should be doable
+      plan tests => 3;
+      my $ffi = FFI::Platypus->new;
+      eval { $ffi->type($name) };
+      is $@, '', "ffi.type($name)";
+      isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
+      is $ffi->{types}->{$name}->array_size, $size, "size = $size";
+    };
+    
+    $size += 2;
+
   }
 
 };

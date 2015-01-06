@@ -50,10 +50,11 @@ dlclose(handle);
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type
 
 ffi_pl_type *
-_new(class, type, platypus_type)
+_new(class, type, platypus_type, array_size)
     const char *class
     const char *type
     const char *platypus_type
+    size_t array_size
   PREINIT:
     ffi_pl_type *self;
   CODE:
@@ -75,6 +76,15 @@ _new(class, type, platypus_type)
       Newx(self, 1, ffi_pl_type);
       self->ffi_type = NULL;
       self->platypus_type = FFI_PL_POINTER;
+    }
+    else if(!strcmp(platypus_type, "array"))
+    {
+      char *buffer;
+      Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra), char);
+      self = (ffi_pl_type*) buffer;
+      self->ffi_type = NULL;
+      self->platypus_type = FFI_PL_ARRAY;
+      self->extra[0].array.element_count = array_size;
     }
     else
     {
@@ -170,6 +180,17 @@ ffi_type(self)
         RETVAL = NULL;
         break;
     }
+  OUTPUT:
+    RETVAL
+
+size_t
+array_size(self)
+    ffi_pl_type *self
+  CODE:
+    if(self->platypus_type == FFI_PL_ARRAY)
+      RETVAL = self->extra[0].array.element_count;
+    else
+      RETVAL = 0;
   OUTPUT:
     RETVAL
 
