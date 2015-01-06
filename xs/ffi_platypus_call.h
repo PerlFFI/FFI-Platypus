@@ -363,8 +363,7 @@
       }
       else
       {
-        arg = ST(0) = sv_newmortal();
-        sv_setpv(arg, (char*)result);
+        XSRETURN_PV((char*)result);
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_POINTER)
