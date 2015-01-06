@@ -34,3 +34,10 @@ uint8_array_inc(uint8_t list[10])
     list[i]++;
   }
 }
+
+extern uint8_t *
+uint8_static_array(void)
+{
+  static uint8_t foo[] = { 1,4,6,8,10,12,14,16,18,20 };
+  return foo;
+}

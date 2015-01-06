@@ -34,3 +34,11 @@ sint8_array_inc(int8_t list[10])
     list[i]++;
   }
 }
+
+extern int8_t *
+sint8_static_array(void)
+{
+  static int8_t foo[] = { -1,2,-3,4,-5,6,-7,8,-9,10 };
+  return foo;
+}
+
