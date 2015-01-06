@@ -127,4 +127,10 @@ typedef struct _ffi_pl_arguments {
 
 #define ffi_pl_arguments_pointers(arguments) ((void**)&arguments->slot[arguments->count])
 
+#ifdef HAVE_ALLOCA
+#define Newx_or_alloca(ptr, type) ptr = alloca(sizeof(type))
+#else
+#define Newx_or_alloca(ptr, type) Newx(ptr, 1, type)
+#endif
+
 #endif

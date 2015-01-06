@@ -55,13 +55,12 @@
           switch(self->argument_types[i]->ffi_type->type)
           {
             case FFI_TYPE_UINT8:
-#ifdef HAVE_ALLOCA
-              ptr = alloca(sizeof(uint8_t));
-#else
-              Newx(ptr, buffer_size, uint8_t);
-#endif
+              Newx_or_alloca(ptr, uint8_t);
               *((uint8_t*)ptr) = SvUV(SvRV(arg));
               break;
+            case FFI_TYPE_SINT8:
+              Newx_or_alloca(ptr, int8_t);
+              *((int8_t*)ptr) = SvIV(SvRV(arg));
           }
         }
         else
@@ -88,6 +87,9 @@
             {
               case FFI_TYPE_UINT8:
                 sv_setuv(SvRV(arg), *((uint8_t*)ptr));
+                break;
+              case FFI_TYPE_SINT8:
+                sv_setiv(SvRV(arg), *((int8_t*)ptr));
                 break;
             }
           }
@@ -167,6 +169,9 @@
         {
           case FFI_TYPE_UINT8:
             sv_setuv(value, *((uint8_t*) result));
+            break;
+          case FFI_TYPE_SINT8:
+            sv_setiv(value, *((int8_t*) result));
             break;
         }
         arg = ST(0) = newRV_inc(value);

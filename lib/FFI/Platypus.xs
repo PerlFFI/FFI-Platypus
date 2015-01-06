@@ -239,7 +239,7 @@ new(class, platypus, address, return_type, ...)
     status = ffi_prep_cif(
       &self->ffi_cif,            /* ffi_cif     | */
       FFI_DEFAULT_ABI,           /* ffi_abi     | */
-      items-4,                   /* int         |argument count */
+      items-4,                   /* int         | argument count */
       ffi_return_type,           /* ffi_type *  | return type */
       signature                  /* ffi_type ** | argument types */
     );
