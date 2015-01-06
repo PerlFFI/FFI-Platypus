@@ -6,6 +6,7 @@ use File::Spec;
 use ExtUtils::CBuilder;
 use FindBin ();
 use Alien::FFI;
+use File::Copy qw( move );
 
 my $root = $FindBin::Bin;
 
@@ -34,11 +35,19 @@ sub build_libtest
   
   if($^O ne 'MSWin32')
   {
-    $b->link(
+    my $dll = $b->link(
       lib_file => $b->lib_file(File::Spec->catfile($root, 'libtest', 'libtest.o')),
       objects  => \@obj,
       extra_linker_flags => Alien::FFI->libs,
     );
+    
+    if($^O eq 'cygwin')
+    {
+      my $old = $dll;
+      my $new = $dll;
+      $new =~ s{libtest.dll$}{cygtest-1.dll};
+      move($old => $new) || die "unable to copy $old => $new $!";
+    }
   }
   else
   {
