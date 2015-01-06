@@ -4,26 +4,22 @@ language: perl
 # prereqs, else travis will try to install deps using cpanm
 # which is not what we want since this is a Dist::Zilla dist.
 install:
-  - cpanm -n Dist::Zilla
-  - dzil authordeps --missing | cpanm -n
-  - cpanm -n Test::CPAN::Changes Test::EOL Test::Fixme Test::NoTabs Test::Pod::Spelling::CommonMistakes Test::Spelling Test::Strict Test::Version Test::Vars || true
-#  - cpanm -n Foo::Bar
+  - cpanm -n Alien::FFI
+  - cpanm -n ExtUtils::CBuilder
+  - cpanm -n Config::AutoConf
+  - cpanm -n FFI::CheckLib
 
 perl:
-  - "5.8"
-  - "5.10"
-  - "5.12"
-  - "5.14"
-  - "5.16"
+#  - "5.8"
+#  - "5.10"
+#  - "5.12"
+#  - "5.14"
+#  - "5.16"
   - "5.18"
   - "5.20"
 
-#env:
-#  - FOO=bar
-
-#before_script: /bin/true
-
 script:
-  - dzil test -v
+  - perl Build.PL
+  - ./Build --verbose
+  - ./Build test --verbose
 
-#after_script: /bin/true
