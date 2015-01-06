@@ -15,6 +15,7 @@ sub new
   $args{c_source}             = 'xs';  
   $args{extra_compiler_flags} = Alien::FFI->cflags;
   $args{extra_linker_flags}   = Alien::FFI->libs;
+  $args{requires}->{'Math::Int64'} = '0.34' if $Config{uvsize} < 8;
 
   my $self = $class->SUPER::new(%args);
 
