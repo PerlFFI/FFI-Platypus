@@ -337,6 +337,20 @@
           case FFI_TYPE_SINT32:
             XSRETURN_IV((int32_t) result);
             break;
+          case FFI_TYPE_UINT64:
+#ifdef HAVE_IV_IS_64
+            XSRETURN_UV((uint64_t) result);
+#else
+            croak("TODO: return 64 bit integer on 32 bit Perl");
+#endif
+            break;
+          case FFI_TYPE_SINT64:
+#ifdef HAVE_IV_IS_64
+            XSRETURN_IV((int64_t) result);
+#else
+            croak("TODO: return 64 bit integer on 32 bit Perl");
+#endif
+            break;
           case FFI_TYPE_POINTER:
             XSRETURN_IV(PTR2IV((void*)result));
             break;
