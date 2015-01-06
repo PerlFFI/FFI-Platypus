@@ -93,6 +93,11 @@ sub build_configure
     $ac->define_var( HAVE_ALLOCA => 1 );
   }
   
+  if($Config{ivsize} >= 8)
+  {
+    $ac->define_var( HAVE_IV_IS_64 => 1 );
+  }
+  
   foreach my $lib (map { s/^-l//; $_ } split /\s+/, $Config{perllibs})
   {
     if($ac->check_lib($lib, 'dlopen'))

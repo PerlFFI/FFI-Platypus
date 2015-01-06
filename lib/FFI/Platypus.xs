@@ -25,6 +25,11 @@ XS(ffi_pl_sub_call)
 
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 
+BOOT:
+#ifndef HAVE_IV_IS_64
+    PERL_MATH_INT64_LOAD_OR_CROAK;
+#endif
+
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::dl
 
 void *

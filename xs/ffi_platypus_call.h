@@ -38,6 +38,21 @@
           case FFI_TYPE_SINT32:
             ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg));
             break;
+#ifdef HAVE_IV_IS_64
+          case FFI_TYPE_UINT64:
+            ffi_pl_arguments_set_uint64(arguments, i, SvUV(arg));
+            break;
+          case FFI_TYPE_SINT64:
+            ffi_pl_arguments_set_sint64(arguments, i, SvIV(arg));
+            break;
+#else
+          case FFI_TYPE_UINT64:
+            ffi_pl_arguments_set_uint64(arguments, i, SvU64(arg));
+            break;
+          case FFI_TYPE_SINT64:
+            ffi_pl_arguments_set_sint64(arguments, i, SvI64(arg));
+            break;
+#endif
           case FFI_TYPE_POINTER:
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;

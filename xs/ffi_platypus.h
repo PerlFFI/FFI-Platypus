@@ -25,6 +25,9 @@
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+#ifndef HAVE_IV_IS_64
+#include "perl_math_int64.h"
+#endif
 
 #ifndef HAVE_RTLD_LAZY
 #define RTLD_LAZY 0
@@ -124,6 +127,10 @@ typedef struct _ffi_pl_arguments {
 #define ffi_pl_arguments_get_sint32(arguments, i)         (arguments->slot[i].sint32)
 #define ffi_pl_arguments_set_uint32(arguments, i, value)  (arguments->slot[i].uint32  = value)
 #define ffi_pl_arguments_get_uint32(arguments, i)         (arguments->slot[i].uint32)
+#define ffi_pl_arguments_set_sint64(arguments, i, value)  (arguments->slot[i].sint64  = value)
+#define ffi_pl_arguments_get_sint64(arguments, i)         (arguments->slot[i].sint64)
+#define ffi_pl_arguments_set_uint64(arguments, i, value)  (arguments->slot[i].uint64  = value)
+#define ffi_pl_arguments_get_uint64(arguments, i)         (arguments->slot[i].uint64)
 
 #define ffi_pl_arguments_pointers(arguments) ((void**)&arguments->slot[arguments->count])
 
