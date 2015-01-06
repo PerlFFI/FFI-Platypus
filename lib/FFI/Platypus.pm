@@ -107,35 +107,35 @@ The following FFI types are always available (parentheticals indicates the usual
 
 =item sint8
 
-Signed 8 bit byte (I<signed char>).
+Signed 8 bit byte (C<signed char>, C<int8_t>).
 
 =item uint8
 
-Unsigned 8 bit byte (I<unsigned char>).
+Unsigned 8 bit byte (C<unsigned char>, C<uint8_t>).
 
 =item sint16
 
-Signed 16 bit integer (I<short>)
+Signed 16 bit integer (C<short>, C<int16_t>)
 
 =item uint16
 
-Unsigned 16 bit integer (I<unsigned short>)
+Unsigned 16 bit integer (C<unsigned short>, C<uint16_t>)
 
 =item sint32
 
-Signed 32 bit integer (I<int>)
+Signed 32 bit integer (C<int>, C<int32_t>)
 
 =item uint32
 
-Unsigned 32 bit integer (I<unsigned int>)
+Unsigned 32 bit integer (C<unsigned int>, C<uint32_t>)
 
 =item sint64
 
-Signed 64 bit integer (I<long> or I<long long>)
+Signed 64 bit integer (C<long> or C<long long>, C<int64_t>)
 
 =item uint64
 
-Unsigned 64 bit integer (I<unsigned long> or I<unsigned long long>)
+Unsigned 64 bit integer (C<unsigned long> or C<unsigned long long>, C<uint64_t>)
 
 =item float
 
@@ -162,6 +162,20 @@ The following FFI types I<may> be available depending on your platform:
 =item longdouble
 
 Double or Quad precision floating point (I<long double>)
+
+=back
+
+The following types are supported, but actual size or signedness depends on your platform:
+
+=over 4
+
+=item char
+
+May be either signed or unsigned.
+
+=item size_t
+
+May be either 32 or 64 bit.  Usually unsigned.
 
 =back
 
