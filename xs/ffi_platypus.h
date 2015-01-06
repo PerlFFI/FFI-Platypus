@@ -25,9 +25,6 @@
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
-#ifndef HAVE_IV_IS_64
-#include "perl_math_int64.h"
-#endif
 
 #ifndef HAVE_RTLD_LAZY
 #define RTLD_LAZY 0

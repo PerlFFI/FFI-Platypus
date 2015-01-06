@@ -5,6 +5,10 @@
 
 #include "ffi_platypus.h"
 
+#ifndef HAVE_IV_IS_64
+#include "perl_math_int64.h"
+#endif
+
 XS(ffi_pl_sub_call)
 {
   ffi_pl_function *self;
