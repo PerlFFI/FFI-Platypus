@@ -2,5 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.02      2015-01-07 17:40:35 -0500
+  - Early (and incomplete) alpha
+
 0.01      2015-01-07 17:21:27 -0500
   - Original (and incompatible) prototype
