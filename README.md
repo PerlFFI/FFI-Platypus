@@ -39,35 +39,35 @@ The following FFI types are always available (parentheticals indicates the usual
 
 - sint8
 
-    Signed 8 bit byte (_signed char_).
+    Signed 8 bit byte (`signed char`, `int8_t`).
 
 - uint8
 
-    Unsigned 8 bit byte (_unsigned char_).
+    Unsigned 8 bit byte (`unsigned char`, `uint8_t`).
 
 - sint16
 
-    Signed 16 bit integer (_short_)
+    Signed 16 bit integer (`short`, `int16_t`)
 
 - uint16
 
-    Unsigned 16 bit integer (_unsigned short_)
+    Unsigned 16 bit integer (`unsigned short`, `uint16_t`)
 
 - sint32
 
-    Signed 32 bit integer (_int_)
+    Signed 32 bit integer (`int`, `int32_t`)
 
 - uint32
 
-    Unsigned 32 bit integer (_unsigned int_)
+    Unsigned 32 bit integer (`unsigned int`, `uint32_t`)
 
 - sint64
 
-    Signed 64 bit integer (_long_ or _long long_)
+    Signed 64 bit integer (`long` or `long long`, `int64_t`)
 
 - uint64
 
-    Unsigned 64 bit integer (_unsigned long_ or _unsigned long long_)
+    Unsigned 64 bit integer (`unsigned long` or `unsigned long long`, `uint64_t`)
 
 - float
 
@@ -90,6 +90,16 @@ The following FFI types _may_ be available depending on your platform:
 - longdouble
 
     Double or Quad precision floating point (_long double_)
+
+The following types are supported, but actual size or sign depends on your platform:
+
+- char
+
+    May be either signed or unsigned.
+
+- size\_t
+
+    May be either 32 or 64 bit.  Usually unsigned.
 
 ## types
 

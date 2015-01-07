@@ -165,7 +165,7 @@ Double or Quad precision floating point (I<long double>)
 
 =back
 
-The following types are supported, but actual size or signedness depends on your platform:
+The following types are supported, but actual size or sign depends on your platform:
 
 =over 4
 
