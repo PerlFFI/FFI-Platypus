@@ -3,22 +3,23 @@
  * Thisfile generated from similar file libtest/uint8.c
  * all instances of "int8" have been changed to "int64"
  */
+#include "libtest.h"
 #include "ffi_platypus.h"
 
-extern uint64_t
+EXTERN uint64_t
 uint64_add(uint64_t a, uint64_t b)
 {
   return a + b;
 }
 
-extern uint64_t*
+EXTERN uint64_t*
 uint64_inc(uint64_t *a, uint64_t b)
 {
   *a += b;
   return a;
 }
 
-extern uint64_t
+EXTERN uint64_t
 uint64_sum(uint64_t list[10])
 {
   int i;
@@ -30,7 +31,7 @@ uint64_sum(uint64_t list[10])
   return total;
 }
 
-extern void
+EXTERN void
 uint64_array_inc(uint64_t list[10])
 {
   int i;
@@ -40,7 +41,7 @@ uint64_array_inc(uint64_t list[10])
   }
 }
 
-extern uint64_t *
+EXTERN uint64_t *
 uint64_static_array(void)
 {
   static uint64_t foo[] = { 1,4,6,8,10,12,14,16,18,20 };

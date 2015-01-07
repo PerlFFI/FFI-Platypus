@@ -3,22 +3,23 @@
  * Thisfile generated from similar file libtest/sint8.c
  * all instances of "int8" have been changed to "int16"
  */
+#include "libtest.h"
 #include "ffi_platypus.h"
 
-extern int16_t
+EXTERN int16_t
 sint16_add(int16_t a, int16_t b)
 {
   return a + b;
 }
 
-extern int16_t*
+EXTERN int16_t*
 sint16_inc(int16_t *a, int16_t b)
 {
   *a += b;
   return a;
 }
 
-extern int16_t
+EXTERN int16_t
 sint16_sum(int16_t list[10])
 {
   int i;
@@ -30,7 +31,7 @@ sint16_sum(int16_t list[10])
   return total;
 }
 
-extern void
+EXTERN void
 sint16_array_inc(int16_t list[10])
 {
   int i;
@@ -40,7 +41,7 @@ sint16_array_inc(int16_t list[10])
   }
 }
 
-extern int16_t *
+EXTERN int16_t *
 sint16_static_array(void)
 {
   static int16_t foo[] = { -1,2,-3,4,-5,6,-7,8,-9,10 };

@@ -1,12 +1,13 @@
+#include "libtest.h"
 #include "ffi_platypus.h"
 
-void *
+EXTERN void *
 pointer_null(void)
 {
   return NULL;
 }
 
-int
+EXTERN int
 pointer_is_null(void *ptr)
 {
   return ptr == NULL;

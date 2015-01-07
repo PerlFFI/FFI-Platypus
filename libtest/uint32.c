@@ -3,22 +3,23 @@
  * Thisfile generated from similar file libtest/uint8.c
  * all instances of "int8" have been changed to "int32"
  */
+#include "libtest.h"
 #include "ffi_platypus.h"
 
-extern uint32_t
+EXTERN uint32_t
 uint32_add(uint32_t a, uint32_t b)
 {
   return a + b;
 }
 
-extern uint32_t*
+EXTERN uint32_t*
 uint32_inc(uint32_t *a, uint32_t b)
 {
   *a += b;
   return a;
 }
 
-extern uint32_t
+EXTERN uint32_t
 uint32_sum(uint32_t list[10])
 {
   int i;
@@ -30,7 +31,7 @@ uint32_sum(uint32_t list[10])
   return total;
 }
 
-extern void
+EXTERN void
 uint32_array_inc(uint32_t list[10])
 {
   int i;
@@ -40,7 +41,7 @@ uint32_array_inc(uint32_t list[10])
   }
 }
 
-extern uint32_t *
+EXTERN uint32_t *
 uint32_static_array(void)
 {
   static uint32_t foo[] = { 1,4,6,8,10,12,14,16,18,20 };
