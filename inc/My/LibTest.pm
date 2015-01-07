@@ -20,8 +20,7 @@ sub build_libtest
     $b->compile(
       source => $_,
       include_dirs => [
-        File::Spec->catdir($root, 'libtest'),
-        File::Spec->catdir($root, 'xs'),
+        File::Spec->catdir($root, 'include'),
       ],
       extra_compiler_flags => Alien::FFI->cflags,
     );

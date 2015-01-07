@@ -44,7 +44,7 @@ dlopen(filename);
   OUTPUT:
     RETVAL
 
-char *
+const char *
 dlerror();
 
 void *

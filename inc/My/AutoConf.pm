@@ -77,8 +77,17 @@ sub build_configure
   my $ac = Config::AutoConf->new;
   
   $ac->check_prog_cc;
+
+  $ac->define_var( do { 
+    my $os = uc $^O;
+    $os =~ s/-/_/;
+    $os =~ s/[^A-Z0-9_]//g;
+    "PERL_OS_$os";
+  } => 1 );
   
-  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes ))
+  $ac->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin)$/;
+  
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio ))
   {
     $ac->check_header("$header.h");
   }
@@ -139,7 +148,7 @@ sub build_configure
     }
   }
   
-  $ac->write_config_h( File::Spec->rel2abs( File::Spec->catfile( 'xs', 'ffi_platypus_config.h' )));
+  $ac->write_config_h( File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypus_config.h' )));
   $mb->config_data( type_map => \%type_map);
 }
 

@@ -8,7 +8,7 @@
 /.build
 /config.log
 /lib/FFI/Platypus.c
-/xs/ffi_platypus_config.h
+/include/ffi_platypus_config.h
 *.o
 *.obj
 *.dll

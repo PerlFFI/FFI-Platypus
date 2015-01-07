@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 our @list = map { [split /\// ] } qw(
-  xs/ppport.h
+  include/ppport.h
 );
 
 1;

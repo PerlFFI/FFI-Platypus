@@ -5,7 +5,9 @@
 #include "ffi_platypus_config.h"
 
 #ifdef HAVE_DLFCN_H
+#ifndef PERL_OS_WINDOWS
 #include <dlfcn.h>
+#endif
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -26,21 +28,21 @@
 #include <alloca.h>
 #endif
 
-#ifndef HAVE_RTLD_LAZY
+#ifndef RTLD_LAZY
 #define RTLD_LAZY 0
 #endif
 
-#ifndef HAVE_dlopen
+#ifdef PERL_OS_WINDOWS
 
-void *ffi_platypus_dlopen(const char *filename, int flag);
-char *ffi_platypus_dlerror(void);
-void *ffi_platypus_dlsym(void *handle, const char *symbol);
-int ffi_platypus_dlclose(void *handle);
+void *windlopen(const char *, int);
+const char *windlerror(void);
+void *windlsym(void *, const char *);
+int windlclose(void *);
 
-#define dlopen(filename, flag) ffi_platypus_dlopen(filename, flag)
-#define dlerror() ffi_platypus_dlerror()
-#define dlsym(handle, symbol) ffi_platypus_dlsym(handle, symbol)
-#define dlclose(handle) ffi_platypus_dlclose(handle)
+#define dlopen(filename, flag) windlopen(filename, flag)
+#define dlerror() windlerror()
+#define dlsym(handle, symbol) windlsym(handle, symbol)
+#define dlclose(handle) windlclose(handle)
 
 #endif
 
