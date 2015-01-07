@@ -18,9 +18,9 @@ sub new
   $args{extra_linker_flags}   = Alien::FFI->libs;
   $args{requires}->{'Math::Int64'} = '0.34' if $Config{uvsize} < 8;
 
-  if($^O eq 'MSWin32' && $Config{cc} !~ /cl(\.exe)?$/i)
+  if($^O eq 'MSWin32' && $Config{cc} =~ /cl(\.exe)?$/i)
   {
-    $args{extra_linker_flags} .= 'psapi.lib';
+    $args{extra_linker_flags} .= ' psapi.lib';
   }
   elsif($^O =~ /^(MSWin32|cygwin)$/)
   {

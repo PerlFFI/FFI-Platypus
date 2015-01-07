@@ -7,6 +7,8 @@ use ExtUtils::CBuilder;
 use FindBin ();
 use Alien::FFI;
 use File::Copy qw( move );
+use Config;
+use Text::ParseWords qw( shellwords );
 
 my $root = $FindBin::Bin;
 
@@ -50,7 +52,25 @@ sub build_libtest
   }
   else
   {
-    die 'TODO';
+    # On windows we can't depend on MM::CBuilder to make the .dll file because it creates dlls
+    # that export only one symbol (which is used for bootstrapping XS modules).
+    my $dll = File::Spec->catfile($FindBin::Bin, 'libtest', 'libtest.dll');
+    $dll =~ s{\\}{/}g;
+    my @cmd;
+    my $cc = $Config{cc};
+    if($cc !~ /cl(\.exe)?$/)
+    {
+      my $lddlflags = $Config{lddlflags};
+      $lddlflags =~ s{\\}{/}g;
+      @cmd = ($cc, shellwords($lddlflags), -o => $dll, "-Wl,--export-all-symbols", @obj);
+    }
+    else
+    {
+      @cmd = ($cc, @obj, '/link', '/dll', '/out:' . $dll);
+    }
+    print "@cmd";
+    system @cmd;
+    exit 2 if $?;
   }
 }
 
