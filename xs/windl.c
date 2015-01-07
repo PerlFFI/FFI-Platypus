@@ -11,9 +11,12 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#ifdef HAVE_PSAPI_H
+/*
+ * TODO: c::ac is not detecting psapi.h for some reason ...
+ * but it should always be there in any platform that
+ * we support
+ */
 #include <psapi.h>
-#endif
 
 typedef struct _library_handle {
   int is_null;
@@ -119,8 +122,6 @@ windlsym(void *void_handle, const char *symbol_name)
   }
   else
   {
-#if 1
-#else
     int n;
     DWORD needed;
     HANDLE process;
@@ -166,7 +167,6 @@ windlsym(void *void_handle, const char *symbol_name)
         }
       }
     }
-#endif    
     error = not_found;
     return NULL;
   }
