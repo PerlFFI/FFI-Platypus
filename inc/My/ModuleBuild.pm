@@ -96,6 +96,7 @@ sub ACTION_build
 sub ACTION_libtest
 {
   my($self) = @_;
+  $self->depends_on('ac') unless $self->config_data('done_ac');
   My::LibTest->build_libtest(shift);
   $self->config_data('done_libtest' => 1);
 }
