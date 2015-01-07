@@ -27,6 +27,9 @@
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 
 #ifndef RTLD_LAZY
 #define RTLD_LAZY 0
