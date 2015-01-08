@@ -9,13 +9,12 @@ use FFI::Platypus;
 
 =head1 SYNOPSIS
 
- use FFI::CheckLib;
- use FFI::Platypus::Declare
-   [ uint8 => 'u8' ],
-   'string';
+ use FFI::Platypus::Declare 'string', 'int';
+
+ lib undef; # use libc
+ function puts => [string] => int;
  
- lib find_lib lib => 'mylib', symbol => 'my_function';
- function my_function => [ u8 ] => 'string';
+ puts("hello world");
 
 =head1 DESCRIPTION
 
@@ -123,3 +122,15 @@ sub import
 }
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus>
+
+Object oriented interface to platypus.
+
+=back
+
+=cut

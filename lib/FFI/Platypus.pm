@@ -8,6 +8,33 @@ use Carp qw( croak );
 # ABSTRACT: Glue a duckbill to an adorable aquatic mammal
 # VERSION
 
+=head1 SYNOPSIS
+
+ use FFI::Platypus;
+ 
+ my $ffi = FFI::Platypus->new;
+ $ffi->lib(undef); # search libc
+ $ffi->type('int');
+ 
+ # call dynamically
+ $ffi->function( puts => ['string'] => 'int' )->call("hello world");
+ 
+ # attach as a xsub and call (much faster)
+ $ffi->attach( puts => ['string'] => 'int' );
+ puts("hello world");
+
+=head1 DESCRIPTION
+
+Platypus provides an interface for creating FFI based modules in
+Perl that call machine code via C<libffi>.  This is an alternative
+to XS that does not require a compiler.
+
+The declarative interface L<FFI::Platypus::Declare> may be more
+suitable, if you do not need the extra power of the OO interface
+and you do not mind the namespace pollution.
+
+=cut
+
 require XSLoader;
 XSLoader::load(
   'FFI::Platypus', eval q{ $VERSION } || do {
@@ -370,3 +397,28 @@ sub new
 }
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus::Declare>
+
+Declarative interface to L<FFI::Platypus>.
+
+=item L<FFI::CheckLib>
+
+Find dynamic libraries in a portable way.
+
+=item L<FFI::TinyCC>
+
+JIT compiler for FFI.
+
+=item L<FFI::Raw>
+
+Alternate interface to libffi with fewer features.  It notably lacks the ability to
+create real xsubs, which may make L<FFI::Platypus> much faster.
+
+=back
+
+=cut

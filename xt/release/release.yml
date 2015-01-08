@@ -10,6 +10,9 @@ pod_spelling_system:
     - parentheticals
     - ffi
     - xsub
+    - JIT
+    - xsubs
+    - libffi
 
 pod_coverage:
   skip: 0

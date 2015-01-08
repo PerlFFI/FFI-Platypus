@@ -2,6 +2,31 @@
 
 Glue a duckbill to an adorable aquatic mammal
 
+# SYNOPSIS
+
+    use FFI::Platypus;
+    
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(undef); # search libc
+    $ffi->type('int');
+    
+    # call dynamically
+    $ffi->function( puts => ['string'] => 'int' )->call("hello world");
+    
+    # attach as a xsub and call (much faster)
+    $ffi->attach( puts => ['string'] => 'int' );
+    puts("hello world");
+
+# DESCRIPTION
+
+Platypus provides an interface for creating FFI based modules in
+Perl that call machine code via `libffi`.  This is an alternative
+to XS that does not require a compiler.
+
+The declarative interface [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare) may be more
+suitable, if you do not need the extra power of the OO interface
+and you do not mind the namespace pollution.
+
 # CONSTRUCTORS
 
 ## new
@@ -135,6 +160,25 @@ The advantage of attaching a function over using the [FFI::Platypus#function](ht
 is that it is much much faster since no object resolution needs to be done.  The disadvantage
 is that it locks the function and the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance into memory permanently, since
 there is no way to deallocate an xsub.
+
+# SEE ALSO
+
+- [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)
+
+    Declarative interface to [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
+
+- [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib)
+
+    Find dynamic libraries in a portable way.
+
+- [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC)
+
+    JIT compiler for FFI.
+
+- [FFI::Raw](https://metacpan.org/pod/FFI::Raw)
+
+    Alternate interface to libffi with fewer features.  It notably lacks the ability to
+    create real xsubs, which may make [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) much faster.
 
 # AUTHOR
 
