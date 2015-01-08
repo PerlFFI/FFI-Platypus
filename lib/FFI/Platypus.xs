@@ -89,7 +89,7 @@ _new(class, type, platypus_type, array_size)
     else if(!strcmp(platypus_type, "array"))
     {
       char *buffer;
-      Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra), char);
+      Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_array), char);
       self = (ffi_pl_type*) buffer;
       self->ffi_type = NULL;
       self->platypus_type = FFI_PL_ARRAY;

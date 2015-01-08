@@ -54,26 +54,26 @@ typedef enum _platypus_type {
   FFI_PL_STRING,
   FFI_PL_POINTER,
   FFI_PL_ARRAY,
-  FFI_PL_BUFFER,
-  FFI_PL_CUSTOM
+  FFI_PL_CUSTOM_PERL,
+  FFI_PL_CUSTOM_C
 } platypus_type;
 
 typedef struct _ffi_pl_type_extra_custom {
-  void *custom[6]; /* really, these are SV* pointing to a coderef */
+  /*
+   * this is used for both FFI_PL_CUSTOM_PERL and FFI_PL_CUSTOM_C
+   * for _PERL these point to SV* that are code references
+   * for _C these are function pointers.
+   */
+  void *custom[6];
 } ffi_pl_type_extra_custom;
 
 typedef struct _ffi_pl_type_extra_array {
   int element_count;
 } ffi_pl_type_extra_array;
 
-typedef struct _ffi_pl_type_extra_buffer {
-  int argument_order;
-} ffi_pl_type_extra_buffer;
-
-typedef struct _ffi_pl_type_extra {
+typedef union _ffi_pl_type_extra {
   ffi_pl_type_extra_custom custom;
   ffi_pl_type_extra_array  array;
-  ffi_pl_type_extra_custom buffer;
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {
