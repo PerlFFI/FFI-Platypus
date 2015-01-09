@@ -22,11 +22,11 @@ function [pointer_null => 'null2'] => [] => uint8_a;
 is add(1,2), 3, 'add(1,2) = 3';
 
 my $i = 3;
-is_deeply inc(\$i, 4), \7, 'inc(\$i,4) = \7';
+is ${inc(\$i, 4)}, 7, 'inc(\$i,4) = \7';
 
 is $i, 3+4, "i=3+4";
 
-is_deeply inc(\3,4), \7, 'inc(\3,4) = \7';
+is ${inc(\3,4)}, 7, 'inc(\3,4) = \7';
 
 my @list = (1,2,3,4,5,6,7,8,9,10);
 

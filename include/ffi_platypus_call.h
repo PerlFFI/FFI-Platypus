@@ -404,14 +404,22 @@
 #ifdef HAVE_IV_IS_64
             XSRETURN_UV((uint64_t) result);
 #else
-            croak("TODO: return 64 bit integer on 32 bit Perl");
+            {
+              ST(0) = sv_newmortal();
+              sv_setu64(ST(0), (uint64_t)result);
+              XSRETURN(1);
+            }
 #endif
             break;
           case FFI_TYPE_SINT64:
 #ifdef HAVE_IV_IS_64
             XSRETURN_IV((int64_t) result);
 #else
-            croak("TODO: return 64 bit integer on 32 bit Perl");
+            {
+              ST(0) = sv_newmortal();
+              sv_seti64(ST(0), (int64_t)result);
+              XSRETURN(1);
+            }
 #endif
             break;
           case FFI_TYPE_POINTER:

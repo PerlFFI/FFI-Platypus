@@ -10,10 +10,12 @@
 /config.log
 /lib/FFI/Platypus.c
 /include/ffi_platypus_config.h
+/test*.c
 *.o
 *.obj
 *.dll
 *.so
 *.bundle
 *.tmp
-/test*.c
+*.core
+core

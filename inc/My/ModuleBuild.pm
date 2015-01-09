@@ -62,6 +62,8 @@ sub new
     'config.log',
     'test*.o',
     'test*.c',
+    '*.core',
+    'core',
   );
 
   $self;

@@ -22,11 +22,11 @@ function [pointer_null => 'null2'] => [] => sint8_a;
 is add(-1,2), 1, 'add(-1,2) = 1';
 
 my $i = -3;
-is_deeply inc(\$i, 4), \1, 'inc(\$i,4) = \1';
+is ${inc(\$i, 4)}, 1, 'inc(\$i,4) = \1';
 
 is $i, 1, "i=1";
 
-is_deeply inc(\-3,4), \1, 'inc(\-3,4) = \1';
+is ${inc(\-3,4)}, 1, 'inc(\-3,4) = \1';
 
 my @list = (-5,-4,-3,-2,-1,0,1,2,3,4);
 
