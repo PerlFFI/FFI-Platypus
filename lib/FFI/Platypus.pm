@@ -341,16 +341,18 @@ sub DESTROY
   }
 }
 
-package
-  FFI::Platypus::Function;
+package FFI::Platypus::Function;
+
+# VERSION
 
 use overload '&{}' => sub {
   my $ffi = shift;
   sub { $ffi->call(@_) };
 };
 
-package
-  FFI::Platypus::Type;
+package FFI::Platypus::Type;
+
+# VERSION
 
 sub new
 {
