@@ -48,3 +48,17 @@ sint64_static_array(void)
   return foo;
 }
 
+typedef int64_t (*closure_t)(int64_t);
+closure_t my_closure;
+
+EXTERN void
+sint64_set_closure(closure_t closure)
+{
+  my_closure = closure;
+}
+
+EXTERN int64_t
+sint64_call_closure(int64_t value)
+{
+  return my_closure(value);
+}

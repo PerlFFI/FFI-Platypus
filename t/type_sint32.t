@@ -5,12 +5,13 @@
 #
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More tests => 12;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'sint32', 'void', 'int',
   ['sint32 *' => 'sint32_p'],
-  ['sint32 [10]' => 'sint32_a'];
+  ['sint32 [10]' => 'sint32_a'],
+  ['(sint32)->sint32' => 'sint32_c'];
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
@@ -45,3 +46,14 @@ is is_null(\22), 0, 'is_null(22) == 0';
 is_deeply static_array(), [-1,2,-3,4,-5,6,-7,8,-9,10], 'static_array = [-1,2,-3,4,-5,6,-7,8,-9,10]';
 
 is null2(), undef, 'null2() == undef';
+
+my $closure = closure { $_[0]-2 };
+function [sint32_set_closure => 'set_closure'] => [sint32_c] => void;
+function [sint32_call_closure => 'call_closure'] => [sint32] => sint32;
+
+set_closure($closure);
+is call_closure(-2), -4, 'call_closure(-2) = -4';
+
+$closure = closure { undef };
+set_closure($closure);
+is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';

@@ -48,3 +48,17 @@ sint32_static_array(void)
   return foo;
 }
 
+typedef int32_t (*closure_t)(int32_t);
+closure_t my_closure;
+
+EXTERN void
+sint32_set_closure(closure_t closure)
+{
+  my_closure = closure;
+}
+
+EXTERN int32_t
+sint32_call_closure(int32_t value)
+{
+  return my_closure(value);
+}

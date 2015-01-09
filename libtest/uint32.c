@@ -48,3 +48,17 @@ uint32_static_array(void)
   return foo;
 }
 
+typedef uint32_t (*closure_t)(uint32_t);
+closure_t my_closure;
+
+EXTERN void
+uint32_set_closure(closure_t closure)
+{
+  my_closure = closure;
+}
+
+EXTERN uint32_t
+uint32_call_closure(uint32_t value)
+{
+  return my_closure(value);
+}

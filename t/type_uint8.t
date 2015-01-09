@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 12;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'uint8', 'void', 'int',
@@ -48,3 +48,8 @@ function [uint8_call_closure => 'call_closure'] => [uint8] => uint8;
 
 set_closure($closure);
 is call_closure(2), 4, 'call_closure(2) = 4';
+
+$closure = closure { undef };
+set_closure($closure);
+is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
+
