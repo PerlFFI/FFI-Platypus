@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.03      2015-01-09 15:40:14 -0500
+  - Second (and incomplete) alpha
+  - closure support added (only integer arguments implmented).
+  - memory leak related to closures will be fixed in the next alpha.
+
 0.02      2015-01-07 17:40:35 -0500
   - Early (and incomplete) alpha
 
