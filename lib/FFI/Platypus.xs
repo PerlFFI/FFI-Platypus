@@ -66,6 +66,7 @@ _new(class, type, platypus_type, array_size)
     size_t array_size
   PREINIT:
     ffi_pl_type *self;
+    char *buffer;
   CODE:
     self = NULL;
     if(!strcmp(platypus_type, "string"))
@@ -88,7 +89,6 @@ _new(class, type, platypus_type, array_size)
     }
     else if(!strcmp(platypus_type, "array"))
     {
-      char *buffer;
       Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_array), char);
       self = (ffi_pl_type*) buffer;
       self->ffi_type = NULL;
@@ -140,66 +140,188 @@ _new(class, type, platypus_type, array_size)
   OUTPUT:
     RETVAL
 
-ffi_pl_string
-ffi_type(self)
-    ffi_pl_type *self
+ffi_pl_type *
+_new_closure(class, return_type, ...)
+    const char *class;
+    ffi_pl_type *return_type
+  PREINIT:
+    char *buffer;
+    ffi_pl_type *self;
+    int i;
+    SV *arg;
+    ffi_type *ffi_return_type;
+    ffi_type **ffi_argument_types;
+    ffi_status ffi_status;
   CODE:
-    switch(self->ffi_type->type)
+    Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2), char);
+    self = (ffi_pl_type*) buffer;
+    
+    self->ffi_type = &ffi_type_pointer;
+    self->platypus_type = FFI_PL_CLOSURE;
+    self->extra[0].closure.return_type = return_type;
+
+    if(return_type->platypus_type == FFI_PL_FFI)
     {
-      case FFI_TYPE_VOID:
-        RETVAL = "void";
-        break;
-      case FFI_TYPE_FLOAT:
-        RETVAL = "float";
-        break;
-      case FFI_TYPE_DOUBLE:
-        RETVAL = "double";
-        break;
-      case FFI_TYPE_LONGDOUBLE:
-        RETVAL = "longdouble";
-        break;
-      case FFI_TYPE_UINT8:
-        RETVAL = "uint8";
-        break;
-      case FFI_TYPE_SINT8:
-        RETVAL = "sint8";
-        break;
-      case FFI_TYPE_UINT16:
-        RETVAL = "uint16";
-        break;
-      case FFI_TYPE_SINT16:
-        RETVAL = "sint16";
-        break;
-      case FFI_TYPE_UINT32:
-        RETVAL = "uint32";
-        break;
-      case FFI_TYPE_SINT32:
-        RETVAL = "sint32";
-        break;
-      case FFI_TYPE_UINT64:
-        RETVAL = "uint64";
-        break;
-      case FFI_TYPE_SINT64:
-        RETVAL = "sint64";
-        break;
-      case FFI_TYPE_POINTER:
-        RETVAL = "pointer";
-        break;
-      default:
-        RETVAL = NULL;
-        break;
+      ffi_return_type = return_type->ffi_type;
     }
+    else
+    {
+      ffi_return_type = &ffi_type_pointer;
+    }
+    
+    for(i=0; i<(items-2); i++)
+    {
+      arg = ST(2+i);
+      self->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
+      if(self->extra[0].closure.argument_types[i]->platypus_type == FFI_PL_FFI)
+      {
+        ffi_argument_types[i] = self->extra[0].closure.argument_types[i]->ffi_type;
+      }
+      else
+      {
+        ffi_argument_types[i] = &ffi_type_pointer;
+      }
+    }
+    
+    ffi_status = ffi_prep_cif(
+      &self->extra[0].closure.ffi_cif,
+      FFI_DEFAULT_ABI,
+      items-2,
+      ffi_return_type,
+      ffi_argument_types
+    );
+    
+    if(ffi_status != FFI_OK)
+    {
+      Safefree(self);
+      Safefree(ffi_argument_types);
+      if(ffi_status == FFI_BAD_TYPEDEF)
+        croak("bad typedef");
+      else if(ffi_status == FFI_BAD_ABI)
+        croak("bad abi");
+      else
+        croak("unknown error with ffi_prep_cif");
+    }
+    
+    RETVAL = self;
+    
   OUTPUT:
     RETVAL
 
-size_t
-array_size(self)
+SV*
+meta(self)
     ffi_pl_type *self
+  PREINIT:
+    HV *meta;
+    const char *string;
   CODE:
-    if(self->platypus_type == FFI_PL_ARRAY)
-      RETVAL = self->extra[0].array.element_count;
-    else
-      RETVAL = 0;
+    meta = newHV();
+    if(self->platypus_type == FFI_PL_FFI)
+    {
+      hv_store(meta, "size",          4, newSViv(self->ffi_type->size), 0);
+      hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
+      hv_store(meta, "type",          4, newSVpv("scalar",0),0);
+    }
+    else if(self->platypus_type == FFI_PL_STRING)
+    {
+      hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
+      hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
+      hv_store(meta, "type",          4, newSVpv("string",0),0);
+    }
+    else if(self->platypus_type == FFI_PL_POINTER)
+    {
+      hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
+      hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
+      hv_store(meta, "type",          4, newSVpv("opaque_pointer",0),0);
+    }
+    else if(self->platypus_type == FFI_PL_ARRAY)
+    {
+      hv_store(meta, "size",           4, newSViv(self->ffi_type->size * self->extra[0].array.element_count), 0);    
+      hv_store(meta, "element_size",  12, newSViv(self->ffi_type->size), 0);
+      hv_store(meta, "type",           4, newSVpv("array",0),0);
+      hv_store(meta, "element_count", 13, newSViv(self->extra[0].array.element_count), 0);
+    }
+    else if(self->platypus_type == FFI_PL_CLOSURE)
+    {
+      hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
+      hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
+      hv_store(meta, "type",          4, newSVpv("closure",0),0);
+    }
+    switch(self->ffi_type->type)
+    {
+      case FFI_TYPE_VOID:
+        hv_store(meta, "element_type", 12, newSVpv("void",0),0);
+        break;
+      case FFI_TYPE_FLOAT:
+      case FFI_TYPE_DOUBLE:
+      case FFI_TYPE_LONGDOUBLE:
+        hv_store(meta, "element_type", 12, newSVpv("float",0),0);
+        break;
+      case FFI_TYPE_UINT8:
+      case FFI_TYPE_UINT16:
+      case FFI_TYPE_UINT32:
+      case FFI_TYPE_UINT64:
+        hv_store(meta, "element_type", 12, newSVpv("int",0),0);
+        hv_store(meta, "sign",          4, newSViv(0),0);
+        break;
+      case FFI_TYPE_SINT8:
+      case FFI_TYPE_SINT16:
+      case FFI_TYPE_SINT32:
+      case FFI_TYPE_SINT64:
+        hv_store(meta, "element_type", 12, newSVpv("int",0),0);
+        hv_store(meta, "sign",          4, newSViv(1),0);
+        break;
+      case FFI_TYPE_POINTER:
+        hv_store(meta, "element_type", 12, newSVpv("pointer",0),0);
+        break;
+    }
+    switch(self->ffi_type->type)
+    {
+      case FFI_TYPE_VOID:
+        string = "void";
+        break;
+      case FFI_TYPE_FLOAT:
+        string = "float";
+        break;
+      case FFI_TYPE_DOUBLE:
+        string = "double";
+        break;
+      case FFI_TYPE_LONGDOUBLE:
+        string = "longdouble";
+        break;
+      case FFI_TYPE_UINT8:
+        string = "uint8";
+        break;
+      case FFI_TYPE_SINT8:
+        string = "sint8";
+        break;
+      case FFI_TYPE_UINT16:
+        string = "uint16";
+        break;
+      case FFI_TYPE_SINT16:
+        string = "sint16";
+        break;
+      case FFI_TYPE_UINT32:
+        string = "uint32";
+        break;
+      case FFI_TYPE_SINT32:
+        string = "sint32";
+        break;
+      case FFI_TYPE_UINT64:
+        string = "uint64";
+        break;
+      case FFI_TYPE_SINT64:
+        string = "sint64";
+        break;
+      case FFI_TYPE_POINTER:
+        string = "pointer";
+        break;
+      default:
+        string = NULL;
+        break;
+    }
+    hv_store(meta, "ffi_type", 8, newSVpv(string,0),0);
+    RETVAL = newRV_noinc((SV*)meta);
   OUTPUT:
     RETVAL
 
@@ -219,12 +341,12 @@ new(class, platypus, address, return_type, ...)
     ffi_pl_type *return_type
   PREINIT:
     ffi_pl_function *self;
-    ffi_status status;
     int i;
     SV* arg;
-    ffi_type **signature;
     void *buffer;
     ffi_type *ffi_return_type;
+    ffi_type **ffi_argument_types;
+    ffi_status ffi_status;
   CODE:
   
     for(i=0; i<(items-4); i++)
@@ -238,14 +360,14 @@ new(class, platypus, address, return_type, ...)
   
     Newx(buffer, (sizeof(ffi_pl_function) + sizeof(ffi_pl_type*)*(items-4)), char);
     self = (ffi_pl_function*)buffer;
-    Newx(signature, items-4, ffi_type*);
+    Newx(ffi_argument_types, items-4, ffi_type*);
     
     self->address = address;
     self->return_type = return_type;
     
-    if(self->return_type->platypus_type == FFI_PL_FFI)
+    if(return_type->platypus_type == FFI_PL_FFI)
     {
-      ffi_return_type = self->return_type->ffi_type;
+      ffi_return_type = return_type->ffi_type;
     }
     else
     {
@@ -258,29 +380,29 @@ new(class, platypus, address, return_type, ...)
       self->argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
       if(self->argument_types[i]->platypus_type == FFI_PL_FFI)
       {
-        signature[i] = self->argument_types[i]->ffi_type;
+        ffi_argument_types[i] = self->argument_types[i]->ffi_type;
       }
       else
       {
-        signature[i] = &ffi_type_pointer;
+        ffi_argument_types[i] = &ffi_type_pointer;
       }
     }
     
-    status = ffi_prep_cif(
+    ffi_status = ffi_prep_cif(
       &self->ffi_cif,            /* ffi_cif     | */
       FFI_DEFAULT_ABI,           /* ffi_abi     | */
       items-4,                   /* int         | argument count */
       ffi_return_type,           /* ffi_type *  | return type */
-      signature                  /* ffi_type ** | argument types */
+      ffi_argument_types         /* ffi_type ** | argument types */
     );
     
-    if(status != FFI_OK)
+    if(ffi_status != FFI_OK)
     {
       Safefree(self);
-      Safefree(signature);
-      if(status == FFI_BAD_TYPEDEF)
+      Safefree(ffi_argument_types);
+      if(ffi_status == FFI_BAD_TYPEDEF)
         croak("bad typedef");
-      else if(status == FFI_BAD_ABI)
+      else if(ffi_status == FFI_BAD_ABI)
         croak("bad abi");
       else
         croak("unknown error with ffi_prep_cif");

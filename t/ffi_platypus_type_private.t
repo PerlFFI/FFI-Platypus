@@ -30,7 +30,7 @@ foreach my $name (@names)
     my $type = eval { FFI::Platypus::Type->new($name) };
     is $@, '', "type = FFI::Platypus::Type->new($name)";
     isa_ok $type, 'FFI::Platypus::Type';
-    is eval { $type->ffi_type }, $name;
+    is eval { $type->meta->{ffi_type} }, $name;
   }
 }
 
@@ -39,5 +39,5 @@ subtest string => sub {
   my $type = eval { FFI::Platypus::Type->new('string') };
   is $@, '', "type = FFI::Platypus::Type->new(string)";
   isa_ok $type, 'FFI::Platypus::Type';
-  is eval { $type->ffi_type }, 'pointer';
+  is eval { $type->meta->{ffi_type} }, 'pointer';
 };

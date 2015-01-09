@@ -2,6 +2,14 @@ use strict;
 use warnings;
 use Test::More tests => 5;
 use FFI::Platypus;
+use JSON::PP qw( encode_json );
+BEGIN { eval { use YAML () } };
+
+sub xdump ($)
+{
+  my($object) = @_;
+  YAML->can('Dump') ? YAML::Dump($object) : encode_json($object);
+}
 
 subtest 'simple type' => sub {
   plan tests => 2;
@@ -34,11 +42,14 @@ subtest 'ffi basic types' => sub {
   foreach my $name (@list)
   {
     subtest $name => sub {
-      plan tests => 2;
+      plan tests => 3;
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
       is $@, '', "ffi.type($name)";
       isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
+      my $meta = $ffi->type_meta($name);
+      note xdump( $meta);
+      cmp_ok $meta->{size}, '>', 0, "size = " . $meta->{size};
     };
   }
 
@@ -51,11 +62,14 @@ subtest 'ffi pointer types' => sub {
   {
     subtest $name => sub {
       plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE POINTER' if $name eq 'string *';
-      plan tests => 2;
+      plan tests => 3;
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
       is $@, '', "ffi.type($name)";
       isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
+      my $meta = $ffi->type_meta($name);
+      note xdump( $meta);
+      cmp_ok $meta->{size}, '>', 0, "size = " . $meta->{size};
     }
   }
 
@@ -72,12 +86,15 @@ subtest 'ffi array types' => sub {
   
     subtest $name => sub {
       plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE ARRAY' if $name =~ /^string \[[0-9]+\]$/; # TODO: actually this should be doable
-      plan tests => 3;
+      plan tests => 4;
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
       is $@, '', "ffi.type($name)";
       isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
-      is $ffi->{types}->{$name}->array_size, $size, "size = $size";
+      my $meta = $ffi->type_meta($name);
+      note xdump( $meta);
+      cmp_ok $meta->{size}, '>', 0, "size = " . $meta->{size};
+      is $meta->{element_count}, $size, "size = $size";
     };
     
     $size += 2;

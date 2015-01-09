@@ -263,6 +263,21 @@ sub types
   sort keys %types;
 }
 
+=head2 type_meta
+
+ my $meta = $ffi->type_meta($type_name);
+
+Returns a hash reference with the meta information for the given type.
+
+=cut
+
+sub type_meta
+{
+  my($self, $name) = @_;
+  my $type = $self->_type_lookup($name);
+  $type->meta;
+}
+
 =head2 function
 
  my $function = $ffi->function('my_function_name', ['int', 'string'] => 'string');
