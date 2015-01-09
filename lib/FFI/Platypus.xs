@@ -170,7 +170,7 @@ _new_closure(class, return_type, ...)
     }
     
     Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2), char);
-    Newx(ffi_argument_types, items-2, ffi_type*); /* FIXME: leak */
+    Newx(ffi_argument_types, items-2, ffi_type*);
     self = (ffi_pl_type*) buffer;
     
     self->ffi_type = &ffi_type_pointer;
@@ -257,6 +257,10 @@ void
 DESTROY(self)
     ffi_pl_type *self
   CODE:
+    if(self->platypus_type == FFI_PL_CLOSURE)
+    {
+      Safefree(self->extra[0].closure.ffi_cif.arg_types);
+    }
     Safefree(self);
 
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Function
