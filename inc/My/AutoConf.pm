@@ -74,6 +74,9 @@ sub build_configure
 {
   my($self, $mb) = @_;
   
+  my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypus_config.h' ) );
+  return if -r $config_h && ref($mb->config_data( 'type_map' )) eq 'HASH';
+
   my $ac = Config::AutoConf->new;
   
   $ac->check_prog_cc;
@@ -148,7 +151,7 @@ sub build_configure
     }
   }
   
-  $ac->write_config_h( File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypus_config.h' )));
+  $ac->write_config_h( $config_h );
   $mb->config_data( type_map => \%type_map);
 }
 

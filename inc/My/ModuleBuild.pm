@@ -63,7 +63,6 @@ sub new
   );
   
   $self->config_data(done_libtest   => 0);
-  $self->config_data(done_ac => 0);
 
   $self;
 }
@@ -72,7 +71,6 @@ sub ACTION_ac
 {
   my($self) = @_;
   My::AutoConf->build_configure($self);
-  $self->config_data('done_ac' => 1);
 }
 
 sub ACTION_build
@@ -89,14 +87,14 @@ sub ACTION_build
     }
   }
   
-  $self->depends_on('ac') unless $self->config_data('done_ac');
+  $self->depends_on('ac');
   $self->SUPER::ACTION_build(@_);
 }
 
 sub ACTION_libtest
 {
   my($self) = @_;
-  $self->depends_on('ac') unless $self->config_data('done_ac');
+  $self->depends_on('ac');
   My::LibTest->build_libtest(shift);
   $self->config_data('done_libtest' => 1);
 }
@@ -112,8 +110,14 @@ sub ACTION_clean
 {
   my $self = shift;
   $self->config_data(done_libtest   => 0);
-  $self->config_data(done_ac => 0);
   $self->SUPER::ACTION_clean(@_);
+}
+
+sub ACTION_distclean
+{
+  my($self) = @_;
+  
+  $self->depends_on('realclean');
 }
 
 1;
