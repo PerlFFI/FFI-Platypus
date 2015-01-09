@@ -89,6 +89,7 @@ sub ACTION_build
   my $c = File::Spec->catfile(qw(lib FFI Platypus.c));
   my($obj) = $b->object_file($c);
   my $obj_time = (stat $obj)[9];
+  $obj_time ||= 0;
   
   if($obj_time < $header_time)
   {
