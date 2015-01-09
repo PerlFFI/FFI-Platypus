@@ -14,7 +14,6 @@ use Carp qw( croak );
  
  my $ffi = FFI::Platypus->new;
  $ffi->lib(undef); # search libc
- $ffi->type('int');
  
  # call dynamically
  $ffi->function( puts => ['string'] => 'int' )->call("hello world");
@@ -238,17 +237,7 @@ sub type
 sub _type_lookup
 {
   my($self, $name) = @_;
-  
-  unless(defined $self->{types}->{$name})
-  {
-    require FFI::Platypus::ConfigData;
-    my $type_map = FFI::Platypus::ConfigData->config("type_map");
-    if(defined $type_map->{$name})
-    {
-      $self->{types}->{$name} = FFI::Platypus::Type->new($name);
-    }
-  }
-  
+  $self->type($name) unless defined $self->{types}->{$name};
   $self->{types}->{$name};
 }
 
