@@ -8,6 +8,13 @@ use Carp qw( croak );
 # ABSTRACT: Glue a duckbill to an adorable aquatic mammal
 # VERSION
 
+# Platypus Man,
+# Platypus Man,
+# Does Everything The Platypus Can
+# ...
+# Watch Out!
+# Here Comes The Platypus Man
+
 =head1 SYNOPSIS
 
  use FFI::Platypus;
@@ -213,20 +220,33 @@ sub type
   croak "usage: \$ffi->type(name => alias) (alias is optional)" unless defined $self && defined $name;
   croak "spaces not allowed in alias" if defined $alias && $alias =~ /\s/;
   croak "allowed characters for alias: [A-Za-z0-9_]+" if defined $alias && $alias =~ /[^A-Za-z0-9_]/;
+
   require FFI::Platypus::ConfigData;
   my $type_map = FFI::Platypus::ConfigData->config("type_map");
-  
-  my $basic = $name;
-  my $extra = '';
-  if($basic =~ s/\s+((\*|\[|\<).*)$//)
+
+  croak "alias conflicts with existing type" if defined $alias && defined $type_map->{$alias};
+
+  if($name =~ /-\>/)
   {
-    $extra = " $1";
+    # for closure types we do not try to convet into the basic type
+    # so you can have many many many copies of a given closure type
+    # if you do not spell it exactly the same each time.  Recommended
+    # thsat you use an alias for a closure type anyway.
+    $self->{types}->{$name} ||= FFI::Platypus::Type->new($name, $self);
+  }
+  else
+  {
+    my $basic = $name;
+    my $extra = '';
+    if($basic =~ s/\s*((\*|\[|\<).*)$//)
+    {
+      $extra = " $1";
+    }
+  
+    croak "unknown type: $basic" unless defined $type_map->{$basic};
+    $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= FFI::Platypus::Type->new($type_map->{$basic}.$extra, $self);
   }
   
-  croak "unknown type: $basic" unless defined $type_map->{$basic};
-  croak "alias conflicts with existing type" if defined $alias && defined $type_map->{$alias};
-  
-  $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= FFI::Platypus::Type->new($type_map->{$basic}.$extra);
   if(defined $alias)
   {
     $self->{types}->{$alias} = $self->{types}->{$name};
@@ -407,11 +427,24 @@ sub DESTROY
 
 package FFI::Platypus::Type;
 
+use Carp qw( croak );
+
 # VERSION
 
 sub new
 {
-  my($class, $type) = @_;
+  my($class, $type, $platypus) = @_;
+
+  # the platypus object is only needed for closures, so
+  # that it can lookup existing types.
+
+  if($type =~ m/^\((.*)\)-\>\s*(.*)\s*$/)
+  {
+    croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
+    my @argument_types = map { $platypus->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
+    my $return_type = $platypus->_type_lookup($2);
+    return $class->_new_closure($return_type, @argument_types);
+  }
   
   my $ffi_type;
   my $platypus_type;
@@ -432,17 +465,6 @@ sub new
     $ffi_type = $type;
     $platypus_type = 'array';
     $array_size = $1;
-  }
-  elsif($type =~ s/\s+\<buffer\>//)
-  {
-    $ffi_type = $type;
-    $platypus_type = 'buffer';
-    # TODO: order
-  }
-  elsif($type =~ s/\s+\<custom\>//)
-  {
-    $ffi_type = $type;
-    $platypus_type = 'custom';
   }
   else
   {

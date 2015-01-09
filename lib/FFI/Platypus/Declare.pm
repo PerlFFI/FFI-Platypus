@@ -74,6 +74,19 @@ sub type ($;$)
   _ffi_object->type(@_);
 }
 
+=head2 type_meta
+
+ my $meta = type_meta 'int';
+
+Get the type meta data for the given type.
+
+=cut
+
+sub type_meta($)
+{
+  _ffi_object->type_meta(@_);
+}
+
 =head2 function
 
  function 'my_function', ['uint8'] => 'string';
@@ -132,6 +145,7 @@ sub import
   *{join '::', $caller, 'ffi'} = \&ffi;
   *{join '::', $caller, 'lib'} = \&lib;
   *{join '::', $caller, 'type'} = \&type;
+  *{join '::', $caller, 'type_meta'} = \&type_meta;
   *{join '::', $caller, 'function'} = \&function;
   *{join '::', $caller, 'closure'} = \&closure;
 }

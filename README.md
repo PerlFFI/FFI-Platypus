@@ -8,7 +8,6 @@ Glue a duckbill to an adorable aquatic mammal
     
     my $ffi = FFI::Platypus->new;
     $ffi->lib(undef); # search libc
-    $ffi->type('int');
     
     # call dynamically
     $ffi->function( puts => ['string'] => 'int' )->call("hello world");
@@ -136,6 +135,12 @@ detected C types (example: _signed int_), or types that you have defined using t
 
 It can also be called as a class method, in which case, not user defined types will be included.
 
+## type\_meta
+
+    my $meta = $ffi->type_meta($type_name);
+
+Returns a hash reference with the meta information for the given type.
+
 ## function
 
     my $function = $ffi->function('my_function_name', ['int', 'string'] => 'string');
@@ -160,6 +165,13 @@ The advantage of attaching a function over using the [FFI::Platypus#function](ht
 is that it is much much faster since no object resolution needs to be done.  The disadvantage
 is that it locks the function and the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance into memory permanently, since
 there is no way to deallocate an xsub.
+
+## closure
+
+    my $closure = $ffi->closure(sub { ... });
+
+Prepars a code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
+from C code).
 
 # SEE ALSO
 

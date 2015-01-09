@@ -146,14 +146,31 @@ _new_closure(class, return_type, ...)
     ffi_pl_type *return_type
   PREINIT:
     char *buffer;
-    ffi_pl_type *self;
+    ffi_pl_type *self, *tmp;
     int i;
     SV *arg;
     ffi_type *ffi_return_type;
     ffi_type **ffi_argument_types;
     ffi_status ffi_status;
   CODE:
+    if(return_type->platypus_type == FFI_PL_CLOSURE)
+    {
+      /* TODO: this really should work, but the syntax need to be worked out */
+      croak("returning a closure from a closure not supported");
+    }
+    
+    for(i=0; i<(items-2); i++)
+    {
+      arg = ST(2+i);
+      tmp = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
+      if(tmp->platypus_type == FFI_PL_CLOSURE)
+      {
+        croak("passing closure into a closure not supported");
+      }
+    }
+    
     Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2), char);
+    Newx(ffi_argument_types, items-2, ffi_type*);
     self = (ffi_pl_type*) buffer;
     
     self->ffi_type = &ffi_type_pointer;
@@ -213,114 +230,9 @@ meta(self)
     ffi_pl_type *self
   PREINIT:
     HV *meta;
-    const char *string;
+    extern void *ffi_pl_get_type_meta(ffi_pl_type*);
   CODE:
-    meta = newHV();
-    if(self->platypus_type == FFI_PL_FFI)
-    {
-      hv_store(meta, "size",          4, newSViv(self->ffi_type->size), 0);
-      hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
-      hv_store(meta, "type",          4, newSVpv("scalar",0),0);
-    }
-    else if(self->platypus_type == FFI_PL_STRING)
-    {
-      hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
-      hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
-      hv_store(meta, "type",          4, newSVpv("string",0),0);
-    }
-    else if(self->platypus_type == FFI_PL_POINTER)
-    {
-      hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
-      hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
-      hv_store(meta, "type",          4, newSVpv("opaque_pointer",0),0);
-    }
-    else if(self->platypus_type == FFI_PL_ARRAY)
-    {
-      hv_store(meta, "size",           4, newSViv(self->ffi_type->size * self->extra[0].array.element_count), 0);    
-      hv_store(meta, "element_size",  12, newSViv(self->ffi_type->size), 0);
-      hv_store(meta, "type",           4, newSVpv("array",0),0);
-      hv_store(meta, "element_count", 13, newSViv(self->extra[0].array.element_count), 0);
-    }
-    else if(self->platypus_type == FFI_PL_CLOSURE)
-    {
-      hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
-      hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
-      hv_store(meta, "type",          4, newSVpv("closure",0),0);
-    }
-    switch(self->ffi_type->type)
-    {
-      case FFI_TYPE_VOID:
-        hv_store(meta, "element_type", 12, newSVpv("void",0),0);
-        break;
-      case FFI_TYPE_FLOAT:
-      case FFI_TYPE_DOUBLE:
-      case FFI_TYPE_LONGDOUBLE:
-        hv_store(meta, "element_type", 12, newSVpv("float",0),0);
-        break;
-      case FFI_TYPE_UINT8:
-      case FFI_TYPE_UINT16:
-      case FFI_TYPE_UINT32:
-      case FFI_TYPE_UINT64:
-        hv_store(meta, "element_type", 12, newSVpv("int",0),0);
-        hv_store(meta, "sign",          4, newSViv(0),0);
-        break;
-      case FFI_TYPE_SINT8:
-      case FFI_TYPE_SINT16:
-      case FFI_TYPE_SINT32:
-      case FFI_TYPE_SINT64:
-        hv_store(meta, "element_type", 12, newSVpv("int",0),0);
-        hv_store(meta, "sign",          4, newSViv(1),0);
-        break;
-      case FFI_TYPE_POINTER:
-        hv_store(meta, "element_type", 12, newSVpv("pointer",0),0);
-        break;
-    }
-    switch(self->ffi_type->type)
-    {
-      case FFI_TYPE_VOID:
-        string = "void";
-        break;
-      case FFI_TYPE_FLOAT:
-        string = "float";
-        break;
-      case FFI_TYPE_DOUBLE:
-        string = "double";
-        break;
-      case FFI_TYPE_LONGDOUBLE:
-        string = "longdouble";
-        break;
-      case FFI_TYPE_UINT8:
-        string = "uint8";
-        break;
-      case FFI_TYPE_SINT8:
-        string = "sint8";
-        break;
-      case FFI_TYPE_UINT16:
-        string = "uint16";
-        break;
-      case FFI_TYPE_SINT16:
-        string = "sint16";
-        break;
-      case FFI_TYPE_UINT32:
-        string = "uint32";
-        break;
-      case FFI_TYPE_SINT32:
-        string = "sint32";
-        break;
-      case FFI_TYPE_UINT64:
-        string = "uint64";
-        break;
-      case FFI_TYPE_SINT64:
-        string = "sint64";
-        break;
-      case FFI_TYPE_POINTER:
-        string = "pointer";
-        break;
-      default:
-        string = NULL;
-        break;
-    }
-    hv_store(meta, "ffi_type", 8, newSVpv(string,0),0);
+    meta = (HV*) ffi_pl_get_type_meta(self);
     RETVAL = newRV_noinc((SV*)meta);
   OUTPUT:
     RETVAL

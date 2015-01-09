@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More tests => 6;
 use FFI::Platypus;
 use JSON::PP qw( encode_json );
 BEGIN { eval q{ use YAML () } };
@@ -101,4 +101,36 @@ subtest 'ffi array types' => sub {
 
   }
 
+};
+
+subtest 'closure types' => sub {
+  plan tests => 6;
+
+  my $ffi = FFI::Platypus->new;
+  
+  $ffi->type('int[22]' => 'my_int_array');
+  $ffi->type('int'     => 'myint');
+  
+  $ffi->type('(int)->int' => 'foo');
+  
+  is $ffi->type_meta('foo')->{type}, 'closure', '(int)->int is a legal closure type';
+  note xdump($ffi->type_meta('foo'));
+  
+  $ffi->type('(my_int_array)->myint' => 'bar');
+  is $ffi->type_meta('bar')->{type}, 'closure', '(int)->int is a legal closure type';
+  note xdump($ffi->type_meta('bar'));
+  
+  eval { $ffi->type('((int)->int)->int') };
+  isnt $@, '', 'inline closure illegal';
+  
+  eval { $ffi->type('(foo)->int') };
+  isnt $@, '', 'argument type closure illegal';
+
+  eval { $ffi->type('(int)->foo') };
+  isnt $@, '', 'return type closure illegal';
+  
+  $ffi->type('(int,int,int,char,string,pointer)->void' => 'baz');
+  is $ffi->type_meta('baz')->{type}, 'closure', 'a more complicated closure';
+  note xdump($ffi->type_meta('baz'));
+  
 };
