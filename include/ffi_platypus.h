@@ -54,6 +54,7 @@ typedef enum _platypus_type {
   FFI_PL_STRING,
   FFI_PL_POINTER,
   FFI_PL_ARRAY,
+  FFI_PL_CLOSURE,
   FFI_PL_CUSTOM_PERL,
   FFI_PL_CUSTOM_C
 } platypus_type;
@@ -71,9 +72,18 @@ typedef struct _ffi_pl_type_extra_array {
   int element_count;
 } ffi_pl_type_extra_array;
 
+struct _ffi_pl_type;
+
+typedef struct _ffi_pl_type_extra_closure {
+  ffi_cif ffi_cif;
+  struct _ffi_pl_type *return_type;
+  struct _ffi_pl_type *argument_types[0];
+} ffi_pl_type_extra_closure;
+
 typedef union _ffi_pl_type_extra {
-  ffi_pl_type_extra_custom custom;
-  ffi_pl_type_extra_array  array;
+  ffi_pl_type_extra_custom  custom;
+  ffi_pl_type_extra_array   array;
+  ffi_pl_type_extra_closure closure;
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {

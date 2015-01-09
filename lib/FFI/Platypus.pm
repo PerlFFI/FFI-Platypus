@@ -328,6 +328,21 @@ sub attach
   $function->attach($perl_name, "$filename:$line");
 }
 
+=head2 closure
+
+ my $closure = $ffi->closure(sub { ... });
+
+Prepars a code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
+from C code).
+
+=cut
+
+sub closure
+{
+  my($self, $coderef) = @_;
+  FFI::Platypus::Closure->new($coderef);
+}
+
 sub DESTROY
 {
   my($self) = @_;
@@ -349,6 +364,42 @@ use overload '&{}' => sub {
   my $ffi = shift;
   sub { $ffi->call(@_) };
 };
+
+package FFI::Platypus::Closure;
+
+use Scalar::Util qw( refaddr);
+use Carp qw( croak );
+
+# VERSION
+
+our %cbdata;
+
+sub new
+{
+  my($class, $coderef) = @_;
+  croak "not a coderef" unless ref($coderef) eq 'CODE';
+  my $self = bless $coderef, $class;
+  $cbdata{refaddr $self} = {};
+  $self;
+}
+
+sub add_data
+{
+  my($self, $key, $payload) = @_;
+  $cbdata{refaddr $self}->{$key} = $payload;
+}
+
+sub get_data
+{
+  my($self, $key) = @_;
+  $cbdata{refaddr $self}->{$key};
+}
+
+sub DESTROY
+{
+  my($self) = @_;
+  delete $cbdata{refaddr $self};
+}
 
 package FFI::Platypus::Type;
 

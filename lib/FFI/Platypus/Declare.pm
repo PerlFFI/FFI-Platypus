@@ -93,6 +93,20 @@ sub function ($$$)
   $function->attach(join('::', $caller, $perl_name), "$filename:$line");
 }
 
+=head2 closure
+
+ my $closure = closure { ... };
+
+Create a closure that can be passed into a C function.
+
+=cut
+
+sub closure (&)
+{
+  my($coderef) = @_;
+  FFI::Platypus::Closure->new($coderef);
+}
+
 sub import
 {
   my $caller = caller;
@@ -119,6 +133,7 @@ sub import
   *{join '::', $caller, 'lib'} = \&lib;
   *{join '::', $caller, 'type'} = \&type;
   *{join '::', $caller, 'function'} = \&function;
+  *{join '::', $caller, 'closure'} = \&closure;
 }
 
 1;

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 do {
   package
@@ -38,4 +38,19 @@ do {
 subtest 'with type aliases' => sub {
   plan tests => 1;
   is WithTypeAliases::atoi("42"), 42, 'atoi("42") = 42';
+};
+
+do {
+  package
+    ClosureSimple;
+  
+  use FFI::Platypus::Declare;
+  
+  our $closure = closure { $_[0]+1 };
+};
+
+subtest 'simple closure test' => sub {
+  plan tests => 2;
+  isa_ok $ClosureSimple::closure, 'FFI::Platypus::Closure';
+  is $ClosureSimple::closure->(1), 2, 'closure.(1) = 2';
 };
