@@ -42,10 +42,10 @@ sub new
     {
       my $value = $Config{$key};
       next unless defined $value;
-      if($value =~ s/-O[0-9]/-g3/g)
+      if($value =~ s/-O[0-9]?/-g3/g)
       {
         print "  + \$Config{$key} = ", $config->{$key}, "\n";
-        print "  - \$Config{$key} = $Config{$key}\n";
+        print "  - \$Config{$key} = $value\n";
         $self->config($key, $value);
       }
     }
