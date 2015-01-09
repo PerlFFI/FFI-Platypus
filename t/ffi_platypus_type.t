@@ -3,7 +3,7 @@ use warnings;
 use Test::More tests => 5;
 use FFI::Platypus;
 use JSON::PP qw( encode_json );
-BEGIN { eval { use YAML () } };
+BEGIN { eval q{ use YAML () } };
 
 sub xdump ($)
 {
