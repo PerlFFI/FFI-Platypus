@@ -356,7 +356,7 @@ sub attach
 
  my $closure = $ffi->closure(sub { ... });
 
-Prepars a code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
+Prepares a code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
 from C code).
 
 =cut
