@@ -260,6 +260,32 @@
               case FFI_TYPE_SINT8:
                 sv_setiv(SvRV(arg), *((int8_t*)ptr));
                 break;
+              case FFI_TYPE_UINT16:
+                sv_setuv(SvRV(arg), *((uint16_t*)ptr));
+                break;
+              case FFI_TYPE_SINT16:
+                sv_setiv(SvRV(arg), *((int16_t*)ptr));
+                break;
+              case FFI_TYPE_UINT32:
+                sv_setuv(SvRV(arg), *((uint32_t*)ptr));
+                break;
+              case FFI_TYPE_SINT32:
+                sv_setiv(SvRV(arg), *((int32_t*)ptr));
+                break;
+              case FFI_TYPE_UINT64:
+#ifdef HAVE_IV_IS_64
+                sv_setuv(SvRV(arg), *((uint64_t*)ptr));
+#else
+                sv_setu64(SvRV(arg), *((uint64_t*)ptr));
+#endif
+                break;
+              case FFI_TYPE_SINT64:
+#ifdef HAVE_IV_IS_64
+                sv_setiv(SvRV(arg), *((int64_t*)ptr));
+#else
+                sv_seti64(SvRV(arg), *((int64_t*)ptr));
+#endif
+                break;
             }
           }
         }

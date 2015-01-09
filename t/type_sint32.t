@@ -5,7 +5,7 @@
 #
 use strict;
 use warnings;
-use Test::More tests => 12;
+use Test::More tests => 14;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'sint32', 'void', 'int',
@@ -28,6 +28,8 @@ is add(-1,2), 1, 'add(-1,2) = 1';
 
 my $i = -3;
 is_deeply inc(\$i, 4), \1, 'inc(\$i,4) = \1';
+
+is $i, 1, "i=1";
 
 is_deeply inc(\-3,4), \1, 'inc(\-3,4) = \1';
 
@@ -57,3 +59,5 @@ is call_closure(-2), -4, 'call_closure(-2) = -4';
 $closure = closure { undef };
 set_closure($closure);
 is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
+
+pass 'extra test';
