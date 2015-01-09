@@ -5,6 +5,8 @@ use warnings;
 use Alien::FFI;
 use My::LibTest;
 use My::AutoConf;
+use ExtUtils::CBuilder;
+use File::Glob qw( bsd_glob );
 use Config;
 use base qw( Module::Build );
 
@@ -61,8 +63,6 @@ sub new
     'test*.o',
     'test*.c',
   );
-  
-  $self->config_data(done_libtest   => 0);
 
   $self;
 }
@@ -70,23 +70,32 @@ sub new
 sub ACTION_ac
 {
   my($self) = @_;
-  My::AutoConf->build_configure($self);
+  My::AutoConf->configure($self);
+}
+
+sub ACTION_ac_clean
+{
+  my($self) = @_;
+  My::AutoConf->clean($self);
 }
 
 sub ACTION_build
 {
   my $self = shift;
   
-  if(-e "lib/FFI/Platypus.c"
-  && -e "lib/FFI/Platypus.o")
-  {
-    if((stat "lib/FFI/Platypus.c")[9] < (stat "include/ffi_platypus_call.h")[9])
-    {
-      unlink "lib/FFI/Platypus.c";
-      unlink "lib/FFI/Platypus.o";
-    }
-  }
+  my $b = ExtUtils::CBuilder->new;
   
+  my($header_time) = reverse sort map { (stat $_)[9] } bsd_glob "include/*.h";
+  my $c = File::Spec->catfile(qw(lib FFI Platypus.c));
+  my($obj) = $b->object_file($c);
+  my $obj_time = (stat $obj)[9];
+  
+  if($obj_time < $header_time)
+  {
+    unlink $obj;
+    unlink $c;
+  }
+
   $self->depends_on('ac');
   $self->SUPER::ACTION_build(@_);
 }
@@ -95,22 +104,14 @@ sub ACTION_libtest
 {
   my($self) = @_;
   $self->depends_on('ac');
-  My::LibTest->build_libtest(shift);
-  $self->config_data('done_libtest' => 1);
+  My::LibTest->build(shift);
 }
 
 sub ACTION_test
 {
   my $self = shift;
-  $self->depends_on('libtest') unless $self->config_data('done_libtest');
+  $self->depends_on('libtest');
   $self->SUPER::ACTION_test(@_);
-}
-
-sub ACTION_clean
-{
-  my $self = shift;
-  $self->config_data(done_libtest   => 0);
-  $self->SUPER::ACTION_clean(@_);
 }
 
 sub ACTION_distclean

@@ -3,25 +3,28 @@ use warnings;
 use inc::My::CopyList;
 use File::Spec;
 
-if(-e 'Build')
+if(@ARGV > 0)
 {
-  if($^O eq 'MSWin32')
+  if(-e 'Build')
   {
-    print "> Build distclean\n";
-    system 'Build', 'distclean';
+    if($^O eq 'MSWin32')
+    {
+      print "> Build distclean\n";
+      system 'Build', 'distclean';
+    }
+    else
+    {
+      print "% ./Build distclean\n";
+      system './Build', 'distclean';
+    }
   }
-  else
-  {
-    print "% ./Build distclean\n";
-    system './Build', 'distclean';
-  }
-}
 
-foreach my $file (map { File::Spec->catfile(@$_) } @inc::My::CopyList::list)
-{
-  if(-e $file && @ARGV > 0)
+  foreach my $file (map { File::Spec->catfile(@$_) } @inc::My::CopyList::list)
   {
-    unlink $file;
+    if(-e $file)
+    {
+      unlink $file;
+    }
   }
 }
 
