@@ -17,4 +17,3 @@
 *.bundle
 *.tmp
 /test*.c
-/test*.o
