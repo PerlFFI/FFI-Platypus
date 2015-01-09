@@ -286,7 +286,7 @@ new(class, platypus, address, return_type, ...)
         croak("unknown error with ffi_prep_cif");
     }
     
-    self->sv = SvREFCNT_inc(platypus);
+    self->platypus_sv = SvREFCNT_inc(platypus);
 
     RETVAL = self;
   OUTPUT:
@@ -333,7 +333,7 @@ void
 DESTROY(self)
     ffi_pl_function *self
   CODE:
-    SvREFCNT_dec(self->sv);
+    SvREFCNT_dec(self->platypus_sv);
     Safefree(self->ffi_cif.arg_types);
     Safefree(self);
 

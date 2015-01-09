@@ -94,7 +94,7 @@ typedef struct _ffi_pl_type {
 
 typedef struct _ffi_pl_function {
   void *address;
-  void *sv;  /* really a Perl SV* */
+  void *platypus_sv;  /* really a Perl SV* */
   ffi_cif ffi_cif;
   ffi_pl_type *return_type;
   ffi_pl_type *argument_types[0];
