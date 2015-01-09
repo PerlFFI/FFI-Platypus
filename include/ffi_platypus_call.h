@@ -199,6 +199,45 @@
         }
         ffi_pl_arguments_set_pointer(arguments, i, ptr);
       }
+      else if(self->argument_types[i]->platypus_type == FFI_PL_CLOSURE)
+      {
+        /*
+         * TODO: failing to create a closure here, should indicate a big problem
+         * and sohuld be pretty rare.  That being said, it would be good to follow
+         * up and see if there is any memory leaking when we croak here, or if
+         * we can trigger some kind of panic to make sure the Perl process just dies.
+         */
+        ffi_pl_closure *closure;
+        ffi_status ffi_status;
+        extern void ffi_pl_closure_call(ffi_cif *, void *, void **, void *);
+
+        Newx(closure, 1, ffi_pl_closure); /* FIXME: leak */
+        closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
+        if(closure->ffi_closure == NULL)
+        {
+          Safefree(closure);
+          croak("unable to allocate memory for closure");
+        }
+        closure->coderef = arg; /* TODO: should increment the count and then decrement when we come out */
+        closure->type = self->argument_types[i];
+
+        ffi_status = ffi_prep_closure_loc(
+          closure->ffi_closure,
+          &self->argument_types[i]->extra[0].closure.ffi_cif,
+          ffi_pl_closure_call,
+          closure,
+          closure->function_pointer
+        );
+
+        if(ffi_status != FFI_OK)
+        {
+          ffi_closure_free(closure->ffi_closure);
+          Safefree(closure);
+          croak("unable to create closure");
+        }
+
+        ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+      }
     }
 
     ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));

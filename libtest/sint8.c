@@ -43,3 +43,17 @@ sint8_static_array(void)
   return foo;
 }
 
+typedef int8_t (*closure_t)(int8_t);
+closure_t my_closure;
+
+EXTERN void
+sint8_set_closure(closure_t closure)
+{
+  my_closure = closure;
+}
+
+EXTERN int8_t
+sint8_call_closure(int8_t value)
+{
+  return my_closure(value);
+}

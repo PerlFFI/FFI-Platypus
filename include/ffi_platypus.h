@@ -76,6 +76,7 @@ struct _ffi_pl_type;
 
 typedef struct _ffi_pl_type_extra_closure {
   ffi_cif ffi_cif;
+  int flags;
   struct _ffi_pl_type *return_type;
   struct _ffi_pl_type *argument_types[0];
 } ffi_pl_type_extra_closure;
@@ -99,6 +100,13 @@ typedef struct _ffi_pl_function {
   ffi_pl_type *return_type;
   ffi_pl_type *argument_types[0];
 } ffi_pl_function;
+
+typedef struct _ffi_pl_closure {
+  ffi_closure *ffi_closure;
+  void *function_pointer; /* C function pointer */
+  void *coderef;          /* Perl CV* pointing to code ref */
+  ffi_pl_type *type;
+} ffi_pl_closure;
 
 typedef const char *ffi_pl_string;
 

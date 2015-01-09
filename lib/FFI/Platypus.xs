@@ -170,13 +170,14 @@ _new_closure(class, return_type, ...)
     }
     
     Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2), char);
-    Newx(ffi_argument_types, items-2, ffi_type*);
+    Newx(ffi_argument_types, items-2, ffi_type*); /* FIXME: leak */
     self = (ffi_pl_type*) buffer;
     
     self->ffi_type = &ffi_type_pointer;
     self->platypus_type = FFI_PL_CLOSURE;
     self->extra[0].closure.return_type = return_type;
-
+    self->extra[0].closure.flags = 0;
+    
     if(return_type->platypus_type == FFI_PL_FFI)
     {
       ffi_return_type = return_type->ffi_type;
@@ -218,6 +219,21 @@ _new_closure(class, return_type, ...)
         croak("bad abi");
       else
         croak("unknown error with ffi_prep_cif");
+    }
+
+    if( items-2 == 0 )
+    {
+      self->extra[0].closure.flags |= G_NOARGS;
+    }
+    
+    if(self->extra[0].closure.return_type->ffi_type->type == FFI_TYPE_VOID
+    && self->extra[0].closure.return_type->platypus_type == FFI_PL_FFI)
+    {
+      self->extra[0].closure.flags |= G_DISCARD | G_VOID;
+    }
+    else
+    {
+      self->extra[0].closure.flags |= G_SCALAR;
     }
     
     RETVAL = self;

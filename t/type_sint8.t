@@ -1,11 +1,12 @@
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More tests => 11;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'sint8', 'void', 'int',
   ['sint8 *' => 'sint8_p'],
-  ['sint8 [10]' => 'sint8_a'];
+  ['sint8 [10]' => 'sint8_a'],
+  ['(sint8)->sint8' => 'sint8_c'];
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
@@ -40,3 +41,11 @@ is is_null(\22), 0, 'is_null(22) == 0';
 is_deeply static_array(), [-1,2,-3,4,-5,6,-7,8,-9,10], 'static_array = [-1,2,-3,4,-5,6,-7,8,-9,10]';
 
 is null2(), undef, 'null2() == undef';
+
+my $closure = closure { $_[0]-2 };
+function [sint8_set_closure => 'set_closure'] => [sint8_c] => void;
+function [sint8_call_closure => 'call_closure'] => [sint8] => sint8;
+
+set_closure($closure);
+is call_closure(-2), -4, 'call_closure(-2) = -4';
+
