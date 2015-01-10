@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More tests => 3;
 use FFI::Platypus;
-use FFI::Platypus::Memory qw( sizeof malloc calloc memset free realloc memcpy );
+use FFI::Platypus::Memory qw( sizeof malloc calloc memset free realloc memcpy cast );
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
@@ -32,9 +32,7 @@ subtest 'realloc memcpy free' => sub {
   $ffi->function(strcpy => ['pointer', 'string'] => 'pointer')->call($tmp, "this and\0");
   memcpy $ptr1, $tmp, 9;
   free $tmp;
-  my $tmp2 = realloc undef, 128;
-  my $string = $ffi->function(strcpy => ['pointer', 'pointer'] => 'string')->call($tmp2, $ptr1);
+  my $string = cast 'pointer' => 'string', $ptr1;
   is $string, 'this and', 'string = this and';
   free $ptr1;
-  free $tmp2;
 };

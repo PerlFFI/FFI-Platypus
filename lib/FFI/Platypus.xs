@@ -9,6 +9,16 @@
 #include "perl_math_int64.h"
 #endif
 
+void *cast0(void)
+{
+  return NULL;
+}
+
+void *cast1(void *value)
+{
+  return value;
+}
+
 XS(ffi_pl_sub_call)
 {
   ffi_pl_function *self;

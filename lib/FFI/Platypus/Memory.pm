@@ -5,7 +5,7 @@ use warnings;
 use FFI::Platypus;
 use base qw( Exporter );
 
-our @EXPORT_OK = qw( malloc free calloc realloc memcpy memset sizeof );
+our @EXPORT_OK = qw( malloc free calloc realloc memcpy memset sizeof cast );
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
@@ -22,6 +22,12 @@ sub sizeof ($)
 {
   $ffi->type($_[0]);
   $ffi->type_meta($_[0])->{size};
+}
+
+sub cast ($$$)
+{
+  my($type1, $type2, $value) = @_;
+  $ffi->function(0 => [$type1] => $type2)->call($value);
 }
 
 1;

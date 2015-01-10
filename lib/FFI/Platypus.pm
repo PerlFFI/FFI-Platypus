@@ -320,8 +320,8 @@ sub function
   croak "usage \$ffi->function( name, [ arguments ], return_type)" unless @_ == 4;
   my @args = map { $self->_type_lookup($_) || croak "unknown type: $_" } @$args;
   $ret = $self->_type_lookup($ret) || croak "unknown type: $ret";
-  my $address = $self->find_symbol($name);
-  croak "unable to find $name" unless $address;
+  my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
+  croak "unable to find $name" unless defined $address;
   FFI::Platypus::Function->new($self, $address, $ret, @args);
 }
 

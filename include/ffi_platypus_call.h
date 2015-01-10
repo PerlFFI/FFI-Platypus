@@ -240,7 +240,15 @@
       }
     }
 
-    ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
+    if(self->address != NULL)
+    {
+      ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
+    }
+    else
+    {
+      void *address = items-(EXTRA_ARGS) > 0 ? (void*) &cast1 : (void*) &cast0;
+      ffi_call(&self->ffi_cif, address, &result, ffi_pl_arguments_pointers(arguments));
+    }
 
     for(i=0; i<items-(EXTRA_ARGS); i++)
     {
