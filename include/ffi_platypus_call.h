@@ -565,5 +565,6 @@
       }
     }
 
+    croak("argument type not supported");
 
 #undef EXTRA_ARGS

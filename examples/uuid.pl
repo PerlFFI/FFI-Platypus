@@ -1,8 +1,15 @@
-# FIXME
-use feature 'say';
-
 use strict;
 use warnings;
+use FFI::CheckLib;
+use FFI::Platypus::Declare qw( void pointer );
+
+check_lib_or_exit lib => 'uuixd';
+lib find_lib lib => 'uuid';
+
+function uuid_generate => [pointer] => void;
+function uuid_unparse  => [pointer] => pointer;
+
+__END__
 
 use FFI::Raw;
 

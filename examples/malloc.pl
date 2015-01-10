@@ -1,4 +1,4 @@
-# FIXME: show an equivalent for platypus
-use FFI::Raw;
+# TODO: do something interesting with that memory
+use FFI::Platypus::Memory qw( malloc );
 
-my $buf = FFI::Raw::memptr(42);
+my $buffer = malloc 42;
