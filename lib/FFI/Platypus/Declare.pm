@@ -97,13 +97,13 @@ array reference to install the function with a different name in perl space.
 
 =cut
 
-sub function ($$$)
+sub function ($$$;$)
 {
   my($caller, $filename, $line) = caller;
-  my($name, $args, $ret) = @_;
+  my($name, $args, $ret, $proto) = @_;
   my($symbol_name, $perl_name) = ref $name ? (@$name) : ($name, $name);
   my $function = _ffi_object->function($symbol_name, $args, $ret);
-  $function->attach(join('::', $caller, $perl_name), "$filename:$line");
+  $function->attach(join('::', $caller, $perl_name), "$filename:$line", $proto);
 }
 
 =head2 closure

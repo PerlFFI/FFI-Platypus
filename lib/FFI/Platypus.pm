@@ -340,7 +340,7 @@ there is no way to deallocate an xsub.
 
 sub attach
 {
-  my($self, $name, $args, $ret) = @_;
+  my($self, $name, $args, $ret, $proto) = @_;
   my($c_name, $perl_name) = ref($name) ? @$name : ($name, $name);
   
   my $function = $self->function($c_name, $args, $ret);
@@ -349,7 +349,7 @@ sub attach
   $perl_name = join '::', $caller, $perl_name
     unless $perl_name =~ /::/;
     
-  $function->attach($perl_name, "$filename:$line");
+  $function->attach($perl_name, "$filename:$line", $proto);
 }
 
 =head2 closure

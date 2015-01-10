@@ -361,10 +361,11 @@ call(self, ...)
 #include "ffi_platypus_call.h"
 
 void
-attach(self, perl_name, path_name)
+attach(self, perl_name, path_name, proto)
     SV *self
     const char *perl_name
     ffi_pl_string path_name
+    ffi_pl_string proto
   PREINIT:
     CV* cv;
   CODE:
@@ -374,7 +375,10 @@ attach(self, perl_name, path_name)
     if(path_name == NULL)
       path_name = "unknown";
 
-    cv = newXS(perl_name, ffi_pl_sub_call, path_name);
+    if(proto == NULL)
+      cv = newXS(perl_name, ffi_pl_sub_call, path_name);
+    else
+      cv = newXSproto(perl_name, ffi_pl_sub_call, path_name, proto);
     CvXSUBANY(cv).any_ptr = (void *) INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
     /*
      * No coresponding decrement !!

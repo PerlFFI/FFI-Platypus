@@ -16,6 +16,7 @@ isa_ok $function, 'FFI::Platypus::Function';
 
 is $function->call(22), 22, 'function.call(22) = 22';
 
-$function->attach('main::fooble', 'whatever.c');
+$function->attach('main::fooble', 'whatever.c', undef);
 
 is fooble(22), 22, 'fooble(22) = 22';
+
