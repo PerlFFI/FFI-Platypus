@@ -573,6 +573,6 @@
       }
     }
 
-    croak("argument type not supported");
+    croak("return type not supported");
 
 #undef EXTRA_ARGS
