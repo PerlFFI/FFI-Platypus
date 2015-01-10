@@ -8,7 +8,7 @@ use base qw( Exporter );
 # ABSTRACT: Memory functions for FFI
 # VERSION
 
-our @EXPORT_OK = qw( malloc free calloc realloc memcpy memset sizeof cast );
+our @EXPORT = qw( malloc free calloc realloc memcpy memset sizeof cast );
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);

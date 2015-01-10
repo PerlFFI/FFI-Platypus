@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More tests => 3;
 use FFI::Platypus;
-use FFI::Platypus::Memory qw( sizeof malloc calloc memset free realloc memcpy cast );
+use FFI::Platypus::Memory;
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
