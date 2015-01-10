@@ -4,8 +4,7 @@ use FFI::CheckLib;
 use FFI::Platypus::Declare qw( void pointer string );
 use FFI::Platypus::Memory qw( malloc free cast sizeof );
 
-check_lib_or_exit lib => 'uuid';
-lib find_lib lib => 'uuid';
+lib find_lib_or_exit lib => 'uuid';
 
 function uuid_generate => [pointer] => void;
 function uuid_unparse  => [pointer,pointer] => void;

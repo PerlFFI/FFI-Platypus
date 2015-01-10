@@ -3,8 +3,7 @@ use warnings;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( void string pointer );
 
-check_lib_or_exit lib => 'notify';
-lib find_lib lib => 'notify';
+lib find_lib_or_exit lib => 'notify';
 
 function notify_init   => [string] => void;
 function notify_uninit => []       => void;
