@@ -56,6 +56,9 @@
           case FFI_TYPE_POINTER:
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;
+          default:
+            croak("argument type not supported (%d)", i);
+            break;
         }
       }
       else if(self->argument_types[i]->platypus_type == FFI_PL_STRING)
@@ -108,6 +111,9 @@
 #else
               *((int64_t*)ptr) = SvI64(SvRV(arg));
 #endif
+              break;
+            default:
+              croak("argument type not supported (%d)", i);
               break;
           }
         }
@@ -190,6 +196,9 @@
 #endif
               }
               break;
+            default:
+              croak("argument type not supported (%d)", i);
+              break;
           }
         }
         else
@@ -237,6 +246,10 @@
         }
 
         ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+      }
+      else
+      {
+        croak("argument type not supported (%d)", i);
       }
     }
 

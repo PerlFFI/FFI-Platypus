@@ -1,8 +1,15 @@
-# FIXME
-use feature 'say';
-
 use strict;
 use warnings;
+use FFI::CheckLib;
+use FFI::Platypus::Declare qw( pointer int string );
+
+function zmq_init => [int] => pointer;
+function zmq_socket => [pointer, int] => pointer;
+function zmq_connect => [pointer, pointer] => int;
+function zmq_send => [pointer, pointer, int] => int;
+function zmq_msg_init_data => [pointer, string, int, pointer, pointer] => int;
+
+__END__
 
 use FFI::Raw;
 
