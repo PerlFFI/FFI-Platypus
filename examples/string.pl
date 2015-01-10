@@ -19,4 +19,3 @@ puts(puts("lol"));
 function strerror => [int] => string;
 
 puts(strerror(2));
-

@@ -7,4 +7,3 @@ function puts => [string] => int;
 function getpid => [] => int;
 
 puts(getpid());
-

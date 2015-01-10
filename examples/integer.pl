@@ -7,4 +7,3 @@ function puts => [string] => int;
 function atoi => [string] => int;
 
 puts(atoi('56'));
-
