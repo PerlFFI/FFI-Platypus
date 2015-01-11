@@ -92,6 +92,11 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
             sv_setnv(sv, *((float*)arguments[i]));
             XPUSHs(sv);
             break;
+          case FFI_TYPE_DOUBLE:
+            sv = sv_newmortal();
+            sv_setnv(sv, *((double*)arguments[i]));
+            XPUSHs(sv);
+            break;
         }
       }
     }
@@ -148,6 +153,9 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
           break;
         case FFI_TYPE_FLOAT:
           *((float*)result) = SvNV(sv);
+          break;
+        case FFI_TYPE_DOUBLE:
+          *((double*)result) = SvNV(sv);
           break;
       }
     }

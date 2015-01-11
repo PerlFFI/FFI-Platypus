@@ -60,6 +60,9 @@
           case FFI_TYPE_FLOAT:
             ffi_pl_arguments_set_float(arguments, i, SvNV(arg));
             break;
+          case FFI_TYPE_DOUBLE:
+            ffi_pl_arguments_set_double(arguments, i, SvNV(arg));
+            break;
           case FFI_TYPE_POINTER:
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;
@@ -122,6 +125,10 @@
             case FFI_TYPE_FLOAT:
               Newx_or_alloca(ptr, float);
               *((float*)ptr) = SvNV(SvRV(arg));
+              break;
+            case FFI_TYPE_DOUBLE:
+              Newx_or_alloca(ptr, double);
+              *((double*)ptr) = SvNV(SvRV(arg));
               break;
             default:
               croak("argument type not supported (%d)", i);
@@ -212,6 +219,13 @@
               for(n=0; n<count; n++)
               {
                 ((float*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
+              }
+              break;
+            case FFI_TYPE_DOUBLE:
+              Newx(ptr, count, double);
+              for(n=0; n<count; n++)
+              {
+                ((double*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
               }
               break;
             default:
@@ -336,6 +350,9 @@
               case FFI_TYPE_FLOAT:
                 sv_setnv(SvRV(arg), *((float*)ptr));
                 break;
+              case FFI_TYPE_DOUBLE:
+                sv_setnv(SvRV(arg), *((double*)ptr));
+                break;
             }
           }
         }
@@ -416,6 +433,12 @@
                 sv_setnv(*av_fetch(av, n, 1), ((float*)ptr)[n]);
               }
               break;
+            case FFI_TYPE_DOUBLE:
+              for(n=0; n<count; n++)
+              {
+                sv_setnv(*av_fetch(av, n, 1), ((double*)ptr)[n]);
+              }
+              break;
           }
         }
 #ifndef HAVE_ALLOCA
@@ -485,6 +508,9 @@
           case FFI_TYPE_FLOAT:
             XSRETURN_NV(((ffi_pl_argument*)&result)->xfloat);
             break;
+          case FFI_TYPE_DOUBLE:
+            XSRETURN_NV(((ffi_pl_argument*)&result)->xdouble);
+            break;
           case FFI_TYPE_POINTER:
             XSRETURN_IV(PTR2IV((void*)result));
             break;
@@ -548,6 +574,9 @@
             break;
           case FFI_TYPE_FLOAT:
             sv_setnv(value, *((float*) result));
+            break;
+          case FFI_TYPE_DOUBLE:
+            sv_setnv(value, *((double*) result));
             break;
           default:
             croak("return type not supported");
@@ -630,6 +659,12 @@
             for(i=0; i<count; i++)
             {
               sv[i] = newSVnv( ((float*)result)[i] );
+            }
+            break;
+          case FFI_TYPE_DOUBLE:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSVnv( ((double*)result)[i] );
             }
             break;
           default:

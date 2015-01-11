@@ -67,3 +67,43 @@ foreach my $bits (qw( 16 32 64 ))
     close $in;
   }
 }
+
+foreach my $type (qw( double ))
+{
+  foreach my $orig (qw( libtest/float.c t/type_float.t ))
+  {
+    my $new = $orig;
+    $new =~ s/float/$type/;
+    
+    open my $in, '<', $orig;
+    open my $out, '>', $new;
+
+    if($orig =~ /\.c$/)
+    {
+      print $out join "\n", "/*",
+                            " * DO NOT MODIFY THIS FILE.",
+                            " * Thisfile generated from similar file $orig",
+                            " * all instances of \"float\" have been changed to \"$type\"",
+                            " */",
+                            "";
+    }
+    else
+    {
+      print $out join "\n", "#",
+                            "# DO NOT MODIFY THIS FILE.",
+                            "# Thisfile generated from similar file $orig",
+                            "# all instances of \"float\" have been changed to \"$type\"",
+                            "#",
+                            "";
+    }
+    
+    while(<$in>)
+    {
+      s/float/$type/eg;
+      print $out $_;
+    }
+    
+    close $out;
+    close $in;
+  }
+}
