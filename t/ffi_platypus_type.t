@@ -34,7 +34,7 @@ subtest 'aliased type' => sub {
   ok scalar(grep { $_ eq 'my_integer_8' } $ffi->types), 'ffi.types returns my_integer_8';
 };
 
-my @list = qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double pointer string );
+my @list = qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double opaque string );
 
 subtest 'ffi basic types' => sub {
   plan tests => scalar @list;
@@ -58,7 +58,7 @@ subtest 'ffi basic types' => sub {
 subtest 'ffi pointer types' => sub {
   plan tests => scalar @list;
 
-  foreach my $name (map { "$_ *" } qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double pointer string ))
+  foreach my $name (map { "$_ *" } qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double opaque string ))
   {
     subtest $name => sub {
       plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE POINTER' if $name eq 'string *';
@@ -80,7 +80,7 @@ subtest 'ffi array types' => sub {
 
   my $size = 5;
 
-  foreach my $basic (qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double pointer string ))
+  foreach my $basic (qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double opaque string ))
   {
     my $name = "$basic [$size]";
   
@@ -129,7 +129,7 @@ subtest 'closure types' => sub {
   eval { $ffi->type('(int)->foo') };
   isnt $@, '', 'return type closure illegal';
   
-  $ffi->type('(int,int,int,char,string,pointer)->void' => 'baz');
+  $ffi->type('(int,int,int,char,string,opaque)->void' => 'baz');
   is $ffi->type_meta('baz')->{type}, 'closure', 'a more complicated closure';
   note xdump($ffi->type_meta('baz'));
   

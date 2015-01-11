@@ -178,9 +178,13 @@ Single precision floating point (I<float>)
 
 Double precision floating point (I<double>)
 
-=item pointer
+=item opaque (or pointer)
 
 Opaque pointer (I<void *>)
+
+The L<FFI::Platypus> documentation refers to this as the opaque type differentiate
+it from pointers to defined types (such as integers or floating points).  It provides
+the alias "pointer" as this is what libffi calls them internally.
 
 =item string
 

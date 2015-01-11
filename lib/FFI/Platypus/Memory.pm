@@ -12,14 +12,14 @@ our @EXPORT = qw( malloc free calloc realloc memcpy memset sizeof cast );
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
-$ffi->type($_) foreach qw( pointer size_t void int );
+$ffi->type($_) foreach qw( opaque size_t void int );
 
-$ffi->attach(malloc  => ['size_t']                       => 'pointer' => '$');
-$ffi->attach(free    => ['pointer']                      => 'void'    => '$');
-$ffi->attach(calloc  => ['size_t', 'size_t']             => 'pointer' => '$$');
-$ffi->attach(realloc => ['pointer', 'size_t']            => 'pointer' => '$$');
-$ffi->attach(memcpy  => ['pointer', 'pointer', 'size_t'] => 'pointer' => '$$$');
-$ffi->attach(memset  => ['pointer', 'int', 'size_t']     => 'pointer' => '$$$');
+$ffi->attach(malloc  => ['size_t']                     => 'opaque' => '$');
+$ffi->attach(free    => ['opaque']                     => 'void'    => '$');
+$ffi->attach(calloc  => ['size_t', 'size_t']           => 'opaque' => '$$');
+$ffi->attach(realloc => ['opaque', 'size_t']           => 'opaque' => '$$');
+$ffi->attach(memcpy  => ['opaque', 'opaque', 'size_t'] => 'opaque' => '$$$');
+$ffi->attach(memset  => ['opaque', 'int', 'size_t']    => 'opaque' => '$$$');
 
 sub sizeof ($)
 {

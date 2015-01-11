@@ -20,7 +20,7 @@ subtest 'malloc calloc memset free' => sub {
   memset $ptr1, ord 'x', 8;
   memset $ptr1, ord 'y', 4;
   my $ptr2 = calloc 9, sizeof 'char';
-  my $string = $ffi->function(strcpy => ['pointer', 'pointer'] => 'string')->call($ptr2, $ptr1);
+  my $string = $ffi->function(strcpy => ['opaque', 'opaque'] => 'string')->call($ptr2, $ptr1);
   is $string, 'yyyyxxxx', 'string = yyyyxxxx';
   free $ptr1;
   free $ptr2;
@@ -29,10 +29,10 @@ subtest 'malloc calloc memset free' => sub {
 subtest 'realloc memcpy free' => sub {
   my $ptr1 = realloc undef, 32;
   my $tmp  = realloc undef, 64;
-  $ffi->function(strcpy => ['pointer', 'string'] => 'pointer')->call($tmp, "this and\0");
+  $ffi->function(strcpy => ['opaque', 'string'] => 'opaque')->call($tmp, "this and\0");
   memcpy $ptr1, $tmp, 9;
   free $tmp;
-  my $string = cast 'pointer' => 'string', $ptr1;
+  my $string = cast 'opaque' => 'string', $ptr1;
   is $string, 'this and', 'string = this and';
   free $ptr1;
 };

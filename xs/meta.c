@@ -92,7 +92,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
       hv_store(meta, "sign",          4, newSViv(1),0);
       break;
     case FFI_TYPE_POINTER:
-      hv_store(meta, "element_type", 12, newSVpv("pointer",0),0);
+      hv_store(meta, "element_type", 12, newSVpv("opaque",0),0);
       break;
   }
   switch(self->ffi_type->type)

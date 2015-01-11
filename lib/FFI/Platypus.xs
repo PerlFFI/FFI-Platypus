@@ -136,7 +136,7 @@ _new(class, type, platypus_type, array_size)
       { self->ffi_type = &ffi_type_double; }
       else if(!strcmp(type, "longdouble"))
       { self->ffi_type = &ffi_type_longdouble; }
-      else if(!strcmp(type, "pointer"))
+      else if(!strcmp(type, "opaque") || !strcmp(type, "pointer"))
       { self->ffi_type = &ffi_type_pointer; }
       else
       {

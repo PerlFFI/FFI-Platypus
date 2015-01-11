@@ -120,7 +120,8 @@ sub configure
     }
   }
 
-  my %type_map = map { $_ => $_ } qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string pointer );
+  my %type_map = map { $_ => $_ } qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque );
+  $type_map{pointer} = 'opaque';
 
   foreach my $type (@probe_types)
   {

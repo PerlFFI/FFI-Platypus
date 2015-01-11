@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 14;
+use Test::More tests => 15;
 use FFI::Platypus;
 
 # this tests the private OO type API used only internally
@@ -20,6 +20,7 @@ sint64
 float 
 double
 longdouble
+opaque
 pointer
 );
 
@@ -30,7 +31,8 @@ foreach my $name (@names)
     my $type = eval { FFI::Platypus::Type->new($name) };
     is $@, '', "type = FFI::Platypus::Type->new($name)";
     isa_ok $type, 'FFI::Platypus::Type';
-    is eval { $type->meta->{ffi_type} }, $name;
+    my $expected = $name eq 'opaque' ? 'pointer' : $name;
+    is eval { $type->meta->{ffi_type} }, $expected, "type.meta.ffi_type = $expected";
   }
 }
 
@@ -39,5 +41,5 @@ subtest string => sub {
   my $type = eval { FFI::Platypus::Type->new('string') };
   is $@, '', "type = FFI::Platypus::Type->new(string)";
   isa_ok $type, 'FFI::Platypus::Type';
-  is eval { $type->meta->{ffi_type} }, 'pointer';
+  is eval { $type->meta->{ffi_type} }, 'pointer', 'type.meta.ffi_type = pointer';
 };
