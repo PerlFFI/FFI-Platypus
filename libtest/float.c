@@ -43,3 +43,17 @@ float_static_array(void)
   return foo;
 }
 
+typedef float (*closure_t)(float);
+closure_t my_closure;
+
+EXTERN void
+float_set_closure(closure_t closure)
+{
+  my_closure = closure;
+}
+
+EXTERN float
+float_call_closure(float value)
+{
+  return my_closure(value);
+}

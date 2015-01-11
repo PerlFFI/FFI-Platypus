@@ -152,6 +152,11 @@ typedef struct _ffi_pl_arguments {
 #define ffi_pl_arguments_set_uint64(arguments, i, value)  (arguments->slot[i].uint64  = value)
 #define ffi_pl_arguments_get_uint64(arguments, i)         (arguments->slot[i].uint64)
 
+#define ffi_pl_arguments_set_float(arguments, i, value)  (arguments->slot[i].xfloat  = value)
+#define ffi_pl_arguments_get_float(arguments, i)         (arguments->slot[i].xfloat)
+#define ffi_pl_arguments_set_double(arguments, i, value)  (arguments->slot[i].xdouble  = value)
+#define ffi_pl_arguments_get_double(arguments, i)         (arguments->slot[i].xdouble)
+
 #define ffi_pl_arguments_pointers(arguments) ((void**)&arguments->slot[arguments->count])
 
 #ifdef HAVE_ALLOCA

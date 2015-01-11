@@ -11,6 +11,10 @@
 
     arguments->count = self->ffi_cif.nargs;
 
+    /*
+     * ARGUMENT IN
+     */
+
     for(i=0; i<items-(EXTRA_ARGS); i++)
     {
       ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
@@ -53,6 +57,9 @@
             ffi_pl_arguments_set_sint64(arguments, i, SvI64(arg));
             break;
 #endif
+          case FFI_TYPE_FLOAT:
+            ffi_pl_arguments_set_float(arguments, i, SvNV(arg));
+            break;
           case FFI_TYPE_POINTER:
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;
@@ -111,6 +118,10 @@
 #else
               *((int64_t*)ptr) = SvI64(SvRV(arg));
 #endif
+              break;
+            case FFI_TYPE_FLOAT:
+              Newx_or_alloca(ptr, float);
+              *((float*)ptr) = SvNV(SvRV(arg));
               break;
             default:
               croak("argument type not supported (%d)", i);
@@ -196,6 +207,13 @@
 #endif
               }
               break;
+            case FFI_TYPE_FLOAT:
+              Newx(ptr, count, float);
+              for(n=0; n<count; n++)
+              {
+                ((float*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
+              }
+              break;
             default:
               croak("argument type not supported (%d)", i);
               break;
@@ -253,6 +271,10 @@
       }
     }
 
+    /*
+     * CALL
+     */
+
     if(self->address != NULL)
     {
       ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
@@ -262,6 +284,10 @@
       void *address = items-(EXTRA_ARGS) > 0 ? (void*) &cast1 : (void*) &cast0;
       ffi_call(&self->ffi_cif, address, &result, ffi_pl_arguments_pointers(arguments));
     }
+
+    /*
+     * ARGUMENT OUT
+     */
 
     for(i=0; i<items-(EXTRA_ARGS); i++)
     {
@@ -306,6 +332,9 @@
 #else
                 sv_seti64(SvRV(arg), *((int64_t*)ptr));
 #endif
+                break;
+              case FFI_TYPE_FLOAT:
+                sv_setnv(SvRV(arg), *((float*)ptr));
                 break;
             }
           }
@@ -381,6 +410,12 @@
 #endif
               }
               break;
+            case FFI_TYPE_FLOAT:
+              for(n=0; n<count; n++)
+              {
+                sv_setnv(*av_fetch(av, n, 1), ((float*)ptr)[n]);
+              }
+              break;
           }
         }
 #ifndef HAVE_ALLOCA
@@ -391,6 +426,10 @@
 #ifndef HAVE_ALLOCA
     Safefree(buffer);
 #endif
+
+    /*
+     * RETURN VALUE
+     */
 
     if(self->return_type->platypus_type == FFI_PL_FFI)
     {
@@ -442,6 +481,9 @@
               XSRETURN(1);
             }
 #endif
+            break;
+          case FFI_TYPE_FLOAT:
+            XSRETURN_NV(((ffi_pl_argument*)&result)->xfloat);
             break;
           case FFI_TYPE_POINTER:
             XSRETURN_IV(PTR2IV((void*)result));
@@ -504,6 +546,11 @@
             sv_seti64(value, *((int64_t*) result));
 #endif
             break;
+          case FFI_TYPE_FLOAT:
+            sv_setnv(value, *((float*) result));
+            break;
+          default:
+            croak("return type not supported");
         }
         ST(0) = newRV_inc(value);
         XSRETURN(1);
@@ -579,6 +626,14 @@
 #endif
             }
             break;
+          case FFI_TYPE_FLOAT:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSVnv( ((float*)result)[i] );
+            }
+            break;
+          default:
+            croak("return type not supported");
         }
         av = av_make(count, sv);
         ST(0) = newRV_inc((SV*)av);
