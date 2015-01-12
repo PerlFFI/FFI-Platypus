@@ -107,7 +107,7 @@ for the platform that you are using.  This includes strings, opaque and
 pointers to other types.
 
 This function is not very fast, so you might want to save this value as a 
-constant, particularlly if you need the size in a loop with many 
+constant, particularly if you need the size in a loop with many 
 iterations.
 
 =head2 strdup

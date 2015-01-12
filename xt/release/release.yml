@@ -13,6 +13,7 @@ pod_spelling_system:
     - JIT
     - xsubs
     - libffi
+    - strdup
 
 pod_coverage:
   skip: 0
