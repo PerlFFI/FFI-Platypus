@@ -228,6 +228,14 @@
                 ((double*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
               }
               break;
+            case FFI_TYPE_POINTER:
+              Newx(ptr, count, void*);
+              for(n=0; n<count; n++)
+              {
+                SV *sv = *av_fetch(av, n, 1);
+                ((void**)ptr)[n] = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
+              }
+              break;
             default:
               croak("argument type not supported (%d)", i);
               break;
@@ -431,6 +439,19 @@
               for(n=0; n<count; n++)
               {
                 sv_setnv(*av_fetch(av, n, 1), ((float*)ptr)[n]);
+              }
+              break;
+            case FFI_TYPE_POINTER:
+              for(n=0; n<count; n++)
+              {
+                if( ((void**)ptr)[n] == NULL)
+                {
+                  av_store(av, n, &PL_sv_undef);
+                }
+                else
+                {
+                  sv_setnv(*av_fetch(av,n,1), PTR2IV( ((void**)ptr)[n]) );
+                }
               }
               break;
             case FFI_TYPE_DOUBLE:
@@ -665,6 +686,19 @@
             for(i=0; i<count; i++)
             {
               sv[i] = newSVnv( ((double*)result)[i] );
+            }
+            break;
+          case FFI_TYPE_POINTER:
+            for(i=0; i<count; i++)
+            {
+              if( ((void**)result)[i] == NULL)
+              {
+                sv[i] = &PL_sv_undef;
+              }
+              else
+              {
+                sv[i] = newSViv( PTR2IV( ((void**)result)[i] ));
+              }
             }
             break;
           default:
