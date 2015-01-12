@@ -49,7 +49,7 @@ double_static_array(void)
 }
 
 typedef double (*closure_t)(double);
-closure_t my_closure;
+static closure_t my_closure;
 
 EXTERN void
 double_set_closure(closure_t closure)

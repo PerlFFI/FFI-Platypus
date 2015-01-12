@@ -49,7 +49,7 @@ uint64_static_array(void)
 }
 
 typedef uint64_t (*closure_t)(uint64_t);
-closure_t my_closure;
+static closure_t my_closure;
 
 EXTERN void
 uint64_set_closure(closure_t closure)

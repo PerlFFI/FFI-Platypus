@@ -101,9 +101,13 @@ The following FFI types are always available (parentheticals indicates the usual
 
     Double precision floating point (_double_)
 
-- pointer
+- opaque (or pointer)
 
     Opaque pointer (_void \*_)
+
+    The [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) documentation refers to this as the opaque type differentiate
+    it from pointers to defined types (such as integers or floating points).  It provides
+    the alias "pointer" as this is what libffi calls them internally.
 
 - string
 

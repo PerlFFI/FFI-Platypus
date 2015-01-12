@@ -44,7 +44,7 @@ float_static_array(void)
 }
 
 typedef float (*closure_t)(float);
-closure_t my_closure;
+static closure_t my_closure;
 
 EXTERN void
 float_set_closure(closure_t closure)

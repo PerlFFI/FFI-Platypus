@@ -44,7 +44,7 @@ sint8_static_array(void)
 }
 
 typedef int8_t (*closure_t)(int8_t);
-closure_t my_closure;
+static closure_t my_closure;
 
 EXTERN void
 sint8_set_closure(closure_t closure)

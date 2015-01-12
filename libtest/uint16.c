@@ -49,7 +49,7 @@ uint16_static_array(void)
 }
 
 typedef uint16_t (*closure_t)(uint16_t);
-closure_t my_closure;
+static closure_t my_closure;
 
 EXTERN void
 uint16_set_closure(closure_t closure)
