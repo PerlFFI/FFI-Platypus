@@ -89,3 +89,17 @@ pointer_pointer_to_pointer_pointer(void *pointer)
   return pointer_pointer;
 }
 
+typedef void *(*closure_t)(void*);
+static closure_t my_closure;
+
+EXTERN void
+pointer_set_closure(closure_t closure)
+{
+  my_closure = closure;
+}
+
+EXTERN void*
+pointer_call_closure(void *value)
+{
+  return my_closure(value);
+}

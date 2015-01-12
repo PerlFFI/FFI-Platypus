@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 16;
+use Test::More tests => 20;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( opaque int void string );
 use FFI::Platypus::Memory qw( malloc free cast strdup );
@@ -89,5 +89,25 @@ is p2pp(undef), \undef, 'p2pp(undef) = \undef';
 do {
   my $ptr = malloc 32;
   is ${p2pp($ptr)}, $ptr, "pp2p($ptr) = \\$ptr";
+  free $ptr;
+};
+
+function [pointer_set_closure => 'set_closure']   => ['(opaque)->opaque'] => void;
+function [pointer_call_closure => 'call_closure'] => [opaque] => opaque;
+
+my $save = 1;
+my $closure = closure { $save = $_[0] };
+
+set_closure($closure);
+
+is call_closure(undef), undef, "call_closure(undef) = undef";
+is $save, undef, "save = undef";
+
+do {
+  my $ptr = malloc 32;
+  
+  is call_closure($ptr), $ptr, "call_closure(\\$ptr) = $ptr";
+  is $save, $ptr, "save = $ptr";
+  
   free $ptr;
 };

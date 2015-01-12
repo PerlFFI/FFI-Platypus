@@ -97,6 +97,12 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
             sv_setnv(sv, *((double*)arguments[i]));
             XPUSHs(sv);
             break;
+          case FFI_TYPE_POINTER:
+            sv = sv_newmortal();
+            if( *((void**)arguments[i]) != NULL)
+              sv_setiv(sv, PTR2IV( *((void**)arguments[i]) ));
+            XPUSHs(sv);
+            break;
         }
       }
     }
@@ -156,6 +162,9 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
           break;
         case FFI_TYPE_DOUBLE:
           *((double*)result) = SvNV(sv);
+          break;
+        case FFI_TYPE_POINTER:
+          *((void**)result) = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
           break;
       }
     }
