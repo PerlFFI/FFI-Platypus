@@ -2,6 +2,7 @@ package My::ModuleBuild;
 
 use strict;
 use warnings;
+use 5.008001;
 use Alien::FFI;
 use My::LibTest;
 use My::AutoConf;

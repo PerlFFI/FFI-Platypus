@@ -17,7 +17,7 @@ on 'configure' => sub {
   requires "ExtUtils::CBuilder" => "0";
   requires "FFI::CheckLib" => "0.05";
   requires "Module::Build" => "0.28";
-  requires "perl" => "5.006";
+  requires "perl" => "5.008001";
 };
 
 on 'develop' => sub {

@@ -22,7 +22,7 @@ my %module_build_args = (
     "ExtUtils::CBuilder" => 0,
     "FFI::CheckLib" => "0.05",
     "Module::Build" => "0.28",
-    "perl" => "5.006"
+    "perl" => "5.008001"
   },
   "dist_abstract" => "Glue a duckbill to an adorable aquatic mammal",
   "dist_author" => [
