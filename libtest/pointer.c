@@ -27,6 +27,12 @@ pointer_get_my_pointer(void)
   return my_pointer;
 }
 
+EXTERN void
+pointer_get_my_pointer_arg(void **ret)
+{
+  *ret = my_pointer;
+}
+
 EXTERN int
 pointer_arg_array_in(char *array[3])
 {
@@ -68,3 +74,18 @@ pointer_ret_array_null_out(void)
   static char *array[3] = { NULL, NULL, NULL };
   return array;
 }
+
+EXTERN void *
+pointer_pointer_pointer_to_pointer(void **pointer_pointer)
+{
+  return *pointer_pointer;
+}
+
+EXTERN void**
+pointer_pointer_to_pointer_pointer(void *pointer)
+{
+  static void *pointer_pointer[1];
+  pointer_pointer[0] = pointer;
+  return pointer_pointer;
+}
+

@@ -130,6 +130,13 @@
               Newx_or_alloca(ptr, double);
               *((double*)ptr) = SvNV(SvRV(arg));
               break;
+            case FFI_TYPE_POINTER:
+              Newx_or_alloca(ptr, void*);
+              {
+                SV *tmp = SvRV(arg);
+                *((void**)ptr) = SvOK(tmp) ? INT2PTR(void *, SvIV(tmp)) : NULL;
+              }
+              break;
             default:
               croak("argument type not supported (%d)", i);
               break;
@@ -357,6 +364,12 @@
                 break;
               case FFI_TYPE_FLOAT:
                 sv_setnv(SvRV(arg), *((float*)ptr));
+                break;
+              case FFI_TYPE_POINTER:
+                if( *((void**)ptr) == NULL)
+                  sv_setsv(SvRV(arg), &PL_sv_undef);
+                else
+                  sv_setiv(SvRV(arg), PTR2IV(*((void**)ptr)));
                 break;
               case FFI_TYPE_DOUBLE:
                 sv_setnv(SvRV(arg), *((double*)ptr));
@@ -598,6 +611,12 @@
             break;
           case FFI_TYPE_DOUBLE:
             sv_setnv(value, *((double*) result));
+            break;
+          case FFI_TYPE_POINTER:
+            if( *((void**)result) == NULL )
+              value = &PL_sv_undef;
+            else
+              sv_setiv(value, PTR2IV(*((void**)result)));
             break;
           default:
             croak("return type not supported");
