@@ -26,10 +26,9 @@ subtest 'malloc calloc memset free' => sub {
   free $ptr2;
 };
 
-subtest 'realloc memcpy free' => sub {
+subtest 'realloc memcpy free strdup' => sub {
   my $ptr1 = realloc undef, 32;
-  my $tmp  = realloc undef, 64;
-  $ffi->function(strcpy => ['opaque', 'string'] => 'opaque')->call($tmp, "this and\0");
+  my $tmp  = strdup "this and\0";
   memcpy $ptr1, $tmp, 9;
   free $tmp;
   my $string = cast 'opaque' => 'string', $ptr1;
