@@ -3,7 +3,7 @@ use warnings;
 use Test::More tests => 16;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( opaque int void string );
-use FFI::Platypus::Memory qw( malloc free cast );
+use FFI::Platypus::Memory qw( malloc free cast strdup );
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
@@ -44,7 +44,12 @@ function [pointer_arg_array_null_in  => 'aa_null_in']  => ['opaque[3]'] => int;
 function [pointer_arg_array_out => 'aa_out'] => ['opaque[3]'] => void;
 function [pointer_arg_array_null_out => 'aa_null_out'] => ['opaque[3]'] => void;
 
-is aa_in([map { cast string => opaque, $_ } qw( one two three )]), 1, "aa_in([one two three])";
+do {
+  my @stuff = map { strdup $_ } qw( one two three );
+  is aa_in([@stuff]), 1, "aa_in([one two three])";
+  free $_ for @stuff;
+};
+
 is aa_null_in([undef,undef,undef]), 1, "aa_null_in([undef,undef,undef])";
 
 do {
