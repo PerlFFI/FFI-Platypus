@@ -105,6 +105,13 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
             break;
         }
       }
+      else if(extra->argument_types[i]->platypus_type == FFI_PL_STRING)
+      {
+        sv = sv_newmortal();
+        if( *((char**)arguments[i]) != NULL)
+          sv_setpv(sv, *((char**)arguments[i]));
+        XPUSHs(sv);
+      }
     }
     PUTBACK;
   }

@@ -1,9 +1,9 @@
 use strict;
 use warnings;
-use Test::More tests => 6;
+use Test::More tests => 8;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
-  'string', 'int';
+  'string', 'int', 'void';
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
@@ -19,3 +19,16 @@ is string_return_foobarbaz(), "foobarbaz", "string_return_foobarbaz() = foobarba
 is null(), undef, 'null() = undef';
 is is_null(undef), 1, 'is_null(undef) = 1';
 is is_null("foo"), 0, 'is_null("foo") = 0';
+
+function [string_set_closure => 'set_closure']   => ['(string)->void'] => void;
+function [string_call_closure => 'call_closure'] => [string]=>void;
+
+my $save = 1;
+my $closure = closure { $save = $_[0] };
+
+set_closure($closure);
+call_closure("hey there");
+is $save, "hey there", "\$save = hey there";
+
+call_closure(undef);
+is $save, undef, "\$save = undef";
