@@ -20,7 +20,16 @@ $ffi->attach(calloc  => ['size_t', 'size_t']           => 'opaque' => '$$');
 $ffi->attach(realloc => ['opaque', 'size_t']           => 'opaque' => '$$');
 $ffi->attach(memcpy  => ['opaque', 'opaque', 'size_t'] => 'opaque' => '$$$');
 $ffi->attach(memset  => ['opaque', 'int', 'size_t']    => 'opaque' => '$$$');
-$ffi->attach(strdup  => ['string']                     => 'opaque' => '$');
+
+eval { $ffi->attach(strdup  => ['string'] => 'opaque' => '$') };
+if($@)
+{
+  *strdup = sub ($) {
+    my($string) = @_;
+    my $ptr = malloc(length($string)+1);
+    memcpy($ptr, cast('string' => 'opaque', $string), length($string)+1);
+  };
+}
 
 sub sizeof ($)
 {
