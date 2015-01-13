@@ -62,4 +62,3 @@ subtest 'custom type input' => sub {
   is custom_add(2,1), 5, 'custom_add(2,1) = 5';
   is_deeply $save, [1,2,3], 'userdata = [1,2,3]';
 };
-
