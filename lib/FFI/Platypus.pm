@@ -490,7 +490,7 @@ L<https://github.com/plicease/FFI-Platypus/issues>
 
 =head1 CONTRIBUTING
 
-If you have implemented a new feature then you may make a pull request on
+If you have implemented a new feature or fixed a bug then you may make a pull request on
 this project's GitHub repository:
 
 L<https://github.com/plicease/FFI-Platypus/pulls>
@@ -499,7 +499,7 @@ This project is developed using L<Dist::Zilla>.  The project's git repository al
 comes with C<Build.PL> and C<cpanfile> files necessary for building, testing 
 (and even installing if necessary) without L<Dist::Zilla>.  Please keep in mind
 though that these files are generated so if changes need to be made to those files
-they should be done through the project's C<dist.ini> file.  If do use L<Dist::Zilla>
+they should be done through the project's C<dist.ini> file.  If you do use L<Dist::Zilla>
 and already have the necessary plugins installed, then I encourage you to run
 C<dzil test> before making any pull requests.  This is not a requirement, however,
 I am happy to integrate especially smaller patches that need tweaking to fit the project
