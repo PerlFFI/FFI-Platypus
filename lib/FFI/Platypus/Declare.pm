@@ -74,6 +74,19 @@ sub type ($;$)
   _ffi_object->type(@_);
 }
 
+=head2 custom_type
+
+ custom_type 'uint8' => 'my_custom_type', sub { }, sub {}, $userdata;
+
+Declare the given custom type.
+
+=cut
+
+sub custom_type ($$$;$$)
+{
+  _ffi_object->custom_type(@_);
+}
+
 =head2 type_meta
 
  my $meta = type_meta 'int';
@@ -146,6 +159,7 @@ sub import
   *{join '::', $caller, 'lib'} = \&lib;
   *{join '::', $caller, 'type'} = \&type;
   *{join '::', $caller, 'type_meta'} = \&type_meta;
+  *{join '::', $caller, 'custom_type'} = \&custom_type;
   *{join '::', $caller, 'function'} = \&function;
   *{join '::', $caller, 'closure'} = \&closure;
 }

@@ -228,7 +228,7 @@ sub type
   require FFI::Platypus::ConfigData;
   my $type_map = FFI::Platypus::ConfigData->config("type_map");
 
-  croak "alias conflicts with existing type" if defined $alias && defined $type_map->{$alias};
+  croak "alias conflicts with existing type" if defined $alias && (defined $type_map->{$alias} || defined $self->{types}->{$alias});
 
   if($name =~ /-\>/)
   {
@@ -255,6 +255,31 @@ sub type
   {
     $self->{types}->{$alias} = $self->{types}->{$name};
   }
+  $self;
+}
+
+=head2 custom_type
+
+ $ffi->type($type, $name, $perl_to_ffi_coderef, $ffi_to_perl_coderef, $userdata);
+
+Define a custom type.
+
+=cut
+
+sub custom_type
+{
+  my($self, $type, $name, $p2f, $f2p, $ud) = @_;
+  
+  croak "Usage: \$ffi->custom_type(\$type, \$name, \$perl_to_ffi, \$ffi_to_perl, \$userdata) # \$userdata is optional, at least one of \$ffi_to_perl or \$perl_to_ffi is required"
+    unless defined $type && defined $name && (defined $p2f || defined $f2p);
+  
+  require FFI::Platypus::ConfigData;
+  my $type_map = FFI::Platypus::ConfigData->config("type_map");  
+  croak "$type is not a basic type" unless defined $type_map->{$type} || $type eq 'string';
+  croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
+  
+  $self->{types}->{$name} = FFI::Platypus::Type->_new_custom_perl($type_map->{$type}, $p2f, $f2p, $ud);
+  
   $self;
 }
 

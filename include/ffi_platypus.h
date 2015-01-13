@@ -55,18 +55,14 @@ typedef enum _platypus_type {
   FFI_PL_POINTER,
   FFI_PL_ARRAY,
   FFI_PL_CLOSURE,
-  FFI_PL_CUSTOM_PERL,
-  FFI_PL_CUSTOM_C
+  FFI_PL_CUSTOM_PERL
 } platypus_type;
 
-typedef struct _ffi_pl_type_extra_custom {
-  /*
-   * this is used for both FFI_PL_CUSTOM_PERL and FFI_PL_CUSTOM_C
-   * for _PERL these point to SV* that are code references
-   * for _C these are function pointers.
-   */
-  void *custom[6];
-} ffi_pl_type_extra_custom;
+typedef struct _ffi_pl_type_extra_custom_perl {
+  void *perl_to_ffi;
+  void *ffi_to_perl;
+  void *userdata;
+} ffi_pl_type_extra_custom_perl;
 
 typedef struct _ffi_pl_type_extra_array {
   int element_count;
@@ -82,9 +78,9 @@ typedef struct _ffi_pl_type_extra_closure {
 } ffi_pl_type_extra_closure;
 
 typedef union _ffi_pl_type_extra {
-  ffi_pl_type_extra_custom  custom;
-  ffi_pl_type_extra_array   array;
-  ffi_pl_type_extra_closure closure;
+  ffi_pl_type_extra_custom_perl  custom_perl;
+  ffi_pl_type_extra_array        array;
+  ffi_pl_type_extra_closure      closure;
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {
@@ -164,5 +160,7 @@ typedef struct _ffi_pl_arguments {
 #else
 #define Newx_or_alloca(ptr, type) Newx(ptr, 1, type)
 #endif
+
+ffi_type *ffi_pl_name_to_type(const char *);
 
 #endif

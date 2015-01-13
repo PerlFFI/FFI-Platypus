@@ -112,33 +112,8 @@ _new(class, type, platypus_type, array_size)
 
     if(self != NULL && self->ffi_type == NULL)
     {
-      if(!strcmp(type, "void"))
-      { self->ffi_type = &ffi_type_void; }
-      else if(!strcmp(type, "uint8"))
-      { self->ffi_type = &ffi_type_uint8; }
-      else if(!strcmp(type, "sint8"))
-      { self->ffi_type = &ffi_type_sint8; }
-      else if(!strcmp(type, "uint16"))
-      { self->ffi_type = &ffi_type_uint16; }
-      else if(!strcmp(type, "sint16"))
-      { self->ffi_type = &ffi_type_sint16; }
-      else if(!strcmp(type, "uint32"))
-      { self->ffi_type = &ffi_type_uint32; }
-      else if(!strcmp(type, "sint32"))
-      { self->ffi_type = &ffi_type_sint32; }
-      else if(!strcmp(type, "uint64"))
-      { self->ffi_type = &ffi_type_uint64; }
-      else if(!strcmp(type, "sint64"))
-      { self->ffi_type = &ffi_type_sint64; }
-      else if(!strcmp(type, "float"))
-      { self->ffi_type = &ffi_type_float; }
-      else if(!strcmp(type, "double"))
-      { self->ffi_type = &ffi_type_double; }
-      else if(!strcmp(type, "longdouble"))
-      { self->ffi_type = &ffi_type_longdouble; }
-      else if(!strcmp(type, "opaque") || !strcmp(type, "pointer"))
-      { self->ffi_type = &ffi_type_pointer; }
-      else
+      self->ffi_type = ffi_pl_name_to_type(type);
+      if(self->ffi_type == NULL)
       {
         Safefree(self);
         self = NULL;
@@ -149,6 +124,38 @@ _new(class, type, platypus_type, array_size)
     RETVAL = self;
   OUTPUT:
     RETVAL
+
+ffi_pl_type *
+_new_custom_perl(class, type, perl_to_ffi, ffi_to_perl, userdata)
+    const char *class
+    const char *type
+    SV *perl_to_ffi
+    SV *ffi_to_perl
+    SV *userdata
+  PREINIT:
+    char *buffer;
+    ffi_pl_type *self;
+    ffi_type *ffi_type;
+    ffi_pl_type_extra_custom_perl *custom;
+  CODE:
+    ffi_type = ffi_pl_name_to_type(type);
+    if(ffi_type == NULL)
+      croak("unknown ffi/platypus type: %s/custom", type);
+      
+    Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_custom_perl), char);
+    self = (ffi_pl_type*) buffer;
+    self->platypus_type = FFI_PL_CUSTOM_PERL;
+    self->ffi_type = ffi_type;
+    
+    custom = &self->extra[0].custom_perl;
+    custom->perl_to_ffi = SvOK(perl_to_ffi) ? SvREFCNT_inc(perl_to_ffi) : NULL;
+    custom->ffi_to_perl = SvOK(ffi_to_perl) ? SvREFCNT_inc(ffi_to_perl) : NULL;
+    custom->userdata    = SvOK(userdata)    ? SvREFCNT_inc(userdata)    : NULL;
+    
+    RETVAL = self;
+  OUTPUT:
+    RETVAL
+
 
 ffi_pl_type *
 _new_closure(class, return_type, ...)
@@ -266,10 +273,24 @@ meta(self)
 void
 DESTROY(self)
     ffi_pl_type *self
+  PREINIT:
   CODE:
     if(self->platypus_type == FFI_PL_CLOSURE)
     {
       Safefree(self->extra[0].closure.ffi_cif.arg_types);
+    }
+    if(self->platypus_type == FFI_PL_CUSTOM_PERL)
+    {
+      ffi_pl_type_extra_custom_perl *custom;
+      
+      custom = &self->extra[0].custom_perl;
+      
+      if(custom->perl_to_ffi != NULL)
+        SvREFCNT_dec(custom->perl_to_ffi);
+      if(custom->ffi_to_perl != NULL)
+        SvREFCNT_dec(custom->ffi_to_perl);
+      if(custom->userdata != NULL)
+        SvREFCNT_dec(custom->userdata);
     }
     Safefree(self);
 

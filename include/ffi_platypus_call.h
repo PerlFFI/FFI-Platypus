@@ -17,11 +17,32 @@
 
     for(i=0; i<items-(EXTRA_ARGS); i++)
     {
+      int platypus_type = self->argument_types[i]->platypus_type;
       ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
 
       arg = ST(i+(EXTRA_ARGS));
-      if(self->argument_types[i]->platypus_type == FFI_PL_FFI)
+      if(platypus_type == FFI_PL_FFI || platypus_type == FFI_PL_CUSTOM_PERL)
       {
+
+        if(platypus_type == FFI_PL_CUSTOM_PERL)
+        {
+          dSP;
+          int count;
+          ENTER;
+          SAVETMPS;
+          PUSHMARK(SP);
+          XPUSHs(arg);
+          if(self->argument_types[i]->extra[0].custom_perl.userdata != NULL)
+            XPUSHs((SV*)self->argument_types[i]->extra[0].custom_perl.userdata);
+          PUTBACK;
+          count = call_sv(self->argument_types[i]->extra[0].custom_perl.perl_to_ffi, G_SCALAR);
+          SPAGAIN;
+          if(count == 1)
+            arg = POPs;
+          else
+            arg = &PL_sv_undef;
+        }
+
         switch(self->argument_types[i]->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
@@ -70,12 +91,20 @@
             croak("argument type not supported (%d)", i);
             break;
         }
+
+        if(platypus_type == FFI_PL_CUSTOM_PERL)
+        {
+          PUTBACK;
+          FREETMPS;
+          LEAVE;
+        }
+
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_STRING)
+      else if(platypus_type == FFI_PL_STRING)
       {
         ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_POINTER)
+      else if(platypus_type == FFI_PL_POINTER)
       {
         void *ptr;
         if(SvROK(arg)) /* TODO: and a scalar ref */
@@ -148,7 +177,7 @@
         }
         ffi_pl_arguments_set_pointer(arguments, i, ptr);
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_ARRAY)
+      else if(platypus_type == FFI_PL_ARRAY)
       {
         void *ptr;
         int count = self->argument_types[i]->extra[0].array.element_count;
@@ -255,7 +284,7 @@
         }
         ffi_pl_arguments_set_pointer(arguments, i, ptr);
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_CLOSURE)
+      else if(platypus_type == FFI_PL_CLOSURE)
       {
         /*
          * TODO: failing to create a closure here, should indicate a big problem
