@@ -106,9 +106,13 @@ sub configure
     $ac->define_var( HAVE_ALLOCA => 1 );
   }
   
-  if($Config{ivsize} >= 8)
+  if(!$ENV{FFI_PLATYPUS_DEBUG_FAKE32} && $Config{ivsize} >= 8)
   {
     $ac->define_var( HAVE_IV_IS_64 => 1 );
+  }
+  else
+  {
+    $ac->define_var( HAVE_IV_IS_64 => 0 );
   }
   
   foreach my $lib (map { s/^-l//; $_ } split /\s+/, $Config{perllibs})

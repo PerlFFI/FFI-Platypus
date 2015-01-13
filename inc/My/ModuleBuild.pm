@@ -19,7 +19,7 @@ sub new
   $args{include_dirs}         = 'include';
   $args{extra_compiler_flags} = Alien::FFI->cflags;
   $args{extra_linker_flags}   = Alien::FFI->libs;
-  $args{requires}->{'Math::Int64'} = '0.34' if $Config{uvsize} < 8;
+  $args{requires}->{'Math::Int64'} = '0.34' if $ENV{FFI_PLATYPUS_DEBUG_FAKE32} || $Config{uvsize} < 8;
 
   if($^O eq 'MSWin32' && $Config{cc} =~ /cl(\.exe)?$/i)
   {
