@@ -137,7 +137,7 @@ The following types are supported, but actual size or sign depends on your platf
 Returns the list of types that FFI knows about.  This may be either built in FFI types (example: _sint32_) or
 detected C types (example: _signed int_), or types that you have defined using the [FFI::Platypus#type](https://metacpan.org/pod/type) method.
 
-It can also be called as a class method, in which case, not user defined types will be included.
+It can also be called as a class method, in which case, no user defined types will be included.
 
 ## type\_meta
 

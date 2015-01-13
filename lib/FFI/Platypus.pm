@@ -273,7 +273,7 @@ sub _type_lookup
 Returns the list of types that FFI knows about.  This may be either built in FFI types (example: I<sint32>) or
 detected C types (example: I<signed int>), or types that you have defined using the L<FFI::Platypus#type|type> method.
 
-It can also be called as a class method, in which case, not user defined types will be included.
+It can also be called as a class method, in which case, no user defined types will be included.
 
 =cut
 
