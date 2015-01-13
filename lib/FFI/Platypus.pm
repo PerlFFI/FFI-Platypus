@@ -5,7 +5,7 @@ use warnings;
 use 5.008001;
 use Carp qw( croak );
 
-# ABSTRACT: Glue a duckbill to an adorable aquatic mammal
+# ABSTRACT: Write Perl bindings to foreign language libraries without XS
 # VERSION
 
 # Platypus Man,

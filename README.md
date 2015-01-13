@@ -1,6 +1,6 @@
 # FFI::Platypus
 
-Glue a duckbill to an adorable aquatic mammal
+Write Perl bindings to foreign language libraries without XS
 
 # SYNOPSIS
 

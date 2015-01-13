@@ -24,7 +24,7 @@ my %module_build_args = (
     "Module::Build" => "0.28",
     "perl" => "5.008001"
   },
-  "dist_abstract" => "Glue a duckbill to an adorable aquatic mammal",
+  "dist_abstract" => "Write Perl bindings to foreign language libraries without XS",
   "dist_author" => [
     "Graham Ollis <plicease\@cpan.org>"
   ],
