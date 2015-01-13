@@ -129,6 +129,12 @@ The following types are supported, but actual size or sign depends on your platf
 
     May be either 32 or 64 bit.  Usually unsigned.
 
+## custom\_type
+
+    $ffi->type($type, $name, $perl_to_ffi_coderef, $ffi_to_perl_coderef, $userdata);
+
+Define a custom type.
+
 ## types
 
     my @types = $ffi->types;
