@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.04      2015-01-13 11:14:54 -0500
+  - Third (and incomplete) alpha
+  - all basic types supported everywhere
+  - closures do not support non basic types or returning strings from a closure
+
 0.03      2015-01-09 15:40:14 -0500
   - Second (and incomplete) alpha
   - closure support added (only integer arguments implmented).
