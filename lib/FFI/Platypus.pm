@@ -481,6 +481,32 @@ sub new
 
 1;
 
+=head1 SUPPORT
+
+If something does not work the way you think it should, or if you have a feature
+request, please open an issue on this project's GitHub Issue tracker:
+
+L<https://github.com/plicease/FFI-Platypus/issues>
+
+=head1 CONTRIBUTING
+
+If you have implemented a new feature then you may make a pull request on
+this project's GitHub repository:
+
+L<https://github.com/plicease/FFI-Platypus/pulls>
+
+This project is developed using L<Dist::Zilla>.  The project's git repository also
+comes with C<Build.PL> and C<cpanfile> files necessary for building, testing 
+(and even installing if necessary) without L<Dist::Zilla>.  Please keep in mind
+though that these files are generated so if changes need to be made to those files
+they should be done through the project's C<dist.ini> file.  If do use L<Dist::Zilla>
+and already have the necessary plugins installed, then I encourage you to run
+C<dzil test> before making any pull requests.  This is not a requirement, however,
+I am happy to integrate especially smaller patches that need tweaking to fit the project
+standards.  I may push back and ask you to write a test case or alter the formatting of 
+a patch depending on the amount of time I have and the amount of code that your patch 
+touches.
+
 =head1 SEE ALSO
 
 =over 4

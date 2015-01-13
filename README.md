@@ -177,6 +177,32 @@ there is no way to deallocate an xsub.
 Prepares a code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
 from C code).
 
+# SUPPORT
+
+If something does not work the way you think it should, or if you have a feature
+request, please open an issue on this project's GitHub Issue tracker:
+
+[https://github.com/plicease/FFI-Platypus/issues](https://github.com/plicease/FFI-Platypus/issues)
+
+# CONTRIBUTING
+
+If you have implemented a new feature then you may make a pull request on
+this project's GitHub repository:
+
+[https://github.com/plicease/FFI-Platypus/pulls](https://github.com/plicease/FFI-Platypus/pulls)
+
+This project is developed using [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  The project's git repository also
+comes with `Build.PL` and `cpanfile` files necessary for building, testing 
+(and even installing if necessary) without [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  Please keep in mind
+though that these files are generated so if changes need to be made to those files
+they should be done through the project's `dist.ini` file.  If do use [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla)
+and already have the necessary plugins installed, then I encourage you to run
+`dzil test` before making any pull requests.  This is not a requirement, however,
+I am happy to integrate especially smaller patches that need tweaking to fit the project
+standards.  I may push back and ask you to write a test case or alter the formatting of 
+a patch depending on the amount of time I have and the amount of code that your patch 
+touches.
+
 # SEE ALSO
 
 - [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)
