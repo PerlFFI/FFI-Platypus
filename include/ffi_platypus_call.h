@@ -367,6 +367,23 @@
      * CALL
      */
 
+#if 0
+    fprintf(stderr, "# ===[%p]===\n", self->address);
+    for(i=0; i<items-(EXTRA_ARGS); i++)
+    {
+      fprintf(stderr, "# [%d] %p %p %016llx %g %g\n", 
+        i, 
+        ((void**)&arguments->slot[arguments->count])[i],
+        &arguments->slot[i],
+        ffi_pl_arguments_get_uint64(arguments, i), 
+        ffi_pl_arguments_get_float(arguments, i), 
+        ffi_pl_arguments_get_double(arguments, i)
+      );
+    }
+    fprintf(stderr, "# === ===\n");
+    fflush(stderr);
+#endif
+    
     if(self->address != NULL)
     {
       ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
