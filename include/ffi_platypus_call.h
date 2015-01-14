@@ -1,3 +1,8 @@
+    /*
+     * FIXME: wrong number of arguments should be supported.
+     * too few and we should fill with undef.  too many may
+     * be a warning.
+     */
     if(items-(EXTRA_ARGS) != self->ffi_cif.nargs)
       croak("wrong number of arguments (expected %d, got %d)", self->ffi_cif.nargs, items-(EXTRA_ARGS) );
 
@@ -68,7 +73,7 @@
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;
           default:
-            croak("argument type not supported (%d)", i);
+            warn("argument type not supported (%d)", i);
             break;
         }
       }
@@ -139,7 +144,8 @@
               }
               break;
             default:
-              croak("argument type not supported (%d)", i);
+              warn("argument type not supported (%d)", i);
+              *((void**)ptr) = NULL;
               break;
           }
         }
@@ -245,7 +251,8 @@
               }
               break;
             default:
-              croak("argument type not supported (%d)", i);
+              Newxz(ptr, count*self->argument_types[i]->ffi_type->size, char);
+              warn("argument type not supported (%d)", i);
               break;
           }
         }
@@ -348,7 +355,7 @@
             ffi_pl_arguments_set_pointer(arguments, i, arg2 != NULL && SvOK(arg2) ? INT2PTR(void*, SvIV(arg2)) : NULL);
             break;
           default:
-            croak("argument type not supported (%d)", i);
+            warn("argument type not supported (%d)", i);
             break;
         }
 
@@ -359,7 +366,7 @@
       }
       else
       {
-        croak("argument type not supported (%d)", i);
+        warn("argument type not supported (%d)", i);
       }
     }
 
@@ -651,28 +658,35 @@
       }
       else
       {
-        SV *value = sv_newmortal();
+        SV *value;
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
+            value = sv_newmortal();
             sv_setuv(value, *((uint8_t*) result));
             break;
           case FFI_TYPE_SINT8:
+            value = sv_newmortal();
             sv_setiv(value, *((int8_t*) result));
             break;
           case FFI_TYPE_UINT16:
+            value = sv_newmortal();
             sv_setuv(value, *((uint16_t*) result));
             break;
           case FFI_TYPE_SINT16:
+            value = sv_newmortal();
             sv_setiv(value, *((int16_t*) result));
             break;
           case FFI_TYPE_UINT32:
+            value = sv_newmortal();
             sv_setuv(value, *((uint32_t*) result));
             break;
           case FFI_TYPE_SINT32:
+            value = sv_newmortal();
             sv_setiv(value, *((int32_t*) result));
             break;
           case FFI_TYPE_UINT64:
+            value = sv_newmortal();
 #ifdef HAVE_IV_IS_64
             sv_setuv(value, *((uint64_t*) result));
 #else
@@ -680,6 +694,7 @@
 #endif
             break;
           case FFI_TYPE_SINT64:
+            value = sv_newmortal();
 #ifdef HAVE_IV_IS_64
             sv_setiv(value, *((int64_t*) result));
 #else
@@ -687,19 +702,23 @@
 #endif
             break;
           case FFI_TYPE_FLOAT:
+            value = sv_newmortal();
             sv_setnv(value, *((float*) result));
             break;
           case FFI_TYPE_DOUBLE:
+            value = sv_newmortal();
             sv_setnv(value, *((double*) result));
             break;
           case FFI_TYPE_POINTER:
+            value = sv_newmortal();
             if( *((void**)result) == NULL )
               value = &PL_sv_undef;
             else
               sv_setiv(value, PTR2IV(*((void**)result)));
             break;
           default:
-            croak("return type not supported");
+            warn("return type not supported");
+            XSRETURN_EMPTY;
         }
         ST(0) = newRV_inc(value);
         XSRETURN(1);
@@ -716,7 +735,7 @@
       {
         int count = self->return_type->extra[0].array.element_count;
         AV *av;
-        SV *sv[count]; /* TODO: could be large shouldn't alloate on the stack */
+        SV *sv[count]; /* FIXME: could be large shouldn't alloate on the stack */
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
@@ -801,7 +820,8 @@
             }
             break;
           default:
-            croak("return type not supported");
+            warn("return type not supported");
+            XSRETURN_EMPTY;
         }
         av = av_make(count, sv);
         ST(0) = newRV_inc((SV*)av);
@@ -810,5 +830,6 @@
     }
 
     croak("return type not supported");
+    XSRETURN_EMPTY;
 
 #undef EXTRA_ARGS
