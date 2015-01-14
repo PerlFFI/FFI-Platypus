@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 14;
+use Test::More tests => 17;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'uint8', 'void', 'int',
@@ -20,6 +20,7 @@ function [uint8_static_array => 'static_array'] => [] => uint8_a;
 function [pointer_null => 'null2'] => [] => uint8_a;
 
 is add(1,2), 3, 'add(1,2) = 3';
+is do { no warnings; add() }, 0, 'add() = 0';
 
 my $i = 3;
 is ${inc(\$i, 4)}, 7, 'inc(\$i,4) = \7';
@@ -33,11 +34,13 @@ my @list = (1,2,3,4,5,6,7,8,9,10);
 is sum(\@list), 55, 'sum([1..10]) = 55';
 
 array_inc(\@list);
+do { local $SIG{__WARN__} = sub {}; array_inc() };
 
 is_deeply \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
 
 is null(), undef, 'null() == undef';
 is is_null(undef), 1, 'is_null(undef) == 1';
+is is_null(), 1, 'is_null() == 1';
 is is_null(\22), 0, 'is_null(22) == 0';
 
 is_deeply static_array(), [1,4,6,8,10,12,14,16,18,20], 'static_array = [1,4,6,8,10,12,14,16,18,20]';
@@ -61,3 +64,6 @@ subtest 'custom type input' => sub {
   function [uint8_add => 'custom_add'] => ['type1',uint8] => uint8;
   is custom_add(2,1), 5, 'custom_add(2,1) = 5';
 };
+
+function [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
+is closure_pointer_is_null(), 1, 'closure_pointer_is_null() = 1';

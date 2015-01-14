@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 21;
+use Test::More tests => 22;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( opaque int void string );
 use FFI::Platypus::Memory qw( malloc free cast strdup );
@@ -15,6 +15,7 @@ function [pointer_get_my_pointer_arg => 'geta'] => ['opaque*'] => void;
 
 is null(), undef, 'null = undef';
 is is_null(undef), 1, 'is_null(undef) == 1';
+is is_null(), 1, 'is_null() == 1';
 
 my $ptr = malloc 32;
 is is_null($ptr), 0, 'is_null($ptr) = 0';

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 9;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'string', 'int', 'void';
@@ -18,6 +18,7 @@ is string_return_foobarbaz(), "foobarbaz", "string_return_foobarbaz() = foobarba
 
 is null(), undef, 'null() = undef';
 is is_null(undef), 1, 'is_null(undef) = 1';
+is is_null(), 1, 'is_null() = 1';
 is is_null("foo"), 0, 'is_null("foo") = 0';
 
 function [string_set_closure => 'set_closure']   => ['(string)->void'] => void;

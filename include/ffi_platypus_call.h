@@ -1,11 +1,3 @@
-    /*
-     * FIXME: wrong number of arguments should be supported.
-     * too few and we should fill with undef.  too many may
-     * be a warning.
-     */
-    if(items-(EXTRA_ARGS) != self->ffi_cif.nargs)
-      croak("wrong number of arguments (expected %d, got %d)", self->ffi_cif.nargs, items-(EXTRA_ARGS) );
-
     buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs * 2 + sizeof(ffi_pl_arguments);
 #ifdef HAVE_ALLOCA
     buffer = alloca(buffer_size);
@@ -20,12 +12,12 @@
      * ARGUMENT IN
      */
 
-    for(i=0; i<items-(EXTRA_ARGS); i++)
+    for(i=0; i < self->ffi_cif.nargs; i++)
     {
       int platypus_type = self->argument_types[i]->platypus_type;
       ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
 
-      arg = ST(i+(EXTRA_ARGS));
+      arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
       if(platypus_type == FFI_PL_FFI)
       {
         switch(self->argument_types[i]->ffi_type->type)
@@ -265,41 +257,48 @@
       }
       else if(platypus_type == FFI_PL_CLOSURE)
       {
-        ffi_pl_closure *closure;
-        ffi_status ffi_status;
-        extern void ffi_pl_closure_call(ffi_cif *, void *, void **, void *);
-
-        Newx(closure, 1, ffi_pl_closure); /* FIXME: leak on successful creation of closure */
-        closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
-        if(closure->ffi_closure == NULL)
+        if(!SvOK(arg))
         {
-          Safefree(closure);
           ffi_pl_arguments_set_pointer(arguments, i, NULL);
-          warn("unable to allocate memory for closure");
         }
         else
         {
-          closure->type = self->argument_types[i];
+          ffi_pl_closure *closure;
+          ffi_status ffi_status;
+          extern void ffi_pl_closure_call(ffi_cif *, void *, void **, void *);
 
-          ffi_status = ffi_prep_closure_loc(
-            closure->ffi_closure,
-            &self->argument_types[i]->extra[0].closure.ffi_cif,
-            ffi_pl_closure_call,
-            closure,
-            closure->function_pointer
-          );
-
-          if(ffi_status != FFI_OK)
+          Newx(closure, 1, ffi_pl_closure); /* FIXME: leak on successful creation of closure */
+          closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
+          if(closure->ffi_closure == NULL)
           {
-            ffi_closure_free(closure->ffi_closure);
             Safefree(closure);
             ffi_pl_arguments_set_pointer(arguments, i, NULL);
-            warn("unable to create closure");
+            warn("unable to allocate memory for closure");
           }
           else
           {
-            closure->coderef = arg; /* FIXME: increment reference here and decrement in args out */
-            ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+            closure->type = self->argument_types[i];
+
+            ffi_status = ffi_prep_closure_loc(
+              closure->ffi_closure,
+              &self->argument_types[i]->extra[0].closure.ffi_cif,
+              ffi_pl_closure_call,
+              closure,
+              closure->function_pointer
+            );
+
+            if(ffi_status != FFI_OK)
+            {
+              ffi_closure_free(closure->ffi_closure);
+              Safefree(closure);
+              ffi_pl_arguments_set_pointer(arguments, i, NULL);
+              warn("unable to create closure");
+            }
+            else
+            {
+              closure->coderef = arg; /* FIXME: increment reference here and decrement in args out */
+              ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+            }
           }
         }
       }
@@ -376,7 +375,7 @@
 
 #if 0
     fprintf(stderr, "# ===[%p]===\n", self->address);
-    for(i=0; i<items-(EXTRA_ARGS); i++)
+    for(i=0; i < self->ffi_cif.nargs; i++)
     {
       fprintf(stderr, "# [%d] %p %p %016llx %g %g\n", 
         i, 
@@ -397,7 +396,7 @@
     }
     else
     {
-      void *address = items-(EXTRA_ARGS) > 0 ? (void*) &cast1 : (void*) &cast0;
+      void *address = self->ffi_cif.nargs > 0 ? (void*) &cast1 : (void*) &cast0;
       ffi_call(&self->ffi_cif, address, &result, ffi_pl_arguments_pointers(arguments));
     }
 
@@ -405,14 +404,14 @@
      * ARGUMENT OUT
      */
 
-    for(i=0; i<items-(EXTRA_ARGS); i++)
+    for(i=0; i < self->ffi_cif.nargs; i++)
     {
       if(self->argument_types[i]->platypus_type == FFI_PL_POINTER)
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         if(ptr != NULL)
         {
-          arg = ST(i+(EXTRA_ARGS));
+          arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
           if(!SvREADONLY(SvRV(arg)))
           {
             switch(self->argument_types[i]->ffi_type->type)
@@ -473,7 +472,7 @@
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         int count = self->argument_types[i]->extra[0].array.element_count;
-        arg = ST(i+(EXTRA_ARGS));
+        arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
         if(SvROK(arg)) /* TODO: and a list reference */
         {
           AV *av = (AV*) SvRV(arg);

@@ -5,7 +5,7 @@
 #
 use strict;
 use warnings;
-use Test::More tests => 14;
+use Test::More tests => 17;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'double', 'void', 'int',
@@ -25,6 +25,7 @@ function [double_static_array => 'static_array'] => [] => double_a;
 function [pointer_null => 'null2'] => [] => double_a;
 
 is add(1.5,2.5), 4, 'add(1.5,2.5) = 4';
+is eval { no warnings; add() }, 0.0, 'add() = 0.0';
 
 my $i = 3.5;
 is ${inc(\$i, 4.25)}, 7.75, 'inc(\$i,4.25) = \7.75';
@@ -38,11 +39,13 @@ my @list = (1,2,3,4,5,6,7,8,9,10);
 is sum(\@list), 55, 'sum([1..10]) = 55';
 
 array_inc(\@list);
+do { local $SIG{__WARN__} = sub {}; array_inc(); };
 
 is_deeply \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
 
 is null(), undef, 'null() == undef';
 is is_null(undef), 1, 'is_null(undef) == 1';
+is is_null(), 1, 'is_null() == 1';
 is is_null(\22), 0, 'is_null(22) == 0';
 
 is_deeply static_array(), [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5], 'static_array = [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5]';
@@ -66,3 +69,7 @@ subtest 'custom type input' => sub {
   function [double_add => 'custom_add'] => ['type1',double] => double;
   is custom_add(1.25,2.5), 4, 'custom_add(1.25,2.5) = 4';
 };
+
+function [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
+is closure_pointer_is_null(), 1, 'closure_pointer_is_null() = 1';
+
