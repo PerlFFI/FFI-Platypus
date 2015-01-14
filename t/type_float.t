@@ -56,9 +56,8 @@ set_closure($closure);
 is do { no warnings; call_closure(2.5) }, 0, 'call_closure(2.5) = 0';
 
 subtest 'custom type input' => sub {
-  my $save;
-  custom_type float => type1 => sub { $save = $_[1]; $_[0]+0.25 }, undef, [1,2,3];
+  plan tests => 2;
+  custom_type float => type1 => sub { is $_[0], 1.25; $_[0]+0.25 }, undef;
   function [float_add => 'custom_add'] => ['type1',float] => float;
-  is custom_add(1.25,1), 2.5, 'custom_add(1.25,1) = 2.5';
-  is_deeply $save, [1,2,3], 'userdata = [1,2,3]';
+  is custom_add(1.25,2.5), 4, 'custom_add(1.25,2.5) = 4';
 };

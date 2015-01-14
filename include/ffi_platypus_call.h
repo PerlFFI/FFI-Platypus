@@ -21,27 +21,8 @@
       ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
 
       arg = ST(i+(EXTRA_ARGS));
-      if(platypus_type == FFI_PL_FFI || platypus_type == FFI_PL_CUSTOM_PERL)
+      if(platypus_type == FFI_PL_FFI)
       {
-
-        if(platypus_type == FFI_PL_CUSTOM_PERL)
-        {
-          dSP;
-          int count;
-          ENTER;
-          SAVETMPS;
-          PUSHMARK(SP);
-          XPUSHs(arg);
-          PUTBACK;
-          /* TODO: handle die */
-          count = call_sv(self->argument_types[i]->extra[0].custom_perl.perl_to_ffi, G_SCALAR);
-          SPAGAIN;
-          if(count == 1)
-            arg = POPs;
-          else
-            arg = &PL_sv_undef;
-        }
-
         switch(self->argument_types[i]->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
@@ -90,14 +71,6 @@
             croak("argument type not supported (%d)", i);
             break;
         }
-
-        if(platypus_type == FFI_PL_CUSTOM_PERL)
-        {
-          PUTBACK;
-          FREETMPS;
-          LEAVE;
-        }
-
       }
       else if(platypus_type == FFI_PL_STRING)
       {
@@ -321,6 +294,68 @@
         }
 
         ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+      }
+      else if(platypus_type == FFI_PL_CUSTOM_PERL)
+      {
+        extern SV* ffi_pl_custom_perl(SV*,SV*);
+        SV *arg2 = ffi_pl_custom_perl(
+          self->argument_types[i]->extra[0].custom_perl.perl_to_ffi,
+          arg
+        );
+
+        switch(self->argument_types[i]->ffi_type->type)
+        {
+          case FFI_TYPE_UINT8:
+            ffi_pl_arguments_set_uint8(arguments, i, arg2 != NULL ? SvUV(arg2) : 0);
+            break;
+          case FFI_TYPE_SINT8:
+            ffi_pl_arguments_set_sint8(arguments, i, arg2 != NULL ? SvIV(arg2) : 0);
+            break;
+          case FFI_TYPE_UINT16:
+            ffi_pl_arguments_set_uint16(arguments, i, arg2 != NULL ? SvUV(arg2) : 0);
+            break;
+          case FFI_TYPE_SINT16:
+            ffi_pl_arguments_set_sint16(arguments, i, arg2 != NULL ? SvIV(arg2) : 0);
+            break;
+          case FFI_TYPE_UINT32:
+            ffi_pl_arguments_set_uint32(arguments, i, arg2 != NULL ? SvUV(arg2) : 0);
+            break;
+          case FFI_TYPE_SINT32:
+            ffi_pl_arguments_set_sint32(arguments, i, arg2 != NULL ? SvIV(arg2) : 0);
+            break;
+#ifdef HAVE_IV_IS_64
+          case FFI_TYPE_UINT64:
+            ffi_pl_arguments_set_uint64(arguments, i, arg2 != NULL ? SvUV(arg2) : 0);
+            break;
+          case FFI_TYPE_SINT64:
+            ffi_pl_arguments_set_sint64(arguments, i, arg2 != NULL ? SvIV(arg2) : 0);
+            break;
+#else
+          case FFI_TYPE_UINT64:
+            ffi_pl_arguments_set_uint64(arguments, i, arg2 != NULL ? SvU64(arg2) : 0);
+            break;
+          case FFI_TYPE_SINT64:
+            ffi_pl_arguments_set_sint64(arguments, i, arg2 != NULL ? SvI64(arg2) : 0);
+            break;
+#endif
+          case FFI_TYPE_FLOAT:
+            ffi_pl_arguments_set_float(arguments, i, arg2 != NULL ? SvNV(arg2) : 0.0);
+            break;
+          case FFI_TYPE_DOUBLE:
+            ffi_pl_arguments_set_double(arguments, i, arg2 != NULL ? SvNV(arg2) : 0.0);
+            break;
+          case FFI_TYPE_POINTER:
+            ffi_pl_arguments_set_pointer(arguments, i, arg2 != NULL && SvOK(arg2) ? INT2PTR(void*, SvIV(arg2)) : NULL);
+            break;
+          default:
+            croak("argument type not supported (%d)", i);
+            break;
+        }
+
+        if(arg2 != NULL)
+        {
+          SvREFCNT_dec(arg2);
+        }
       }
       else
       {

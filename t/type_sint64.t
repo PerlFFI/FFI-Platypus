@@ -61,8 +61,8 @@ set_closure($closure);
 is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
 
 subtest 'custom type input' => sub {
-  plan tests => 1;
-  custom_type sint64 => type1 => sub { $_[0]*2 }, undef;
+  plan tests => 2;
+  custom_type sint64 => type1 => sub { is $_[0], -2; $_[0]*2 }, undef;
   function [sint64_add => 'custom_add'] => ['type1',sint64] => sint64;
   is custom_add(-2,-1), -5, 'custom_add(-2,-1) = -5';
 };
