@@ -620,7 +620,7 @@
 #else
             {
               ST(0) = sv_newmortal();
-              sv_seti64(ST(0), (int64_t)result);
+              sv_seti64(ST(0), ((ffi_pl_argument*)&result)->uint64);
               XSRETURN(1);
             }
 #endif
