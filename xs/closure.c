@@ -116,7 +116,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
     PUTBACK;
   }
 
-  /* TODO: what to do in the event of die */
+  /* TODO: catch die and warn */
   count = call_sv(closure->coderef, flags);
 
   if(!(flags & G_DISCARD))
