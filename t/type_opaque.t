@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 20;
+use Test::More tests => 21;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( opaque int void string );
 use FFI::Platypus::Memory qw( malloc free cast strdup );
@@ -109,5 +109,21 @@ do {
   is call_closure($ptr), $ptr, "call_closure(\\$ptr) = $ptr";
   is $save, $ptr, "save = $ptr";
   
+  free $ptr;
+};
+
+subtest 'custom type input' => sub {
+  plan tests => 2;
+  custom_type opaque => type1 => sub { 
+    is cast(opaque=>string,$_[0]), "abc";
+    free $_[0];
+    strdup "def";
+  };
+  function [pointer_set_my_pointer => 'custom1_setp'] => ['type1'] => void;
+  
+  custom1_setp(strdup("abc"));
+  
+  my $ptr = getp();
+  is cast(opaque=>string,$ptr), "def";
   free $ptr;
 };
