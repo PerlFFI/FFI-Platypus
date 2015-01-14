@@ -273,15 +273,15 @@ sub custom_type
   croak "Usage: \$ffi->custom_type(\$type, \$name, { ... })"
     unless defined $type && defined $name && ref($cb) eq 'HASH';
   
-  croak "must define at least one of ffi_to_perl or perl_to_ffi"
-    unless defined $cb->{ffi_to_perl} || defined $cb->{perl_to_ffi};
+  croak "must define at least one of ffi_to_perl, perl_to_ffi, or perl_to_ffi_post"
+    unless defined $cb->{ffi_to_perl} || defined $cb->{perl_to_ffi} || defined $cb->{perl_to_ffi_post};
   
   require FFI::Platypus::ConfigData;
   my $type_map = FFI::Platypus::ConfigData->config("type_map");  
   croak "$type is not a basic type" unless defined $type_map->{$type} || $type eq 'string';
   croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
   
-  $self->{types}->{$name} = FFI::Platypus::Type->_new_custom_perl($type_map->{$type}, $cb->{perl_to_ffi}, $cb->{ffi_to_perl});
+  $self->{types}->{$name} = FFI::Platypus::Type->_new_custom_perl($type_map->{$type}, $cb->{perl_to_ffi}, $cb->{ffi_to_perl}, $cb->{perl_to_ffi_post});
   
   $self;
 }

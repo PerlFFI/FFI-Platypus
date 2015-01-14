@@ -61,6 +61,7 @@ typedef enum _platypus_type {
 typedef struct _ffi_pl_type_extra_custom_perl {
   void *perl_to_ffi;
   void *ffi_to_perl;
+  void *perl_to_ffi_post;
 } ffi_pl_type_extra_custom_perl;
 
 typedef struct _ffi_pl_type_extra_array {

@@ -41,3 +41,17 @@ ffi_pl_custom_perl(SV *subref, SV *in_arg)
     return out_arg;
   }
 }
+
+void
+ffi_pl_custom_perl_cb(SV *subref, SV *in_arg)
+{
+  dSP;
+  ENTER;
+  SAVETMPS;
+  PUSHMARK(SP);
+  XPUSHs(in_arg);
+  PUTBACK;
+  call_sv(subref, G_VOID|G_DISCARD);
+  FREETMPS;
+  LEAVE;
+}

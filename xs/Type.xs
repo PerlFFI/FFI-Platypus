@@ -58,11 +58,12 @@ _new(class, type, platypus_type, array_size)
     RETVAL
 
 ffi_pl_type *
-_new_custom_perl(class, type, perl_to_ffi, ffi_to_perl)
+_new_custom_perl(class, type, perl_to_ffi, ffi_to_perl, perl_to_ffi_post)
     const char *class
     const char *type
     SV *perl_to_ffi
     SV *ffi_to_perl
+    SV *perl_to_ffi_post
   PREINIT:
     char *buffer;
     ffi_pl_type *self;
@@ -80,6 +81,7 @@ _new_custom_perl(class, type, perl_to_ffi, ffi_to_perl)
     
     custom = &self->extra[0].custom_perl;
     custom->perl_to_ffi = SvOK(perl_to_ffi) ? SvREFCNT_inc(perl_to_ffi) : NULL;
+    custom->perl_to_ffi_post = SvOK(perl_to_ffi_post) ? SvREFCNT_inc(perl_to_ffi_post) : NULL;
     custom->ffi_to_perl = SvOK(ffi_to_perl) ? SvREFCNT_inc(ffi_to_perl) : NULL;
     
     RETVAL = self;
@@ -217,6 +219,8 @@ DESTROY(self)
       
       if(custom->perl_to_ffi != NULL)
         SvREFCNT_dec(custom->perl_to_ffi);
+      if(custom->perl_to_ffi_post != NULL)
+        SvREFCNT_dec(custom->perl_to_ffi_post);
       if(custom->ffi_to_perl != NULL)
         SvREFCNT_dec(custom->ffi_to_perl);
     }

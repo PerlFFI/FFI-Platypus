@@ -565,6 +565,16 @@
         Safefree(ptr);
 #endif
       }
+      else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
+      {
+        SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_ffi_post;
+        if(coderef != NULL)
+        {
+          extern void ffi_pl_custom_perl_cb(SV *, SV*);
+          arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+          ffi_pl_custom_perl_cb(coderef, arg);
+        }
+      }
     }
 #ifndef HAVE_ALLOCA
     Safefree(buffer);
