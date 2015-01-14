@@ -61,9 +61,8 @@ set_closure($closure);
 is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
 
 subtest 'custom type input' => sub {
-  my $save;
-  custom_type sint32 => type1 => sub { $save = $_[1]; $_[0]*2 }, undef, [1,2,3];
+  plan tests => 1;
+  custom_type sint32 => type1 => sub { $_[0]*2 }, undef;
   function [sint32_add => 'custom_add'] => ['type1',sint32] => sint32;
   is custom_add(-2,-1), -5, 'custom_add(-2,-1) = -5';
-  is_deeply $save, [1,2,3], 'userdata = [1,2,3]';
 };

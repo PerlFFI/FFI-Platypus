@@ -150,7 +150,6 @@ _new_custom_perl(class, type, perl_to_ffi, ffi_to_perl, userdata)
     custom = &self->extra[0].custom_perl;
     custom->perl_to_ffi = SvOK(perl_to_ffi) ? SvREFCNT_inc(perl_to_ffi) : NULL;
     custom->ffi_to_perl = SvOK(ffi_to_perl) ? SvREFCNT_inc(ffi_to_perl) : NULL;
-    custom->userdata    = SvOK(userdata)    ? SvREFCNT_inc(userdata)    : NULL;
     
     RETVAL = self;
   OUTPUT:
@@ -289,8 +288,6 @@ DESTROY(self)
         SvREFCNT_dec(custom->perl_to_ffi);
       if(custom->ffi_to_perl != NULL)
         SvREFCNT_dec(custom->ffi_to_perl);
-      if(custom->userdata != NULL)
-        SvREFCNT_dec(custom->userdata);
     }
     Safefree(self);
 

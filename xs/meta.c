@@ -70,8 +70,6 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
   else if(self->platypus_type == FFI_PL_CUSTOM_PERL)
   {
     hv_store(meta, "type",          4, newSVpv("custom_perl",0),0);
-    if(self->extra[0].custom_perl.userdata != NULL)
-      hv_store(meta, "custom_userdata", 15, newRV_inc((SV*)self->extra[0].custom_perl.userdata), 0);
     if(self->extra[0].custom_perl.perl_to_ffi != NULL)
       hv_store(meta, "custom_perl_to_ffi", 18, newRV_inc((SV*)self->extra[0].custom_perl.perl_to_ffi), 0);
     if(self->extra[0].custom_perl.ffi_to_perl != NULL)
