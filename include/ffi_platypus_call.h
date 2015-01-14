@@ -871,7 +871,7 @@
 #ifdef HAVE_IV_IS_64
           ret_in = newSViv(result.sint64);
 #else
-          ret_in = newSVs64(result.sint64);
+          ret_in = newSVi64(result.sint64);
 #endif
           break;
         case FFI_TYPE_FLOAT:
