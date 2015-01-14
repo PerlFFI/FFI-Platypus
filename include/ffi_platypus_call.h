@@ -35,6 +35,7 @@
           if(self->argument_types[i]->extra[0].custom_perl.userdata != NULL)
             XPUSHs((SV*)self->argument_types[i]->extra[0].custom_perl.userdata);
           PUTBACK;
+          /* TODO: handle die */
           count = call_sv(self->argument_types[i]->extra[0].custom_perl.perl_to_ffi, G_SCALAR);
           SPAGAIN;
           if(count == 1)
