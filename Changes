@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.06      2015-01-14 17:13:57 -0500
+  - fix typo in last version that broke 32 bit Perls.  oops.
+
 0.05      2015-01-14 17:04:25 -0500
   - Forth (and mostly complete) alpha
   - custom types written in Perl are supported.
