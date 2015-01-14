@@ -114,6 +114,11 @@ attach(self, perl_name, path_name, proto)
       cv = newXS(perl_name, ffi_pl_sub_call, path_name);
     else
     {
+      /*
+       * this ifdef is needed for Perl 5.8.8 support.
+       * once we don't need to support 5.8.8 we can
+       * remove this workaround (the ndef'd branch)
+       */
 #ifdef newXS_flags
       cv = newXSproto(perl_name, ffi_pl_sub_call, path_name, proto);
 #else
