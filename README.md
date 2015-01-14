@@ -131,7 +131,7 @@ The following types are supported, but actual size or sign depends on your platf
 
 ## custom\_type
 
-    $ffi->type($type, $name, $perl_to_ffi_coderef, $ffi_to_perl_coderef, $userdata);
+    $ffi->custom_type($type, $name, { ffi_to_perl => $coderef, ffi_to_perl => $coderef });
 
 Define a custom type.
 

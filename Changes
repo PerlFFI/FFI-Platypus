@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.05      2015-01-14 17:04:25 -0500
+  - Forth (and mostly complete) alpha
+  - custom types written in Perl are supported.
+  - bug fixes for 32 bit Perls (with compilers that support int64_t)
+
 0.04      2015-01-13 11:14:54 -0500
   - Third (and incomplete) alpha
   - all basic types supported everywhere
