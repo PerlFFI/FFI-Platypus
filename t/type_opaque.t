@@ -115,11 +115,11 @@ do {
 
 subtest 'custom type input' => sub {
   plan tests => 2;
-  custom_type opaque => type1 => sub { 
+  custom_type opaque => type1 => { perl_to_ffi => sub { 
     is cast(opaque=>string,$_[0]), "abc";
     free $_[0];
     strdup "def";
-  };
+  } };
   function [pointer_set_my_pointer => 'custom1_setp'] => ['type1'] => void;
   
   custom1_setp(strdup("abc"));

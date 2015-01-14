@@ -76,13 +76,13 @@ sub type ($;$)
 
 =head2 custom_type
 
- custom_type 'uint8' => 'my_custom_type', sub { }, sub {}, $userdata;
+ custom_type 'uint8' => 'my_custom_type', { ... };
 
 Declare the given custom type.
 
 =cut
 
-sub custom_type ($$$;$$)
+sub custom_type ($$$)
 {
   _ffi_object->custom_type(@_);
 }

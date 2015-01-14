@@ -58,12 +58,11 @@ _new(class, type, platypus_type, array_size)
     RETVAL
 
 ffi_pl_type *
-_new_custom_perl(class, type, perl_to_ffi, ffi_to_perl, userdata)
+_new_custom_perl(class, type, perl_to_ffi, ffi_to_perl)
     const char *class
     const char *type
     SV *perl_to_ffi
     SV *ffi_to_perl
-    SV *userdata
   PREINIT:
     char *buffer;
     ffi_pl_type *self;

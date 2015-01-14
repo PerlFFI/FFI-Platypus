@@ -60,7 +60,7 @@ is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
 
 subtest 'custom type input' => sub {
   plan tests => 2;
-  custom_type uint8 => type1 => sub { is $_[0], 2; $_[0]*2 }, undef;
+  custom_type uint8 => type1 => { perl_to_ffi => sub { is $_[0], 2; $_[0]*2 } };
   function [uint8_add => 'custom_add'] => ['type1',uint8] => uint8;
   is custom_add(2,1), 5, 'custom_add(2,1) = 5';
 };

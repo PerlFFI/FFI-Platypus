@@ -260,7 +260,7 @@ sub type
 
 =head2 custom_type
 
- $ffi->type($type, $name, $perl_to_ffi_coderef, $ffi_to_perl_coderef, $userdata);
+ $ffi->custom_type($type, $name, { ffi_to_perl => $coderef, ffi_to_perl => $coderef });
 
 Define a custom type.
 
@@ -268,17 +268,20 @@ Define a custom type.
 
 sub custom_type
 {
-  my($self, $type, $name, $p2f, $f2p, $ud) = @_;
+  my($self, $type, $name, $cb) = @_;
   
-  croak "Usage: \$ffi->custom_type(\$type, \$name, \$perl_to_ffi, \$ffi_to_perl, \$userdata) # \$userdata is optional, at least one of \$ffi_to_perl or \$perl_to_ffi is required"
-    unless defined $type && defined $name && (defined $p2f || defined $f2p);
+  croak "Usage: \$ffi->custom_type(\$type, \$name, { ... })"
+    unless defined $type && defined $name && ref($cb) eq 'HASH';
+  
+  croak "must define at least one of ffi_to_perl or perl_to_ffi"
+    unless defined $cb->{ffi_to_perl} || defined $cb->{perl_to_ffi};
   
   require FFI::Platypus::ConfigData;
   my $type_map = FFI::Platypus::ConfigData->config("type_map");  
   croak "$type is not a basic type" unless defined $type_map->{$type} || $type eq 'string';
   croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
   
-  $self->{types}->{$name} = FFI::Platypus::Type->_new_custom_perl($type_map->{$type}, $p2f, $f2p, $ud);
+  $self->{types}->{$name} = FFI::Platypus::Type->_new_custom_perl($type_map->{$type}, $cb->{perl_to_ffi}, $cb->{ffi_to_perl});
   
   $self;
 }

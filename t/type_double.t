@@ -65,7 +65,7 @@ is do { no warnings; call_closure(2.5) }, 0, 'call_closure(2.5) = 0';
 
 subtest 'custom type input' => sub {
   plan tests => 2;
-  custom_type double => type1 => sub { is $_[0], 1.25; $_[0]+0.25 }, undef;
+  custom_type double => type1 => { perl_to_ffi => sub { is $_[0], 1.25; $_[0]+0.25 } };
   function [double_add => 'custom_add'] => ['type1',double] => double;
   is custom_add(1.25,2.5), 4, 'custom_add(1.25,2.5) = 4';
 };

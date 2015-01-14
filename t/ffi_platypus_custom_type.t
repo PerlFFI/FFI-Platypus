@@ -22,15 +22,15 @@ foreach my $basic (@basic_types)
   subtest $basic => sub {
     plan tests => 3;
   
-    eval { $ffi->custom_type($basic, "foo_${basic}_1", sub {}, undef) };
+    eval { $ffi->custom_type($basic, "foo_${basic}_1", { perl_to_ffi => sub {} }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("foo_${basic}_1") });
 
-    eval { $ffi->custom_type($basic, "bar_${basic}_1", undef, sub {}) };
+    eval { $ffi->custom_type($basic, "bar_${basic}_1", { ffi_to_perl => sub {} }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("bar_${basic}_1") });
 
-    eval { $ffi->custom_type($basic, "baz_${basic}_1", sub {}, sub {}) };
+    eval { $ffi->custom_type($basic, "baz_${basic}_1", { perl_to_ffi => sub {}, ffi_to_perl => sub {} }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("baz_${basic}_1") });
   };
