@@ -113,7 +113,14 @@ attach(self, perl_name, path_name, proto)
     if(proto == NULL)
       cv = newXS(perl_name, ffi_pl_sub_call, path_name);
     else
+    {
+#ifdef newXS_flags
       cv = newXSproto(perl_name, ffi_pl_sub_call, path_name, proto);
+#else
+      newXSproto(perl_name, ffi_pl_sub_call, path_name, proto);
+      cv = (CV*)PL_Sv;
+#endif
+    }
     CvXSUBANY(cv).any_ptr = (void *) INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
     /*
      * No coresponding decrement !!
