@@ -24,3 +24,4 @@ do {
 
 like $warning, qr{omg i don't want to die};
 pass 'does not exit';
+note "warning = '$warning'";

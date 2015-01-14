@@ -121,7 +121,11 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
 
   if(SvTRUE(ERRSV))
   {
+#ifdef warn_sv
     warn_sv(ERRSV);
+#else
+    warn("%s", SvPV_nolen(ERRSV));
+#endif
   }
 
   if(!(flags & G_DISCARD))
