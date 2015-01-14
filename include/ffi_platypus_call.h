@@ -389,7 +389,7 @@
     fprintf(stderr, "# === ===\n");
     fflush(stderr);
 #endif
-    
+
     if(self->address != NULL)
     {
       ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
@@ -577,7 +577,7 @@
     if(self->return_type->platypus_type == FFI_PL_FFI)
     {
       int type = self->return_type->ffi_type->type;
-      if(type == FFI_TYPE_VOID || (type == FFI_TYPE_POINTER && ((void*) result) == NULL))
+      if(type == FFI_TYPE_VOID || (type == FFI_TYPE_POINTER && result.pointer == NULL))
       {
         XSRETURN_EMPTY;
       }
@@ -586,72 +586,71 @@
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
-            XSRETURN_UV((uint8_t) result);
+            XSRETURN_UV(result.uint8);
             break;
           case FFI_TYPE_SINT8:
-            XSRETURN_IV((int8_t) result);
+            XSRETURN_IV(result.sint8);
             break;
           case FFI_TYPE_UINT16:
-            XSRETURN_UV((uint16_t) result);
+            XSRETURN_UV(result.uint16);
             break;
           case FFI_TYPE_SINT16:
-            XSRETURN_IV((int16_t) result);
+            XSRETURN_IV(result.sint16);
             break;
           case FFI_TYPE_UINT32:
-            XSRETURN_UV((uint32_t) result);
+            XSRETURN_UV(result.uint32);
             break;
           case FFI_TYPE_SINT32:
-            XSRETURN_IV((int32_t) result);
+            XSRETURN_IV(result.sint32);
             break;
           case FFI_TYPE_UINT64:
 #ifdef HAVE_IV_IS_64
-            XSRETURN_UV((uint64_t) result);
+            XSRETURN_UV(result.uint64);
 #else
             {
               ST(0) = sv_newmortal();
-              sv_setu64(ST(0), (uint64_t)result);
+              sv_setu64(ST(0), result.uint64);
               XSRETURN(1);
             }
 #endif
             break;
           case FFI_TYPE_SINT64:
 #ifdef HAVE_IV_IS_64
-            XSRETURN_IV((int64_t) result);
+            XSRETURN_IV(result.sint64);
 #else
             {
               ST(0) = sv_newmortal();
-              sv_seti64(ST(0), ((ffi_pl_argument*)&result)->uint64);
+              sv_seti64(ST(0), result.uint64);
               XSRETURN(1);
             }
 #endif
             break;
           case FFI_TYPE_FLOAT:
-            XSRETURN_NV(((ffi_pl_argument*)&result)->xfloat);
+            XSRETURN_NV(result.xfloat);
             break;
           case FFI_TYPE_DOUBLE:
-            XSRETURN_NV(((ffi_pl_argument*)&result)->xdouble);
+            XSRETURN_NV(result.xdouble);
             break;
           case FFI_TYPE_POINTER:
-            XSRETURN_IV(PTR2IV((void*)result));
+            XSRETURN_IV(PTR2IV(result.pointer));
             break;
         }
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_STRING)
     {
-      if( ((char*)result) == NULL )
+      if( result.pointer == NULL )
       {
         XSRETURN_EMPTY;
       }
       else
       {
-        XSRETURN_PV((char*)result);
+        XSRETURN_PV(result.pointer);
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_POINTER)
     {
-      void *ptr = (void*) result;
-      if(ptr == NULL)
+      if(result.pointer == NULL)
       {
         XSRETURN_EMPTY;
       }
@@ -662,58 +661,58 @@
         {
           case FFI_TYPE_UINT8:
             value = sv_newmortal();
-            sv_setuv(value, *((uint8_t*) result));
+            sv_setuv(value, *((uint8_t*) result.pointer));
             break;
           case FFI_TYPE_SINT8:
             value = sv_newmortal();
-            sv_setiv(value, *((int8_t*) result));
+            sv_setiv(value, *((int8_t*) result.pointer));
             break;
           case FFI_TYPE_UINT16:
             value = sv_newmortal();
-            sv_setuv(value, *((uint16_t*) result));
+            sv_setuv(value, *((uint16_t*) result.pointer));
             break;
           case FFI_TYPE_SINT16:
             value = sv_newmortal();
-            sv_setiv(value, *((int16_t*) result));
+            sv_setiv(value, *((int16_t*) result.pointer));
             break;
           case FFI_TYPE_UINT32:
             value = sv_newmortal();
-            sv_setuv(value, *((uint32_t*) result));
+            sv_setuv(value, *((uint32_t*) result.pointer));
             break;
           case FFI_TYPE_SINT32:
             value = sv_newmortal();
-            sv_setiv(value, *((int32_t*) result));
+            sv_setiv(value, *((int32_t*) result.pointer));
             break;
           case FFI_TYPE_UINT64:
             value = sv_newmortal();
 #ifdef HAVE_IV_IS_64
-            sv_setuv(value, *((uint64_t*) result));
+            sv_setuv(value, *((uint64_t*) result.pointer));
 #else
-            sv_seti64(value, *((int64_t*) result));
+            sv_seti64(value, *((int64_t*) result.pointer));
 #endif
             break;
           case FFI_TYPE_SINT64:
             value = sv_newmortal();
 #ifdef HAVE_IV_IS_64
-            sv_setiv(value, *((int64_t*) result));
+            sv_setiv(value, *((int64_t*) result.pointer));
 #else
-            sv_seti64(value, *((int64_t*) result));
+            sv_seti64(value, *((int64_t*) result.pointer));
 #endif
             break;
           case FFI_TYPE_FLOAT:
             value = sv_newmortal();
-            sv_setnv(value, *((float*) result));
+            sv_setnv(value, *((float*) result.pointer));
             break;
           case FFI_TYPE_DOUBLE:
             value = sv_newmortal();
-            sv_setnv(value, *((double*) result));
+            sv_setnv(value, *((double*) result.pointer));
             break;
           case FFI_TYPE_POINTER:
             value = sv_newmortal();
-            if( *((void**)result) == NULL )
+            if( *((void**)result.pointer) == NULL )
               value = &PL_sv_undef;
             else
-              sv_setiv(value, PTR2IV(*((void**)result)));
+              sv_setiv(value, PTR2IV(*((void**)result.pointer)));
             break;
           default:
             warn("return type not supported");
@@ -725,8 +724,7 @@
     }
     else if(self->return_type->platypus_type == FFI_PL_ARRAY)
     {
-      void *ptr = (void*) result;
-      if(ptr == NULL)
+      if(result.pointer == NULL)
       {
         XSRETURN_EMPTY;
       }
@@ -740,46 +738,46 @@
           case FFI_TYPE_UINT8:
             for(i=0; i<count; i++)
             {
-              sv[i] = newSVuv( ((uint8_t*)result)[i] );
+              sv[i] = newSVuv( ((uint8_t*)result.pointer)[i] );
             }
             break;
           case FFI_TYPE_SINT8:
             for(i=0; i<count; i++)
             {
-              sv[i] = newSViv( ((int8_t*)result)[i] );
+              sv[i] = newSViv( ((int8_t*)result.pointer)[i] );
             }
             break;
           case FFI_TYPE_UINT16:
             for(i=0; i<count; i++)
             {
-              sv[i] = newSVuv( ((uint16_t*)result)[i] );
+              sv[i] = newSVuv( ((uint16_t*)result.pointer)[i] );
             }
             break;
           case FFI_TYPE_SINT16:
             for(i=0; i<count; i++)
             {
-              sv[i] = newSViv( ((int16_t*)result)[i] );
+              sv[i] = newSViv( ((int16_t*)result.pointer)[i] );
             }
             break;
           case FFI_TYPE_UINT32:
             for(i=0; i<count; i++)
             {
-              sv[i] = newSVuv( ((uint32_t*)result)[i] );
+              sv[i] = newSVuv( ((uint32_t*)result.pointer)[i] );
             }
             break;
           case FFI_TYPE_SINT32:
             for(i=0; i<count; i++)
             {
-              sv[i] = newSViv( ((int32_t*)result)[i] );
+              sv[i] = newSViv( ((int32_t*)result.pointer)[i] );
             }
             break;
           case FFI_TYPE_UINT64:
             for(i=0; i<count; i++)
             {
 #ifdef HAVE_IV_IS_64
-              sv[i] = newSVuv( ((uint64_t*)result)[i] );
+              sv[i] = newSVuv( ((uint64_t*)result.pointer)[i] );
 #else
-              sv[i] = newSVu64( ((uint64_t*)result)[i] );
+              sv[i] = newSVu64( ((uint64_t*)result.pointer)[i] );
 #endif
             }
             break;
@@ -787,34 +785,34 @@
             for(i=0; i<count; i++)
             {
 #ifdef HAVE_IV_IS_64
-              sv[i] = newSViv( ((int64_t*)result)[i] );
+              sv[i] = newSViv( ((int64_t*)result.pointer)[i] );
 #else
-              sv[i] = newSVi64( ((int64_t*)result)[i] );
+              sv[i] = newSVi64( ((int64_t*)result.pointer)[i] );
 #endif
             }
             break;
           case FFI_TYPE_FLOAT:
             for(i=0; i<count; i++)
             {
-              sv[i] = newSVnv( ((float*)result)[i] );
+              sv[i] = newSVnv( ((float*)result.pointer)[i] );
             }
             break;
           case FFI_TYPE_DOUBLE:
             for(i=0; i<count; i++)
             {
-              sv[i] = newSVnv( ((double*)result)[i] );
+              sv[i] = newSVnv( ((double*)result.pointer)[i] );
             }
             break;
           case FFI_TYPE_POINTER:
             for(i=0; i<count; i++)
             {
-              if( ((void**)result)[i] == NULL)
+              if( ((void**)result.pointer)[i] == NULL)
               {
                 sv[i] = &PL_sv_undef;
               }
               else
               {
-                sv[i] = newSViv( PTR2IV( ((void**)result)[i] ));
+                sv[i] = newSViv( PTR2IV( ((void**)result.pointer)[i] ));
               }
             }
             break;

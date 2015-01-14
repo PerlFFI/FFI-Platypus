@@ -89,7 +89,7 @@ call(self, ...)
     size_t buffer_size;
     int i, n;
     SV *arg;
-    ffi_arg result;
+    ffi_pl_argument result;
     ffi_pl_arguments *arguments;
   CODE:
 #define EXTRA_ARGS 1

@@ -26,7 +26,7 @@ XS(ffi_pl_sub_call)
   size_t buffer_size;
   int i,n;
   SV *arg;
-  ffi_arg result;
+  ffi_pl_argument result;
   ffi_pl_arguments *arguments;
   
   dVAR; dXSARGS;
