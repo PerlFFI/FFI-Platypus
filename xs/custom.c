@@ -19,7 +19,6 @@ ffi_pl_custom_perl(SV *subref, SV *in_arg)
   XPUSHs(in_arg);
   PUTBACK;
 
-  /* TODO: catch die and warn */
   count = call_sv(subref, G_SCALAR);
 
   SPAGAIN;

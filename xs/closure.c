@@ -117,7 +117,12 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
   }
 
   /* TODO: catch die and warn */
-  count = call_sv(closure->coderef, flags);
+  count = call_sv(closure->coderef, flags | G_EVAL);
+
+  if(SvTRUE(ERRSV))
+  {
+    warn_sv(ERRSV);
+  }
 
   if(!(flags & G_DISCARD))
   {
