@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 17;
+use Test::More tests => 18;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'float', 'void', 'int',
@@ -63,6 +63,13 @@ subtest 'custom type input' => sub {
   custom_type float => type1 => { perl_to_ffi => sub { is $_[0], 1.25; $_[0]+0.25 } };
   function [float_add => 'custom_add'] => ['type1',float] => float;
   is custom_add(1.25,2.5), 4, 'custom_add(1.25,2.5) = 4';
+};
+
+subtest 'custom type output' => sub {
+  plan tests => 2;
+  custom_type float => type2 => { ffi_to_perl => sub { is $_[0], 2.0; $_[0]+0.25 } };
+  function [float_add => 'custom_add2'] => [float,float] => 'type2';
+  is custom_add2(1,1), 2.25, 'custom_add2(1,1) = 2.25';
 };
 
 function [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;

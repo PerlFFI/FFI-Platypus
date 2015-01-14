@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 22;
+use Test::More tests => 23;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( opaque int void string );
 use FFI::Platypus::Memory qw( malloc free cast strdup );
@@ -127,4 +127,22 @@ subtest 'custom type input' => sub {
   my $ptr = getp();
   is cast(opaque=>string,$ptr), "def";
   free $ptr;
+};
+
+subtest 'custom type output' => sub {
+  plan tests => 2;
+
+  setp(strdup("ABC"));
+  
+  custom_type opaque => type2 => { ffi_to_perl => sub {
+    is cast(opaque=>string,$_[0]), "ABC";
+    free $_[0];
+    "DEF";
+  } };
+  
+  function [pointer_get_my_pointer => 'custom2_getp'] => [] => 'type2';
+  
+  is custom2_getp(), "DEF";
+  
+  setp(undef);
 };

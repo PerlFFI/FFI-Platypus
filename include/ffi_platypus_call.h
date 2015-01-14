@@ -825,6 +825,81 @@
         XSRETURN(1);
       }
     }
+    else if(self->return_type->platypus_type == FFI_PL_CUSTOM_PERL)
+    {
+      extern SV* ffi_pl_custom_perl(SV*,SV*);
+      SV *ret_in=NULL, *ret_out;
+
+      switch(self->return_type->ffi_type->type)
+      {
+        case FFI_TYPE_UINT8:
+          ret_in = newSVuv(result.uint8);
+          break;
+        case FFI_TYPE_SINT8:
+          ret_in = newSViv(result.sint8);
+          break;
+        case FFI_TYPE_UINT16:
+          ret_in = newSVuv(result.uint16);
+          break;
+        case FFI_TYPE_SINT16:
+          ret_in = newSViv(result.sint16);
+          break;
+        case FFI_TYPE_UINT32:
+          ret_in = newSVuv(result.uint32);
+          break;
+        case FFI_TYPE_SINT32:
+          ret_in = newSViv(result.sint32);
+          break;
+        case FFI_TYPE_UINT64:
+#ifdef HAVE_IV_IS_64
+          ret_in = newSVuv(result.uint64);
+#else
+          ret_in = newSVu64(result.uint64);
+#endif
+          break;
+        case FFI_TYPE_SINT64:
+#ifdef HAVE_IV_IS_64
+          ret_in = newSViv(result.sint64);
+#else
+          ret_in = newSVs64(result.sint64);
+#endif
+          break;
+        case FFI_TYPE_FLOAT:
+          ret_in = newSVnv(result.xfloat);
+          break;
+        case FFI_TYPE_DOUBLE:
+          ret_in = newSVnv(result.xdouble);
+          break;
+        case FFI_TYPE_POINTER:
+          if(result.pointer != NULL)
+            ret_in = newSViv(PTR2IV(result.pointer));
+          break;
+        default:
+          warn("return type not supported");
+          XSRETURN_EMPTY;
+      }
+
+      ret_out = ffi_pl_custom_perl(
+        self->return_type->extra[0].custom_perl.ffi_to_perl,
+        ret_in != NULL ? ret_in : &PL_sv_undef
+      );
+
+      if(ret_in != NULL)
+      {
+        SvREFCNT_dec(ret_in);
+      }
+
+      if(ret_out == NULL)
+      {
+        XSRETURN_EMPTY;
+      }
+      else
+      {
+        ST(0) = sv_2mortal(ret_out);
+        XSRETURN(1);
+      }
+
+    }
 
     warn("return type not supported");
     XSRETURN_EMPTY;

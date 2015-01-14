@@ -5,7 +5,7 @@
 #
 use strict;
 use warnings;
-use Test::More tests => 17;
+use Test::More tests => 18;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'uint16', 'void', 'int',
@@ -68,6 +68,13 @@ subtest 'custom type input' => sub {
   custom_type uint16 => type1 => { perl_to_ffi => sub { is $_[0], 2; $_[0]*2 } };
   function [uint16_add => 'custom_add'] => ['type1',uint16] => uint16;
   is custom_add(2,1), 5, 'custom_add(2,1) = 5';
+};
+
+subtest 'custom type output' => sub {
+  plan tests => 2;
+  custom_type uint16 => type2 => { ffi_to_perl => sub { is $_[0], 2; $_[0]*2 } };
+  function [uint16_add => 'custom_add2'] => [uint16,uint16] => 'type2';
+  is custom_add2(1,1), 4, 'custom_add2(1,1) = 4';
 };
 
 function [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
