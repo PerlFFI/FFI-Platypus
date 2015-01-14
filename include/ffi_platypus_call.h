@@ -151,7 +151,7 @@
       {
         void *ptr;
         int count = self->argument_types[i]->extra[0].array.element_count;
-        if(SvROK(arg)) /* TODO: and an array ref */
+        if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
         {
           AV *av = (AV*) SvRV(arg);
           switch(self->argument_types[i]->ffi_type->type)
@@ -473,7 +473,7 @@
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         int count = self->argument_types[i]->extra[0].array.element_count;
         arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
-        if(SvROK(arg)) /* TODO: and a list reference */
+        if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
         {
           AV *av = (AV*) SvRV(arg);
           switch(self->argument_types[i]->ffi_type->type)
