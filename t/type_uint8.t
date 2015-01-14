@@ -77,7 +77,6 @@ subtest 'custom type post' => sub {
   custom_type uint8 => type3 => { perl_to_ffi_post => sub { is $_[0], 1 } };
   function [uint8_add => 'custom_add3'] => ['type3',uint8] => uint8;
   is custom_add3(1,2), 3, 'custom_add3(1,2) = 3';
-  use YAML ();
 };
 
 function [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
