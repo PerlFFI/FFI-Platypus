@@ -260,7 +260,7 @@
       {
         /*
          * TODO: failing to create a closure here, should indicate a big problem
-         * and sohuld be pretty rare.  That being said, it would be good to follow
+         * and should be pretty rare.  That being said, it would be good to follow
          * up and see if there is any memory leaking when we croak here, or if
          * we can trigger some kind of panic to make sure the Perl process just dies.
          */

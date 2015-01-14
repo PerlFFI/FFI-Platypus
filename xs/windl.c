@@ -154,7 +154,7 @@ windlsym(void *void_handle, const char *symbol_name)
           {
             error = NULL;
             /*
-             * TODO: FreeLibrary never ges called on handle
+             * TODO: FreeLibrary never gets called on handle
              * TODO: Does mod_name need to be strdup'd?
              */
             last_mod_name = mod_name;
