@@ -30,7 +30,7 @@ and you do not mind the namespace pollution.
 
 ## new
 
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new(%options);
 
 Create a new instance of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
 
@@ -39,7 +39,14 @@ instance only, so you do not need to worry about stepping on
 the toes of other CPAN FFI Authors.
 
 Any functions found will be out of the list of libraries
-specified with the [lib](https://metacpan.org/pod/FFI::Platypus#lib) method.
+specified with the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
+
+### options
+
+- lib
+
+    Either a pathname (string) or a list of pathnames (array ref of strings)
+    to pre-populate the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
 
 # ATTRIBUTES
 

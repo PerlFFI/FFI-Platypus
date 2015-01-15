@@ -60,7 +60,7 @@ XSLoader::load(
 
 =head2 new
 
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new(%options);
 
 Create a new instance of L<FFI::Platypus>.
 
@@ -69,14 +69,41 @@ instance only, so you do not need to worry about stepping on
 the toes of other CPAN FFI Authors.
 
 Any functions found will be out of the list of libraries
-specified with the L<lib|FFI::Platypus#lib> method.
+specified with the L<lib|FFI::Platypus#lib> attribute.
+
+=head3 options
+
+=over 4
+
+=item lib
+
+Either a pathname (string) or a list of pathnames (array ref of strings)
+to pre-populate the L<lib|FFI::Platypus#lib> attribute.
+
+=back
 
 =cut
 
 sub new
 {
-  my($class) = @_;
-  bless { lib => [], handles => {}, types => {} }, $class;
+  my($class, %args) = @_;
+  my @lib;
+  if(defined $args{lib})
+  {
+    if(!ref($args{lib}))
+    {
+      push @lib, $args{lib};
+    }
+    elsif(ref($args{lib}) eq 'ARRAY')
+    {
+      push @lib, @{$args{lib}};
+    }
+    else
+    {
+      croak "lib argument must be a scalar or array reference";
+    }
+  }
+  bless { lib => \@lib, handles => {}, types => {} }, $class;
 }
 
 =head1 ATTRIBUTES
@@ -114,6 +141,7 @@ out it is different just about everywhere!).
 sub lib
 {
   my($self, @new) = @_;
+
   if(@new)
   {
     push @{ $self->{lib} }, @new;
