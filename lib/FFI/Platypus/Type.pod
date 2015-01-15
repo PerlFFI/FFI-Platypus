@@ -302,12 +302,19 @@ file descriptors as an array.
 
 A closure (called a "callback" by L<FFI::Raw>) is a Perl subroutine that can be called from C.  In order
 to be called from C it needs to be passed to a C function.  To define the closure type you need to provide
-a list of argument types and a return type.  At the moment, only native types are supported as closure
-argument or return types (no strings, non-opaque pointers or arrays).  Here is an example, with C code:
+a list of argument types and a return type.  As of this writing only native types and strings are supported
+as closure argument types and only native types are supported as closure return types.  Here is an example,
+with C code:
 
 # EXAMPLE: examples/closure.c
 
 # EXAMPLE: examples/closure.pl
+
+The syntax for specifying a closure type is a list of comma separated types in parentheticals followed by
+a narrow arrow C<-E<gt>>, followed by the return type for the closure.  For example a closure that takes
+a pointer, an integer and a string and returns an integer would look like this:
+
+ (opaque, int, string) -> int
 
 Care needs to be taken with scoping and closures, because of the way Perl and C handle responsibility
 for allocation differently.  Perl keeps reference counts and frees objects when nothing is referencing
