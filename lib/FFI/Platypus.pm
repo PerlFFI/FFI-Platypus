@@ -575,10 +575,9 @@ Native to Perl functions that can be used to decode C C<struct> types.
 =item L<FFI::Raw>
 
 Alternate interface to libffi with fewer features.  It notably lacks the ability to
-create real xsubs, which may make L<FFI::Platypus> much faster.  It also lacks
-some of Platypus' features, such as pointers, arrays and custom types.  In its
-favor, it has been around for longer that Platypus, and has been battle tested to
-some success.
+create real xsubs, which may make L<FFI::Platypus> much faster.  Also lacking are
+pointers to native types, arrays and custom types.  In its favor, it has been around
+for longer that Platypus, and has been battle tested to some success.
 
 =item L<Win32::API>
 
