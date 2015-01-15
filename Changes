@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.07      2015-01-15 18:53:45 -0500
   - First (mostly complete) beta
   - workaround some issues with closures
   - much more comprehensive documentation
