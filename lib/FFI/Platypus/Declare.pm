@@ -150,6 +150,7 @@ sub import
   *{join '::', $caller, 'custom_type'} = \&custom_type;
   *{join '::', $caller, 'function'} = \&function;
   *{join '::', $caller, 'closure'} = \&closure;
+  *{join '::', $caller, 'sticky'} = sub ($) { }; # FIXME implment, see GH#4, GH#9
 }
 
 1;
