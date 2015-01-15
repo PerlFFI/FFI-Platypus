@@ -92,7 +92,7 @@ sub ACTION_build
   
   my $b = ExtUtils::CBuilder->new;
   
-  my($header_time) = reverse sort map { (stat $_)[9] } bsd_glob "include/*.h";
+  my($header_time) = reverse sort map { (stat $_)[9] } map { bsd_glob($_) } qw( include/*.h xs/*.xs);
   my $c = File::Spec->catfile(qw(lib FFI Platypus.c));
   my($obj) = $b->object_file($c);
   my $obj_time = (stat $obj)[9];
