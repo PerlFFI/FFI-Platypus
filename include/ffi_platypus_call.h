@@ -742,7 +742,8 @@
       {
         int count = self->return_type->extra[0].array.element_count;
         AV *av;
-        SV *sv[count]; /* FIXME: could be large shouldn't alloate on the stack */
+        SV **sv;
+        Newx(sv, count, SV*);
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
@@ -831,6 +832,7 @@
             XSRETURN_EMPTY;
         }
         av = av_make(count, sv);
+        Safefree(sv);
         ST(0) = newRV_inc((SV*)av);
         XSRETURN(1);
       }
