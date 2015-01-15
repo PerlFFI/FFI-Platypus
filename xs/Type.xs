@@ -21,7 +21,7 @@ _new(class, type, platypus_type, array_size)
     {
       Newx(self, 1, ffi_pl_type);
       self->ffi_type = NULL;
-      self->platypus_type = FFI_PL_FFI;
+      self->platypus_type = FFI_PL_NATIVE;
     }
     else if(!strcmp(platypus_type, "pointer"))
     {
@@ -127,7 +127,7 @@ _new_closure(class, return_type, ...)
     self->extra[0].closure.return_type = return_type;
     self->extra[0].closure.flags = 0;
     
-    if(return_type->platypus_type == FFI_PL_FFI)
+    if(return_type->platypus_type == FFI_PL_NATIVE)
     {
       ffi_return_type = return_type->ffi_type;
     }
@@ -140,7 +140,7 @@ _new_closure(class, return_type, ...)
     {
       arg = ST(2+i);
       self->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
-      if(self->extra[0].closure.argument_types[i]->platypus_type == FFI_PL_FFI)
+      if(self->extra[0].closure.argument_types[i]->platypus_type == FFI_PL_NATIVE)
       {
         ffi_argument_types[i] = self->extra[0].closure.argument_types[i]->ffi_type;
       }
@@ -176,7 +176,7 @@ _new_closure(class, return_type, ...)
     }
     
     if(self->extra[0].closure.return_type->ffi_type->type == FFI_TYPE_VOID
-    && self->extra[0].closure.return_type->platypus_type == FFI_PL_FFI)
+    && self->extra[0].closure.return_type->platypus_type == FFI_PL_NATIVE)
     {
       self->extra[0].closure.flags |= G_DISCARD | G_VOID;
     }

@@ -33,7 +33,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
   {
     for(i=0; i< ffi_cif->nargs; i++)
     {
-      if(extra->argument_types[i]->platypus_type == FFI_PL_FFI)
+      if(extra->argument_types[i]->platypus_type == FFI_PL_NATIVE)
       {
         switch(extra->argument_types[i]->ffi_type->type)
         {
@@ -137,7 +137,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
     else
       sv = POPs;
 
-    if(extra->return_type->platypus_type == FFI_PL_FFI)
+    if(extra->return_type->platypus_type == FFI_PL_NATIVE)
     {
       switch(extra->return_type->ffi_type->type)
       {

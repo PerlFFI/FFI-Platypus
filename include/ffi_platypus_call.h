@@ -18,7 +18,7 @@
       ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
 
       arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
-      if(platypus_type == FFI_PL_FFI)
+      if(platypus_type == FFI_PL_NATIVE)
       {
         switch(self->argument_types[i]->ffi_type->type)
         {
@@ -584,7 +584,7 @@
      * RETURN VALUE
      */
 
-    if(self->return_type->platypus_type == FFI_PL_FFI)
+    if(self->return_type->platypus_type == FFI_PL_NATIVE)
     {
       int type = self->return_type->ffi_type->type;
       if(type == FFI_TYPE_VOID || (type == FFI_TYPE_POINTER && result.pointer == NULL))

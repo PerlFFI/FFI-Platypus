@@ -13,7 +13,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
   meta = newHV();
 
-  if(self->platypus_type == FFI_PL_FFI)
+  if(self->platypus_type == FFI_PL_NATIVE)
   {
     hv_store(meta, "size",          4, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);

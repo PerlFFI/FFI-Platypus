@@ -32,7 +32,7 @@ new(class, platypus, address, return_type, ...)
     self->address = address;
     self->return_type = return_type;
     
-    if(return_type->platypus_type == FFI_PL_FFI || return_type->platypus_type == FFI_PL_CUSTOM_PERL)
+    if(return_type->platypus_type == FFI_PL_NATIVE || return_type->platypus_type == FFI_PL_CUSTOM_PERL)
     {
       ffi_return_type = return_type->ffi_type;
     }
@@ -45,7 +45,7 @@ new(class, platypus, address, return_type, ...)
     {
       arg = ST(i+4);
       self->argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
-      if(self->argument_types[i]->platypus_type == FFI_PL_FFI || self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
+      if(self->argument_types[i]->platypus_type == FFI_PL_NATIVE || self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
       {
         ffi_argument_types[i] = self->argument_types[i]->ffi_type;
       }

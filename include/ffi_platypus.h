@@ -50,7 +50,7 @@ int windlclose(void *);
 #endif
 
 typedef enum _platypus_type {
-  FFI_PL_FFI = 0,
+  FFI_PL_NATIVE = 0,
   FFI_PL_STRING,
   FFI_PL_POINTER,
   FFI_PL_ARRAY,
