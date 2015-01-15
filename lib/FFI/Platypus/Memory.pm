@@ -160,3 +160,19 @@ sub cast ($$$)
 }
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus>
+
+Main platypus documentation.
+
+=item L<FFI::Platypus::Declare>
+
+Declarative interface for L<FFI::Platypus>.
+
+=back
+
+=cut

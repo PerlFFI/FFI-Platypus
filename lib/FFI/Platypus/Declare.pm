@@ -35,17 +35,6 @@ sub _ffi_object
 
 =head1 FUNCTIONS
 
-=head2 ffi
-
-=cut
-
-sub ffi (&)
-{
-  my $caller = caller;
-  local $ffi->{$caller} = FFI::Platypus->new;
-  $_[0]->();
-}
-
 =head2 lib
 
  lib '/lib/libfoo.so';
@@ -155,7 +144,6 @@ sub import
   }
   
   no strict 'refs';
-  *{join '::', $caller, 'ffi'} = \&ffi;
   *{join '::', $caller, 'lib'} = \&lib;
   *{join '::', $caller, 'type'} = \&type;
   *{join '::', $caller, 'type_meta'} = \&type_meta;
@@ -173,6 +161,27 @@ sub import
 =item L<FFI::Platypus>
 
 Object oriented interface to platypus.
+
+=item L<FFI::Platypus::Type>
+
+Type definitions for L<FFI::Platypus>.
+
+=item L<FFI::Platypus::Memory>
+
+memory functions for FFI.
+
+=item L<FFI::CheckLib>
+
+Find dynamic libraries in a portable way.
+
+=item L<FFI::TinyCC>
+
+JIT compiler for FFI.
+
+=item L<FFI::Raw>
+
+Alternate interface to libffi with fewer features.  It notably lacks the ability to
+create real xsubs, which may make L<FFI::Platypus> much faster.
 
 =back
 
