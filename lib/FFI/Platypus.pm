@@ -379,6 +379,8 @@ sub attach
     unless $perl_name =~ /::/;
     
   $function->attach($perl_name, "$filename:$line", $proto);
+  
+  $self;
 }
 
 =head2 closure
