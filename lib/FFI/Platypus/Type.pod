@@ -1,0 +1,134 @@
+# PODNAME: FFI::Platypus::Type
+# ABSTRACT: Defining types for FFI::Platypus
+# VERSION
+
+=head1 SYNOPSIS
+
+OO Interface:
+
+ use FFI::Platypus;
+ my $ffi = FFI::Platypus->new;
+ $ffi->type('int' => 'my_int');
+
+Declarative interface:
+
+ use FFI::Platypus::Declare
+   qw( int void ),
+   ['int' => 'my_int'];
+
+=head1 TYPE CATEGORIES
+
+=head2 Native types
+
+=head3 the void type
+
+This can be used as a return value to indicate a function does not return a value
+(or if you want the return value to be ignored).
+
+=head3 integer types
+
+The following native integer types are always available (parentheticals indicates the usual corresponding C type):
+
+=over 4
+
+=item sint8
+
+Signed 8 bit byte (C<signed char>, C<int8_t>).
+
+=item uint8
+
+Unsigned 8 bit byte (C<unsigned char>, C<uint8_t>).
+
+=item sint16
+
+Signed 16 bit integer (C<short>, C<int16_t>)
+
+=item uint16
+
+Unsigned 16 bit integer (C<unsigned short>, C<uint16_t>)
+
+=item sint32
+
+Signed 32 bit integer (C<int>, C<int32_t>)
+
+=item uint32
+
+Unsigned 32 bit integer (C<unsigned int>, C<uint32_t>)
+
+=item sint64
+
+Signed 64 bit integer (C<long> or C<long long>, C<int64_t>)
+
+=item uint64
+
+Unsigned 64 bit integer (C<unsigned long> or C<unsigned long long>, C<uint64_t>)
+
+=back
+
+These integer types are also available, but there actual size and sign may depend on the platform.
+
+=over 4
+
+=item char
+
+=item size_t
+
+=back
+
+There are a number of other types that may or may not be available if they are detected when
+L<FFI::Platypus> is installed.  Such time include things like C<wchar_t>, C<off_t>, C<wint_t>.
+You can use this script to list all the integer types that L<FFI::Platypus> knows about, plus
+how they are implemented.
+
+# EXAMPLE: examples/list_integer_types.pl
+
+=head3 floating point types
+
+The following native floating point types are always available (parentheticals indicates the usual corresponding C type):
+
+=over 4
+
+=item float
+
+Single precision floating point (I<float>)
+
+=item double
+
+Double precision floating point (I<double>)
+
+=back
+
+=head3 opaque pointers
+
+Opaque pointers are simply a pointer to a region of memory that you do not manage, and do not know the structure of.
+It is like a C<void *> in C.  These types are represented in Perl space as integers and get converted to and from
+pointers by L<FFI::Platypus>.  You may use C<pointer> as an alias for C<opaque>.
+
+=head2 Strings
+
+=head2 Pointer / References
+
+=head2 Fixed length arrays
+
+=head2 Closures
+
+=head2 Custom Types (Perl)
+
+=head2 Custom Types (C/XS)
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus>
+
+Main platypus documentation.
+
+=item L<FFI::Platypus::Declare>
+
+Declarative interface for L<FFI::Platypus>.
+
+=back
+
+=cut
+

@@ -132,89 +132,7 @@ sub find_symbol
  $ffi->type('sint32' => 'myint');
 
 Define a type.  The first argument is the FFI or C name of the type.  The second argument (optional) is an alias name
-that you can use to refer to this new type.
-
-The following FFI types are always available (parentheticals indicates the usual corresponding C type):
-
-=over 4
-
-=item sint8
-
-Signed 8 bit byte (C<signed char>, C<int8_t>).
-
-=item uint8
-
-Unsigned 8 bit byte (C<unsigned char>, C<uint8_t>).
-
-=item sint16
-
-Signed 16 bit integer (C<short>, C<int16_t>)
-
-=item uint16
-
-Unsigned 16 bit integer (C<unsigned short>, C<uint16_t>)
-
-=item sint32
-
-Signed 32 bit integer (C<int>, C<int32_t>)
-
-=item uint32
-
-Unsigned 32 bit integer (C<unsigned int>, C<uint32_t>)
-
-=item sint64
-
-Signed 64 bit integer (C<long> or C<long long>, C<int64_t>)
-
-=item uint64
-
-Unsigned 64 bit integer (C<unsigned long> or C<unsigned long long>, C<uint64_t>)
-
-=item float
-
-Single precision floating point (I<float>)
-
-=item double
-
-Double precision floating point (I<double>)
-
-=item opaque (or pointer)
-
-Opaque pointer (I<void *>)
-
-The L<FFI::Platypus> documentation refers to this as the opaque type differentiate
-it from pointers to defined types (such as integers or floating points).  It provides
-the alias "pointer" as this is what libffi calls them internally.
-
-=item string
-
-Null terminated ASCII string (I<char *>)
-
-=back
-
-The following FFI types I<may> be available depending on your platform:
-
-=over 4
-
-=item longdouble
-
-Double or Quad precision floating point (I<long double>)
-
-=back
-
-The following types are supported, but actual size or sign depends on your platform:
-
-=over 4
-
-=item char
-
-May be either signed or unsigned.
-
-=item size_t
-
-May be either 32 or 64 bit.  Usually unsigned.
-
-=back
+that you can use to refer to this new type.  See L<FFI:Platypus::Type> for legal type definitions.
 
 =cut
 
@@ -542,6 +460,14 @@ touches.
 =item L<FFI::Platypus::Declare>
 
 Declarative interface to L<FFI::Platypus>.
+
+=item L<FFI::Platypus::Type>
+
+Type definitions for L<FFI::Platypus>.
+
+=item L<FFI::Platypus::Memory>
+
+memory functions for FFI.
 
 =item L<FFI::CheckLib>
 
