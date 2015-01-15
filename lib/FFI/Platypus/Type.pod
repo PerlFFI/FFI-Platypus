@@ -230,7 +230,7 @@ into C<NULL> for C.  When a C function returns a NULL pointer, it will be transl
 =head2 Strings
 
 From the CPU's perspective, strings are just pointers.  From Perl and C's perspective, those pointers
-point to a series of acharacters.  For C they are null terminates ("\0").  L<FFI::Platypus> handles
+point to a series of characters.  For C they are null terminates ("\0").  L<FFI::Platypus> handles
 the details where they differ.  Basically when you see C<char *> or C<const char *> used in a C header
 file you can expect to be able to use the C<string> type.
 
@@ -294,7 +294,7 @@ updated before returning to Perl space.  Example, with C code.
 Fixed length arrays of native types are supported by L<FFI::Platypus>.  Like pointers, if the values
 contained in the array are updated by the C function these changes will be reflected when it returns
 to Perl space.  An example of using this is the Unix C<pipe> command which returns a list of two
-file descripters as an array.
+file descriptors as an array.
 
 # EXAMPLE: examples/pipe.pl
 
@@ -309,7 +309,7 @@ argument or return types (no strings, non-opaque pointers or arrays).  Here is a
 
 # EXAMPLE: examples/closure.pl
 
-Care needs to be taken with scoping and closures, because of the way Perl and C handle responsability
+Care needs to be taken with scoping and closures, because of the way Perl and C handle responsibility
 for allocation differently.  Perl keeps reference counts and frees objects when nothing is referencing
 them.  In C the code that allocates the memory is considered responsible for explicitly free'ing the
 memory for objects it has created.  When you pass a closure into a C function, the C code has a pointer
@@ -332,7 +332,7 @@ TODO
 =head2 Custom Types (C/XS)
 
 Custom types written in C or XS are a future goal of the L<FFI::Platypus> project.  They should
-allow some of the flexability of custom types written in Perl, with potential performance improvements
+allow some of the flexibility of custom types written in Perl, with potential performance improvements
 of native code.
 
 =head1 SEE ALSO

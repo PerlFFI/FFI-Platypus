@@ -132,10 +132,10 @@ If you pass a closure into a C function without saving a reference to it like th
 
  foo(closure { ... });
 
-Perl will not see any references to it and try to free it immeidately.  (this has to do with
-the way Perl and C handle responsabilties for memory allocation differently).  One fix for 
+Perl will not see any references to it and try to free it immediately.  (this has to do with
+the way Perl and C handle responsibilities for memory allocation differently).  One fix for 
 this is to make sure the closure remains in scope using either C<my> or C<our>.  If you
-know the closure will need to remain in existance for the life of the process (or if you do
+know the closure will need to remain in existence for the life of the process (or if you do
 not care about leaking memory), then you can add the sticky keyword to tell L<FFI::Platypus>
 to keep the thing in memory.
 
