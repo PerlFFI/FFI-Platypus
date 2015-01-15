@@ -296,7 +296,7 @@
             }
             else
             {
-              closure->coderef = arg; /* FIXME: increment reference here and decrement in args out */
+              closure->coderef = SvREFCNT_inc(arg); /* FIXME: increment reference here and decrement in args out */
               ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
             }
           }
