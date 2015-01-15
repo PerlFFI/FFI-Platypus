@@ -123,7 +123,7 @@ attach(self, perl_name, path_name, proto)
       cv = newXSproto(perl_name, ffi_pl_sub_call, path_name, proto);
 #else
       newXSproto(perl_name, ffi_pl_sub_call, path_name, proto);
-      cv = (CV*)PL_Sv;
+      cv = get_cv(perl_name,0);
 #endif
     }
     CvXSUBANY(cv).any_ptr = (void *) INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
