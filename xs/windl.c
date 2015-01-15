@@ -92,10 +92,6 @@ windlopen(const char *filename, int flags)
   return (void*) handle;
 }
 
-static int         last_flag = 0;
-static const char *last_mod_name = NULL;
-static HMODULE     last_library_handle = NULL;
-
 /*
  * dlsym()
  */
@@ -106,10 +102,6 @@ windlsym(void *void_handle, const char *symbol_name)
   library_handle *handle = (library_handle*) void_handle;
   static const char *not_found = "symbol not found";
   void *symbol;
-  
-  last_flag = 0;
-  last_mod_name = NULL;
-  last_library_handle = NULL;
   
   if(!handle->is_null)
   {
@@ -153,13 +145,7 @@ windlsym(void *void_handle, const char *symbol_name)
           if(symbol != NULL)
           {
             error = NULL;
-            /*
-             * TODO: FreeLibrary never gets called on handle
-             * TODO: Does mod_name need to be strdup'd?
-             */
-            last_mod_name = mod_name;
-            last_library_handle = handle;
-            last_flag = 1;
+            FreeLibrary(handle);
             return symbol;
           }
           
