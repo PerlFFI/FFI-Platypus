@@ -176,11 +176,11 @@ int
 windlclose(void *void_handle)
 {
   library_handle *handle = (library_handle*) void_handle;
-
   if(!handle->is_null)
   {
     FreeLibrary(handle->os_handle);
   }
+  free(handle);
   error = NULL;
   return 0;
 }

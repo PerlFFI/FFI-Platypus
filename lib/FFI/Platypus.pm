@@ -120,7 +120,7 @@ sub find_symbol
     }
     else
     {
-      FFI::Platypus::dl::dlclose($handle);
+      FFI::Platypus::dl::dlclose($handle) unless $self->{handles}->{$path||0};
     }
   }
   return;
@@ -328,6 +328,7 @@ sub DESTROY
     next unless $handle;
     FFI::Platypus::dl::dlclose($handle);
   }
+  delete $self->{handles};
 }
 
 package FFI::Platypus::Function;
