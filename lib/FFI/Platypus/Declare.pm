@@ -37,7 +37,7 @@ sub _ffi_object
 
 =head2 lib
 
- lib '/lib/libfoo.so';
+ lib $libpath;
 
 Specify one or more dynamic libraries to search for symbols.
 If you are unsure of the location / version of the library then
@@ -52,9 +52,15 @@ sub lib (@)
 
 =head2 type
 
- type 'uint8' => 'my_unsigned_int_8';
+ type $type;
+ type $type = $alias;
 
 Declare the given type.
+
+Examples:
+
+ type 'uint8'; # only really checks that uint8 is a valid type
+ type 'uint8' => 'my_unsigned_int_8';
 
 =cut
 
@@ -65,9 +71,9 @@ sub type ($;$)
 
 =head2 custom_type
 
- custom_type 'uint8' => 'my_custom_type', { ... };
+ custom_type $type => $alias => \%args;
 
-Declare the given custom type.
+Declare the given custom type.  See L<FFI::Platypus::Type#Custom Types> for details.
 
 =cut
 
@@ -78,9 +84,13 @@ sub custom_type ($$$)
 
 =head2 type_meta
 
- my $meta = type_meta 'int';
+ my $meta = type_meta $type;
 
 Get the type meta data for the given type.
+
+Example:
+
+ my $meta = type_meta 'int';
 
 =cut
 
@@ -91,11 +101,23 @@ sub type_meta($)
 
 =head2 function
 
+ function $name => \@argument_types => $return_type;
+ function [$c_name => $perl_name] => \@argument_types => $return_type;
+ function [$address => $perl_name] => \@argument_types => $return_type;
+
+Find and attach a C function as a Perl function as a real live xsub.
+
+If just one I<$name> is given, then the function will be attached in Perl with the same
+name as it has in C.  The second form allows you to give the Perl function a different
+name.  You can also provide an address (the third form), just like with the
+L<function|FFI::Platypus#function> method.
+
+Examples:
+
  function 'my_function', ['uint8'] => 'string';
  function ['my_c_function_name' => 'my_perl_function_name'], ['uint8'] => 'string';
-
-Attach the given function with argument and return types.  You can use a two element
-array reference to install the function with a different name in perl space.
+ my $string1 = my_function($int);
+ my $string2 = my_perl_function_name($int);
 
 =cut
 
@@ -110,9 +132,14 @@ sub function ($$$;$)
 
 =head2 closure
 
- my $closure = closure { ... };
+ my $closure = closure $codeblock;
 
-Create a closure that can be passed into a C function.
+Create a closure that can be passed into a C function.  For details on closures, see L<FFI::Platypus::Type#Closures>.
+
+Example:
+
+ my $closure1 = closure { return $_[0] * 2 };
+ my $closure2 = closure sub { return $_[0] * 4 };
 
 =cut
 
@@ -124,13 +151,13 @@ sub closure (&)
 
 =head2 sticky
 
- my $closure = sticky closure { ... }
+ my $closure = sticky closure $codeblock;
 
 Keyword to indicate the closure should not be deallocated for the life of the current process.
 
 If you pass a closure into a C function without saving a reference to it like this:
 
- foo(closure { ... });
+ foo(closure { ... });         # BAD
 
 Perl will not see any references to it and try to free it immediately.  (this has to do with
 the way Perl and C handle responsibilities for memory allocation differently).  One fix for 
@@ -139,7 +166,7 @@ know the closure will need to remain in existence for the life of the process (o
 not care about leaking memory), then you can add the sticky keyword to tell L<FFI::Platypus>
 to keep the thing in memory.
 
- foo(sticky closure { ... });
+ foo(sticky closure { ... });  # OKAY
 
 =cut
 

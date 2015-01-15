@@ -325,11 +325,13 @@ the sticky keyword to indicate this, without the need to keep track of the closu
 
  set_closure(sticky closure { $_[0] * 2 }); # OKAY 
 
-=head2 Custom Types (Perl)
+=head2 Custom Types
+
+=head3 Custom Types in Perl
 
 TODO
 
-=head2 Custom Types (C/XS)
+=head3 Custom Types in C/XS
 
 Custom types written in C or XS are a future goal of the L<FFI::Platypus> project.  They should
 allow some of the flexibility of custom types written in Perl, with potential performance improvements

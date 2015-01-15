@@ -19,6 +19,7 @@ pod_spelling_system:
     - free'd
     - free'ing
     - SIGSEGV
+    - Ctypes
 
 pod_coverage:
   skip: 0
