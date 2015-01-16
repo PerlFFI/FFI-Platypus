@@ -434,9 +434,6 @@ sub find_symbol
 sub DESTROY
 {
   my($self) = @_;
-  # TODO: Need to remember not to free these if they
-  # have been perminently attached as an xsub
-  # TODO: also need to be ABLE to attach as an xsub :P
   foreach my $handle (values %{ $self->{handles} })
   {
     next unless $handle;
@@ -468,20 +465,14 @@ sub new
   my($class, $coderef) = @_;
   croak "not a coderef" unless ref($coderef) eq 'CODE';
   my $self = bless $coderef, $class;
-  $cbdata{refaddr $self} = {};
+  $cbdata{refaddr $self} = [];
   $self;
 }
 
 sub add_data
 {
-  my($self, $key, $payload) = @_;
-  $cbdata{refaddr $self}->{$key} = $payload;
-}
-
-sub get_data
-{
-  my($self, $key) = @_;
-  $cbdata{refaddr $self}->{$key};
+  my($self, $payload) = @_;
+  push @{ $cbdata{refaddr $self} }, bless \$payload, 'FFI::Platypus::ClosureData';
 }
 
 sub DESTROY
@@ -489,6 +480,10 @@ sub DESTROY
   my($self) = @_;
   delete $cbdata{refaddr $self};
 }
+
+package FFI::Platypus::ClosureData;
+
+# VERSION
 
 package FFI::Platypus::Type;
 

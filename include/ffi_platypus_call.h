@@ -298,7 +298,9 @@
             }
             else
             {
-              closure->coderef = arg;
+              extern void ffi_pl_closure_add_data(SV *closure, ffi_pl_closure *closure_data);
+              closure->coderef = SvREFCNT_inc(arg);
+              ffi_pl_closure_add_data(arg, closure);
               ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
             }
           }

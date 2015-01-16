@@ -10,6 +10,21 @@
 #endif
 
 void
+ffi_pl_closure_add_data(SV *closure, ffi_pl_closure *closure_data)
+{
+  dSP;
+  ENTER;
+  SAVETMPS;
+  PUSHMARK(SP);
+  XPUSHs(closure);
+  XPUSHs(sv_2mortal(newSViv(PTR2IV(closure_data))));
+  PUTBACK;
+  call_pv("FFI::Platypus::Closure::add_data", G_DISCARD);
+  FREETMPS;
+  LEAVE;
+}
+
+void
 ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user)
 {
   dSP;

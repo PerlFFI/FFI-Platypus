@@ -48,3 +48,4 @@ INCLUDE: ../../xs/dl.xs
 INCLUDE: ../../xs/Type.xs
 INCLUDE: ../../xs/Function.xs
 INCLUDE: ../../xs/Declare.xs
+INCLUDE: ../../xs/ClosureData.xs

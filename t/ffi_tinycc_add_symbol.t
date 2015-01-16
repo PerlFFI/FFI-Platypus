@@ -27,8 +27,7 @@ subtest 'FFI::Platypus' => sub {
   my $tcc = FFI::TinyCC->new;
   my $ffi = FFI::Platypus->new;
   
-  #my $closure = $tcc->{foo} = $ffi->closure(sub { $_[0] + $_[0] });
-  my $closure = sticky closure { $_[0] + $_[0] };
+  my $closure = $ffi->closure(sub { $_[0] + $_[0] });
   my $pointer = cast '(int)->int' => 'opaque', $closure;
   note sprintf("address = 0x%x", $pointer);
   
