@@ -269,7 +269,7 @@
 
           SvREFCNT_inc(arg);
 
-          Newx(closure, 1, ffi_pl_closure); /* FIXME: leak on successful creation of closure */
+          Newx(closure, 1, ffi_pl_closure);
           closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
           if(closure->ffi_closure == NULL)
           {
