@@ -166,11 +166,11 @@ sub cast ($$$)
 
 =item L<FFI::Platypus>
 
-Main platypus documentation.
+Main Platypus documentation.
 
 =item L<FFI::Platypus::Declare>
 
-Declarative interface for L<FFI::Platypus>.
+Declarative interface for Platypus.
 
 =back
 

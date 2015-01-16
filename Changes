@@ -1,6 +1,13 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Second beta
+  - add FFI::Platypus::Buffer
+    stole the buffer functions from FFI::Util
+    can do this with cast, but cast is slow
+  - Fixed bug where cast didn't work with closures.
+  - closure data now free'd when it the closure
+    goes out of scope (GH#4)
 
 0.07      2015-01-15 18:53:45 -0500
   - First (mostly complete) beta
