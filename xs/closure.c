@@ -131,7 +131,6 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
     PUTBACK;
   }
 
-  /* TODO: catch die and warn */
   count = call_sv(closure->coderef, flags | G_EVAL);
 
   if(SvTRUE(ERRSV))
