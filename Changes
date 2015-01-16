@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.08      2015-01-16 10:55:14 -0500
   - Second beta
   - add FFI::Platypus::Buffer
     stole the buffer functions from FFI::Util
