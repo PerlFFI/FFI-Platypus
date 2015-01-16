@@ -102,19 +102,19 @@ _new_closure(class, return_type, ...)
     ffi_type **ffi_argument_types;
     ffi_status ffi_status;
   CODE:
-    if(return_type->platypus_type == FFI_PL_CLOSURE)
+    if(return_type->platypus_type != FFI_PL_NATIVE)
     {
-      /* TODO: this really should work, but the syntax need to be worked out */
-      croak("returning a closure from a closure not supported");
+      croak("Only native types are supported as closure return types");
     }
     
     for(i=0; i<(items-2); i++)
     {
       arg = ST(2+i);
       tmp = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
-      if(tmp->platypus_type == FFI_PL_CLOSURE)
+      if(tmp->platypus_type != FFI_PL_NATIVE
+      && tmp->platypus_type != FFI_PL_STRING)
       {
-        croak("passing closure into a closure not supported");
+        croak("Only native types and strings are supported as closure argument types");
       }
     }
     

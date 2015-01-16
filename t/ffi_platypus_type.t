@@ -116,9 +116,12 @@ subtest 'closure types' => sub {
   is $ffi->type_meta('foo')->{type}, 'closure', '(int)->int is a legal closure type';
   note xdump($ffi->type_meta('foo'));
   
-  $ffi->type('(my_int_array)->myint' => 'bar');
-  is $ffi->type_meta('bar')->{type}, 'closure', '(int)->int is a legal closure type';
-  note xdump($ffi->type_meta('bar'));
+  SKIP: {
+    skip "arrays not currently supported as closure argument types", 1;
+    $ffi->type('(my_int_array)->myint' => 'bar');
+    is $ffi->type_meta('bar')->{type}, 'closure', '(int)->int is a legal closure type';
+    note xdump($ffi->type_meta('bar'));
+  }
   
   eval { $ffi->type('((int)->int)->int') };
   isnt $@, '', 'inline closure illegal';
