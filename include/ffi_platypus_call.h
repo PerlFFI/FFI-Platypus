@@ -257,7 +257,7 @@
       }
       else if(platypus_type == FFI_PL_CLOSURE)
       {
-        if(!SvOK(arg))
+        if(!SvROK(arg))
         {
           ffi_pl_arguments_set_pointer(arguments, i, NULL);
         }
@@ -266,6 +266,8 @@
           ffi_pl_closure *closure;
           ffi_status ffi_status;
           extern void ffi_pl_closure_call(ffi_cif *, void *, void **, void *);
+
+          SvREFCNT_inc(arg);
 
           Newx(closure, 1, ffi_pl_closure); /* FIXME: leak on successful creation of closure */
           closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
@@ -296,7 +298,7 @@
             }
             else
             {
-              closure->coderef = SvREFCNT_inc(arg); /* FIXME: increment reference here and decrement in args out */
+              closure->coderef = arg; /* FIXME: increment reference here and decrement in args out */
               ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
             }
           }
@@ -564,6 +566,14 @@
 #ifndef HAVE_ALLOCA
         Safefree(ptr);
 #endif
+      }
+      else if(self->argument_types[i]->platypus_type == FFI_PL_CLOSURE)
+      {
+        arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+        if(SvROK(arg))
+        {
+          //SvREFCNT_dec(arg);
+        }
       }
       else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
       {
