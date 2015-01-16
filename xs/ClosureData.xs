@@ -12,5 +12,4 @@ DESTROY(self)
     fflush(stderr);
     */
     ffi_closure_free(self->ffi_closure);
-    SvREFCNT_dec(self->coderef);
     Safefree(self);

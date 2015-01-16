@@ -155,8 +155,7 @@ sub sizeof ($)
 
 sub cast ($$$)
 {
-  my($type1, $type2, $value) = @_;
-  $ffi->function(0 => [$type1] => $type2)->call($value);
+  $ffi->function(0 => [$_[0]] => $_[1])->call($_[2]);
 }
 
 1;
