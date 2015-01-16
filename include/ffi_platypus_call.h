@@ -298,7 +298,7 @@
             }
             else
             {
-              closure->coderef = arg; /* FIXME: increment reference here and decrement in args out */
+              closure->coderef = arg;
               ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
             }
           }
@@ -379,12 +379,14 @@
     fprintf(stderr, "# ===[%p]===\n", self->address);
     for(i=0; i < self->ffi_cif.nargs; i++)
     {
-      fprintf(stderr, "# [%d] %p %p %016llx %g %g\n", 
-        i, 
+      fprintf(stderr, "# [%d] <%d:%d> %p %p %016llx %g %g\n",
+        i,
+        self->argument_types[i]->ffi_type->type,
+        self->argument_types[i]->platypus_type,
         ((void**)&arguments->slot[arguments->count])[i],
         &arguments->slot[i],
-        ffi_pl_arguments_get_uint64(arguments, i), 
-        ffi_pl_arguments_get_float(arguments, i), 
+        ffi_pl_arguments_get_uint64(arguments, i),
+        ffi_pl_arguments_get_float(arguments, i),
         ffi_pl_arguments_get_double(arguments, i)
       );
     }
@@ -572,7 +574,7 @@
         arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
         if(SvROK(arg))
         {
-          //SvREFCNT_dec(arg);
+          SvREFCNT_dec(arg);
         }
       }
       else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
