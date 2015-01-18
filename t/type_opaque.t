@@ -3,7 +3,7 @@ use warnings;
 use Test::More tests => 23;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( opaque int void string );
-use FFI::Platypus::Memory qw( malloc free cast strdup );
+use FFI::Platypus::Memory qw( malloc free strdup );
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 

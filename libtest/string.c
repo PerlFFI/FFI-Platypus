@@ -24,7 +24,7 @@ string_set_closure(closure_t closure)
 }
 
 EXTERN void
-string_call_closure(my_string_t value)
+string_call_closure(const char *value)
 {
   my_closure(value);
 }

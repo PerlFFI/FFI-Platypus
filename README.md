@@ -191,6 +191,46 @@ Examples:
 Prepares a code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
 from C code).  For details on closures, see [FFI::Platypus::Type#Closures](https://metacpan.org/pod/FFI::Platypus::Type#Closures).
 
+## cast
+
+    my $converted_value = $ffi->cast($original_type, $converted_type, $original_value);
+
+The `cast` function converts an existing _$original\_value_ of type
+_$original\_type_ into one of type _$converted\_type_.  Not all types are
+supported, so care must be taken.  For example, to get the address of a
+string, you can do this:
+
+    my $address = $ffi->cast('string' => 'opaque', $string_value);
+
+## attach\_cast
+
+    $ffi->attach_cast("cast_name", $original_type, $converted_type);
+    my $converted_value = cast_name($original_value);
+
+This function attaches a cast as a permanent xsub.  This will make it faster
+and may be useful if you are calling a particular cast a lot.
+
+## sizeof
+
+    my $size = $ffi->sizeof($type);
+
+Returns the total size of the given type.  For example to get the size of
+an integer:
+
+    my $intsize = $ffi->sizeof('int'); # usually 4 or 8 depending on platform
+
+You can also get the size of arrays
+
+    my $intarraysize = $ffi->sizeof('int[64]');
+
+Keep in mind that "pointer" types will always be the pointer / word size
+for the platform that you are using.  This includes strings, opaque and
+pointers to other types.
+
+This function is not very fast, so you might want to save this value as a
+constant, particularly if you need the size in a loop with many
+iterations.
+
 ## find\_symbol
 
     my $address = $ffi->find_symbol($name);

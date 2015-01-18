@@ -168,7 +168,66 @@ to keep the thing in memory.
 
  foo(sticky closure { ... });  # OKAY
 
+=head2 cast
+
+ my $converted_value = cast $original_type, $converted_type, $original_value;
+
+The C<cast> function converts an existing I<$original_value> of type
+I<$original_type> into one of type I<$converted_type>.  Not all types are
+supported, so care must be taken.  For example, to get the address of a
+string, you can do this:
+
+ my $address = cast 'string' => 'opaque', $string_value;
+
 =cut
+
+sub cast ($$$)
+{
+  _ffi_object->cast(@_);
+}
+
+=head2 attach_cast
+
+ attach_cast "cast_name", $original_type, $converted_type;
+ my $converted_value = cast_name($original_value);
+
+=cut
+
+sub attach_cast ($$$)
+{
+  my($name, $type1, $type2) = @_;
+  my $caller = caller;
+  $name = join '::', $caller, $name;
+  _ffi_object->attach_cast($name, $type1, $type2);
+}
+
+=head2 sizeof
+
+ my $size = sizeof $type;
+
+Returns the total size of the given type.  For example to get the size of
+an integer:
+
+ my $intsize = sizeof 'int'; # usually 4 or 8 depending on platform
+
+You can also get the size of arrays
+
+ my $intarraysize = sizeof 'int[64]';
+
+Keep in mind that "pointer" types will always be the pointer / word size
+for the platform that you are using.  This includes strings, opaque and
+pointers to other types.
+
+This function is not very fast, so you might want to save this value as a
+constant, particularly if you need the size in a loop with many
+iterations.
+
+=cut
+
+sub sizeof ($)
+{
+  _ffi_object->sizeof($_[0]);
+}
 
 sub import
 {
@@ -199,6 +258,9 @@ sub import
   *{join '::', $caller, 'function'} = \&function;
   *{join '::', $caller, 'closure'} = \&closure;
   *{join '::', $caller, 'sticky'} = \&sticky;
+  *{join '::', $caller, 'cast'} = \&cast;
+  *{join '::', $caller, 'attach_cast'} = \&attach_cast;
+  *{join '::', $caller, 'sizeof'} = \&sizeof;
 }
 
 1;

@@ -37,17 +37,6 @@ C libraries with FFI.
 The C<calloc> function contiguously allocates enough space for I<$count>
 objects that are I<$size> bytes of memory each.
 
-=head2 cast
-
- my $converted_value = cast $original_type, $converted_type, $original_value;
-
-The C<cast> function converts an existing I<$original_value> of type 
-I<$original_type> into one of type I<$converted_type>.  Not all types are 
-supported, so care must be taken.  For example, to get the address of a 
-string, you can do this:
-
- my $address = cast 'string' => 'opaque', $string_value;
-
 =head2 free
 
  free $pointer;
@@ -89,27 +78,6 @@ C<malloc>:
 
  my $pointer = realloc undef, 64; # same as malloc 64
 
-=head2 sizeof
-
- my $size = sizeof $type;
-
-Returns the total size of the given type.  For example to get the size of
-an integer:
-
- my $intsize = sizeof 'int'; # usually 4 or 8 depending on platform
-
-You can also get the size of arrays
-
- my $intarraysize = sizeof 'int[64]'; # same as (sizeof 'int')*64
-
-Keep in mind that "pointer" types will always be the pointer / word size 
-for the platform that you are using.  This includes strings, opaque and 
-pointers to other types.
-
-This function is not very fast, so you might want to save this value as a 
-constant, particularly if you need the size in a loop with many 
-iterations.
-
 =head2 strdup
 
  my $pointer = strdup $string;
@@ -124,7 +92,7 @@ using C<malloc> and C<memcpy> written in Perl.  This version is slower.
 
 =cut
 
-our @EXPORT = qw( malloc free calloc realloc memcpy memset sizeof cast strdup );
+our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup );
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
@@ -143,19 +111,8 @@ if($@)
   *strdup = sub ($) {
     my($string) = @_;
     my $ptr = malloc(length($string)+1);
-    memcpy($ptr, cast('string' => 'opaque', $string), length($string)+1);
+    memcpy($ptr, $ffi->cast('string' => 'opaque', $string), length($string)+1);
   };
-}
-
-sub sizeof ($)
-{
-  $ffi->type($_[0]);
-  $ffi->type_meta($_[0])->{size};
-}
-
-sub cast ($$$)
-{
-  $ffi->function(0 => [$_[0]] => $_[1])->call($_[2]);
 }
 
 1;

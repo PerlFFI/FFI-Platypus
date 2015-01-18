@@ -54,8 +54,13 @@ supported, which may be helpful.
 
 =head2 meta information about types
 
-You can get the size of a type using the L<FFI::Platypus::Memory#sizeof> function.
+You can get the size of a type using the L<FFI::Platypus#sizeof> method.
 
+ # OO interface
+ my $intsize = $ffi->sizeof('int');
+ my intarraysize = $ffi->sizeof('int[64]');
+ 
+ # Declare interface
  my $intsize = sizeof 'int';
  my intarraysize = sizeof 'int[64]';
 
@@ -63,10 +68,16 @@ You can get the size of a type using the L<FFI::Platypus::Memory#sizeof> functio
 
 Sometimes it is necessary to convert types.  In particular various pointer types
 often need to be converted for consumption in Perl.  For this purpose the
-L<FFI::Platypus::Memory#cast> function is provided.  It needs to be used with
+L<FFI::Platypus#cast> method is provided.  It needs to be used with
 care though, because not all type combinations are supported.  Here are some 
 useful ones:
 
+ # OO interface
+ my $address = $ffi->cast('string' => 'opaque', $string);
+ my $string  = $ffi->cast('opaque' => 'string', $pointer);
+ 
+ # Declare interface
+ use FFI::Platypus::Declare;
  my $address = cast 'string' => 'opaque', $string;
  my $string  = cast 'opaque' => 'string', $pointer;
 
@@ -249,7 +260,7 @@ and return types.  Most of these things can be accomplished with these tools:
 
 =item L<unpack|perlfunc#unpack>
 
-=item L<FFI::Platypus::Memory#cast>
+=item L<FFI::Platypus#cast>
 
 =item Custom Types (see below)
 

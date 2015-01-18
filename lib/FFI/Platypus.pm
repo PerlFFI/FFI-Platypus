@@ -398,6 +398,73 @@ sub closure
   FFI::Platypus::Closure->new($coderef);
 }
 
+=head2 cast
+
+ my $converted_value = $ffi->cast($original_type, $converted_type, $original_value);
+
+The C<cast> function converts an existing I<$original_value> of type
+I<$original_type> into one of type I<$converted_type>.  Not all types are
+supported, so care must be taken.  For example, to get the address of a
+string, you can do this:
+
+ my $address = $ffi->cast('string' => 'opaque', $string_value);
+
+=cut
+
+sub cast
+{
+  $_[0]->function(0 => [$_[1]] => $_[2])->call($_[3]);
+}
+
+=head2 attach_cast
+
+ $ffi->attach_cast("cast_name", $original_type, $converted_type);
+ my $converted_value = cast_name($original_value);
+
+This function attaches a cast as a permanent xsub.  This will make it faster
+and may be useful if you are calling a particular cast a lot.
+
+=cut
+
+sub attach_cast
+{
+  my($self, $name, $type1, $type2) = @_;
+  my $caller = caller;
+  $name = join '::', $caller, $name unless $name =~ /::/;
+  $self->attach([0 => $name] => [$type1] => $type2 => '$');
+  $self;
+}
+
+=head2 sizeof
+
+ my $size = $ffi->sizeof($type);
+
+Returns the total size of the given type.  For example to get the size of
+an integer:
+
+ my $intsize = $ffi->sizeof('int'); # usually 4 or 8 depending on platform
+
+You can also get the size of arrays
+
+ my $intarraysize = $ffi->sizeof('int[64]');
+
+Keep in mind that "pointer" types will always be the pointer / word size
+for the platform that you are using.  This includes strings, opaque and
+pointers to other types.
+
+This function is not very fast, so you might want to save this value as a
+constant, particularly if you need the size in a loop with many
+iterations.
+
+=cut
+
+sub sizeof
+{
+  my($self,$type) = @_;
+  $self->type($type);
+  $self->type_meta($type)->{size};
+}
+
 =head2 find_symbol
 
  my $address = $ffi->find_symbol($name);
