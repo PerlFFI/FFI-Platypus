@@ -6,12 +6,12 @@ use FFI::Platypus::Declare qw( pointer int string );
 
 lib find_lib_or_exit lib => 'zmq';
 
-function zmq_init => [int] => pointer;
-function zmq_socket => [pointer, int] => pointer;
-function zmq_connect => [pointer, string] => int;
-function zmq_send => [pointer, pointer, int] => int;
-function zmq_msg_init_data => [pointer, string, int, pointer, pointer] => int;
-function zmq_msg_data => [pointer] => string;
+attach zmq_init => [int] => pointer;
+attach zmq_socket => [pointer, int] => pointer;
+attach zmq_connect => [pointer, string] => int;
+attach zmq_send => [pointer, pointer, int] => int;
+attach zmq_msg_init_data => [pointer, string, int, pointer, pointer] => int;
+attach zmq_msg_data => [pointer] => string;
 
 # init zmq context
 my $ctx = zmq_init(1);

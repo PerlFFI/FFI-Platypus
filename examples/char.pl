@@ -11,7 +11,7 @@ my @list = qw(
   space upper xdigit
 );
 
-function "is$_" => [character] => int for @list;
+attach "is$_" => [character] => int for @list;
 
 my $char = shift(@ARGV) || 'a';
 

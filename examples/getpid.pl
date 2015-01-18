@@ -3,7 +3,7 @@ use warnings;
 use FFI::Platypus::Declare qw( string int );
 
 lib undef;
-function puts => [string] => int;
-function getpid => [] => int;
+attach puts => [string] => int;
+attach getpid => [] => int;
 
 puts(getpid());

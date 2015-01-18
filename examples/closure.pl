@@ -7,9 +7,9 @@ use FFI::Platypus::Declare
 lib './closure.so';
 lib undef; # for puts
 
-function set_closure => [closure_t] => void;
-function call_closure => [int] => int;
-function puts => [string] => int;
+attach set_closure => [closure_t] => void;
+attach call_closure => [int] => int;
+attach puts => [string] => int;
 
 my $closure1 = closure { $_[0] * 2 };
 set_closure($closure1);

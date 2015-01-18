@@ -1,6 +1,7 @@
 use strict;
 use warnings;
-use FFI::Platypus::Memory qw( malloc cast free memcpy );
+use FFI::Platypus::Declare;
+use FFI::Platypus::Memory qw( malloc free memcpy );
 
 my $buffer = malloc 12;
 

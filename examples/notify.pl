@@ -10,11 +10,11 @@ use FFI::Platypus::Declare qw( void string pointer );
 
 lib find_lib_or_exit lib => 'notify';
 
-function notify_init   => [string] => void;
-function notify_uninit => []       => void;
-function [notify_notification_new    => 'notify_new']    => [string,string,string]            => pointer;
-function [notify_notification_update => 'notify_update'] => [pointer, string, string, string] => void;
-function [notify_notification_show   => 'notify_show']   => [pointer, pointer]                => void;
+attach notify_init   => [string] => void;
+attach notify_uninit => []       => void;
+attach [notify_notification_new    => 'notify_new']    => [string,string,string]            => pointer;
+attach [notify_notification_update => 'notify_update'] => [pointer, string, string, string] => void;
+attach [notify_notification_show   => 'notify_show']   => [pointer, pointer]                => void;
 
 notify_init('FFI::Platypus');
 my $n = notify_new('','','');

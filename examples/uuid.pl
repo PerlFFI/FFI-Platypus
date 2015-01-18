@@ -2,12 +2,12 @@ use strict;
 use warnings;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( void pointer string );
-use FFI::Platypus::Memory qw( malloc free cast sizeof );
+use FFI::Platypus::Memory qw( malloc free );
 
 lib find_lib_or_exit lib => 'uuid';
 
-function uuid_generate => [pointer] => void;
-function uuid_unparse  => [pointer,pointer] => void;
+attach uuid_generate => [pointer] => void;
+attach uuid_unparse  => [pointer,pointer] => void;
 
 my $uuid = malloc sizeof 'char[16]';  # uuid_t
 uuid_generate($uuid);

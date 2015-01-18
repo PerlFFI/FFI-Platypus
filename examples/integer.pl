@@ -3,7 +3,7 @@ use warnings;
 use FFI::Platypus::Declare qw( int string );
 
 lib undef;
-function puts => [string] => int;
-function atoi => [string] => int;
+attach puts => [string] => int;
+attach atoi => [string] => int;
 
 puts(atoi('56'));
