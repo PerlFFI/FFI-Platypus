@@ -15,14 +15,14 @@ use FFI::Platypus::Declare
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
-function [sint64_add => 'add'] => [sint64, sint64] => sint64;
-function [sint64_inc => 'inc'] => [sint64_p, sint64] => sint64_p;
-function [sint64_sum => 'sum'] => [sint64_a] => sint64;
-function [sint64_array_inc => 'array_inc'] => [sint64_a] => void;
-function [pointer_null => 'null'] => [] => sint64_p;
-function [pointer_is_null => 'is_null'] => [sint64_p] => int;
-function [sint64_static_array => 'static_array'] => [] => sint64_a;
-function [pointer_null => 'null2'] => [] => sint64_a;
+attach [sint64_add => 'add'] => [sint64, sint64] => sint64;
+attach [sint64_inc => 'inc'] => [sint64_p, sint64] => sint64_p;
+attach [sint64_sum => 'sum'] => [sint64_a] => sint64;
+attach [sint64_array_inc => 'array_inc'] => [sint64_a] => void;
+attach [pointer_null => 'null'] => [] => sint64_p;
+attach [pointer_is_null => 'is_null'] => [sint64_p] => int;
+attach [sint64_static_array => 'static_array'] => [] => sint64_a;
+attach [pointer_null => 'null2'] => [] => sint64_a;
 
 is add(-1,2), 1, 'add(-1,2) = 1';
 is do { no warnings; add() }, 0, 'add() = 0';
@@ -53,8 +53,8 @@ is_deeply static_array(), [-1,2,-3,4,-5,6,-7,8,-9,10], 'static_array = [-1,2,-3,
 is null2(), undef, 'null2() == undef';
 
 my $closure = closure { $_[0]-2 };
-function [sint64_set_closure => 'set_closure'] => [sint64_c] => void;
-function [sint64_call_closure => 'call_closure'] => [sint64] => sint64;
+attach [sint64_set_closure => 'set_closure'] => [sint64_c] => void;
+attach [sint64_call_closure => 'call_closure'] => [sint64] => sint64;
 
 set_closure($closure);
 is call_closure(-2), -4, 'call_closure(-2) = -4';
@@ -66,17 +66,17 @@ is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
 subtest 'custom type input' => sub {
   plan tests => 2;
   custom_type sint64 => type1 => { perl_to_ffi => sub { is $_[0], -2; $_[0]*2 } };
-  function [sint64_add => 'custom_add'] => ['type1',sint64] => sint64;
+  attach [sint64_add => 'custom_add'] => ['type1',sint64] => sint64;
   is custom_add(-2,-1), -5, 'custom_add(-2,-1) = -5';
 };
 
 subtest 'custom type output' => sub {
   plan tests => 2;
   custom_type sint64 => type2 => { ffi_to_perl => sub { is $_[0], -3; $_[0]*2 } };
-  function [sint64_add => 'custom_add2'] => [sint64,sint64] => 'type2';
+  attach [sint64_add => 'custom_add2'] => [sint64,sint64] => 'type2';
   is custom_add2(-2,-1), -6, 'custom_add2(-2,-1) = -6';
 };
 
-function [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
+attach [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
 is closure_pointer_is_null(), 1, 'closure_pointer_is_null() = 1';
 

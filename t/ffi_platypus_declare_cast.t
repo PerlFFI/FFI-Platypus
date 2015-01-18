@@ -6,10 +6,10 @@ use FFI::CheckLib;
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
-function string_matches_foobarbaz => ['opaque'] => 'int';
-function string_return_foobarbaz  => [] => 'opaque';
-function string_set_closure => ['opaque'] => 'void';
-function string_call_closure => ['string'] => 'void';
+attach string_matches_foobarbaz => ['opaque'] => 'int';
+attach string_return_foobarbaz  => [] => 'opaque';
+attach string_set_closure => ['opaque'] => 'void';
+attach string_call_closure => ['string'] => 'void';
 
 subtest 'cast from string to pointer' => sub {
   plan tests => 2;

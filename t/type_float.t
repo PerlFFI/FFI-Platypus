@@ -10,14 +10,14 @@ use FFI::Platypus::Declare
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
-function [float_add => 'add'] => [float, float] => float;
-function [float_inc => 'inc'] => [float_p, float] => float_p;
-function [float_sum => 'sum'] => [float_a] => float;
-function [float_array_inc => 'array_inc'] => [float_a] => void;
-function [pointer_null => 'null'] => [] => float_p;
-function [pointer_is_null => 'is_null'] => [float_p] => int;
-function [float_static_array => 'static_array'] => [] => float_a;
-function [pointer_null => 'null2'] => [] => float_a;
+attach [float_add => 'add'] => [float, float] => float;
+attach [float_inc => 'inc'] => [float_p, float] => float_p;
+attach [float_sum => 'sum'] => [float_a] => float;
+attach [float_array_inc => 'array_inc'] => [float_a] => void;
+attach [pointer_null => 'null'] => [] => float_p;
+attach [pointer_is_null => 'is_null'] => [float_p] => int;
+attach [float_static_array => 'static_array'] => [] => float_a;
+attach [pointer_null => 'null2'] => [] => float_a;
 
 is add(1.5,2.5), 4, 'add(1.5,2.5) = 4';
 is eval { no warnings; add() }, 0.0, 'add() = 0.0';
@@ -48,8 +48,8 @@ is_deeply static_array(), [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5
 is null2(), undef, 'null2() == undef';
 
 my $closure = closure { $_[0]+2.25 };
-function [float_set_closure => 'set_closure'] => [float_c] => void;
-function [float_call_closure => 'call_closure'] => [float] => float;
+attach [float_set_closure => 'set_closure'] => [float_c] => void;
+attach [float_call_closure => 'call_closure'] => [float] => float;
 
 set_closure($closure);
 is call_closure(2.5), 4.75, 'call_closure(2.5) = 4.75';
@@ -61,17 +61,17 @@ is do { no warnings; call_closure(2.5) }, 0, 'call_closure(2.5) = 0';
 subtest 'custom type input' => sub {
   plan tests => 2;
   custom_type float => type1 => { perl_to_ffi => sub { is $_[0], 1.25; $_[0]+0.25 } };
-  function [float_add => 'custom_add'] => ['type1',float] => float;
+  attach [float_add => 'custom_add'] => ['type1',float] => float;
   is custom_add(1.25,2.5), 4, 'custom_add(1.25,2.5) = 4';
 };
 
 subtest 'custom type output' => sub {
   plan tests => 2;
   custom_type float => type2 => { ffi_to_perl => sub { is $_[0], 2.0; $_[0]+0.25 } };
-  function [float_add => 'custom_add2'] => [float,float] => 'type2';
+  attach [float_add => 'custom_add2'] => [float,float] => 'type2';
   is custom_add2(1,1), 2.25, 'custom_add2(1,1) = 2.25';
 };
 
-function [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
+attach [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
 is closure_pointer_is_null(), 1, 'closure_pointer_is_null() = 1';
 

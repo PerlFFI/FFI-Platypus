@@ -12,7 +12,7 @@ use FFI::Platypus;
  use FFI::Platypus::Declare 'string', 'int';
 
  lib undef; # use libc
- function puts => [string] => int;
+ attach puts => [string] => int;
  
  puts("hello world");
 
@@ -99,29 +99,28 @@ sub type_meta($)
   _ffi_object->type_meta(@_);
 }
 
-=head2 function
+=head2 attach
 
- function $name => \@argument_types => $return_type;
- function [$c_name => $perl_name] => \@argument_types => $return_type;
- function [$address => $perl_name] => \@argument_types => $return_type;
+ attach $name => \@argument_types => $return_type;
+ attach [$c_name => $perl_name] => \@argument_types => $return_type;
+ attach [$address => $perl_name] => \@argument_types => $return_type;
 
 Find and attach a C function as a Perl function as a real live xsub.
 
 If just one I<$name> is given, then the function will be attached in Perl with the same
 name as it has in C.  The second form allows you to give the Perl function a different
-name.  You can also provide an address (the third form), just like with the
-L<function|FFI::Platypus#function> method.
+name.  You can also provide a memory address (the third form) of a function to attach.
 
 Examples:
 
- function 'my_function', ['uint8'] => 'string';
- function ['my_c_function_name' => 'my_perl_function_name'], ['uint8'] => 'string';
+ attach 'my_function', ['uint8'] => 'string';
+ attach ['my_c_function_name' => 'my_perl_function_name'], ['uint8'] => 'string';
  my $string1 = my_function($int);
  my $string2 = my_perl_function_name($int);
 
 =cut
 
-sub function ($$$;$)
+sub attach ($$$;$)
 {
   my($caller, $filename, $line) = caller;
   my($name, $args, $ret, $proto) = @_;
@@ -255,7 +254,7 @@ sub import
   *{join '::', $caller, 'type'} = \&type;
   *{join '::', $caller, 'type_meta'} = \&type_meta;
   *{join '::', $caller, 'custom_type'} = \&custom_type;
-  *{join '::', $caller, 'function'} = \&function;
+  *{join '::', $caller, 'attach'} = \&attach;
   *{join '::', $caller, 'closure'} = \&closure;
   *{join '::', $caller, 'sticky'} = \&sticky;
   *{join '::', $caller, 'cast'} = \&cast;

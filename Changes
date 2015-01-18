@@ -1,6 +1,13 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - moved cast and sizeof from FFI::Platypus::Memory
+    into FFI::Platypus methods.
+  - cast and size of functions for FFI::Platypus::Declare
+  - attach_cast for faster casting
+  - renamed FFI::Platypus::Declare#function to
+    FFI::Platypus::Declare#attach to more closely match
+    the OO interface
 
 0.08      2015-01-16 10:55:14 -0500
   - Second beta

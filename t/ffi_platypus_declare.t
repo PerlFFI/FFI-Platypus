@@ -10,8 +10,8 @@ do {
   use FFI::Platypus::Declare;
 
   lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
-  function 'f0', ['uint8'] => 'uint8';
-  function [f0 => 'f1'], ['uint8'] => 'uint8';
+  attach 'f0', ['uint8'] => 'uint8';
+  attach [f0 => 'f1'], ['uint8'] => 'uint8';
 };
 
 subtest normal => sub {
@@ -30,7 +30,7 @@ do {
     [int => 'myint'];
   
   lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
-  function [my_atoi=>'atoi'], [string] => myint;
+  attach [my_atoi=>'atoi'], [string] => myint;
   
   
 };

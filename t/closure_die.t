@@ -10,8 +10,8 @@ my $closure = closure {
   die "omg i don't want to die!";
 };
 
-function [pointer_set_closure => 'set_closure'] => ['(opaque)->opaque'] => void;
-function [pointer_call_closure => 'call_closure'] => [opaque] => opaque;
+attach [pointer_set_closure => 'set_closure'] => ['(opaque)->opaque'] => void;
+attach [pointer_call_closure => 'call_closure'] => [opaque] => opaque;
 
 
 set_closure($closure);
