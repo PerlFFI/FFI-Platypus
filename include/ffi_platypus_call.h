@@ -310,7 +310,7 @@
       {
         extern SV* ffi_pl_custom_perl(SV*,SV*);
         SV *arg2 = ffi_pl_custom_perl(
-          self->argument_types[i]->extra[0].custom_perl.perl_to_ffi,
+          self->argument_types[i]->extra[0].custom_perl.perl_to_native,
           arg
         );
 
@@ -581,7 +581,7 @@
       }
       else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
       {
-        SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_ffi_post;
+        SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_native_post;
         if(coderef != NULL)
         {
           extern void ffi_pl_custom_perl_cb(SV *, SV*);
@@ -906,7 +906,7 @@
       }
 
       ret_out = ffi_pl_custom_perl(
-        self->return_type->extra[0].custom_perl.ffi_to_perl,
+        self->return_type->extra[0].custom_perl.native_to_perl,
         ret_in != NULL ? ret_in : &PL_sv_undef
       );
 

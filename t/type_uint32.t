@@ -65,21 +65,21 @@ is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
 
 subtest 'custom type input' => sub {
   plan tests => 2;
-  custom_type uint32 => type1 => { perl_to_ffi => sub { is $_[0], 2; $_[0]*2 } };
+  custom_type uint32 => type1 => { perl_to_native => sub { is $_[0], 2; $_[0]*2 } };
   attach [uint32_add => 'custom_add'] => ['type1',uint32] => uint32;
   is custom_add(2,1), 5, 'custom_add(2,1) = 5';
 };
 
 subtest 'custom type output' => sub {
   plan tests => 2;
-  custom_type uint32 => type2 => { ffi_to_perl => sub { is $_[0], 2; $_[0]*2 } };
+  custom_type uint32 => type2 => { native_to_perl => sub { is $_[0], 2; $_[0]*2 } };
   attach [uint32_add => 'custom_add2'] => [uint32,uint32] => 'type2';
   is custom_add2(1,1), 4, 'custom_add2(1,1) = 4';
 };
 
 subtest 'custom type post' => sub {
   plan tests => 2;
-  custom_type uint32 => type3 => { perl_to_ffi_post => sub { is $_[0], 1 } };
+  custom_type uint32 => type3 => { perl_to_native_post => sub { is $_[0], 1 } };
   attach [uint32_add => 'custom_add3'] => ['type3',uint32] => uint32;
   is custom_add3(1,2), 3, 'custom_add3(1,2) = 3';
 };

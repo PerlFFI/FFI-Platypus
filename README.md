@@ -97,9 +97,9 @@ Examples:
 ## custom\_type
 
     $ffi->custom_type($type, $name, {
-      ffi_to_perl => $coderef,
-      ffi_to_perl => $coderef,
-      perl_to_ffi_post => $coderef,
+      native_to_perl => $coderef,
+      perl_to_native => $coderef,
+      perl_to_native_post => $coderef,
     });
 
 Define a custom type.  See ["FFI::Platypus::Type#Custom Types"](#ffi-platypus-type-custom-types) for details.
