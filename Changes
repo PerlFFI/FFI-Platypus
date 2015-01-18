@@ -8,6 +8,8 @@ Revision history for {{$dist->name}}
   - renamed FFI::Platypus::Declare#function to
     FFI::Platypus::Declare#attach to more closely match
     the OO interface
+  - renamed ffi_to_perl native_to_perl
+  - renamed perl_to_ffi perl_to_native
 
 0.08      2015-01-16 10:55:14 -0500
   - Second beta
