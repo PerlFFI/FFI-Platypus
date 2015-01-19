@@ -4,7 +4,7 @@
 #else
     Newx(buffer, buffer_size, char);
 #endif
-    arguments = (ffi_pl_arguments*) buffer;
+    current_argv = arguments = (ffi_pl_arguments*) buffer;
 
     arguments->count = self->ffi_cif.nargs;
 
@@ -398,6 +398,8 @@
     fflush(stderr);
 #endif
 
+    current_argv = NULL;
+
     if(self->address != NULL)
     {
       ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
@@ -411,6 +413,8 @@
     /*
      * ARGUMENT OUT
      */
+
+    current_argv = arguments;
 
     for(i=self->ffi_cif.nargs-1; i >= 0; i--)
     {
@@ -599,6 +603,8 @@
 #ifndef HAVE_ALLOCA
     Safefree(buffer);
 #endif
+
+    current_argv = NULL;
 
     /*
      * RETURN VALUE
@@ -911,10 +917,14 @@
           XSRETURN_EMPTY;
       }
 
+      current_argv = arguments = (ffi_pl_arguments*) buffer;
+
       ret_out = ffi_pl_custom_perl(
         self->return_type->extra[0].custom_perl.native_to_perl,
         ret_in != NULL ? ret_in : &PL_sv_undef
       );
+      
+      current_argv = NULL;
 
       if(ret_in != NULL)
       {

@@ -243,7 +243,7 @@ sub custom_type
   
   require FFI::Platypus::ConfigData;
   my $type_map = FFI::Platypus::ConfigData->config("type_map");  
-  croak "$type is not a basic type" unless defined $type_map->{$type} || $type eq 'string';
+  croak "$type is not a native type" unless defined $type_map->{$type} || $type eq 'string';
   croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
   
   $self->{types}->{$name} = FFI::Platypus::Type->_new_custom_perl(

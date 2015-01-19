@@ -8,7 +8,7 @@ new(class, platypus, address, return_type, ...)
     ffi_pl_type *return_type
   PREINIT:
     ffi_pl_function *self;
-    int i;
+    int i,n,j;
     SV* arg;
     void *buffer;
     ffi_type *ffi_return_type;
@@ -41,17 +41,26 @@ new(class, platypus, address, return_type, ...)
       ffi_return_type = &ffi_type_pointer;
     }
     
-    for(i=0; i<(items-4); i++)
+    for(i=0,n=0; i<(items-4); i++,n++)
     {
       arg = ST(i+4);
-      self->argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
-      if(self->argument_types[i]->platypus_type == FFI_PL_NATIVE || self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
+      self->argument_types[n] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
+      if(self->argument_types[n]->platypus_type == FFI_PL_NATIVE || self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL)
       {
-        ffi_argument_types[i] = self->argument_types[i]->ffi_type;
+        ffi_argument_types[n] = self->argument_types[n]->ffi_type;
       }
       else
       {
-        ffi_argument_types[i] = &ffi_type_pointer;
+        ffi_argument_types[n] = &ffi_type_pointer;
+      }
+      if(self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL
+      && self->argument_types[n]->extra[0].custom_perl.argument_count > 0)
+      {
+        for(j=1; j-1 < self->argument_types[n]->extra[0].custom_perl.argument_count; j++)
+        {
+          self->argument_types[n+j] = self->argument_types[n];
+          ffi_argument_types[n+j] = self->argument_types[n]->ffi_type;
+        }
       }
     }
     

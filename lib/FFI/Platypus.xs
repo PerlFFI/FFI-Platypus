@@ -9,6 +9,8 @@
 #include "perl_math_int64.h"
 #endif
 
+ffi_pl_arguments *current_argv = NULL;
+
 void *cast0(void)
 {
   return NULL;
@@ -49,3 +51,4 @@ INCLUDE: ../../xs/Type.xs
 INCLUDE: ../../xs/Function.xs
 INCLUDE: ../../xs/Declare.xs
 INCLUDE: ../../xs/ClosureData.xs
+INCLUDE: ../../xs/API.xs

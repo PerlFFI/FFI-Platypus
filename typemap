@@ -1,7 +1,8 @@
-ffi_pl_string    T_FFI_PL_STRING
-ffi_pl_type*     T_FFI_PL_TYPE
-ffi_pl_function* T_FFI_PL_FUNCTION
-ffi_pl_closure*  T_FFI_PL_CLOSURE_DATA
+ffi_pl_string     T_FFI_PL_STRING
+ffi_pl_type*      T_FFI_PL_TYPE
+ffi_pl_function*  T_FFI_PL_FUNCTION
+ffi_pl_closure*   T_FFI_PL_CLOSURE_DATA
+ffi_pl_arguments* T_FFI_PL_ARGUMENTS
 
 OUTPUT
 T_FFI_PL_STRING
@@ -37,3 +38,9 @@ T_FFI_PL_CLOSURE_DATA
     $var = INT2PTR($type, SvIV((SV *) SvRV($arg)));
   else
     Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::ClosureData\");
+
+T_FFI_PL_ARGUMENTS
+  if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::API::ARGV\"))
+    $var = INT2PTR($type, SvIV((SV *) SvRV($arg)));
+  else
+    Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::API::ARGV\");

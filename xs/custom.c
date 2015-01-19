@@ -6,7 +6,7 @@
 #include "ffi_platypus.h"
 
 SV*
-ffi_pl_custom_perl(SV *subref, SV *in_arg)
+ffi_pl_custom_perl(SV *subref, SV *in_arg, int i)
 {
   if(subref == NULL)
   {
@@ -23,6 +23,7 @@ ffi_pl_custom_perl(SV *subref, SV *in_arg)
     SAVETMPS;
     PUSHMARK(SP);
     XPUSHs(in_arg);
+    XPUSHs(sv_2mortal(newSViv(i)));
     PUTBACK;
 
     count = call_sv(subref, G_SCALAR);

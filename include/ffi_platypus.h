@@ -108,18 +108,18 @@ typedef struct _ffi_pl_closure {
 typedef const char *ffi_pl_string;
 
 typedef union _ffi_pl_argument {
-  void    *pointer;
-  char    *string;
-  int8_t   sint8;
-  uint8_t  uint8;
-  int16_t  sint16;
-  uint16_t uint16;
-  int32_t  sint32;
-  uint32_t uint32;
-  int64_t  sint64;
-  uint64_t uint64;
-  float    xfloat;
-  double   xdouble;
+  void       *pointer;
+  const char *string;
+  int8_t     sint8;
+  uint8_t    uint8;
+  int16_t    sint16;
+  uint16_t   uint16;
+  int32_t    sint32;
+  uint32_t   uint32;
+  int64_t    sint64;
+  uint64_t   uint64;
+  float      xfloat;
+  double     xdouble;
 } ffi_pl_argument;
 
 typedef struct _ffi_pl_arguments {
@@ -131,6 +131,7 @@ typedef struct _ffi_pl_arguments {
 #define ffi_pl_arguments_set_pointer(arguments, i, value) (arguments->slot[i].pointer = value)
 #define ffi_pl_arguments_get_pointer(arguments, i)        (arguments->slot[i].pointer)
 #define ffi_pl_arguments_set_string(arguments, i, value)  (arguments->slot[i].string  = value)
+#define ffi_pl_arguments_get_string(arguments, i)         (arguments->slot[i].string)
 
 #define ffi_pl_arguments_set_sint8(arguments, i, value)   (arguments->slot[i].sint8   = value)
 #define ffi_pl_arguments_get_sint8(arguments, i)          (arguments->slot[i].sint8)
