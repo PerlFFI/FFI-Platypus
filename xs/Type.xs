@@ -230,12 +230,13 @@ DESTROY(self)
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type::StringPointer
 
 void
-native_to_perl(pointer)
+native_to_perl_xs(pointer)
     SV *pointer
   PREINIT:
     const char **string_c;
     SV *string_perl;
   CODE:
+    /* we currently use the pp version instead */
     if(SvOK(pointer))
     {
       string_c = INT2PTR(const char**,SvIV(pointer));

@@ -2,6 +2,7 @@ package FFI::Platypus::Type::StringPointer;
 
 use strict;
 use warnings;
+use FFI::Platypus;
 use Config ();
 
 # ABSTRACT: Convert a pointer to a string and back
@@ -48,6 +49,7 @@ use constant _incantation =>
   $^O eq 'MSWin32' && $Config::Config{archname} =~ /MSWin32-x64/
   ? 'Q'
   : 'L!';
+use constant _pointer_buffer => "P" . FFI::Platypus->new->sizeof('opaque');
 
 my @stack;
 
@@ -79,18 +81,12 @@ sub perl_to_native_post
   eval { ${$_[0]} = unpack 'p', $$packed };
 }
 
-#sub native_to_perl
-#{
-#  use YAML ();
-#  print YAML::Dump({
-#    ret => sprintf("0x%x", $_[0]),
-#    packed => pack(_incantation, $_[0]),
-#    length => length(pack(_incantation, $_[0])),
-#    pointer_pointer => sprintf("0x%x", unpack(_incantation, unpack('P8', pack(_incantation, $_[0])))),
-#    string => unpack('p', pack(_incantation, unpack(_incantation, unpack('P8', pack(_incantation, $_[0]))))),
-#  });
-#  \"foo";
-#}
+sub native_to_perl
+{
+  return unless defined $_[0];
+  my $pointer_pointer = unpack(_incantation, unpack(_pointer_buffer, pack(_incantation, $_[0])));
+  $pointer_pointer ? \unpack('p', pack(_incantation, $pointer_pointer)) : \undef;
+}
 
 sub ffi_custom_type_api_1
 {
