@@ -96,9 +96,10 @@ Examples:
 
 ## custom\_type
 
-    $ffi->custom_type($type, $name, {
-      native_to_perl => $coderef,
-      perl_to_native => $coderef,
+    $ffi->custom_type($alias => {
+      native_type         => $native_type,
+      native_to_perl      => $coderef,
+      perl_to_native      => $coderef,
       perl_to_native_post => $coderef,
     });
 

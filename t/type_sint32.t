@@ -65,14 +65,14 @@ is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
 
 subtest 'custom type input' => sub {
   plan tests => 2;
-  custom_type sint32 => type1 => { perl_to_native => sub { is $_[0], -2; $_[0]*2 } };
+  custom_type type1 => { native_type => 'uint32', perl_to_native => sub { is $_[0], -2; $_[0]*2 } };
   attach [sint32_add => 'custom_add'] => ['type1',sint32] => sint32;
   is custom_add(-2,-1), -5, 'custom_add(-2,-1) = -5';
 };
 
 subtest 'custom type output' => sub {
   plan tests => 2;
-  custom_type sint32 => type2 => { native_to_perl => sub { is $_[0], -3; $_[0]*2 } };
+  custom_type type2 => { native_type => 'sint32', native_to_perl => sub { is $_[0], -3; $_[0]*2 } };
   attach [sint32_add => 'custom_add2'] => [sint32,sint32] => 'type2';
   is custom_add2(-2,-1), -6, 'custom_add2(-2,-1) = -6';
 };

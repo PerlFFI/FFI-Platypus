@@ -71,13 +71,13 @@ sub type ($;$)
 
 =head2 custom_type
 
- custom_type $type => $alias => \%args;
+ custom_type $alias => \%args;
 
 Declare the given custom type.  See L<FFI::Platypus::Type#Custom Types> for details.
 
 =cut
 
-sub custom_type ($$$)
+sub custom_type ($$)
 {
   _ffi_object->custom_type(@_);
 }

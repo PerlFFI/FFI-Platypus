@@ -22,27 +22,27 @@ foreach my $basic (@basic_types)
   subtest $basic => sub {
     plan tests => 6;
   
-    eval { $ffi->custom_type($basic, "foo_${basic}_1", { perl_to_native => sub {} }) };
+    eval { $ffi->custom_type("foo_${basic}_1", { native_type => $basic, perl_to_native => sub {} }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("foo_${basic}_1") });
 
-    eval { $ffi->custom_type($basic, "bar_${basic}_1", { native_to_perl => sub {} }) };
+    eval { $ffi->custom_type("bar_${basic}_1", { native_type => $basic, native_to_perl => sub {} }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("bar_${basic}_1") });
 
-    eval { $ffi->custom_type($basic, "baz_${basic}_1", { perl_to_native => sub {}, native_to_perl => sub {} }) };
+    eval { $ffi->custom_type("baz_${basic}_1", { native_type => $basic, perl_to_native => sub {}, native_to_perl => sub {} }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("baz_${basic}_1") });
 
-    eval { $ffi->custom_type($basic, "foo_${basic}_2", { perl_to_native => sub {}, perl_to_native_post => sub { } }) };
+    eval { $ffi->custom_type("foo_${basic}_2", { native_type => $basic, perl_to_native => sub {}, perl_to_native_post => sub { } }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("foo_${basic}_2") });
 
-    eval { $ffi->custom_type($basic, "bar_${basic}_2", { native_to_perl => sub {}, perl_to_native_post => sub { }  }) };
+    eval { $ffi->custom_type("bar_${basic}_2", { native_type => $basic, native_to_perl => sub {}, perl_to_native_post => sub { }  }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("bar_${basic}_2") });
 
-    eval { $ffi->custom_type($basic, "baz_${basic}_2", { perl_to_native => sub {}, native_to_perl => sub {}, perl_to_native_post => sub { }  }) };
+    eval { $ffi->custom_type("baz_${basic}_2", { native_type => $basic, perl_to_native => sub {}, native_to_perl => sub {}, perl_to_native_post => sub { }  }) };
     is $@, '', 'ffi.custom_type 1';
     xdump({ "${basic}_1" => $ffi->type_meta("baz_${basic}_2") });
   };

@@ -115,7 +115,7 @@ do {
 
 subtest 'custom type input' => sub {
   plan tests => 2;
-  custom_type opaque => type1 => { perl_to_native => sub { 
+  custom_type type1 => { perl_to_native => sub { 
     is cast(opaque=>string,$_[0]), "abc";
     free $_[0];
     strdup "def";
@@ -134,7 +134,7 @@ subtest 'custom type output' => sub {
 
   setp(strdup("ABC"));
   
-  custom_type opaque => type2 => { native_to_perl => sub {
+  custom_type type2 => { native_to_perl => sub {
     is cast(opaque=>string,$_[0]), "ABC";
     free $_[0];
     "DEF";

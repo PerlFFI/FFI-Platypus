@@ -210,9 +210,10 @@ sub type
 
 =head2 custom_type
 
- $ffi->custom_type($type, $name, {
-   native_to_perl => $coderef,
-   perl_to_native => $coderef,
+ $ffi->custom_type($alias => {
+   native_type         => $native_type,
+   native_to_perl      => $coderef,
+   perl_to_native      => $coderef,
    perl_to_native_post => $coderef,
  });
 
@@ -222,10 +223,13 @@ Define a custom type.  See L<FFI::Platypus::Type#Custom Types> for details.
 
 sub custom_type
 {
-  my($self, $type, $name, $cb) = @_;
+  my($self, $name, $cb) = @_;
   
-  croak "Usage: \$ffi->custom_type(\$type, \$name, { ... })"
-    unless defined $type && defined $name && ref($cb) eq 'HASH';
+  my $type = $cb->{native_type};
+  $type ||= 'opaque';
+  
+  croak "Usage: \$ffi->custom_type(\$name, { ... })"
+    unless defined $name && ref($cb) eq 'HASH';
   
   croak "must define at least one of native_to_perl, perl_to_native, or perl_to_native_post"
     unless defined $cb->{native_to_perl} || defined $cb->{perl_to_native} || defined $cb->{perl_to_native_post};
