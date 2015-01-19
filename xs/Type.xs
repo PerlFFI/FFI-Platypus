@@ -58,12 +58,13 @@ _new(class, type, platypus_type, array_size)
     RETVAL
 
 ffi_pl_type *
-_new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_post)
+_new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
     const char *class
     const char *type
     SV *perl_to_native
     SV *native_to_perl
     SV *perl_to_native_post
+    int argument_count
   PREINIT:
     char *buffer;
     ffi_pl_type *self;
@@ -83,6 +84,7 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
     custom->perl_to_native = SvOK(perl_to_native) ? SvREFCNT_inc(perl_to_native) : NULL;
     custom->perl_to_native_post = SvOK(perl_to_native_post) ? SvREFCNT_inc(perl_to_native_post) : NULL;
     custom->native_to_perl = SvOK(native_to_perl) ? SvREFCNT_inc(native_to_perl) : NULL;
+    custom->argument_count = argument_count-1;
     
     RETVAL = self;
   OUTPUT:
@@ -205,7 +207,6 @@ meta(self)
 void
 DESTROY(self)
     ffi_pl_type *self
-  PREINIT:
   CODE:
     if(self->platypus_type == FFI_PL_CLOSURE)
     {
@@ -225,3 +226,32 @@ DESTROY(self)
         SvREFCNT_dec(custom->native_to_perl);
     }
     Safefree(self);
+
+MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type::StringPointer
+
+void
+native_to_perl(pointer)
+    SV *pointer
+  PREINIT:
+    const char **string_c;
+    SV *string_perl;
+  CODE:
+    if(SvOK(pointer))
+    {
+      string_c = INT2PTR(const char**,SvIV(pointer));
+      if(*string_c != NULL)
+      {
+        string_perl = sv_newmortal();
+        sv_setpv(string_perl, *string_c);
+        ST(0) = newRV_inc(string_perl);
+      }
+      else
+      {
+        ST(0) = newRV_noinc(&PL_sv_undef);
+      }
+      XSRETURN(1);
+    }
+    else
+    {
+      XSRETURN_EMPTY;
+    }

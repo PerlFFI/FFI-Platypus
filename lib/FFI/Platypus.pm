@@ -41,6 +41,8 @@ and you do not mind the namespace pollution.
 
 =cut
 
+our @CARP_NOT = qw( FFI::Platypus::Declare );
+
 require XSLoader;
 XSLoader::load(
   'FFI::Platypus', eval q{ $VERSION } || do {
@@ -228,6 +230,11 @@ sub custom_type
   my $type = $cb->{native_type};
   $type ||= 'opaque';
   
+  my $argument_count = $cb->{argument_count} || 1;
+  
+  croak "argument_count must be >= 1"
+    unless $argument_count >= 1;
+  
   croak "Usage: \$ffi->custom_type(\$name, { ... })"
     unless defined $name && ref($cb) eq 'HASH';
   
@@ -239,7 +246,52 @@ sub custom_type
   croak "$type is not a basic type" unless defined $type_map->{$type} || $type eq 'string';
   croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
   
-  $self->{types}->{$name} = FFI::Platypus::Type->_new_custom_perl($type_map->{$type}, $cb->{perl_to_native}, $cb->{native_to_perl}, $cb->{perl_to_native_post});
+  $self->{types}->{$name} = FFI::Platypus::Type->_new_custom_perl(
+    $type_map->{$type},
+    $cb->{perl_to_native},
+    $cb->{native_to_perl},
+    $cb->{perl_to_native_post},
+    $argument_count,
+  );
+  
+  $self;
+}
+
+=head2 load_custom_type
+
+ $ffi->load_custom_type($name => $alias, @type_args);
+
+Load the custom type defined in the module I<$name>, and make an alias with the name I<$alias>.
+If the custom type requires any arguments, they may be passed in as I<@type_args>.
+See L<FFI::Platypus::Type#Custom Types> for details.
+
+If I<$name> contains C<::> then it will be assumed to be a fully qualified package name.
+If not, then C<FFI::Platypus::Type::> will be prepended to it.
+
+=cut
+
+sub load_custom_type
+{
+  my($self, $name, $alias, @type_args) = @_;
+
+  croak "usage: \$ffi->load_custom_type(\$name, \$alias, ...)"
+    unless defined $name && defined $alias;
+
+  $name = "FFI::Platypus::Type::$name" unless $name =~ /::/;
+  
+  unless($name->can("ffi_custom_type_api_1"))
+  {
+    eval qq{ use $name () };
+    warn $@ if $@;
+  }
+  
+  unless($name->can("ffi_custom_type_api_1"))
+  {
+    croak "$name does not appear to conform to the custom type API";
+  }
+  
+  my $cb = $name->ffi_custom_type_api_1($self, @type_args);
+  $self->custom_type($alias => $cb);
   
   $self;
 }

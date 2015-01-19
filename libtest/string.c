@@ -28,3 +28,34 @@ string_call_closure(const char *value)
 {
   my_closure(value);
 }
+
+EXTERN const char *
+string_pointer_pointer_get(const char **ptr)
+{
+  return *ptr;
+}
+
+EXTERN void
+string_pointer_pointer_set(const char **ptr, const char *value)
+{
+  *ptr = value;
+}
+
+#include <stdio.h>
+
+EXTERN char **
+string_pointer_pointer_return(char *value)
+{
+  static char buffer[512];
+  static char *tmp;
+  if(value != NULL)
+  {
+    strcpy(buffer, value);
+    tmp = buffer;
+  }
+  else
+  {
+    tmp = value;
+  }
+  return &tmp;
+}

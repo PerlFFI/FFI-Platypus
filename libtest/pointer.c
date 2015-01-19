@@ -13,6 +13,12 @@ pointer_is_null(void *ptr)
   return ptr == NULL;
 }
 
+EXTERN int
+pointer_pointer_is_null(void **ptr)
+{
+  return *ptr == NULL;
+}
+
 static void *my_pointer;
 
 EXTERN void

@@ -62,6 +62,7 @@ typedef struct _ffi_pl_type_extra_custom_perl {
   void *perl_to_native;
   void *native_to_perl;
   void *perl_to_native_post;
+  int argument_count;
 } ffi_pl_type_extra_custom_perl;
 
 typedef struct _ffi_pl_type_extra_array {

@@ -366,6 +366,8 @@
           }
           SvREFCNT_dec(arg2);
         }
+
+        i += self->argument_types[i]->extra[0].custom_perl.argument_count;
       }
       else
       {
@@ -410,7 +412,7 @@
      * ARGUMENT OUT
      */
 
-    for(i=0; i < self->ffi_cif.nargs; i++)
+    for(i=self->ffi_cif.nargs-1; i >= 0; i--)
     {
       if(self->argument_types[i]->platypus_type == FFI_PL_POINTER)
       {
@@ -581,12 +583,16 @@
       }
       else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
       {
-        SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_native_post;
-        if(coderef != NULL)
+        /* FIXME: need to fill out argument_types for skipping */
+        i -= self->argument_types[i]->extra[0].custom_perl.argument_count;
         {
-          extern void ffi_pl_custom_perl_cb(SV *, SV*);
-          arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
-          ffi_pl_custom_perl_cb(coderef, arg);
+          SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_native_post;
+          if(coderef != NULL)
+          {
+            extern void ffi_pl_custom_perl_cb(SV *, SV*);
+            arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+            ffi_pl_custom_perl_cb(coderef, arg);
+          }
         }
       }
     }

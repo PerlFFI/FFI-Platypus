@@ -82,6 +82,24 @@ sub custom_type ($$)
   _ffi_object->custom_type(@_);
 }
 
+=head2 load_custom_type
+
+ load_custom_type $name => $alias, @type_args;
+
+Load the custom type defined in the module I<$name>, and make an alias with the name I<$alias>.
+If the custom type requires any arguments, they may be passed in as I<@type_args>.
+See L<FFI::Platypus::Type#Custom Types> for details.
+
+If I<$name> contains C<::> then it will be assumed to be a fully qualified package name.
+If not, then C<FFI::Platypus::Type::> will be prepended to it.
+
+=cut
+
+sub load_custom_type ($$;@)
+{
+  _ffi_object->load_custom_type(@_);
+}
+
 =head2 type_meta
 
  my $meta = type_meta $type;
@@ -254,6 +272,7 @@ sub import
   *{join '::', $caller, 'type'} = \&type;
   *{join '::', $caller, 'type_meta'} = \&type_meta;
   *{join '::', $caller, 'custom_type'} = \&custom_type;
+  *{join '::', $caller, 'load_custom_type'} = \&load_custom_type;
   *{join '::', $caller, 'attach'} = \&attach;
   *{join '::', $caller, 'closure'} = \&closure;
   *{join '::', $caller, 'sticky'} = \&sticky;

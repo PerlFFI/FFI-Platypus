@@ -54,10 +54,7 @@ use constant _incantation =>
 
 Convert a string scalar into a buffer.  Returned in order are a pointer
 to the start of the string scalar's memory region and the size of the
-region.  This function DOES NOT copy any memory, so it is fast, but you
-have to be careful, especially if you are passing it into C code that
-might modify it, or keep it past when the original string scalar falls
-out of scope.
+region.
 
 =cut
 
@@ -71,10 +68,7 @@ sub scalar_to_buffer ($)
  my $scalar = buffer_to_scalar $pointer, $size;
 
 Convert the buffer region defined by the pointer and size into a string
-scalar.  For this operation, the buffer region is copied into the new
-string scalar, so it may be slow if you use it a lot, especially for large
-regions of memory.  You do not, however, have to worry if the original
-region of memory is later modified by C code.
+scalar.
 
 =cut
       
