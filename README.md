@@ -266,6 +266,18 @@ standards.  I may push back and ask you to write a test case or alter the format
 a patch depending on the amount of time I have and the amount of code that your patch 
 touches.
 
+This project's GitHub repository listed above is not Write-Only.  If you want to
+contribute then feel free to browse through the existing issues and see if there is
+something you feel you might be good at and tack a whack at the problem.  I frequently
+open issues myself that I hope will be accomplished by someone in the future but do
+not have time for immediately.
+
+Another good area to help out in is documentation.  I try to make sure that there is
+good document coverage, that is there should be documentation describing all the public
+features and warnings about common pitfalls, but an outsider's or alternate view point
+on such things would be welcome; if you see something confusing or lacks sufficient
+detail I encourage documentation only pull requests to improve things.
+
 # SEE ALSO
 
 - [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)
