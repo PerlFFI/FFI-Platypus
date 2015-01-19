@@ -255,7 +255,14 @@ sub import
   {
     if(ref $arg)
     {
-      _ffi_object->type(@$arg);
+      if($arg->[0] =~ /::/)
+      {
+        _ffi_object->load_custom_type(@$arg);
+      }
+      else
+      {
+        _ffi_object->type(@$arg);
+      }
       no strict 'refs';
       *{join '::', $caller, $arg->[1]} = sub () { $arg->[0] };
     }

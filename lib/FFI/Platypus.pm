@@ -277,6 +277,7 @@ sub load_custom_type
   croak "usage: \$ffi->load_custom_type(\$name, \$alias, ...)"
     unless defined $name && defined $alias;
 
+  $name = "FFI::Platypus::Type$name" if $name =~ /^::/;
   $name = "FFI::Platypus::Type::$name" unless $name =~ /::/;
   
   unless($name->can("ffi_custom_type_api_1"))

@@ -2,16 +2,18 @@ use strict;
 use warnings;
 use Test::More tests => 3;
 use FFI::CheckLib;
-use FFI::Platypus::Declare qw( int string void );
+use FFI::Platypus::Declare
+  qw( int string void ),
+  [ '::StringPointer' => 'string_p'];
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
-load_custom_type 'StringPointer' => 'string_p';
-attach string_pointer_pointer_get => ['string_p'] => string;
-attach string_pointer_pointer_set => ['string_p', string] => void;
-attach pointer_pointer_is_null => ['string_p'] => int;
-attach pointer_is_null => ['string_p'] => int;
-attach string_pointer_pointer_return => [string] => 'string_p';
-attach pointer_null => [] => 'string_p';
+load_custom_type 'StringPointer' => string_p;
+attach string_pointer_pointer_get => [string_p] => string;
+attach string_pointer_pointer_set => [string_p, string] => void;
+attach pointer_pointer_is_null => [string_p] => int;
+attach pointer_is_null => [string_p] => int;
+attach string_pointer_pointer_return => [string] => string_p;
+attach pointer_null => [] => string_p;
 
 subtest 'arg pass in' => sub {
   plan tests => 3;
