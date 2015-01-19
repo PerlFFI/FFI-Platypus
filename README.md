@@ -105,6 +105,17 @@ Examples:
 
 Define a custom type.  See ["FFI::Platypus::Type#Custom Types"](#ffi-platypus-type-custom-types) for details.
 
+## load\_custom\_type
+
+    $ffi->load_custom_type($name => $alias, @type_args);
+
+Load the custom type defined in the module _$name_, and make an alias with the name _$alias_.
+If the custom type requires any arguments, they may be passed in as _@type\_args_.
+See ["FFI::Platypus::Type#Custom Types"](#ffi-platypus-type-custom-types) for details.
+
+If _$name_ contains `::` then it will be assumed to be a fully qualified package name.
+If not, then `FFI::Platypus::Type::` will be prepended to it.
+
 ## types
 
     my @types = $ffi->types;

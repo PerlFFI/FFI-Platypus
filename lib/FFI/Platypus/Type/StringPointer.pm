@@ -39,6 +39,9 @@ In your Platypus::FFI code:
 
 =head1 DESCRIPTION
 
+This module provides a L<FFI::Platypus> custom type for pointers to
+strings.
+
 =cut
 
 use constant _incantation =>
@@ -67,7 +70,7 @@ sub perl_to_native
 
 sub perl_to_native_post
 {
-  my($packed, $pointer_pointer) = @{ pop @stack };
+  my($packed) = @{ pop @stack };
   return unless defined $packed;
   # TODO: doing an eval here to ignore ro value
   # modification.  Can we instead check for
@@ -100,3 +103,23 @@ sub ffi_custom_type_api_1
 }
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus>
+
+Main Platypus documentation.
+
+=item L<FFI::Platypus::Declare>
+
+Declarative interface for Platypus.
+
+=item L<FFI::Platypus::Type>
+
+Platypus types documentation.
+
+=back
+
+=cut
