@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.09      2015-01-19 03:01:48 -0500
   - Third beta
   - moved cast and sizeof from FFI::Platypus::Memory
     into FFI::Platypus methods.
