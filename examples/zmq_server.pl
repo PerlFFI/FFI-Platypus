@@ -2,16 +2,16 @@ use strict;
 use warnings;
 use FFI::CheckLib;
 use FFI::Platypus::Memory qw( malloc free );
-use FFI::Platypus::Declare qw( pointer int string );
+use FFI::Platypus::Declare qw( opaque int string );
 
 lib find_lib_or_exit lib => 'zmq';
 
-attach zmq_init => [int] => pointer;
-attach zmq_socket => [pointer, int] => pointer;
-attach zmq_bind => [pointer, string] => int;
-attach zmq_recv => [pointer, pointer, int] => int;
-attach zmq_msg_init => [pointer] => int;
-attach zmq_msg_data => [pointer] => string;
+attach zmq_init => [int] => opaque;
+attach zmq_socket => [opaque, int] => opaque;
+attach zmq_bind => [opaque, string] => int;
+attach zmq_recv => [opaque, opaque, int] => int;
+attach zmq_msg_init => [opaque] => int;
+attach zmq_msg_data => [opaque] => string;
 
 # init zmq context
 my $ctx = zmq_init(1);

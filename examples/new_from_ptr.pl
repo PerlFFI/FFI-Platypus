@@ -3,8 +3,6 @@ use warnings;
 use FFI::CheckLib;
 use FFI::Platypus;
 
-# The Declare interface does not allow creating functions
-# from pointers, so we will use the OO interface instead.
 my $ffi = FFI::Platypus->new;
 $ffi->lib(find_lib_or_exit lib => 'm');
 
