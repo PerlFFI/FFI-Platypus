@@ -2,6 +2,12 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.10      2015-01-20 04:06:17 -0500
+  - Release candidate 1
+  - Added custom Types API (see FFI::Platypus::API)
+  - Added String Pointer custom type (FFI::Platypus::Type::StringPointer)
+  - Added Pointer / Size Buffer custom type (FFI::Platypus::Type::PointerSizeBuffer)
+
 0.09      2015-01-19 03:01:48 -0500
   - Third beta
   - moved cast and sizeof from FFI::Platypus::Memory
