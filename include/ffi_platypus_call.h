@@ -79,55 +79,56 @@
         void *ptr;
         if(SvROK(arg)) /* TODO: and a scalar ref */
         {
+          SV *arg2 = SvRV(arg);
           switch(self->argument_types[i]->ffi_type->type)
           {
             case FFI_TYPE_UINT8:
               Newx_or_alloca(ptr, uint8_t);
-              *((uint8_t*)ptr) = SvUV(SvRV(arg));
+              *((uint8_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
               break;
             case FFI_TYPE_SINT8:
               Newx_or_alloca(ptr, int8_t);
-              *((int8_t*)ptr) = SvIV(SvRV(arg));
+              *((int8_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
               break;
             case FFI_TYPE_UINT16:
               Newx_or_alloca(ptr, uint16_t);
-              *((uint16_t*)ptr) = SvUV(SvRV(arg));
+              *((uint16_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
               break;
             case FFI_TYPE_SINT16:
               Newx_or_alloca(ptr, int16_t);
-              *((int16_t*)ptr) = SvIV(SvRV(arg));
+              *((int16_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
               break;
             case FFI_TYPE_UINT32:
               Newx_or_alloca(ptr, uint32_t);
-              *((uint32_t*)ptr) = SvUV(SvRV(arg));
+              *((uint32_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
               break;
             case FFI_TYPE_SINT32:
               Newx_or_alloca(ptr, int32_t);
-              *((int32_t*)ptr) = SvIV(SvRV(arg));
+              *((int32_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
               break;
             case FFI_TYPE_UINT64:
               Newx_or_alloca(ptr, uint64_t);
 #ifdef HAVE_IV_IS_64
-              *((uint64_t*)ptr) = SvUV(SvRV(arg));
+              *((uint64_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
 #else
-              *((uint64_t*)ptr) = SvU64(SvRV(arg));
+              *((uint64_t*)ptr) = SvOK(arg2) ? SvU64(arg2) : 0;
 #endif
               break;
             case FFI_TYPE_SINT64:
               Newx_or_alloca(ptr, int64_t);
 #ifdef HAVE_IV_IS_64
-              *((int64_t*)ptr) = SvIV(SvRV(arg));
+              *((int64_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
 #else
-              *((int64_t*)ptr) = SvI64(SvRV(arg));
+              *((int64_t*)ptr) = SvOK(arg2) ? SvI64(arg2) : 0;
 #endif
               break;
             case FFI_TYPE_FLOAT:
               Newx_or_alloca(ptr, float);
-              *((float*)ptr) = SvNV(SvRV(arg));
+              *((float*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
               break;
             case FFI_TYPE_DOUBLE:
               Newx_or_alloca(ptr, double);
-              *((double*)ptr) = SvNV(SvRV(arg));
+              *((double*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
               break;
             case FFI_TYPE_POINTER:
               Newx_or_alloca(ptr, void*);
