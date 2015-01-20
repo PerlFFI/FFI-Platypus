@@ -26,14 +26,14 @@ ffi_pl_custom_perl(SV *subref, SV *in_arg, int i)
     XPUSHs(sv_2mortal(newSViv(i)));
     PUTBACK;
 
-    count = call_sv(subref, G_SCALAR);
+    count = call_sv(subref, G_ARRAY);
 
     SPAGAIN;
 
-    if(count == 0)
-      out_arg = NULL;
-    else
+    if(count >= 1)
       out_arg = SvREFCNT_inc(POPs);
+    else
+      out_arg = NULL;
 
     PUTBACK;
     FREETMPS;
@@ -44,13 +44,14 @@ ffi_pl_custom_perl(SV *subref, SV *in_arg, int i)
 }
 
 void
-ffi_pl_custom_perl_cb(SV *subref, SV *in_arg)
+ffi_pl_custom_perl_cb(SV *subref, SV *in_arg, int i)
 {
   dSP;
   ENTER;
   SAVETMPS;
   PUSHMARK(SP);
   XPUSHs(in_arg);
+  XPUSHs(sv_2mortal(newSViv(i)));
   PUTBACK;
   call_sv(subref, G_VOID|G_DISCARD);
   FREETMPS;

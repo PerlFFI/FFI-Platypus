@@ -14,20 +14,25 @@ new(class, platypus, address, return_type, ...)
     ffi_type *ffi_return_type;
     ffi_type **ffi_argument_types;
     ffi_status ffi_status;
+    ffi_pl_type *tmp;
+    int extra_arguments;
   CODE:
   
-    for(i=0; i<(items-4); i++)
+    for(i=0,extra_arguments=0; i<(items-4); i++)
     {
       arg = ST(i+4);
       if(!(sv_isobject(arg) && sv_derived_from(arg, "FFI::Platypus::Type")))
       {
         croak("non-type parameter passed in as type");
       }
+      tmp = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
+      if(tmp->platypus_type == FFI_PL_CUSTOM_PERL)
+        extra_arguments += tmp->extra[0].custom_perl.argument_count;
     }
   
-    Newx(buffer, (sizeof(ffi_pl_function) + sizeof(ffi_pl_type*)*(items-4)), char);
+    Newx(buffer, (sizeof(ffi_pl_function) + sizeof(ffi_pl_type*)*(items-4+extra_arguments)), char);
     self = (ffi_pl_function*)buffer;
-    Newx(ffi_argument_types, items-4, ffi_type*);
+    Newx(ffi_argument_types, items-4+extra_arguments, ffi_type*);
     
     self->address = address;
     self->return_type = return_type;
@@ -67,7 +72,7 @@ new(class, platypus, address, return_type, ...)
     ffi_status = ffi_prep_cif(
       &self->ffi_cif,            /* ffi_cif     | */
       FFI_DEFAULT_ABI,           /* ffi_abi     | */
-      items-4,                   /* int         | argument count */
+      items-4+extra_arguments,   /* int         | argument count */
       ffi_return_type,           /* ffi_type *  | return type */
       ffi_argument_types         /* ffi_type ** | argument types */
     );

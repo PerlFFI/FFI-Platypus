@@ -9,7 +9,6 @@ argv()
     {
       argv = ST(0) = sv_newmortal();
       sv_setref_pv(argv, "FFI::Platypus::API::ARGV", (void*) current_argv);
-      printf("current_argv = %p\n", current_argv);
       XSRETURN(1);
     }
     else
@@ -48,7 +47,6 @@ set_pointer(self, i, value)
   CODE:
     if(self != current_argv)
       croak("stale argv handle");
-    printf("current_argv = %p\n", current_argv);
     ffi_pl_arguments_set_pointer(self, i, value);
 
 ffi_pl_string
@@ -135,6 +133,27 @@ set_float(self, i, value)
       croak("stale argv handle");
     ffi_pl_arguments_set_float(self, i, value);
 
+double
+get_double(self, i)
+    ffi_pl_arguments *self
+    int i
+  CODE:
+    if(self != current_argv)
+      croak("stale argv handle");
+    RETVAL = ffi_pl_arguments_get_double(self, i);
+  OUTPUT:
+    RETVAL
+
+void
+set_double(self, i, value)
+    ffi_pl_arguments *self
+    int i
+    double value
+  CODE:
+    if(self != current_argv)
+      croak("stale argv handle");
+    ffi_pl_arguments_set_double(self, i, value);
+
 UV
 get_uint16(self, i)
     ffi_pl_arguments *self
@@ -218,4 +237,66 @@ set_sint32(self, i, value)
     if(self != current_argv)
       croak("stale argv handle");
     ffi_pl_arguments_set_sint32(self, i, value);
+
+void
+get_uint64(self, i)
+    ffi_pl_arguments *self
+    int i
+  CODE:
+    if(self != current_argv)
+      croak("stale argv handle");
+#ifdef HAVE_IV_IS_64
+    XSRETURN_UV(ffi_pl_arguments_get_uint64(self, i));
+#else
+    {
+      ST(0) = sv_newmortal();
+      sv_setu64(ST(0), ffi_pl_arguments_get_uint64(self, i));
+      XSRETURN(1);
+    }
+#endif
+
+void
+set_uint64(self, i, value)
+    ffi_pl_arguments *self
+    int i
+    SV* value
+  CODE:
+    if(self != current_argv)
+      croak("stale argv handle");
+#ifdef HAVE_IV_IS_64
+    ffi_pl_arguments_set_uint64(self, i, SvUV(value));
+#else
+    ffi_pl_arguments_set_uint64(self, i, SvU64(value));
+#endif
+
+void
+get_sint64(self, i)
+    ffi_pl_arguments *self
+    int i
+  CODE:
+    if(self != current_argv)
+      croak("stale argv handle");
+#ifdef HAVE_IV_IS_64
+    XSRETURN_IV(ffi_pl_arguments_get_sint64(self, i));
+#else
+    {
+      ST(0) = sv_newmortal();
+      sv_setu64(ST(0), ffi_pl_arguments_get_sint64(self, i));
+      XSRETURN(1);
+    }
+#endif
+
+void
+set_sint64(self, i, value)
+    ffi_pl_arguments *self
+    int i
+    SV* value
+  CODE:
+    if(self != current_argv)
+      croak("stale argv handle");
+#ifdef HAVE_IV_IS_64
+    ffi_pl_arguments_set_sint64(self, i, SvIV(value));
+#else
+    ffi_pl_arguments_set_sint64(self, i, SvI64(value));
+#endif
 

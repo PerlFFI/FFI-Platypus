@@ -308,10 +308,11 @@
       }
       else if(platypus_type == FFI_PL_CUSTOM_PERL)
       {
-        extern SV* ffi_pl_custom_perl(SV*,SV*);
+        extern SV* ffi_pl_custom_perl(SV*,SV*,int);
         SV *arg2 = ffi_pl_custom_perl(
           self->argument_types[i]->extra[0].custom_perl.perl_to_native,
-          arg
+          arg,
+          i
         );
 
         if(arg2 != NULL)
@@ -367,7 +368,11 @@
           SvREFCNT_dec(arg2);
         }
 
-        i += self->argument_types[i]->extra[0].custom_perl.argument_count;
+        for(n=0; n < self->argument_types[i]->extra[0].custom_perl.argument_count; n++)
+        {
+          i++;
+          ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
+        }
       }
       else
       {
@@ -383,15 +388,15 @@
     fprintf(stderr, "# ===[%p]===\n", self->address);
     for(i=0; i < self->ffi_cif.nargs; i++)
     {
-      fprintf(stderr, "# [%d] <%d:%d> %p %p %016llx %g %g\n",
+      fprintf(stderr, "# [%d] <%d:%d> %p %p %016llx \n",
         i,
         self->argument_types[i]->ffi_type->type,
         self->argument_types[i]->platypus_type,
         ((void**)&arguments->slot[arguments->count])[i],
         &arguments->slot[i],
-        ffi_pl_arguments_get_uint64(arguments, i),
-        ffi_pl_arguments_get_float(arguments, i),
-        ffi_pl_arguments_get_double(arguments, i)
+        ffi_pl_arguments_get_uint64(arguments, i)
+        /* ffi_pl_arguments_get_float(arguments, i), *
+         * ffi_pl_arguments_get_double(arguments, i) */
       );
     }
     fprintf(stderr, "# === ===\n");
@@ -593,9 +598,9 @@
           SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_native_post;
           if(coderef != NULL)
           {
-            extern void ffi_pl_custom_perl_cb(SV *, SV*);
+            extern void ffi_pl_custom_perl_cb(SV *, SV*, int);
             arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
-            ffi_pl_custom_perl_cb(coderef, arg);
+            ffi_pl_custom_perl_cb(coderef, arg, i);
           }
         }
       }
@@ -865,7 +870,7 @@
     }
     else if(self->return_type->platypus_type == FFI_PL_CUSTOM_PERL)
     {
-      extern SV* ffi_pl_custom_perl(SV*,SV*);
+      extern SV* ffi_pl_custom_perl(SV*,SV*,int);
       SV *ret_in=NULL, *ret_out;
 
       switch(self->return_type->ffi_type->type)
@@ -921,9 +926,10 @@
 
       ret_out = ffi_pl_custom_perl(
         self->return_type->extra[0].custom_perl.native_to_perl,
-        ret_in != NULL ? ret_in : &PL_sv_undef
+        ret_in != NULL ? ret_in : &PL_sv_undef,
+        -1
       );
-      
+
       current_argv = NULL;
 
       if(ret_in != NULL)
