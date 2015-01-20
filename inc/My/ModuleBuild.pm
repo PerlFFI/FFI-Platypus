@@ -52,6 +52,14 @@ sub new
     }
     print "\n\n";
   }
+  if($ENV{FFI_PLATYPUS_DEBUG_FAKE32} && $Config{uvsize} == 8)
+  {
+    print "\n\n";
+    print "DEBUG_FAKE32:\n";
+    print "  + making Math::Int64 a prerequsite (not normally done on 64 bit Perls)\n";
+    print "  + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)\n";
+    print "\n\n";
+  }
   
   $self->add_to_cleanup(
     'libtest/*.o',

@@ -290,6 +290,54 @@ features and warnings about common pitfalls, but an outsider's or alternate view
 on such things would be welcome; if you see something confusing or lacks sufficient
 detail I encourage documentation only pull requests to improve things.
 
+The Platypus distribution comes with a test library named `libtest` that is normally
+automatically built before `./Build test`.  If you prefer to use `prove` or run tests
+directly, you can use the `./Build libtest` command to build it.  Example:
+
+    % perl Build.PL
+    % ./Build
+    % ./Build libtest
+    % prove -bv t
+    # or an individual test
+    % perl -Mblib t/ffi_platypus_memory.t
+
+The build process also respects two environment variables:
+
+- FFI\_PLATYPUS\_DEBUG
+
+    Build the XS code portion of Platypus with -g3 instead of what ever optimizing flags
+    that your Perl normally uses.  This is useful if you need to debug the C or XS code
+    that comes with Platypus, but do not have a debugging Perl.
+
+        iscah% env FFI_PLATYPUS_DEBUG=1 perl Build.PL
+        
+        
+        DEBUG:
+          + $Config{lddlflags} = -shared -O2 -L/usr/local/lib -fstack-protector
+          - $Config{lddlflags} = -shared -g3 -L/usr/local/lib -fstack-protector
+          + $Config{optimize} = -O2
+          - $Config{optimize} = -g3
+        
+        
+        Created MYMETA.yml and MYMETA.json
+        Creating new 'Build' script for 'FFI-Platypus' version '0.10'
+
+- FFI\_PLATYPUS\_DEBUG\_FAKE32
+
+    When building Platypus on 32 bit Perls, it will use the [Math::Int64](https://metacpan.org/pod/Math::Int64) C API
+    and make [Math::Int64](https://metacpan.org/pod/Math::Int64) a prerequisite.  Setting this environment variable
+    will force Platypus to build with both of those options on a 64 bit Perl.
+
+        iscah% env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Build.PL
+        
+        
+        DEBUG_FAKE32:
+          + making Math::Int64 a prerequsite (not normally done on 64 bit Perls)
+          + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)
+        
+        Created MYMETA.yml and MYMETA.json
+        Creating new 'Build' script for 'FFI-Platypus' version '0.10'
+
 # SEE ALSO
 
 - [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)

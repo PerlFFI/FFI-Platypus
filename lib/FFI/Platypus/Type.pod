@@ -333,7 +333,8 @@ them.  In C the code that allocates the memory is considered responsible for exp
 memory for objects it has created.  When you pass a closure into a C function, the C code has a pointer
 or reference to that object, but it has no way up letting Perl know when it is no longer using it.
 As a result, if you do not keep a reference to your closure around it will be free'd by Perl and if 
-the C code ever tries to call the closure it will probably SIGSEGV.  Thus this is almost always wrong:
+the C code ever tries to call the closure it will probably SIGSEGV.  Thus supposing you have a C
+function C<set_closure> that takes a Perl closure, this is almost always wrong:
 
  set_closure(closure { $_[0] * 2 });  # BAD
 
@@ -346,6 +347,92 @@ the sticky keyword to indicate this, without the need to keep track of the closu
 =head2 Custom Types
 
 =head3 Custom Types in Perl
+
+Platypus custom types are the rough analogue to typemaps in the XS world.  They offer a method for
+converting Perl types into native types that the C<libffi> can understand and pass on to the C code.
+
+=head4 Example 1: Integer constants
+
+Say you have a C header file like this:
+
+ /* possible foo types: */
+ #define FOO_STATIC  1
+ #define FOO_DYNAMIC 2
+ #define FOO_OTHER   3
+ 
+ typedef int foo_t;
+ 
+ void foo(foo_t foo);
+ foo_t get_foo();
+
+One common way of implementing this would be to create and export constants in your Perl module,
+like this:
+
+ package Foo;
+ 
+ use FFI::Platypus::Declare qw( void int );
+ use base qw( Exporter );
+ 
+ our @EXPORT_OK = qw( FOO_STATIC FOO_DYNAMIC FOO_OTHER foo get_foo );
+ 
+ ues constant FOO_STATIC  => 1;
+ ues constant FOO_DYNAMIC => 2;
+ ues constant FOO_OTHER   => 3;
+ 
+ attach foo => [int] => void;
+ attach get_foo => [] => int;
+
+Then you could use the module thus:
+
+ use Foo qw( foo FOO_STATIC );
+ foo(FOO_STATIC);
+
+If you didn't want to rely on integer constants or exports, you could also define a custom type,
+and allow strings to be passed into your function, like this:
+
+ package Foo;
+ 
+ use FFI::Platypus::Declare qw( void );
+ use base qw( Exporter );
+ 
+ our @EXPORT_OK = qw( foo get_foo );
+ 
+ my %foo_types = (
+   static  => 1,
+   dynamic => 2,
+   other   => 3,
+ );
+ my %foo_types_reverse = reverse %foo_types;
+ 
+ custom_type foo_t => {
+   native_type    => 'int',
+   native_to_perl => sub {
+     $foo_types{$_[0]};
+   },
+   perl_to_native => sub {
+     $foo_types_reverse{$_[0]};
+   },
+ };
+ 
+ attach foo => ['foo_t'] => void;
+ attach get_foo => [] => foo_t;
+
+Now when an argument of type C<foo_t> is called for it will be converted from an appropriate string
+representation, and any function that returns a C<foo_t> type will return a string instead of the
+integer representation:
+
+ use Foo;
+ foo('static');
+
+=head4 Example 2: Pointers with pack / unpack
+
+TODO
+
+=head4 Example 3: Custom Type modules and the Custom Type API
+
+TODO
+
+=head4 Example 4: Blessed references
 
 TODO
 
