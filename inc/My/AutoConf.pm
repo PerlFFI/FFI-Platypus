@@ -101,12 +101,15 @@ sub configure
     $ac->define_var( HAVE_RTLD_LAZY => 1 );
   }
   
-  if($ac->check_decl('alloca', { prologue => $prologue }))
+  unless($mb->config('config_no_alloca'))
   {
-    $ac->define_var( HAVE_ALLOCA => 1 );
+    if($ac->check_decl('alloca', { prologue => $prologue }))
+    {
+      $ac->define_var( HAVE_ALLOCA => 1 );
+    }
   }
   
-  if(!$ENV{FFI_PLATYPUS_DEBUG_FAKE32} && $Config{ivsize} >= 8)
+  if(!$mb->config('config_debug_fake32') && $Config{ivsize} >= 8)
   {
     $ac->define_var( HAVE_IV_IS_64 => 1 );
   }

@@ -24,3 +24,8 @@ script:
   - ./Build --verbose
   - ./Build test --verbose
 
+env:
+  - FFI_PLATYPUS=1
+  - FFI_PLATYPUS_DEBUG_FAKE32=1
+  - FFI_PLATYPUS_NO_ALLOCA=1
+  - FFI_PLATYPUS_DEBUG_FAKE32=1 FFI_PLATYPUS_NO_ALLOCA=1

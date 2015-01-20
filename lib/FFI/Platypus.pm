@@ -807,7 +807,7 @@ Build the XS code portion of Platypus with -g3 instead of what ever optimizing f
 that your Perl normally uses.  This is useful if you need to debug the C or XS code
 that comes with Platypus, but do not have a debugging Perl.
 
- iscah% env FFI_PLATYPUS_DEBUG=1 perl Build.PL
+ % env FFI_PLATYPUS_DEBUG=1 perl Build.PL
  
  
  DEBUG:
@@ -826,7 +826,7 @@ When building Platypus on 32 bit Perls, it will use the L<Math::Int64> C API
 and make L<Math::Int64> a prerequisite.  Setting this environment variable
 will force Platypus to build with both of those options on a 64 bit Perl.
 
- iscah% env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Build.PL
+ % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Build.PL
  
  
  DEBUG_FAKE32:
@@ -835,6 +835,24 @@ will force Platypus to build with both of those options on a 64 bit Perl.
  
  Created MYMETA.yml and MYMETA.json
  Creating new 'Build' script for 'FFI-Platypus' version '0.10'
+
+=item FFI_PLATYPUS_NO_ALLOCA
+
+Platypus uses the C function C<alloca> by default on platforms that support it.
+I believe that Platypus uses it responsibly to allocate small amounts of memory
+for argument type parameters, and does not use it to allocate large structures
+like arrays or buffers.  If you prefer not to use C<alloca>, then you can turn
+its use off by setting this environment variable when you run C<Build.PL>:
+
+ % env FFI_PLATYPUS_NO_ALLOCA=1 perl Build.PL 
+ 
+ 
+ NO_ALLOCA:
+   + alloca() will not be used, even if your platform supports it.
+ 
+ 
+  Created MYMETA.yml and MYMETA.json
+  Creating new 'Build' script for 'FFI-Platypus' version '0.10'
 
 =back
 

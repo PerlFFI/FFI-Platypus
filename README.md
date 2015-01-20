@@ -546,7 +546,7 @@ The build process also respects two environment variables:
     that your Perl normally uses.  This is useful if you need to debug the C or XS code
     that comes with Platypus, but do not have a debugging Perl.
 
-        iscah% env FFI_PLATYPUS_DEBUG=1 perl Build.PL
+        % env FFI_PLATYPUS_DEBUG=1 perl Build.PL
         
         
         DEBUG:
@@ -565,7 +565,7 @@ The build process also respects two environment variables:
     and make [Math::Int64](https://metacpan.org/pod/Math::Int64) a prerequisite.  Setting this environment variable
     will force Platypus to build with both of those options on a 64 bit Perl.
 
-        iscah% env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Build.PL
+        % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Build.PL
         
         
         DEBUG_FAKE32:
@@ -574,6 +574,24 @@ The build process also respects two environment variables:
         
         Created MYMETA.yml and MYMETA.json
         Creating new 'Build' script for 'FFI-Platypus' version '0.10'
+
+- FFI\_PLATYPUS\_NO\_ALLOCA
+
+    Platypus uses the C function `alloca` by default on platforms that support it.
+    I believe that Platypus uses it responsibly to allocate small amounts of memory
+    for argument type parameters, and does not use it to allocate large structures
+    like arrays or buffers.  If you prefer not to use `alloca`, then you can turn
+    its use off by setting this environment variable when you run `Build.PL`:
+
+        % env FFI_PLATYPUS_NO_ALLOCA=1 perl Build.PL 
+        
+        
+        NO_ALLOCA:
+          + alloca() will not be used, even if your platform supports it.
+        
+        
+         Created MYMETA.yml and MYMETA.json
+         Creating new 'Build' script for 'FFI-Platypus' version '0.10'
 
 # SEE ALSO
 
