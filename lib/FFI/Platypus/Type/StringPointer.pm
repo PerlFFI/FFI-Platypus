@@ -12,23 +12,25 @@ use Config ();
 
 In your C code:
 
- void string_pointer_argument(const char **string)
+ void
+ string_pointer_argument(const char **string)
  {
    ...
  }
- const char ** string_pointer_return(void)
+ const char **
+ string_pointer_return(void)
  {
    ...
  }
 
 In your Platypus::FFI code:
 
- use FFI::Platypus::Declare;
+ use FFI::Platypus::Declare
+   'void',
+   [ '::StringPointer' => 'string_pointer' ];
  
- load_custom_type StringPointer => 'my_string_pointer';
- 
- attach string_pointer_argument => ['my_string_pointer'] => 'void';
- attach string_pointer_return   => [] => 'my_string_pointer';
+ attach string_pointer_argument => [string_pointer] => void;
+ attach string_pointer_return   => [] => string_pointer;
  
  my $string = "foo";
  

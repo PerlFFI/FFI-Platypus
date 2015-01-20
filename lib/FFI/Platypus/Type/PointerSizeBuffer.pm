@@ -3,32 +3,58 @@ package FFI::Platypus::Type::PointerSizeBuffer;
 use strict;
 use warnings;
 use FFI::Platypus;
-use FFI::Platypus::API qw( argv );
+use FFI::Platypus::API qw( arguments_set_pointer arguments_set_uint32 arguments_set_uint64 );
 use FFI::Platypus::Buffer qw( scalar_to_buffer );
 use FFI::Platypus::Buffer qw( buffer_to_scalar );
 
 # ABSTRACT: Convert string scalar to a buffer as a pointer / size_t combination
 # VERSION
 
+=head1 SYNOPSIS
+
+In your C code:
+
+ void
+ function_with_buffer(void *pointer, size_t size)
+ {
+   ...
+ }
+
+In your Platypus::FFI code:
+
+ use FFI::Platypus::Declare
+   'void',
+   [ '::PointerSizeBuffer' => 'buffer' ];
+ 
+ attach function_with_buffer => [buffer] => void;
+ my $string = "content of buffer";
+ function_with_buffer($string);
+
+=head1 DESCRIPTION
+
+A common pattern in C code is to pass in a region of memory
+as a buffer, consisting of a pointer and a size of the memory
+region.  In Perl, string scalars also point to a contiguous
+series of bytes that has a size, so when interfacing with
+C libraries it is handy to be able to pass in a string scalar
+as a pointer / size buffer pair.
+
+=cut
+
 my @stack;
 
-sub perl_to_native32
+*arguments_set_size_t 
+  = FFI::Platypus->new->sizeof('size_t') == 4
+  ? \&arguments_set_uint32
+  : \&arguments_set_uint64;
+
+sub perl_to_native
 {
   my($pointer, $size) = scalar_to_buffer($_[0]);
   push @stack, [ $pointer, $size ];
-  argv->set_pointer($_[1], $pointer);
-  argv->set_uint32($_[1]+1, $size);
+  arguments_set_pointer($_[1], $pointer);
+  arguments_set_size_t($_[1]+1, $size);
 }
-
-sub perl_to_native64
-{
-  my($pointer, $size) = scalar_to_buffer($_[0]);
-  push @stack, [ $pointer, $size ];
-  argv->set_pointer($_[1], $pointer);
-  argv->set_uint64($_[1]+1, $size);
-}
-
-*perl_to_native = FFI::Platypus->new->sizeof('size_t') == 4 ? \&perl_to_native32 : \&perl_to_native64;
 
 sub perl_to_native_post
 {

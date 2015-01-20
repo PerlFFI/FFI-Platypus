@@ -705,11 +705,15 @@ detail I encourage documentation only pull requests to improve things.
 
 =item L<FFI::Platypus::Declare>
 
-Declarative interface to L<FFI::Platypus>.
+Declarative interface to Platypus.
 
 =item L<FFI::Platypus::Type>
 
-Type definitions for L<FFI::Platypus>.
+Type definitions for Platypus.
+
+=item L<FFI::Platypus::API>
+
+The custom types API for Platypus.
 
 =item L<FFI::Platypus::Memory>
 

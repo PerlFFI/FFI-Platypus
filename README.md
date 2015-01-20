@@ -294,11 +294,15 @@ detail I encourage documentation only pull requests to improve things.
 
 - [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)
 
-    Declarative interface to [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
+    Declarative interface to Platypus.
 
 - [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type)
 
-    Type definitions for [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
+    Type definitions for Platypus.
+
+- [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API)
+
+    The custom types API for Platypus.
 
 - [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory)
 

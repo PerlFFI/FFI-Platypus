@@ -367,6 +367,10 @@ Main platypus documentation.
 
 Declarative interface for L<FFI::Platypus>.
 
+=item L<FFI::Platypus::API>
+
+Custom types API.
+
 =item L<FFI::Platypus::Type::StringPointer>
 
 String pointer type.

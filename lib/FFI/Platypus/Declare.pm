@@ -298,11 +298,15 @@ sub import
 
 =item L<FFI::Platypus>
 
-Object oriented interface to platypus.
+Object oriented interface to Platypus.
 
 =item L<FFI::Platypus::Type>
 
-Type definitions for L<FFI::Platypus>.
+Type definitions for Platypus.
+
+=item L<FFI::Platypus::API>
+
+Custom types API for Platypus.
 
 =item L<FFI::Platypus::Memory>
 
