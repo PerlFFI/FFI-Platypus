@@ -555,6 +555,93 @@ sub find_symbol
   return;
 }
 
+=head1 EXAMPLES
+
+Here are some examples.  Some of them use the L<FFI::Platypus::Declare> interface,
+but the principles apply to the OO interface.  These examples are provided in full
+with the Platypus distribution in the "examples" directory.  There are also some more
+examples in L<FFI::Platypus::Type> that are related to types.
+
+=head2 Integer conversions
+
+# EXAMPLE: examples/integer.pl
+
+B<Discussion>: C<puts> and C<atoi> should be part of libc on all platforms.  C<puts> prints
+a string to standard output, and C<atoi> converts a string to integer.  Specifying C<undef>
+as a library tells Platypus to search the current process for symbols, which includes the
+standard c library.
+
+=head2 libnotify
+
+# EXAMPLE: examples/notify.pl
+
+B<Discussion>: The most portable way to find the correct name and location of a dynamic library
+is via the L<FFI::CheckLib#find_lib> family of functions.  If you are putting together a
+CPAN distribution, you should also consider using L<FFI::CheckLib#check_lib_or_exit> function
+in your C<Build.PL> or C<Makefile.PL> file. This will provide a user friendly diagnostic letting
+the user know that the required library is missing, and reduce the number of bogus CPAN testers
+results that you will get.
+
+=head2 Allocating and freeing memory
+
+# EXAMPLE: examples/malloc.pl
+
+B<Discussion>: C<malloc> and C<free> are standard memory allocation functions available from
+the standard c library and.  Interfaces to these and other memory related functions are provided
+by the L<FFI::Platypus::Memory> module.
+
+=head2 libuuid
+
+# EXAMPLE: examples/uuid.pl
+
+B<Discussion>: Knowing the size of objects is sometimes important.  In this example, we use
+the L<sizeof|FFI::Platypus#sizeof> function to get the size of 16 characters (in this case
+it is simply 16 bytes).  We also know that the strings "deparsed" by C<uuid_unparse> are exactly
+37 bytes.
+
+=head2 puts and getpid
+
+# EXAMPLE: examples/getpid.pl
+
+B<Discussion>: C<puts> is part of libc on all platforms.  C<getpid> is available as part of libc 
+on Unix type platforms.
+
+=head2 Math library
+
+# EXAMPLE: examples/math.pl
+
+B<Discussion>: On UNIX the standard c library math functions are frequently provided in a separate
+library C<libm>, so you could search for those symbols in "libm.so", but that won't work on non-UNIX
+platforms like Microsoft Windows.  Fortunately Perl uses the math library so these symbols are
+already in the current process so you can use C<undef> as the library.
+
+=head2 Strings
+
+# EXAMPLE: examples/string.pl
+
+B<Discussion>: Strings are not a native type to C<libffi> but the are handled seamlessly by
+Platypus.
+
+=head2 Attach function from pointer
+
+# EXAMPLE: examples/attach_from_pointer.pl
+
+B<Discussion>: TODO
+
+=head2 libzmq
+
+Server:
+
+# EXAMPLE: examples/zmq_server.pl
+
+Client:
+
+# EXAMPLE: examples/zmq_client.pl
+
+B<Discussion>: TODO
+
+=cut
+
 sub DESTROY
 {
   my($self) = @_;

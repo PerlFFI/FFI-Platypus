@@ -1,3 +1,4 @@
+    /* buffer contains the memory required for the arguments structure */
     buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs * 2 + sizeof(ffi_pl_arguments);
 #ifdef HAVE_ALLOCA
     buffer = alloca(buffer_size);
@@ -606,7 +607,8 @@
       }
     }
 #ifndef HAVE_ALLOCA
-    Safefree(buffer);
+    if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
+      Safefree(arguments);
 #endif
 
     current_argv = NULL;
@@ -918,11 +920,14 @@
             ret_in = newSViv(PTR2IV(result.pointer));
           break;
         default:
+#ifndef HAVE_ALLOCA
+          Safefree(arguments);
+#endif
           warn("return type not supported");
           XSRETURN_EMPTY;
       }
 
-      current_argv = arguments = (ffi_pl_arguments*) buffer;
+      current_argv = arguments;
 
       ret_out = ffi_pl_custom_perl(
         self->return_type->extra[0].custom_perl.native_to_perl,
@@ -931,6 +936,10 @@
       );
 
       current_argv = NULL;
+
+#ifndef HAVE_ALLOCA
+      Safefree(arguments);
+#endif
 
       if(ret_in != NULL)
       {

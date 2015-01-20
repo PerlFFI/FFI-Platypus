@@ -20,6 +20,11 @@ pod_spelling_system:
     - free'ing
     - SIGSEGV
     - Ctypes
+    - libm
+    - libnotify
+    - libuuid
+    - libzmq
+    - deparsed
 
 pod_coverage:
   skip: 0

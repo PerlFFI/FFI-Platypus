@@ -4,7 +4,7 @@ use FFI::CheckLib;
 use FFI::Platypus;
 
 my $ffi = FFI::Platypus->new;
-$ffi->lib(find_lib_or_exit lib => 'm');
+$ffi->lib(undef);
 
 my $address = $ffi->find_symbol('fmax'); # could also use DynaLoader or FFI::TinyCC
 

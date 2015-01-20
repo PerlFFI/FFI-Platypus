@@ -424,15 +424,15 @@ integer representation:
  use Foo;
  foo('static');
 
-=head4 Example 2: Pointers with pack / unpack
+=head4 Example 2: Blessed references
+
+# EXAMPLE: examples/archive.pl
+
+=head4 Example 3: Pointers with pack / unpack
 
 TODO
 
-=head4 Example 3: Custom Type modules and the Custom Type API
-
-TODO
-
-=head4 Example 4: Blessed references
+=head4 Example 4: Custom Type modules and the Custom Type API
 
 TODO
 

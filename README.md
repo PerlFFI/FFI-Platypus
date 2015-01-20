@@ -252,6 +252,243 @@ can use the [function](https://metacpan.org/pod/FFI::Platypus#function) method o
 [attach](https://metacpan.org/pod/FFI::Platypus#attach) function directly and will not need
 to use this.
 
+# EXAMPLES
+
+Here are some examples.  Some of them use the [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare) interface,
+but the principles apply to the OO interface.  These examples are provided in full
+with the Platypus distribution in the "examples" directory.  There are also some more
+examples in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) that are related to types.
+
+## Integer conversions
+
+    use FFI::Platypus::Declare qw( int string );
+    
+    lib undef;
+    attach puts => [string] => int;
+    attach atoi => [string] => int;
+    
+    puts(atoi('56'));
+
+**Discussion**: `puts` and `atoi` should be part of libc on all platforms.  `puts` prints
+a string to standard output, and `atoi` converts a string to integer.  Specifying `undef`
+as a library tells Platypus to search the current process for symbols, which includes the
+standard c library.
+
+## libnotify
+
+    use FFI::CheckLib;
+    use FFI::Platypus::Declare qw( void string opaque );
+    
+    # NOTE: I ported this from the like named eg/notify.pl that came with FFI::Raw
+    # and it seems to work most of the time, but also seems to SIGSEGV sometimes.
+    # I saw the same behavior in the FFI::Raw version, and am not really familiar
+    # with the libnotify API to say what is the cause.  Patches welcome to fix it.
+    
+    lib find_lib_or_exit lib => 'notify';
+    
+    attach notify_init   => [string] => void;
+    attach notify_uninit => []       => void;
+    attach [notify_notification_new    => 'notify_new']    => [string,string,string]           => opaque;
+    attach [notify_notification_update => 'notify_update'] => [opaque, string, string, string] => void;
+    attach [notify_notification_show   => 'notify_show']   => [opaque, opaque]                 => void;
+    
+    notify_init('FFI::Platypus');
+    my $n = notify_new('','','');
+    notify_update($n, 'FFI::Platypus', 'It works!!!', 'media-playback-start');
+    notify_show($n, undef);
+    notify_uninit();
+
+**Discussion**: The most portable way to find the correct name and location of a dynamic library
+is via the [FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib) family of functions.  If you are putting together a
+CPAN distribution, you should also consider using [FFI::CheckLib#check\_lib\_or\_exit](https://metacpan.org/pod/FFI::CheckLib#check_lib_or_exit) function
+in your `Build.PL` or `Makefile.PL` file. This will provide a user friendly diagnostic letting
+the user know that the required library is missing, and reduce the number of bogus CPAN testers
+results that you will get.
+
+## Allocating and freeing memory
+
+    use FFI::Platypus::Declare;
+    use FFI::Platypus::Memory qw( malloc free memcpy );
+    
+    my $buffer = malloc 12;
+    
+    memcpy $buffer, cast('string' => 'opaque', "hello there"), length "hello there\0";
+    
+    print cast('opaque' => 'string', $buffer), "\n";
+    
+    free $buffer;
+
+**Discussion**: `malloc` and `free` are standard memory allocation functions available from
+the standard c library and.  Interfaces to these and other memory related functions are provided
+by the [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory) module.
+
+## libuuid
+
+    use FFI::CheckLib;
+    use FFI::Platypus::Declare qw( void opaque string );
+    use FFI::Platypus::Memory qw( malloc free );
+    
+    lib find_lib_or_exit lib => 'uuid';
+    
+    attach uuid_generate => [opaque] => void;
+    attach uuid_unparse  => [opaque,opaque] => void;
+    
+    my $uuid = malloc sizeof 'char[16]';  # uuid_t
+    uuid_generate($uuid);
+    
+    my $string_opaque = malloc 37;       # 36 bytes to store a UUID string
+    uuid_unparse($uuid, $string_opaque);
+    
+    print cast( opaque => string, $string_opaque), "\n";
+
+**Discussion**: Knowing the size of objects is sometimes important.  In this example, we use
+the [sizeof](https://metacpan.org/pod/FFI::Platypus#sizeof) function to get the size of 16 characters (in this case
+it is simply 16 bytes).  We also know that the strings "deparsed" by `uuid_unparse` are exactly
+37 bytes.
+
+## puts and getpid
+
+    use FFI::Platypus::Declare qw( string int );
+    
+    lib undef;
+    attach puts => [string] => int;
+    attach getpid => [] => int;
+    
+    puts(getpid());
+
+**Discussion**: `puts` is part of libc on all platforms.  `getpid` is available as part of libc 
+on Unix type platforms.
+
+## Math library
+
+    use FFI::Platypus::Declare qw( string int double );
+    use FFI::CheckLib;
+    
+    lib undef;
+    attach puts => [string] => int;
+    attach fdim => [double,double] => double;
+    
+    puts(fdim(7.0, 2.0));
+    
+    attach cos => [double] => double;
+    
+    puts(cos(2.0));
+    
+    attach fmax => [double, double] => double;
+    
+    puts(fmax(2.0,3.0));
+
+**Discussion**: On UNIX the standard c library math functions are frequently provided in a separate
+library `libm`, so you could search for those symbols in "libm.so", but that won't work on non-UNIX
+platforms like Microsoft Windows.  Fortunately Perl uses the math library so these symbols are
+already in the current process so you can use `undef` as the library.
+
+## Strings
+
+    use FFI::Platypus::Declare qw( int string );
+    
+    lib undef;
+    attach puts => [string] => int;
+    attach strlen => [string] => int;
+    
+    puts(strlen('somestring'));
+    
+    attach strstr => [string,string] => string;
+    
+    puts(strstr('somestring', 'string'));
+    
+    #attach puts => [string] => int;
+    
+    puts(puts("lol"));
+    
+    attach strerror => [int] => string;
+    
+    puts(strerror(2));
+
+**Discussion**: Strings are not a native type to `libffi` but the are handled seamlessly by
+Platypus.
+
+## Attach function from pointer
+
+    use FFI::CheckLib;
+    use FFI::Platypus;
+    
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(undef);
+    
+    my $address = $ffi->find_symbol('fmax'); # could also use DynaLoader or FFI::TinyCC
+    
+    $ffi->attach([$address => 'fmax'] => ['double','double'] => 'double', '$$');
+    
+    print fmax(2.0,4.0), "\n";
+
+**Discussion**: TODO
+
+## libzmq
+
+Server:
+
+    use FFI::CheckLib;
+    use FFI::Platypus::Memory qw( malloc free );
+    use FFI::Platypus::Declare qw( opaque int string );
+    
+    lib find_lib_or_exit lib => 'zmq';
+    
+    attach zmq_init => [int] => opaque;
+    attach zmq_socket => [opaque, int] => opaque;
+    attach zmq_bind => [opaque, string] => int;
+    attach zmq_recv => [opaque, opaque, int] => int;
+    attach zmq_msg_init => [opaque] => int;
+    attach zmq_msg_data => [opaque] => string;
+    
+    # init zmq context
+    my $ctx = zmq_init(1);
+    
+    # init zmq socket and bind
+    my $sock = zmq_socket($ctx, 4); # 4 is ZMQ_REP
+    zmq_bind($sock, 'tcp://127.0.0.1:6666');
+    
+    # receive message from client
+    my $msg = malloc 40; # 40 is sizeof(zmq_msg_t)
+    zmq_msg_init($msg);
+    
+    zmq_recv($sock, $msg, 0);
+    print zmq_msg_data($msg), "\n";
+    
+    free $msg;
+
+Client:
+
+    use FFI::CheckLib;
+    use FFI::Platypus::Memory qw( malloc free );
+    use FFI::Platypus::Declare qw( opaque int string );
+    
+    lib find_lib_or_exit lib => 'zmq';
+    
+    attach zmq_init => [int] => opaque;
+    attach zmq_socket => [opaque, int] => opaque;
+    attach zmq_connect => [opaque, string] => int;
+    attach zmq_send => [opaque, opaque, int] => int;
+    attach zmq_msg_init_data => [opaque, string, int, opaque, opaque] => int;
+    attach zmq_msg_data => [opaque] => string;
+    
+    # init zmq context
+    my $ctx = zmq_init(1);
+    
+    # init zmq socket and bind
+    my $sock = zmq_socket($ctx, 3); # 3 is ZMQ_REQ
+    zmq_connect($sock, 'tcp://127.0.0.1:6666');
+    
+    # send message to server
+    my $msg = malloc 140; # 40 is sizeof(zmq_msg_t);
+    zmq_msg_init_data($msg, 'some message', 4, undef, undef);
+    
+    zmq_send($sock, $msg, 0);
+    
+    free $msg;
+
+**Discussion**: TODO
+
 # SUPPORT
 
 If something does not work the way you think it should, or if you have a feature

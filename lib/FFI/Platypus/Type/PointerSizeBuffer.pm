@@ -52,7 +52,7 @@ sub perl_to_native
 {
   my($pointer, $size) = scalar_to_buffer($_[0]);
   push @stack, [ $pointer, $size ];
-  arguments_set_pointer($_[1], $pointer);
+  arguments_set_pointer $_[1], $pointer;
   arguments_set_size_t($_[1]+1, $size);
 }
 
