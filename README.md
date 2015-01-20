@@ -438,66 +438,70 @@ functions, which we then use to create a perl xsub to call it.
 
 ## libzmq
 
-Server:
-
-    use FFI::CheckLib;
-    use FFI::Platypus::Memory qw( malloc free );
-    use FFI::Platypus::Declare qw( opaque int string );
+    use constant ZMQ_IO_THREADS  => 1;
+    use constant ZMQ_MAX_SOCKETS => 2;
+    use constant ZMQ_REQ => 3;
+    use constant ZMQ_REP => 4;
+    use FFI::CheckLib qw( find_lib_or_exit );
+    use FFI::Platypus;
+    use FFI::Platypus::Memory qw( malloc );
+    use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
     
-    lib find_lib_or_exit lib => 'zmq';
+    my $endpoint = "ipc://zmq-ffi-$$";
+    #my $endpoint = "tcp://localhost:3000";
+    my $ffi = FFI::Platypus->new;
     
-    attach zmq_init => [int] => opaque;
-    attach zmq_socket => [opaque, int] => opaque;
-    attach zmq_bind => [opaque, string] => int;
-    attach zmq_recv => [opaque, opaque, int] => int;
-    attach zmq_msg_init => [opaque] => int;
-    attach zmq_msg_data => [opaque] => string;
+    $ffi->lib(undef); # for puts
+    $ffi->attach(puts => ['string'] => 'int');
     
-    # init zmq context
-    my $ctx = zmq_init(1);
+    $ffi->lib(find_lib_or_exit lib => 'zmq');
+    $ffi->attach(zmq_version => ['int*', 'int*', 'int*'] => 'void');
     
-    # init zmq socket and bind
-    my $sock = zmq_socket($ctx, 4); # 4 is ZMQ_REP
-    zmq_bind($sock, 'tcp://127.0.0.1:6666');
+    my($major,$minor,$patch);
+    zmq_version(\$major, \$minor, \$patch);
+    puts("libzmq version $major.$minor.$patch");
+    die "this script only works with libzmq 3 or better" unless $major >= 3;
     
-    # receive message from client
-    my $msg = malloc 40; # 40 is sizeof(zmq_msg_t)
-    zmq_msg_init($msg);
+    $ffi->type('opaque'       => 'zmq_context');
+    $ffi->type('opaque'       => 'zmq_socket');
+    $ffi->type('opaque'       => 'zmq_msg_t');
+    $ffi->attach(zmq_ctx_new  => [] => 'zmq_context');
+    $ffi->attach(zmq_ctx_set  => ['zmq_context', 'int', 'int'] => 'int');
+    $ffi->attach(zmq_socket   => ['zmq_context', 'int'] => 'zmq_socket');
+    $ffi->attach(zmq_connect  => ['opaque', 'string'] => 'int');
+    $ffi->attach(zmq_bind     => ['zmq_socket', 'string'] => 'int');
+    $ffi->attach(zmq_send     => ['zmq_socket', 'opaque', 'size_t', 'int'] => 'int');
+    $ffi->attach(zmq_msg_init => ['zmq_msg_t'] => 'int');
+    $ffi->attach(zmq_msg_recv => ['zmq_msg_t', 'zmq_socket', 'int'] => 'int');
+    $ffi->attach(zmq_msg_data => ['zmq_msg_t'] => 'opaque');
+    $ffi->attach(zmq_errno    => [] => 'int');
+    $ffi->attach(zmq_strerror => ['int'] => 'string');
     
-    zmq_recv($sock, $msg, 0);
-    print zmq_msg_data($msg), "\n";
+    my $context = zmq_ctx_new();
+    zmq_ctx_set($context, ZMQ_IO_THREADS, 1);
     
-    free $msg;
-
-Client:
-
-    use FFI::CheckLib;
-    use FFI::Platypus::Memory qw( malloc free );
-    use FFI::Platypus::Declare qw( opaque int string );
+    my $socket1 = zmq_socket($context, ZMQ_REQ);
+    zmq_connect($socket1, $endpoint);
     
-    lib find_lib_or_exit lib => 'zmq';
+    my $socket2 = zmq_socket($context, ZMQ_REP);
+    zmq_bind($socket2, $endpoint);
     
-    attach zmq_init => [int] => opaque;
-    attach zmq_socket => [opaque, int] => opaque;
-    attach zmq_connect => [opaque, string] => int;
-    attach zmq_send => [opaque, opaque, int] => int;
-    attach zmq_msg_init_data => [opaque, string, int, opaque, opaque] => int;
-    attach zmq_msg_data => [opaque] => string;
+    do { # send
+      our $sent_message = "hello there";
+      my($pointer, $size) = scalar_to_buffer $sent_message;
+      my $r = zmq_send($socket1, $pointer, $size, 0);
+      die zmq_strerror(zmq_errno()) if $r == -1;
+    };
     
-    # init zmq context
-    my $ctx = zmq_init(1);
-    
-    # init zmq socket and bind
-    my $sock = zmq_socket($ctx, 3); # 3 is ZMQ_REQ
-    zmq_connect($sock, 'tcp://127.0.0.1:6666');
-    
-    # send message to server
-    my $msg = malloc 140; # 40 is sizeof(zmq_msg_t);
-    zmq_msg_init_data($msg, 'some message', 4, undef, undef);
-    
-    zmq_send($sock, $msg, 0);
-    
-    free $msg;
+    do { # recv
+      my $msg_ptr  = malloc 100;
+      zmq_msg_init($msg_ptr);
+      my $size     = zmq_msg_recv($msg_ptr, $socket2, 0);
+      die zmq_strerror(zmq_errno()) if $size == -1;
+      my $data_ptr = zmq_msg_data($msg_ptr);
+      my $recv_message = buffer_to_scalar $data_ptr, $size;
+      print "recv_message = $recv_message\n";
+    };
 
 **Discussion**: TODO
 

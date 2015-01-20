@@ -634,13 +634,7 @@ functions, which we then use to create a perl xsub to call it.
 
 =head2 libzmq
 
-Server:
-
-# EXAMPLE: examples/zmq_server.pl
-
-Client:
-
-# EXAMPLE: examples/zmq_client.pl
+# EXAMPLE: examples/zmq3.pl
 
 B<Discussion>: TODO
 

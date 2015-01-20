@@ -33,7 +33,8 @@ $ffi->attach(zmq_socket   => ['zmq_context', 'int'] => 'zmq_socket');
 $ffi->attach(zmq_connect  => ['opaque', 'string'] => 'int');
 $ffi->attach(zmq_bind     => ['zmq_socket', 'string'] => 'int');
 $ffi->attach(zmq_send     => ['zmq_socket', 'opaque', 'size_t', 'int'] => 'int');
-$ffi->attach(zmq_msg_recv => ['zmq_msg_t', 'opaque', 'int'] => 'int');
+$ffi->attach(zmq_msg_init => ['zmq_msg_t'] => 'int');
+$ffi->attach(zmq_msg_recv => ['zmq_msg_t', 'zmq_socket', 'int'] => 'int');
 $ffi->attach(zmq_msg_data => ['zmq_msg_t'] => 'opaque');
 $ffi->attach(zmq_errno    => [] => 'int');
 $ffi->attach(zmq_strerror => ['int'] => 'string');
@@ -55,28 +56,11 @@ do { # send
 };
 
 do { # recv
-  my $msg_ptr  = malloc 96;
+  my $msg_ptr  = malloc 100;
+  zmq_msg_init($msg_ptr);
   my $size     = zmq_msg_recv($msg_ptr, $socket2, 0);
-  print "zmq_errno() = ", zmq_errno(), "\n";
   die zmq_strerror(zmq_errno()) if $size == -1;
-  print "msg_ptr = $msg_ptr, size = $size\n";
   my $data_ptr = zmq_msg_data($msg_ptr);
   my $recv_message = buffer_to_scalar $data_ptr, $size;
   print "recv_message = $recv_message\n";
 };
-
-__END__
-
-use ZMQ::FFI;
-
-my $ctx      = ZMQ::FFI->new( threads => 1 );
- 
-my $s1 = $ctx->socket(ZMQ_REQ);
-$s1->connect($endpoint);
- 
-my $s2 = $ctx->socket(ZMQ_REP);
-$s2->bind($endpoint);
- 
-$s1->send('hi there');
- 
-puts($s2->recv()); # prints "hi there"
