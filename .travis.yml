@@ -8,6 +8,7 @@ install:
   - cpanm -n ExtUtils::CBuilder
   - cpanm -n Config::AutoConf
   - cpanm -n FFI::CheckLib
+  - cpanm -n Math::Int64
 
 perl:
   - "5.8"

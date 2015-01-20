@@ -410,19 +410,31 @@ Platypus.
 
 ## Attach function from pointer
 
-    use FFI::CheckLib;
+    use FFI::TinyCC;
     use FFI::Platypus;
     
     my $ffi = FFI::Platypus->new;
-    $ffi->lib(undef);
+    my $tcc = FFI::TinyCC->new;
     
-    my $address = $ffi->find_symbol('fmax'); # could also use DynaLoader or FFI::TinyCC
+    $tcc->compile_string(q{
+      int
+      add(int a, int b)
+      {
+        return a+b;
+      }
+    });
     
-    $ffi->attach([$address => 'fmax'] => ['double','double'] => 'double', '$$');
+    my $address = $tcc->get_symbol('add');
     
-    print fmax(2.0,4.0), "\n";
+    $ffi->attach( [ $address => 'add' ] => ['int','int'] => 'int' );
+    
+    print add(1,2), "\n";
 
-**Discussion**: TODO
+**Discussion**: Sometimes you will have a pointer to a function from a source other than Platypus
+that you want to call.  You can use that address instead of a function name for either
+of the [FFI::Platypus#function](https://metacpan.org/pod/FFI::Platypus#function) or [FFI::Platypus#attach](https://metacpan.org/pod/FFI::Platypus#attach) methods.  In this example we use
+[FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) to compile a short piece of C code and to give us the address of one of its
+functions, which we then use to create a perl xsub to call it.
 
 ## libzmq
 

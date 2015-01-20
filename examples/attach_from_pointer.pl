@@ -1,13 +1,23 @@
 use strict;
 use warnings;
-use FFI::CheckLib;
+use FFI::TinyCC;
 use FFI::Platypus;
 
 my $ffi = FFI::Platypus->new;
-$ffi->lib(undef);
+my $tcc = FFI::TinyCC->new;
 
-my $address = $ffi->find_symbol('fmax'); # could also use DynaLoader or FFI::TinyCC
+$tcc->compile_string(q{
+  int
+  add(int a, int b)
+  {
+    return a+b;
+  }
+});
 
-$ffi->attach([$address => 'fmax'] => ['double','double'] => 'double', '$$');
+my $address = $tcc->get_symbol('add');
 
-print fmax(2.0,4.0), "\n";
+$ffi->attach( [ $address => 'add' ] => ['int','int'] => 'int' );
+
+print add(1,2), "\n";
+
+

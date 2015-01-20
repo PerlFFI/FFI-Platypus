@@ -626,7 +626,11 @@ Platypus.
 
 # EXAMPLE: examples/attach_from_pointer.pl
 
-B<Discussion>: TODO
+B<Discussion>: Sometimes you will have a pointer to a function from a source other than Platypus
+that you want to call.  You can use that address instead of a function name for either
+of the L<FFI::Platypus#function> or L<FFI::Platypus#attach> methods.  In this example we use
+L<FFI::TinyCC> to compile a short piece of C code and to give us the address of one of its
+functions, which we then use to create a perl xsub to call it.
 
 =head2 libzmq
 
