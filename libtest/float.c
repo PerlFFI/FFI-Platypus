@@ -10,8 +10,9 @@ float_add(float a, float b)
 EXTERN float*
 float_inc(float *a, float b)
 {
-  *a += b;
-  return a;
+  static float keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN float

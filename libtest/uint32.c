@@ -15,8 +15,9 @@ uint32_add(uint32_t a, uint32_t b)
 EXTERN uint32_t*
 uint32_inc(uint32_t *a, uint32_t b)
 {
-  *a += b;
-  return a;
+  static uint32_t keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN uint32_t

@@ -15,8 +15,9 @@ sint64_add(int64_t a, int64_t b)
 EXTERN int64_t*
 sint64_inc(int64_t *a, int64_t b)
 {
-  *a += b;
-  return a;
+  static int64_t keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN int64_t

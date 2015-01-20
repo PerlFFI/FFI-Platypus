@@ -15,8 +15,9 @@ uint64_add(uint64_t a, uint64_t b)
 EXTERN uint64_t*
 uint64_inc(uint64_t *a, uint64_t b)
 {
-  *a += b;
-  return a;
+  static uint64_t keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN uint64_t

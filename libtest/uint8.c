@@ -10,8 +10,9 @@ uint8_add(uint8_t a, uint8_t b)
 EXTERN uint8_t*
 uint8_inc(uint8_t *a, uint8_t b)
 {
-  *a += b;
-  return a;
+  static uint8_t keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN uint8_t

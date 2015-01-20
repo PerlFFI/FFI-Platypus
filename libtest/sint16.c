@@ -15,8 +15,9 @@ sint16_add(int16_t a, int16_t b)
 EXTERN int16_t*
 sint16_inc(int16_t *a, int16_t b)
 {
-  *a += b;
-  return a;
+  static int16_t keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN int16_t

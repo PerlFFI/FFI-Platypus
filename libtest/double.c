@@ -15,8 +15,9 @@ double_add(double a, double b)
 EXTERN double*
 double_inc(double *a, double b)
 {
-  *a += b;
-  return a;
+  static double keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN double

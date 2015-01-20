@@ -15,8 +15,9 @@ uint16_add(uint16_t a, uint16_t b)
 EXTERN uint16_t*
 uint16_inc(uint16_t *a, uint16_t b)
 {
-  *a += b;
-  return a;
+  static uint16_t keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN uint16_t

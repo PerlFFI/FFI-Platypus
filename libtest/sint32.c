@@ -15,8 +15,9 @@ sint32_add(int32_t a, int32_t b)
 EXTERN int32_t*
 sint32_inc(int32_t *a, int32_t b)
 {
-  *a += b;
-  return a;
+  static int32_t keeper;
+  keeper = *a += b;
+  return &keeper;
 }
 
 EXTERN int32_t
