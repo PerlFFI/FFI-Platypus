@@ -810,11 +810,11 @@ standards.  I may push back and ask you to write a test case or alter the format
 a patch depending on the amount of time I have and the amount of code that your patch 
 touches.
 
-This project's GitHub repository listed above is not Write-Only.  If you want to
+This project's GitHub issue tracker listed above is not Write-Only.  If you want to
 contribute then feel free to browse through the existing issues and see if there is
-something you feel you might be good at and tack a whack at the problem.  I frequently
+something you feel you might be good at and take a whack at the problem.  I frequently
 open issues myself that I hope will be accomplished by someone in the future but do
-not have time for immediately.
+not have time to immediately implement.
 
 Another good area to help out in is documentation.  I try to make sure that there is
 good document coverage, that is there should be documentation describing all the public
@@ -833,7 +833,7 @@ directly, you can use the C<./Build libtest> command to build it.  Example:
  # or an individual test
  % perl -Mblib t/ffi_platypus_memory.t
 
-The build process also respects two environment variables:
+The build process also respects these environment variables:
 
 =over 4
 
@@ -860,7 +860,7 @@ that comes with Platypus, but do not have a debugging Perl.
 
 When building Platypus on 32 bit Perls, it will use the L<Math::Int64> C API
 and make L<Math::Int64> a prerequisite.  Setting this environment variable
-will force Platypus to build with both of those options on a 64 bit Perl.
+will force Platypus to build with both of those options on a 64 bit Perl as well.
 
  % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Build.PL
  
@@ -874,11 +874,12 @@ will force Platypus to build with both of those options on a 64 bit Perl.
 
 =item FFI_PLATYPUS_NO_ALLOCA
 
-Platypus uses the C function C<alloca> by default on platforms that support it.
-I believe that Platypus uses it responsibly to allocate small amounts of memory
-for argument type parameters, and does not use it to allocate large structures
-like arrays or buffers.  If you prefer not to use C<alloca>, then you can turn
-its use off by setting this environment variable when you run C<Build.PL>:
+Platypus uses the non-standard and somewhat controversial C function C<alloca> 
+by default on platforms that support it.  I believe that Platypus uses it
+responsibly to allocate small amounts of memory for argument type parameters,
+and does not use it to allocate large structures like arrays or buffers.  If 
+you prefer not to use C<alloca>, then you can turn its use off by setting this
+environment variable when you run C<Build.PL>:
 
  % env FFI_PLATYPUS_NO_ALLOCA=1 perl Build.PL 
  
