@@ -24,9 +24,9 @@ use base qw( Exporter );
 
 =head1 DESCRIPTION
 
-This module provides an interface to common memory functions provided by
-the standard C library.  They may be useful when constructing interfaces to
-C libraries with FFI.
+This module provides an interface to common memory functions provided by 
+the standard C library.  They may be useful when constructing interfaces 
+to C libraries with FFI.
 
 =head1 FUNCTIONS
 
@@ -34,7 +34,7 @@ C libraries with FFI.
 
  my $pointer = calloc $count, $size;
 
-The C<calloc> function contiguously allocates enough space for I<$count>
+The C<calloc> function contiguously allocates enough space for I<$count> 
 objects that are I<$size> bytes of memory each.
 
 =head2 free
@@ -42,8 +42,8 @@ objects that are I<$size> bytes of memory each.
  free $pointer;
 
 The C<free> function frees the memory allocated by C<malloc>, C<calloc>, 
-C<realloc> or C<strdup>.  It is important to only free memory that you
-yourself have allocated.  A good way to crash your program is to try and
+C<realloc> or C<strdup>.  It is important to only free memory that you 
+yourself have allocated.  A good way to crash your program is to try and 
 free a pointer that some C library has returned to you.
 
 =head2 malloc
@@ -70,10 +70,10 @@ specified by I<$buffer>.
 
  my $new_pointer = realloc $old_pointer, $size;
 
-The C<realloc> function reallocates enough memory to fit I<$size> bytes.
+The C<realloc> function reallocates enough memory to fit I<$size> bytes. 
 It copies the existing data and frees I<$old_pointer>.
 
-If you pass C<undef> in as I<$old_pointer>, then it behaves exactly like
+If you pass C<undef> in as I<$old_pointer>, then it behaves exactly like 
 C<malloc>:
 
  my $pointer = realloc undef, 64; # same as malloc 64
@@ -83,12 +83,14 @@ C<malloc>:
  my $pointer = strdup $string;
 
 The C<strdup> function allocates enough memory to contain I<$string> and 
-then copies it to that newly allocated memory.  This version of C<strdup> 
-returns an opaque pointer type, not a string type.  This may seem a little 
-strange, but returning a string type would not be very useful in Perl.
+then copies it to that newly allocated memory.  This version of 
+C<strdup> returns an opaque pointer type, not a string type.  This may 
+seem a little strange, but returning a string type would not be very 
+useful in Perl.
 
-Platforms that do not support C<strdup> will be provided with an equivalent 
-using C<malloc> and C<memcpy> written in Perl.  This version is slower.
+Platforms that do not support C<strdup> will be provided with an 
+equivalent using C<malloc> and C<memcpy> written in Perl.  This version 
+is slower.
 
 =cut
 

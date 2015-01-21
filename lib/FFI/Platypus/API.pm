@@ -33,13 +33,14 @@ our @EXPORT = grep /^arguments_/, keys %FFI::Platypus::API::;
 
 =head1 DESCRIPTION
 
-The custom types API for L<FFI::Platypus> allows you to set multiple C arguments
-from a single Perl argument as a common type.  This is sometimes useful for 
-pointer / size pairs which are a common pattern in C, but are usually represented by
-a single value (a string scalar) in Perl.
+The custom types API for L<FFI::Platypus> allows you to set multiple C 
+arguments from a single Perl argument as a common type.  This is 
+sometimes useful for pointer / size pairs which are a common pattern in 
+C, but are usually represented by a single value (a string scalar) in 
+Perl.
 
-The custom type API is somewhat experimental, and you should expect
-some changes as needs arise (I won't break compatibility lightly, however).
+The custom type API is somewhat experimental, and you should expect some 
+changes as needs arise (I won't break compatibility lightly, however).
 
 =head1 FUNCTIONS
 
@@ -169,7 +170,8 @@ Get the double precision floating point argument from position I<$i>.
 
  arguments_set_double $i, $double;
 
-Set the double precision floating point argument at position I<$i> to I<$double>
+Set the double precision floating point argument at position I<$i> to 
+I<$double>
 
 =head2 arguments_get_pointer
 
