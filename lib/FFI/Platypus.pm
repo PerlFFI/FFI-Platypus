@@ -15,6 +15,12 @@ use Carp qw( croak );
 # Watch Out!
 # Here Comes The Platypus Man
 
+=begin stopwords
+
+ØMQ
+
+=end stopwords
+
 =head1 SYNOPSIS
 
  use FFI::Platypus;
@@ -575,7 +581,11 @@ standard c library.
 
 # EXAMPLE: examples/notify.pl
 
-B<Discussion>: The most portable way to find the correct name and location of a dynamic library
+B<Discussion>: libnotify is a desktop GUI notification library for the GNOME Desktop environment.
+This script sends a notification event that should show up as a balloon, for me it did so in the
+upper right hand corner of my screen.
+
+The most portable way to find the correct name and location of a dynamic library
 is via the L<FFI::CheckLib#find_lib> family of functions.  If you are putting together a
 CPAN distribution, you should also consider using L<FFI::CheckLib#check_lib_or_exit> function
 in your C<Build.PL> or C<Makefile.PL> file. This will provide a user friendly diagnostic letting
@@ -594,7 +604,11 @@ by the L<FFI::Platypus::Memory> module.
 
 # EXAMPLE: examples/uuid.pl
 
-B<Discussion>: Knowing the size of objects is sometimes important.  In this example, we use
+B<Discussion>: libuuid is a library used to generate unique identifiers (UUID) for objects that
+may be accessible beyond the local system.  The library is or was part of the Linux e2fsprogs
+package.
+
+Knowing the size of objects is sometimes important.  In this example, we use
 the L<sizeof|FFI::Platypus#sizeof> function to get the size of 16 characters (in this case
 it is simply 16 bytes).  We also know that the strings "deparsed" by C<uuid_unparse> are exactly
 37 bytes.
@@ -632,11 +646,35 @@ of the L<FFI::Platypus#function> or L<FFI::Platypus#attach> methods.  In this ex
 L<FFI::TinyCC> to compile a short piece of C code and to give us the address of one of its
 functions, which we then use to create a perl xsub to call it.
 
+L<FFI::TinyCC> embeds the Tiny C Compiler (tcc) to provide a just-in-time (JIT) compilation
+service for FFI.
+
 =head2 libzmq
 
 # EXAMPLE: examples/zmq3.pl
 
-B<Discussion>: TODO
+B<Discussion>: ØMQ is a high-performance asynchronous messaging library.  There are a few things
+to note here.
+
+Firstly, sometimes there may be multiple versions of a library in the wild and you may need to
+verify that the library on a system meets your needs.  Here we use C<zmq_version> to ask
+libzmq which version it is.
+
+C<zmq_version> returns the version number via three integer pointer arguments, so we use the 
+pointer to integer type: C<int *>.  In order to pass pointer types, we pass a reference.
+In this case it is a reference to an undefined value, because zmq_version will write into
+the pointers the output values, but you can also pass in references to integers, floating
+point values and opaque pointer types.  When the function returns the C<$major> variable
+(and the others) has been updated and we can use it to verify that it supports the API
+that we require.
+
+Notice that we define three aliases for the C<opaque> type: C<zmq_context>, C<zmq_socket>
+and C<zmq_msg_t>.  While this isn't strictly necessary, since Platypus and C treat all
+three of these types the same, it is useful form of documentation that helps describe
+the functionality of the interface.
+
+Finally we attach the necessary functions, send and receive a message.  If you are interested,
+there is a fully fleshed out ØMQ Perl interface implemented using FFI called L<ZMQ::FFI>.
 
 =cut
 

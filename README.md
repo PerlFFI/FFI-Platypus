@@ -298,7 +298,11 @@ standard c library.
     notify_show($n, undef);
     notify_uninit();
 
-**Discussion**: The most portable way to find the correct name and location of a dynamic library
+**Discussion**: libnotify is a desktop GUI notification library for the GNOME Desktop environment.
+This script sends a notification event that should show up as a balloon, for me it did so in the
+upper right hand corner of my screen.
+
+The most portable way to find the correct name and location of a dynamic library
 is via the [FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib) family of functions.  If you are putting together a
 CPAN distribution, you should also consider using [FFI::CheckLib#check\_lib\_or\_exit](https://metacpan.org/pod/FFI::CheckLib#check_lib_or_exit) function
 in your `Build.PL` or `Makefile.PL` file. This will provide a user friendly diagnostic letting
@@ -341,7 +345,11 @@ by the [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory) m
     
     print cast( opaque => string, $string_opaque), "\n";
 
-**Discussion**: Knowing the size of objects is sometimes important.  In this example, we use
+**Discussion**: libuuid is a library used to generate unique identifiers (UUID) for objects that
+may be accessible beyond the local system.  The library is or was part of the Linux e2fsprogs
+package.
+
+Knowing the size of objects is sometimes important.  In this example, we use
 the [sizeof](https://metacpan.org/pod/FFI::Platypus#sizeof) function to get the size of 16 characters (in this case
 it is simply 16 bytes).  We also know that the strings "deparsed" by `uuid_unparse` are exactly
 37 bytes.
@@ -436,6 +444,9 @@ of the [FFI::Platypus#function](https://metacpan.org/pod/FFI::Platypus#function)
 [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) to compile a short piece of C code and to give us the address of one of its
 functions, which we then use to create a perl xsub to call it.
 
+[FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) embeds the Tiny C Compiler (tcc) to provide a just-in-time (JIT) compilation
+service for FFI.
+
 ## libzmq
 
     use constant ZMQ_IO_THREADS  => 1;
@@ -503,7 +514,28 @@ functions, which we then use to create a perl xsub to call it.
       print "recv_message = $recv_message\n";
     };
 
-**Discussion**: TODO
+**Discussion**: ØMQ is a high-performance asynchronous messaging library.  There are a few things
+to note here.
+
+Firstly, sometimes there may be multiple versions of a library in the wild and you may need to
+verify that the library on a system meets your needs.  Here we use `zmq_version` to ask
+libzmq which version it is.
+
+`zmq_version` returns the version number via three integer pointer arguments, so we use the 
+pointer to integer type: `int *`.  In order to pass pointer types, we pass a reference.
+In this case it is a reference to an undefined value, because zmq\_version will write into
+the pointers the output values, but you can also pass in references to integers, floating
+point values and opaque pointer types.  When the function returns the `$major` variable
+(and the others) has been updated and we can use it to verify that it supports the API
+that we require.
+
+Notice that we define three aliases for the `opaque` type: `zmq_context`, `zmq_socket`
+and `zmq_msg_t`.  While this isn't strictly necessary, since Platypus and C treat all
+three of these types the same, it is useful form of documentation that helps describe
+the functionality of the interface.
+
+Finally we attach the necessary functions, send and receive a message.  If you are interested,
+there is a fully fleshed out ØMQ Perl interface implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
 
 # SUPPORT
 

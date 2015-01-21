@@ -25,6 +25,8 @@ pod_spelling_system:
     - libuuid
     - libzmq
     - deparsed
+    - tcc
+    - fsprogs
 
 pod_coverage:
   skip: 0
