@@ -267,7 +267,6 @@
         {
           ffi_pl_closure *closure;
           ffi_status ffi_status;
-          extern void ffi_pl_closure_call(ffi_cif *, void *, void **, void *);
 
           SvREFCNT_inc(arg);
 
@@ -300,7 +299,6 @@
             }
             else
             {
-              extern void ffi_pl_closure_add_data(SV *closure, ffi_pl_closure *closure_data);
               closure->coderef = arg;
               ffi_pl_closure_add_data(arg, closure);
               ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
@@ -310,7 +308,6 @@
       }
       else if(platypus_type == FFI_PL_CUSTOM_PERL)
       {
-        extern SV* ffi_pl_custom_perl(SV*,SV*,int);
         SV *arg2 = ffi_pl_custom_perl(
           self->argument_types[i]->extra[0].custom_perl.perl_to_native,
           arg,
@@ -600,7 +597,6 @@
           SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_native_post;
           if(coderef != NULL)
           {
-            extern void ffi_pl_custom_perl_cb(SV *, SV*, int);
             arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
             ffi_pl_custom_perl_cb(coderef, arg, i);
           }
@@ -873,7 +869,6 @@
     }
     else if(self->return_type->platypus_type == FFI_PL_CUSTOM_PERL)
     {
-      extern SV* ffi_pl_custom_perl(SV*,SV*,int);
       SV *ret_in=NULL, *ret_out;
 
       switch(self->return_type->ffi_type->type)

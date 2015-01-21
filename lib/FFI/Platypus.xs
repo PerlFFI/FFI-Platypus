@@ -4,6 +4,7 @@
 #include "ppport.h"
 
 #include "ffi_platypus.h"
+#include "ffi_platypus_guts.h"
 
 #ifndef HAVE_IV_IS_64
 #include "perl_math_int64.h"

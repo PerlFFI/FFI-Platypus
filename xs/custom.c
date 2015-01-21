@@ -4,6 +4,7 @@
 #include "ppport.h"
 
 #include "ffi_platypus.h"
+#include "ffi_platypus_guts.h"
 
 SV*
 ffi_pl_custom_perl(SV *subref, SV *in_arg, int i)

@@ -31,6 +31,10 @@
 #include <string.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef RTLD_LAZY
 #define RTLD_LAZY 0
 #endif
@@ -164,5 +168,9 @@ typedef struct _ffi_pl_arguments {
 #endif
 
 ffi_type *ffi_pl_name_to_type(const char *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
