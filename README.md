@@ -18,26 +18,67 @@ Write Perl bindings to non-Perl libraries without C or XS
 
 # DESCRIPTION
 
-Platypus provides an interface for creating FFI based modules in
-Perl that call machine code via `libffi`.  This is an alternative
-to XS that does not require a compiler.
+Platypus provides an interface for creating interfaces to machine code 
+libraries.  This implementation uses `libffi`, a library that provides 
+Foreign Function Interfaces for a number of other languages, including 
+Ruby and Python.  Platypus can be used in stand alone scripts, or to 
+create Perl extensions for CPAN.  There are a number of reasons why you 
+might want to write extensions with FFI instead of XS:
 
-The declarative interface [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare) may be more
-suitable, if you do not need the extra power of the OO interface
-and you do not mind the namespace pollution.
+- FFI / Platypus does not require messing with the guts of Perl
 
-This document consists of an API reference, a set of 
-[examples](https://metacpan.org/pod/FFI::Platypus#EXAMPLES) and some 
-[support](https://metacpan.org/pod/FFI::Platypus#SUPPORT) and
-[development](https://metacpan.org/pod/FFI::Platypus#CONTRIBUTING) information.
-If you are new to Platypus, or FFI, you may want to
-skip down to the
-[examples](https://metacpan.org/pod/FFI::Platypus#EXAMPLES)
-to get a taste of what you can do with Platypus.
+    XS is less of an API and more of the guts of perl splayed out to do 
+    whatever you want.  That may sometimes be very powerful, but it may also 
+    sometimes be very dangerous to your mental health.
 
-Additional reference documentation is contained in the 
-[type documentation](https://metacpan.org/pod/FFI::Platypus::Type) and the 
-[custom type API](https://metacpan.org/pod/FFI::Platypus::API).
+- FFI / Platypus is portable
+
+    Lots of languages have FFI interfaces, and it is subjectively easier to 
+    port an extension written in FFI in Perl or another language to FFI in 
+    another language or Perl.  One goal of Platypus is to reduce interface 
+    information to a common format like JSON that could be shared between 
+    different languages.
+
+- FFI / Platypus could be a bridge to Perl 6
+
+    One of those "other" languages could be Perl 6.  Perl 6 already has an 
+    FFI interface.
+
+- FFI / Platypus is pure perl (sorta)
+
+    One Platypus script or module works on any platform where the libraries 
+    are available.  That means you can deploy your Platypus script in a 
+    shared filesystem where they may be run on different platforms.  It also 
+    means that Platypus modules do not need to be installed in the platform 
+    specific Perl library path.
+
+- FFI / Platypus is not C or C++ centric
+
+    XS is implemented primarily as a bunch of C macros, which requires at 
+    least some understanding of C, the C pre-processor, some C++ caveats. 
+    Platypus on the other hand could be used to call other compiled 
+    languages, like Rust or Go.
+
+- FFI does not require a parser
+
+    [Inline](https://metacpan.org/pod/Inline) isolates the extension developer from XS, but it also requires 
+    a parser.  I salute the [Inline](https://metacpan.org/pod/Inline) developers for what they have 
+    accomplished, but I think writing a parser for every language that you 
+    want to interface with is a bit of an anti-pattern.
+
+This document consists of an API reference, a set of examples and some 
+support and development (contributing) information.  If you are new to 
+Platypus or FFI, you may want to skip down to the 
+[EXAMPLES](https://metacpan.org/pod/FFI::Platypus#Examples) to get a taste of what you can do 
+with Platypus.
+
+Platypus also provides an declarative interface you may want to use 
+instead of the object oriented interface called 
+[FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare).
+
+Platypus has an extensive documentation of Platypus types at
+[FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) and the the Platypus custom types API
+at [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
 
 # CONSTRUCTORS
 

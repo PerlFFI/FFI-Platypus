@@ -37,26 +37,71 @@ use Carp qw( croak );
 
 =head1 DESCRIPTION
 
-Platypus provides an interface for creating FFI based modules in
-Perl that call machine code via C<libffi>.  This is an alternative
-to XS that does not require a compiler.
+Platypus provides an interface for creating interfaces to machine code 
+libraries.  This implementation uses C<libffi>, a library that provides 
+Foreign Function Interfaces for a number of other languages, including 
+Ruby and Python.  Platypus can be used in stand alone scripts, or to 
+create Perl extensions for CPAN.  There are a number of reasons why you 
+might want to write extensions with FFI instead of XS:
 
-The declarative interface L<FFI::Platypus::Declare> may be more
-suitable, if you do not need the extra power of the OO interface
-and you do not mind the namespace pollution.
+=over 4
 
-This document consists of an API reference, a set of 
-L<examples|FFI::Platypus#EXAMPLES> and some 
-L<support|FFI::Platypus#SUPPORT> and
-L<development|FFI::Platypus#CONTRIBUTING> information.
-If you are new to Platypus, or FFI, you may want to
-skip down to the
-L<examples|FFI::Platypus#EXAMPLES>
-to get a taste of what you can do with Platypus.
+=item FFI / Platypus does not require messing with the guts of Perl
 
-Additional reference documentation is contained in the 
-L<type documentation|FFI::Platypus::Type> and the 
-L<custom type API|FFI::Platypus::API>.
+XS is less of an API and more of the guts of perl splayed out to do 
+whatever you want.  That may sometimes be very powerful, but it may also 
+sometimes be very dangerous to your mental health.
+
+=item FFI / Platypus is portable
+
+Lots of languages have FFI interfaces, and it is subjectively easier to 
+port an extension written in FFI in Perl or another language to FFI in 
+another language or Perl.  One goal of Platypus is to reduce interface 
+information to a common format like JSON that could be shared between 
+different languages.
+
+=item FFI / Platypus could be a bridge to Perl 6
+
+One of those "other" languages could be Perl 6.  Perl 6 already has an 
+FFI interface.
+
+=item FFI / Platypus is pure perl (sorta)
+
+One Platypus script or module works on any platform where the libraries 
+are available.  That means you can deploy your Platypus script in a 
+shared filesystem where they may be run on different platforms.  It also 
+means that Platypus modules do not need to be installed in the platform 
+specific Perl library path.
+
+=item FFI / Platypus is not C or C++ centric
+
+XS is implemented primarily as a bunch of C macros, which requires at 
+least some understanding of C, the C pre-processor, some C++ caveats. 
+Platypus on the other hand could be used to call other compiled 
+languages, like Rust or Go.
+
+=item FFI does not require a parser
+
+L<Inline> isolates the extension developer from XS, but it also requires 
+a parser.  I salute the L<Inline> developers for what they have 
+accomplished, but I think writing a parser for every language that you 
+want to interface with is a bit of an anti-pattern.
+
+=back
+
+This document consists of an API reference, a set of examples and some 
+support and development (contributing) information.  If you are new to 
+Platypus or FFI, you may want to skip down to the 
+L<EXAMPLES|FFI::Platypus#Examples> to get a taste of what you can do 
+with Platypus.
+
+Platypus also provides an declarative interface you may want to use 
+instead of the object oriented interface called 
+L<FFI::Platypus::Declare>.
+
+Platypus has an extensive documentation of Platypus types at
+L<FFI::Platypus::Type> and the the Platypus custom types API
+at L<FFI::Platypus::API>.
 
 =cut
 
