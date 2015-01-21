@@ -26,6 +26,19 @@ The declarative interface [FFI::Platypus::Declare](https://metacpan.org/pod/FFI:
 suitable, if you do not need the extra power of the OO interface
 and you do not mind the namespace pollution.
 
+This document consists of an API reference, a set of 
+[examples](https://metacpan.org/pod/FFI::Platypus#EXAMPLES) and some 
+[support](https://metacpan.org/pod/FFI::Platypus#SUPPORT) and
+[development](https://metacpan.org/pod/FFI::Platypus#CONTRIBUTING) information.
+If you are new to Platypus, or FFI, you may want to
+skip down to the
+[examples](https://metacpan.org/pod/FFI::Platypus#EXAMPLES)
+to get a taste of what you can do with Platypus.
+
+Additional reference documentation is contained in the 
+[type documentation](https://metacpan.org/pod/FFI::Platypus::Type) and the 
+[custom type API](https://metacpan.org/pod/FFI::Platypus::API).
+
 # CONSTRUCTORS
 
 ## new

@@ -45,6 +45,19 @@ The declarative interface L<FFI::Platypus::Declare> may be more
 suitable, if you do not need the extra power of the OO interface
 and you do not mind the namespace pollution.
 
+This document consists of an API reference, a set of 
+L<examples|FFI::Platypus#EXAMPLES> and some 
+L<support|FFI::Platypus#SUPPORT> and
+L<development|FFI::Platypus#CONTRIBUTING> information.
+If you are new to Platypus, or FFI, you may want to
+skip down to the
+L<examples|FFI::Platypus#EXAMPLES>
+to get a taste of what you can do with Platypus.
+
+Additional reference documentation is contained in the 
+L<type documentation|FFI::Platypus::Type> and the 
+L<custom type API|FFI::Platypus::API>.
+
 =cut
 
 our @CARP_NOT = qw( FFI::Platypus::Declare );
