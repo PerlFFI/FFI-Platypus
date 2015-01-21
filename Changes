@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.11      2015-01-21 16:33:58 -0500
   - Release candidate 2
   - arguments are available during custom return type even when
     platform does not support alloca
