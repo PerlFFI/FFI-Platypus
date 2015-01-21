@@ -18,8 +18,9 @@ Declarative interface:
 
 =head1 DESCRIPTION
 
-This document describes how to define types using L<FFI::Platypus>.  Types may be
-"defined" ahead of time, or simply used when defining or attaching functions.
+This document describes how to define types using L<FFI::Platypus>.  
+Types may be "defined" ahead of time, or simply used when defining or 
+attaching functions.
 
  # OO example of defining types
  use FFI::Platypus;
@@ -31,11 +32,11 @@ This document describes how to define types using L<FFI::Platypus>.  Types may b
  my $f = $ffi->function(puts => ['string'] => 'int');
  $ffi->attach(puts => ['string'] => 'int');
 
-If you are using the declarative interface, you can either pass the types
-you need to the L<FFI::Platypus::Declare> C<use> invocation, or you can
-use the L<FFI::Platypus::Declare#type> function.  The advantage of the former
-is that it creates a Perl constant for that type so that you do not need
-to use quotation marks when using the type.
+If you are using the declarative interface, you can either pass the 
+types you need to the L<FFI::Platypus::Declare> C<use> invocation, or 
+you can use the L<FFI::Platypus::Declare#type> function.  The advantage 
+of the former is that it creates a Perl constant for that type so that 
+you do not need to use quotation marks when using the type.
 
  # Declarative with use
  use FFI::Platypus::Declare 'string', 'int';
@@ -66,11 +67,11 @@ You can get the size of a type using the L<FFI::Platypus#sizeof> method.
 
 =head2 converting types
 
-Sometimes it is necessary to convert types.  In particular various pointer types
-often need to be converted for consumption in Perl.  For this purpose the
-L<FFI::Platypus#cast> method is provided.  It needs to be used with
-care though, because not all type combinations are supported.  Here are some 
-useful ones:
+Sometimes it is necessary to convert types.  In particular various 
+pointer types often need to be converted for consumption in Perl.  For 
+this purpose the L<FFI::Platypus#cast> method is provided.  It needs to 
+be used with care though, because not all type combinations are 
+supported.  Here are some useful ones:
 
  # OO interface
  my $address = $ffi->cast('string' => 'opaque', $string);
@@ -83,11 +84,11 @@ useful ones:
 
 =head2 aliases
 
-Some times using alternate names is useful for documenting the purpose of an
-argument or return type.  For this "aliases" can be come helpful.  The
-second argument to the L<FFI::Platypus#type> method or L<FFI::Platypus::Declare#type>
-function can be used to define a type alias that can later be used by function
-declaration and attachment.
+Some times using alternate names is useful for documenting the purpose 
+of an argument or return type.  For this "aliases" can be come helpful.  
+The second argument to the L<FFI::Platypus#type> method or 
+L<FFI::Platypus::Declare#type> function can be used to define a type 
+alias that can later be used by function declaration and attachment.
 
  # OO style
  use FFI::Platypus;
@@ -109,28 +110,30 @@ declaration and attachment.
    [ string => 'mystring' ];
  attach puts => [mystring] => myint;
 
-Alias are contained without the L<FFI::Platypus> object, or the current package
-if you are using L<FFI::Platypus::Declare>, so feel free to define your own crazy
-types without stepping on the toes of other CPAN FFI developers.
+Alias are contained without the L<FFI::Platypus> object, or the current 
+package if you are using L<FFI::Platypus::Declare>, so feel free to 
+define your own crazy types without stepping on the toes of other CPAN 
+FFI developers.
 
 =head1 TYPE CATEGORIES
 
 =head2 Native types
 
-So called native types are the types types that the CPU understands that can
-be passed on the argument stack or returned by a function.  It does not include
-more complicated types like arrays or structs, which can be passed via pointers
-(see the opaque type below>.  Generally native types include void, integers,
-floats and pointers.
+So called native types are the types types that the CPU understands that 
+can be passed on the argument stack or returned by a function.  It does 
+not include more complicated types like arrays or structs, which can be 
+passed via pointers (see the opaque type below>.  Generally native types 
+include void, integers, floats and pointers.
 
 =head3 the void type
 
-This can be used as a return value to indicate a function does not return a value
-(or if you want the return value to be ignored).
+This can be used as a return value to indicate a function does not 
+return a value (or if you want the return value to be ignored).
 
 =head3 integer types
 
-The following native integer types are always available (parentheticals indicates the usual corresponding C type):
+The following native integer types are always available (parentheticals 
+indicates the usual corresponding C type):
 
 =over 4
 
@@ -164,26 +167,29 @@ Signed 64 bit integer (C<long> or C<long long>, C<int64_t>)
 
 =item uint64
 
-Unsigned 64 bit integer (C<unsigned long> or C<unsigned long long>, C<uint64_t>)
+Unsigned 64 bit integer (C<unsigned long> or C<unsigned long long>, 
+C<uint64_t>)
 
 =back
 
-These integer types are also available, but there actual size and sign may depend on the platform.
+These integer types are also available, but there actual size and sign 
+may depend on the platform.
 
 =over 4
 
 =item char
 
-This is really an alias for either C<sint8_t> or C<uint8_t>.  If you want to pass a character
-in to a C function that takes a character you want to use the perl L<ord|perlfunc#ord> function.
-Here is an example that uses the standard libc C<isalpha>, C<isdigit> type functions:
+This is really an alias for either C<sint8_t> or C<uint8_t>.  If you 
+want to pass a character in to a C function that takes a character you 
+want to use the perl L<ord|perlfunc#ord> function. Here is an example 
+that uses the standard libc C<isalpha>, C<isdigit> type functions:
 
 # EXAMPLE: examples/char.pl
 
 =item size_t
 
-This is usually an C<unsigned long>, but it is up to the compiler to decide.  The C<malloc>
-function is defined in terms of C<size_t>:
+This is usually an C<unsigned long>, but it is up to the compiler to 
+decide.  The C<malloc> function is defined in terms of C<size_t>:
 
  use FFI::Platypus::Declare qw( size_t opaque );
  attach malloc => [size_t] => opaque;
@@ -192,16 +198,18 @@ function is defined in terms of C<size_t>:
 
 =back
 
-There are a number of other types that may or may not be available if they are detected when
-L<FFI::Platypus> is installed.  Such time include things like C<wchar_t>, C<off_t>, C<wint_t>.
-You can use this script to list all the integer types that L<FFI::Platypus> knows about, plus
-how they are implemented.
+There are a number of other types that may or may not be available if 
+they are detected when L<FFI::Platypus> is installed.  Such time include 
+things like C<wchar_t>, C<off_t>, C<wint_t>. You can use this script to 
+list all the integer types that L<FFI::Platypus> knows about, plus how 
+they are implemented.
 
 # EXAMPLE: examples/list_integer_types.pl
 
 =head3 floating point types
 
-The following native floating point types are always available (parentheticals indicates the usual corresponding C type):
+The following native floating point types are always available 
+(parentheticals indicates the usual corresponding C type):
 
 =over 4
 
@@ -219,15 +227,19 @@ The C<long double> type may be supported in a future version.
 
 =head3 opaque pointers
 
-Opaque pointers are simply a pointer to a region of memory that you do not manage, and do not know the structure of.
-It is like a C<void *> in C.  These types are represented in Perl space as integers and get converted to and from
-pointers by L<FFI::Platypus>.  You may use C<pointer> as an alias for C<opaque>.
+Opaque pointers are simply a pointer to a region of memory that you do 
+not manage, and do not know the structure of. It is like a C<void *> in 
+C.  These types are represented in Perl space as integers and get 
+converted to and from pointers by L<FFI::Platypus>.  You may use 
+C<pointer> as an alias for C<opaque>.
 
-As an example, libarchive defines C<archive> type in its header files, but does not define its content.  
-Internally it is defined as a C<struct> type, but the caller does not see this.  It is therefore opaque
-to its caller.  There are C<archive_read_new> and C<archive_write_new> functions to create a new instance
-of this opaque object and C<archive_read_free> and C<archive_write_free> to destroy this objects when you
-are done.
+As an example, libarchive defines C<archive> type in its header files, 
+but does not define its content.  Internally it is defined as a 
+C<struct> type, but the caller does not see this.  It is therefore 
+opaque to its caller.  There are C<archive_read_new> and 
+C<archive_write_new> functions to create a new instance of this opaque 
+object and C<archive_read_free> and C<archive_write_free> to destroy 
+this objects when you are done.
 
  use FFI::Platypus::Declare qw( opaque int );
  attach archive_read_new   => []       => opaque;
@@ -235,22 +247,27 @@ are done.
  attach archive_read_free  => [opaque] => int;
  attach archive_write_free => [opaque] => int;
 
-As a special case, when you pass C<undef> into a function that takes an opaque type it will be translated
-into C<NULL> for C.  When a C function returns a NULL pointer, it will be translated back to C<undef>.
+As a special case, when you pass C<undef> into a function that takes an 
+opaque type it will be translated into C<NULL> for C.  When a C function 
+returns a NULL pointer, it will be translated back to C<undef>.
 
 =head2 Strings
 
-From the CPU's perspective, strings are just pointers.  From Perl and C's perspective, those pointers
-point to a series of characters.  For C they are null terminates ("\0").  L<FFI::Platypus> handles
-the details where they differ.  Basically when you see C<char *> or C<const char *> used in a C header
-file you can expect to be able to use the C<string> type.
+From the CPU's perspective, strings are just pointers.  From Perl and 
+C's perspective, those pointers point to a series of characters.  For C 
+they are null terminates ("\0").  L<FFI::Platypus> handles the details 
+where they differ.  Basically when you see C<char *> or C<const char *> 
+used in a C header file you can expect to be able to use the C<string> 
+type.
 
  use FFI::Platypus::Declare qw( string int );
  attach puts => [string] => int;
 
-Currently strings are only supported as simple argument and return types for C functions called from Perl.
-In the future I hope to also support pointers to strings, arrays of strings, strings as closure argument
-and return types.  Most of these things can be accomplished with these tools:
+Currently strings are only supported as simple argument and return types 
+for C functions called from Perl. In the future I hope to also support 
+pointers to strings, arrays of strings, strings as closure argument and 
+return types.  Most of these things can be accomplished with these 
+tools:
 
 =over 4
 
@@ -268,17 +285,20 @@ and return types.  Most of these things can be accomplished with these tools:
 
 =head2 Pointer / References
 
-In C you can pass a pointer to a variable to a function in order accomplish the task of
-pass by reference.  In Perl the same is task is accomplished by passing a reference (although
-you can also modify the argument stack thus Perl supports proper pass by reference as well).
+In C you can pass a pointer to a variable to a function in order 
+accomplish the task of pass by reference.  In Perl the same is task is 
+accomplished by passing a reference (although you can also modify the 
+argument stack thus Perl supports proper pass by reference as well).
 
-With L<FFI::Platypus> you can define a pointer types to any of the native types described above
-(that is all the types we have covered so far except for strings).  When using this you must
-make sure to pass in a reference to a scalar, or C<undef> (the later if you intend to pass
+With L<FFI::Platypus> you can define a pointer types to any of the 
+native types described above (that is all the types we have covered so 
+far except for strings).  When using this you must make sure to pass in 
+a reference to a scalar, or C<undef> (the later if you intend to pass 
 C<NULL> into C space).
 
-If the C code makes a change to the value pointed to by the pointer, the scalar will be
-updated before returning to Perl space.  Example, with C code.
+If the C code makes a change to the value pointed to by the pointer, the 
+scalar will be updated before returning to Perl space.  Example, with C 
+code.
 
  /* foo.c */
  void increment_int(int *value)
@@ -302,45 +322,56 @@ updated before returning to Perl space.  Example, with C code.
 
 =head2 Fixed length arrays
 
-Fixed length arrays of native types are supported by L<FFI::Platypus>.  Like pointers, if the values
-contained in the array are updated by the C function these changes will be reflected when it returns
-to Perl space.  An example of using this is the Unix C<pipe> command which returns a list of two
-file descriptors as an array.
+Fixed length arrays of native types are supported by L<FFI::Platypus>.  
+Like pointers, if the values contained in the array are updated by the C 
+function these changes will be reflected when it returns to Perl space.  
+An example of using this is the Unix C<pipe> command which returns a 
+list of two file descriptors as an array.
 
 # EXAMPLE: examples/pipe.pl
 
 =head2 Closures
 
-A closure (called a "callback" by L<FFI::Raw>) is a Perl subroutine that can be called from C.  In order
-to be called from C it needs to be passed to a C function.  To define the closure type you need to provide
-a list of argument types and a return type.  As of this writing only native types and strings are supported
-as closure argument types and only native types are supported as closure return types.  Here is an example,
-with C code:
+A closure (called a "callback" by L<FFI::Raw>) is a Perl subroutine that 
+can be called from C.  In order to be called from C it needs to be 
+passed to a C function.  To define the closure type you need to provide 
+a list of argument types and a return type.  As of this writing only 
+native types and strings are supported as closure argument types and 
+only native types are supported as closure return types.  Here is an 
+example, with C code:
 
 # EXAMPLE: examples/closure.c
 
 # EXAMPLE: examples/closure.pl
 
-The syntax for specifying a closure type is a list of comma separated types in parentheticals followed by
-a narrow arrow C<-E<gt>>, followed by the return type for the closure.  For example a closure that takes
-a pointer, an integer and a string and returns an integer would look like this:
+The syntax for specifying a closure type is a list of comma separated 
+types in parentheticals followed by a narrow arrow C<-E<gt>>, followed 
+by the return type for the closure.  For example a closure that takes a 
+pointer, an integer and a string and returns an integer would look like 
+this:
 
  (opaque, int, string) -> int
 
-Care needs to be taken with scoping and closures, because of the way Perl and C handle responsibility
-for allocation differently.  Perl keeps reference counts and frees objects when nothing is referencing
-them.  In C the code that allocates the memory is considered responsible for explicitly free'ing the
-memory for objects it has created.  When you pass a closure into a C function, the C code has a pointer
-or reference to that object, but it has no way up letting Perl know when it is no longer using it.
-As a result, if you do not keep a reference to your closure around it will be free'd by Perl and if 
-the C code ever tries to call the closure it will probably SIGSEGV.  Thus supposing you have a C
-function C<set_closure> that takes a Perl closure, this is almost always wrong:
+Care needs to be taken with scoping and closures, because of the way 
+Perl and C handle responsibility for allocation differently.  Perl keeps 
+reference counts and frees objects when nothing is referencing them.  In 
+C the code that allocates the memory is considered responsible for 
+explicitly free'ing the memory for objects it has created.  When you 
+pass a closure into a C function, the C code has a pointer or reference 
+to that object, but it has no way up letting Perl know when it is no 
+longer using it. As a result, if you do not keep a reference to your 
+closure around it will be free'd by Perl and if the C code ever tries to 
+call the closure it will probably SIGSEGV.  Thus supposing you have a C 
+function C<set_closure> that takes a Perl closure, this is almost always 
+wrong:
 
  set_closure(closure { $_[0] * 2 });  # BAD
 
-In some cases, you may want to create a closure shouldn't ever be free'd.  For example you are passing
-a closure into a C function that will retain it for the lifetime of your application.  You can use
-the sticky keyword to indicate this, without the need to keep track of the closure:
+In some cases, you may want to create a closure shouldn't ever be 
+free'd.  For example you are passing a closure into a C function that 
+will retain it for the lifetime of your application.  You can use the 
+sticky keyword to indicate this, without the need to keep track of the 
+closure:
 
  set_closure(sticky closure { $_[0] * 2 }); # OKAY 
 
@@ -348,8 +379,9 @@ the sticky keyword to indicate this, without the need to keep track of the closu
 
 =head3 Custom Types in Perl
 
-Platypus custom types are the rough analogue to typemaps in the XS world.  They offer a method for
-converting Perl types into native types that the C<libffi> can understand and pass on to the C code.
+Platypus custom types are the rough analogue to typemaps in the XS 
+world.  They offer a method for converting Perl types into native types 
+that the C<libffi> can understand and pass on to the C code.
 
 =head4 Example 1: Integer constants
 
@@ -365,8 +397,8 @@ Say you have a C header file like this:
  void foo(foo_t foo);
  foo_t get_foo();
 
-One common way of implementing this would be to create and export constants in your Perl module,
-like this:
+One common way of implementing this would be to create and export 
+constants in your Perl module, like this:
 
  package Foo;
  
@@ -387,8 +419,9 @@ Then you could use the module thus:
  use Foo qw( foo FOO_STATIC );
  foo(FOO_STATIC);
 
-If you didn't want to rely on integer constants or exports, you could also define a custom type,
-and allow strings to be passed into your function, like this:
+If you didn't want to rely on integer constants or exports, you could 
+also define a custom type, and allow strings to be passed into your 
+function, like this:
 
  package Foo;
  
@@ -417,30 +450,79 @@ and allow strings to be passed into your function, like this:
  attach foo => ['foo_t'] => void;
  attach get_foo => [] => foo_t;
 
-Now when an argument of type C<foo_t> is called for it will be converted from an appropriate string
-representation, and any function that returns a C<foo_t> type will return a string instead of the
-integer representation:
+Now when an argument of type C<foo_t> is called for it will be converted 
+from an appropriate string representation, and any function that returns 
+a C<foo_t> type will return a string instead of the integer 
+representation:
 
  use Foo;
  foo('static');
 
 =head4 Example 2: Blessed references
 
-# EXAMPLE: examples/archive.pl
+Supposing you have a C library that uses an opaque pointer with a pseudo 
+OO interface, like this:
+
+ typedef struct foo_t;
+ 
+ foo_t *foo_new();
+ void foo_method(foo_t *, int argument);
+ void foo_free(foo_t *);
+
+One approach to adapting this to Perl would be to create a OO Perl 
+interface like this:
+
+ package Foo;
+ 
+ use FFI::Platypus::Declare
+   'void', 'int';
+ use FFI::Platypus::API qw( arguments_get_string );
+ 
+ custom_type foo_t => {
+   native_type    => 'opaque',
+   native_to_perl => sub {
+     my $class = arguments_get_string(0);
+     bless \$_[0], $class;
+   }
+   perl_to_native => sub { ${$_[0]} },
+ };
+ 
+ attach [ foo_new => 'new' ] => [ string ] => 'foo_t' );
+ attach [ foo_method => 'method' ] => [ 'foo_t', int ] => void;
+ attach [ foo_free => 'DESTROY' ] => [ 'foo_t' ] => void;
+ 
+ my $foo = Foo->new;
+
+Here we are blessing a reference to the opaque pointer when we return 
+the custom type for C<foo_t>, and dereferencing that reference before we 
+pass it back in.  The function C<arguments_get_string> queries the C 
+arguments to get the class name to make sure the object is blessed into 
+the correct class (for more details on the custom type API see 
+L<FFI::Platypus::API>), so you can inherit and extend this class like a 
+normal Perl class.
+
+I good example of a C library that uses this pattern, including 
+inheritance is C<libarchive>. Platypus comes with a more extensive 
+example in C<examples/archive.pl> that demonstrates this.
 
 =head4 Example 3: Pointers with pack / unpack
 
 TODO
 
+See example L<FFI::Platypus::Type::StringPointer>.
+
 =head4 Example 4: Custom Type modules and the Custom Type API
 
 TODO
 
+See example L<FFI::Platypus::Type::PointerSizeBuffer>.
+
 =head3 Custom Types in C/XS
 
-Custom types written in C or XS are a future goal of the L<FFI::Platypus> project.  They should
-allow some of the flexibility of custom types written in Perl, with potential performance improvements
-of native code.
+Custom types written in C or XS are a future goal of the 
+L<FFI::Platypus> project.  They should allow some of the flexibility of 
+custom types written in Perl, with potential performance improvements of 
+native code.
 
 =head1 SEE ALSO
 

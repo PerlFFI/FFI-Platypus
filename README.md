@@ -76,9 +76,9 @@ Platypus also provides an declarative interface you may want to use
 instead of the object oriented interface called 
 [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare).
 
-Platypus has an extensive documentation of Platypus types at
-[FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) and the the Platypus custom types API
-at [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
+Platypus has an extensive documentation of Platypus types at 
+[FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) and the the Platypus custom types API at 
+[FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
 
 # CONSTRUCTORS
 
@@ -88,18 +88,18 @@ at [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
 
 Create a new instance of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
 
-Any types defined with this instance will be valid for this
-instance only, so you do not need to worry about stepping on
-the toes of other CPAN FFI Authors.
+Any types defined with this instance will be valid for this instance 
+only, so you do not need to worry about stepping on the toes of other 
+CPAN FFI Authors.
 
-Any functions found will be out of the list of libraries
-specified with the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
+Any functions found will be out of the list of libraries specified with 
+the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
 
 ### options
 
 - lib
 
-    Either a pathname (string) or a list of pathnames (array ref of strings)
+    Either a pathname (string) or a list of pathnames (array ref of strings) 
     to pre-populate the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
 
 # ATTRIBUTES
@@ -111,7 +111,7 @@ specified with the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
 
 The list of libraries to search for symbols in.
 
-The most portable and reliable way to find dynamic libraries is by using
+The most portable and reliable way to find dynamic libraries is by using 
 [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib), like this:
 
     use FFI::CheckLib 0.06;
@@ -123,13 +123,13 @@ The most portable and reliable way to find dynamic libraries is by using
       #       ...
       # and will die if it isn't found
 
-[FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib) has a number of options, such as checking for specific
+[FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib) has a number of options, such as checking for specific 
 symbols, etc.  You should consult the documentation for that module.
 
-As a special case, if you add `undef` as a "library" to be searched,
-[FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) will also search the current process for symbols.
-This is mostly useful for finding functions in the standard C library,
-without having to know the name of libc for your platform (as it turns
+As a special case, if you add `undef` as a "library" to be searched, 
+[FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) will also search the current process for symbols. This 
+is mostly useful for finding functions in the standard C library, 
+without having to know the name of libc for your platform (as it turns 
 out it is different just about everywhere!).
 
 # METHODS
@@ -139,8 +139,10 @@ out it is different just about everywhere!).
     $ffi->type($typename);
     $ffi->type($typename => $alias);
 
-Define a type.  The first argument is the native or C name of the type.  The second argument (optional) is an alias name
-that you can use to refer to this new type.  See [FFI:Platypus::Type](FFI:Platypus::Type) for legal type definitions.
+Define a type.  The first argument is the native or C name of the type.  
+The second argument (optional) is an alias name that you can use to 
+refer to this new type.  See [FFI:Platypus::Type](FFI:Platypus::Type) for legal type 
+definitions.
 
 Examples:
 
@@ -163,22 +165,27 @@ Define a custom type.  See ["FFI::Platypus::Type#Custom Types"](#ffi-platypus-ty
 
     $ffi->load_custom_type($name => $alias, @type_args);
 
-Load the custom type defined in the module _$name_, and make an alias with the name _$alias_.
-If the custom type requires any arguments, they may be passed in as _@type\_args_.
-See ["FFI::Platypus::Type#Custom Types"](#ffi-platypus-type-custom-types) for details.
+Load the custom type defined in the module _$name_, and make an alias 
+with the name _$alias_. If the custom type requires any arguments, they 
+may be passed in as _@type\_args_. See ["FFI::Platypus::Type#Custom 
+Types"](#ffi-platypus-type-custom-types) for details.
 
-If _$name_ contains `::` then it will be assumed to be a fully qualified package name.
-If not, then `FFI::Platypus::Type::` will be prepended to it.
+If _$name_ contains `::` then it will be assumed to be a fully 
+qualified package name. If not, then `FFI::Platypus::Type::` will be 
+prepended to it.
 
 ## types
 
     my @types = $ffi->types;
     my @types = FFI::Platypus->types;
 
-Returns the list of types that FFI knows about.  This may be either built in FFI types (example: _sint32_) or
-detected C types (example: _signed int_), or types that you have defined using the [type](https://metacpan.org/pod/FFI::Platypus#type) method.
+Returns the list of types that FFI knows about.  This may be either 
+built in FFI types (example: _sint32_) or detected C types (example: 
+_signed int_), or types that you have defined using the 
+[type](https://metacpan.org/pod/FFI::Platypus#type) method.
 
-It can also be called as a class method, in which case, no user defined types will be included.
+It can also be called as a class method, in which case, no user defined 
+types will be included.
 
 ## type\_meta
 
@@ -187,7 +194,8 @@ It can also be called as a class method, in which case, no user defined types wi
 
 Returns a hash reference with the meta information for the given type.
 
-It can also be called as a class method, in which case, you won't be able to get meta data on user defined types.
+It can also be called as a class method, in which case, you won't be 
+able to get meta data on user defined types.
 
 Examples:
 
@@ -201,25 +209,29 @@ Examples:
     my $function = $ffi->function($name => \@argument_types => $return_type);
     my $function = $ffi->function($address => \@argument_types => $return_type);
 
-Returns an object that is similar to a code reference in that it can be called like one.
+Returns an object that is similar to a code reference in that it can be 
+called like one.
 
-Caveat: many situations require a real code reference, at the price of a performance
-penalty you can get one like this:
+Caveat: many situations require a real code reference, at the price of a 
+performance penalty you can get one like this:
 
     my $function = $ffi->function(...);
     my $coderef = sub { $function->(@_) };
 
-It may be better, and faster to create a real Perl function using the [attach](https://metacpan.org/pod/FFI::Platypus#attach) method.
+It may be better, and faster to create a real Perl function using the 
+[attach](https://metacpan.org/pod/FFI::Platypus#attach) method.
 
-In addition to looking up a function by name you can provide the address of the symbol
-yourself:
+In addition to looking up a function by name you can provide the address 
+of the symbol yourself:
 
     my $address = $ffi->find_symbol('my_functon');
     my $function = $ffi->function($address => ...);
 
-Under the covers this function uses [find\_symbol](https://metacpan.org/pod/FFI::Platypus#find_symbol) when you provide it
-with a name rather than an address, but you may have alternative ways of obtaining a function's
-address, such as it could be returned as an `opaque` pointer.
+Under the covers this function uses 
+[find\_symbol](https://metacpan.org/pod/FFI::Platypus#find_symbol) when you provide it with a name 
+rather than an address, but you may have alternative ways of obtaining a 
+function's address, such as it could be returned as an `opaque` 
+pointer.
 
 Examples:
 
@@ -232,15 +244,17 @@ Examples:
     $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
     $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
 
-Find and attach a C function as a Perl function as a real live xsub.  The advantage of
-attaching a function over using the [function](https://metacpan.org/pod/FFI::Platypus#function) method is that
-it is much much much faster since no object resolution needs to be done.  The disadvantage
-is that it locks the function and the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance into memory permanently,
-since there is no way to deallocate an xsub.
+Find and attach a C function as a Perl function as a real live xsub.  
+The advantage of attaching a function over using the 
+[function](https://metacpan.org/pod/FFI::Platypus#function) method is that it is much much much 
+faster since no object resolution needs to be done.  The disadvantage is 
+that it locks the function and the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance into memory 
+permanently, since there is no way to deallocate an xsub.
 
-If just one _$name_ is given, then the function will be attached in Perl with the same
-name as it has in C.  The second form allows you to give the Perl function a different
-name.  You can also provide an address (the third form), just like with the 
+If just one _$name_ is given, then the function will be attached in 
+Perl with the same name as it has in C.  The second form allows you to 
+give the Perl function a different name.  You can also provide an 
+address (the third form), just like with the 
 [function](https://metacpan.org/pod/FFI::Platypus#function) method.
 
 Examples:
@@ -254,17 +268,18 @@ Examples:
 
     my $closure = $ffi->closure($coderef);
 
-Prepares a code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
-from C code).  For details on closures, see [FFI::Platypus::Type#Closures](https://metacpan.org/pod/FFI::Platypus::Type#Closures).
+Prepares a code reference so that it can be used as a FFI closure (a 
+Perl subroutine that can be called from C code).  For details on 
+closures, see [FFI::Platypus::Type#Closures](https://metacpan.org/pod/FFI::Platypus::Type#Closures).
 
 ## cast
 
     my $converted_value = $ffi->cast($original_type, $converted_type, $original_value);
 
-The `cast` function converts an existing _$original\_value_ of type
-_$original\_type_ into one of type _$converted\_type_.  Not all types are
-supported, so care must be taken.  For example, to get the address of a
-string, you can do this:
+The `cast` function converts an existing _$original\_value_ of type 
+_$original\_type_ into one of type _$converted\_type_.  Not all types 
+are supported, so care must be taken.  For example, to get the address 
+of a string, you can do this:
 
     my $address = $ffi->cast('string' => 'opaque', $string_value);
 
@@ -273,15 +288,15 @@ string, you can do this:
     $ffi->attach_cast("cast_name", $original_type, $converted_type);
     my $converted_value = cast_name($original_value);
 
-This function attaches a cast as a permanent xsub.  This will make it faster
-and may be useful if you are calling a particular cast a lot.
+This function attaches a cast as a permanent xsub.  This will make it 
+faster and may be useful if you are calling a particular cast a lot.
 
 ## sizeof
 
     my $size = $ffi->sizeof($type);
 
-Returns the total size of the given type.  For example to get the size of
-an integer:
+Returns the total size of the given type.  For example to get the size 
+of an integer:
 
     my $intsize = $ffi->sizeof('int'); # usually 4 or 8 depending on platform
 
@@ -289,29 +304,30 @@ You can also get the size of arrays
 
     my $intarraysize = $ffi->sizeof('int[64]');
 
-Keep in mind that "pointer" types will always be the pointer / word size
-for the platform that you are using.  This includes strings, opaque and
+Keep in mind that "pointer" types will always be the pointer / word size 
+for the platform that you are using.  This includes strings, opaque and 
 pointers to other types.
 
-This function is not very fast, so you might want to save this value as a
-constant, particularly if you need the size in a loop with many
+This function is not very fast, so you might want to save this value as 
+a constant, particularly if you need the size in a loop with many 
 iterations.
 
 ## find\_symbol
 
     my $address = $ffi->find_symbol($name);
 
-Return the address of the given symbol (usually function).  Usually you
+Return the address of the given symbol (usually function).  Usually you 
 can use the [function](https://metacpan.org/pod/FFI::Platypus#function) method or the 
-[attach](https://metacpan.org/pod/FFI::Platypus#attach) function directly and will not need
-to use this.
+[attach](https://metacpan.org/pod/FFI::Platypus#attach) function directly and will not need to 
+use this.
 
 # EXAMPLES
 
-Here are some examples.  Some of them use the [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare) interface,
-but the principles apply to the OO interface.  These examples are provided in full
-with the Platypus distribution in the "examples" directory.  There are also some more
-examples in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) that are related to types.
+Here are some examples.  Some of them use the [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare) 
+interface, but the principles apply to the OO interface.  These examples 
+are provided in full with the Platypus distribution in the "examples" 
+directory.  There are also some more examples in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) 
+that are related to types.
 
 ## Integer conversions
 
@@ -323,9 +339,10 @@ examples in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) 
     
     puts(atoi('56'));
 
-**Discussion**: `puts` and `atoi` should be part of libc on all platforms.  `puts` prints
-a string to standard output, and `atoi` converts a string to integer.  Specifying `undef`
-as a library tells Platypus to search the current process for symbols, which includes the
+**Discussion**: `puts` and `atoi` should be part of libc on all 
+platforms.  `puts` prints a string to standard output, and `atoi` 
+converts a string to integer.  Specifying `undef` as a library tells 
+Platypus to search the current process for symbols, which includes the 
 standard c library.
 
 ## libnotify
@@ -352,16 +369,18 @@ standard c library.
     notify_show($n, undef);
     notify_uninit();
 
-**Discussion**: libnotify is a desktop GUI notification library for the GNOME Desktop environment.
-This script sends a notification event that should show up as a balloon, for me it did so in the
-upper right hand corner of my screen.
+**Discussion**: libnotify is a desktop GUI notification library for the 
+GNOME Desktop environment. This script sends a notification event that 
+should show up as a balloon, for me it did so in the upper right hand 
+corner of my screen.
 
-The most portable way to find the correct name and location of a dynamic library
-is via the [FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib) family of functions.  If you are putting together a
-CPAN distribution, you should also consider using [FFI::CheckLib#check\_lib\_or\_exit](https://metacpan.org/pod/FFI::CheckLib#check_lib_or_exit) function
-in your `Build.PL` or `Makefile.PL` file. This will provide a user friendly diagnostic letting
-the user know that the required library is missing, and reduce the number of bogus CPAN testers
-results that you will get.
+The most portable way to find the correct name and location of a dynamic 
+library is via the [FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib) family of functions.  If 
+you are putting together a CPAN distribution, you should also consider 
+using [FFI::CheckLib#check\_lib\_or\_exit](https://metacpan.org/pod/FFI::CheckLib#check_lib_or_exit) function in your `Build.PL` or 
+`Makefile.PL` file. This will provide a user friendly diagnostic 
+letting the user know that the required library is missing, and reduce 
+the number of bogus CPAN testers results that you will get.
 
 ## Allocating and freeing memory
 
@@ -376,9 +395,10 @@ results that you will get.
     
     free $buffer;
 
-**Discussion**: `malloc` and `free` are standard memory allocation functions available from
-the standard c library and.  Interfaces to these and other memory related functions are provided
-by the [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory) module.
+**Discussion**: `malloc` and `free` are standard memory allocation 
+functions available from the standard c library and.  Interfaces to 
+these and other memory related functions are provided by the 
+[FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory) module.
 
 ## libuuid
 
@@ -399,14 +419,14 @@ by the [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory) m
     
     print cast( opaque => string, $string_opaque), "\n";
 
-**Discussion**: libuuid is a library used to generate unique identifiers (UUID) for objects that
-may be accessible beyond the local system.  The library is or was part of the Linux e2fsprogs
-package.
+**Discussion**: libuuid is a library used to generate unique identifiers 
+(UUID) for objects that may be accessible beyond the local system.  The 
+library is or was part of the Linux e2fsprogs package.
 
-Knowing the size of objects is sometimes important.  In this example, we use
-the [sizeof](https://metacpan.org/pod/FFI::Platypus#sizeof) function to get the size of 16 characters (in this case
-it is simply 16 bytes).  We also know that the strings "deparsed" by `uuid_unparse` are exactly
-37 bytes.
+Knowing the size of objects is sometimes important.  In this example, we 
+use the [sizeof](https://metacpan.org/pod/FFI::Platypus#sizeof) function to get the size of 16 
+characters (in this case it is simply 16 bytes).  We also know that the 
+strings "deparsed" by `uuid_unparse` are exactly 37 bytes.
 
 ## puts and getpid
 
@@ -418,8 +438,8 @@ it is simply 16 bytes).  We also know that the strings "deparsed" by `uuid_unpar
     
     puts(getpid());
 
-**Discussion**: `puts` is part of libc on all platforms.  `getpid` is available as part of libc 
-on Unix type platforms.
+**Discussion**: `puts` is part of libc on all platforms.  `getpid` is 
+available as part of libc on Unix type platforms.
 
 ## Math library
 
@@ -440,10 +460,12 @@ on Unix type platforms.
     
     puts(fmax(2.0,3.0));
 
-**Discussion**: On UNIX the standard c library math functions are frequently provided in a separate
-library `libm`, so you could search for those symbols in "libm.so", but that won't work on non-UNIX
-platforms like Microsoft Windows.  Fortunately Perl uses the math library so these symbols are
-already in the current process so you can use `undef` as the library.
+**Discussion**: On UNIX the standard c library math functions are 
+frequently provided in a separate library `libm`, so you could search 
+for those symbols in "libm.so", but that won't work on non-UNIX 
+platforms like Microsoft Windows.  Fortunately Perl uses the math 
+library so these symbols are already in the current process so you can 
+use `undef` as the library.
 
 ## Strings
 
@@ -467,8 +489,8 @@ already in the current process so you can use `undef` as the library.
     
     puts(strerror(2));
 
-**Discussion**: Strings are not a native type to `libffi` but the are handled seamlessly by
-Platypus.
+**Discussion**: Strings are not a native type to `libffi` but the are 
+handled seamlessly by Platypus.
 
 ## Attach function from pointer
 
@@ -492,14 +514,16 @@ Platypus.
     
     print add(1,2), "\n";
 
-**Discussion**: Sometimes you will have a pointer to a function from a source other than Platypus
-that you want to call.  You can use that address instead of a function name for either
-of the [FFI::Platypus#function](https://metacpan.org/pod/FFI::Platypus#function) or [FFI::Platypus#attach](https://metacpan.org/pod/FFI::Platypus#attach) methods.  In this example we use
-[FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) to compile a short piece of C code and to give us the address of one of its
-functions, which we then use to create a perl xsub to call it.
+**Discussion**: Sometimes you will have a pointer to a function from a 
+source other than Platypus that you want to call.  You can use that 
+address instead of a function name for either of the 
+[FFI::Platypus#function](https://metacpan.org/pod/FFI::Platypus#function) or [FFI::Platypus#attach](https://metacpan.org/pod/FFI::Platypus#attach) methods.  In this 
+example we use [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) to compile a short piece of C code and to 
+give us the address of one of its functions, which we then use to create 
+a perl xsub to call it.
 
-[FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) embeds the Tiny C Compiler (tcc) to provide a just-in-time (JIT) compilation
-service for FFI.
+[FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) embeds the Tiny C Compiler (tcc) to provide a 
+just-in-time (JIT) compilation service for FFI.
 
 ## libzmq
 
@@ -568,28 +592,138 @@ service for FFI.
       print "recv_message = $recv_message\n";
     };
 
-**Discussion**: ØMQ is a high-performance asynchronous messaging library.  There are a few things
-to note here.
+**Discussion**: ØMQ is a high-performance asynchronous messaging library.  
+There are a few things to note here.
 
-Firstly, sometimes there may be multiple versions of a library in the wild and you may need to
-verify that the library on a system meets your needs.  Here we use `zmq_version` to ask
-libzmq which version it is.
+Firstly, sometimes there may be multiple versions of a library in the 
+wild and you may need to verify that the library on a system meets your 
+needs.  Here we use `zmq_version` to ask libzmq which version it is.
 
-`zmq_version` returns the version number via three integer pointer arguments, so we use the 
-pointer to integer type: `int *`.  In order to pass pointer types, we pass a reference.
-In this case it is a reference to an undefined value, because zmq\_version will write into
-the pointers the output values, but you can also pass in references to integers, floating
-point values and opaque pointer types.  When the function returns the `$major` variable
-(and the others) has been updated and we can use it to verify that it supports the API
-that we require.
+`zmq_version` returns the version number via three integer pointer 
+arguments, so we use the pointer to integer type: `int *`.  In order to 
+pass pointer types, we pass a reference. In this case it is a reference 
+to an undefined value, because zmq\_version will write into the pointers 
+the output values, but you can also pass in references to integers, 
+floating point values and opaque pointer types.  When the function 
+returns the `$major` variable (and the others) has been updated and we 
+can use it to verify that it supports the API that we require.
 
-Notice that we define three aliases for the `opaque` type: `zmq_context`, `zmq_socket`
-and `zmq_msg_t`.  While this isn't strictly necessary, since Platypus and C treat all
-three of these types the same, it is useful form of documentation that helps describe
-the functionality of the interface.
+Notice that we define three aliases for the `opaque` type: 
+`zmq_context`, `zmq_socket` and `zmq_msg_t`.  While this isn't 
+strictly necessary, since Platypus and C treat all three of these types 
+the same, it is useful form of documentation that helps describe the 
+functionality of the interface.
 
-Finally we attach the necessary functions, send and receive a message.  If you are interested,
-there is a fully fleshed out ØMQ Perl interface implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
+Finally we attach the necessary functions, send and receive a message.  
+If you are interested, there is a fully fleshed out ØMQ Perl interface 
+implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
+
+## libarchive
+
+    use FFI::Platypus      ();
+    use FFI::Platypus::API ();
+    use FFI::CheckLib      ();
+    
+    # This example uses FreeBSD's libarchive to list the contents of any
+    # archive format that it suppors.  We've also filled out a part of
+    # the ArchiveWrite class that could be used for writing archive formats
+    # supported by libarchive
+    
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(FFI::CheckLib::find_lib_or_exit lib => 'archive');
+    
+    $ffi->custom_type(archive => {
+      native_type    => 'opaque',
+      perl_to_native => sub { ${$_[0]} },
+      native_to_perl => sub {
+        # this works because archive_read_new ignores any arguments
+        # and we pass in the class name which we can get here.
+        my $class = FFI::Platypus::API::arguments_get_string(0);
+        bless \$_[0], $class;
+      },
+    });
+    
+    $ffi->custom_type(archive_entry => {
+      native_type => 'opaque',
+      perl_to_native => sub { ${$_[0]} },
+      native_to_perl => sub {
+        # works likewise for archive_entry objects
+        my $class = FFI::Platypus::API::arguments_get_string(0);
+        bless \$_[0], $class,
+      },
+    });
+    
+    package Archive;
+    
+    # base class is "abstract" having no constructor or destructor
+    
+    $ffi->attach( [ archive_error_string => 'error_string' ] => ['archive'] => 'string' );
+    
+    package ArchiveRead;
+    
+    our @ISA = qw( Archive );
+    
+    $ffi->attach( [ archive_read_new => 'new' ] => ['string'] => 'archive' );
+    $ffi->attach( [ archive_read_free => 'DESTROY' ] => ['archive'] => 'void' );
+    $ffi->attach( [ archive_read_support_filter_all => 'support_filter_all' ] => ['archive'] => 'int' );
+    $ffi->attach( [ archive_read_support_format_all => 'support_format_all' ] => ['archive'] => 'int' );
+    $ffi->attach( [ archive_read_open_filename => 'open_filename' ] => ['archive','string','size_t'] => 'int' );
+    $ffi->attach( [ archive_read_next_header2 => 'next_header2' ] => ['archive', 'archive_entry' ] => 'int' );
+    $ffi->attach( [ archive_read_data_skip => 'data_skip' ] => ['archive'] => 'int' );
+    # ... define additional read methods
+    
+    package ArchiveWrite;
+    
+    our @ISA = qw( Archive );
+    
+    $ffi->attach( [ archive_write_new => 'new' ] => ['string'] => 'archive' );
+    $ffi->attach( [ archive_write_free => 'DESTROY' ] => ['archive'] => 'void' );
+    # ... define additional write methods
+    
+    package ArchiveEntry;
+    
+    $ffi->attach( [ archive_entry_new => 'new' ] => ['string'] => 'archive_entry' );
+    $ffi->attach( [ archive_entry_free => 'DESTROY' ] => ['archive_entry'] => 'void' );
+    $ffi->attach( [ archive_entry_pathname => 'pathname' ] => ['archive_entry'] => 'string' );
+    # ... define additional entry methods
+    
+    package main;
+    
+    use constant ARCHIVE_OK => 0;
+    
+    # this is a Perl version of the C code here:
+    # https://github.com/libarchive/libarchive/wiki/Examples#List_contents_of_Archive_stored_in_File
+    
+    my $archive_filename = shift @ARGV;
+    die "usage: $0 archive.tar" unless defined $archive_filename;
+    
+    my $archive = ArchiveRead->new;
+    $archive->support_filter_all;
+    $archive->support_format_all;
+    
+    my $r = $archive->open_filename($archive_filename, 1024);
+    die "error opening $archive_filename: ", $archive->error_string
+      unless $r == ARCHIVE_OK;
+    
+    my $entry = ArchiveEntry->new;
+    
+    while($archive->next_header2($entry) == ARCHIVE_OK)
+    {
+      print $entry->pathname, "\n";
+      $archive->data_skip;
+    }
+
+**Discussion**: libarchive is the implementation of `tar` from BSD 
+provided as a library.
+
+One interesting thing about libarchive is that it provides a kind of 
+object oriented interface via opaque pointers.  This approach to writing 
+an interface to it creates an abstract class `Archive`, and concrete 
+classes `ArchiveWrite`, `ArchiveRead` and `ArchiveEntry`.  The 
+concrete classes can even be inherited from and extended just like any 
+Perl classes because of the way the custom types are implemented.  For 
+more details on custom types see [FFI::Platypus::Custom](https://metacpan.org/pod/FFI::Platypus::Custom) and 
+[FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
 
 # SUPPORT
 

@@ -99,9 +99,9 @@ Platypus also provides an declarative interface you may want to use
 instead of the object oriented interface called 
 L<FFI::Platypus::Declare>.
 
-Platypus has an extensive documentation of Platypus types at
-L<FFI::Platypus::Type> and the the Platypus custom types API
-at L<FFI::Platypus::API>.
+Platypus has an extensive documentation of Platypus types at 
+L<FFI::Platypus::Type> and the the Platypus custom types API at 
+L<FFI::Platypus::API>.
 
 =cut
 
@@ -130,12 +130,12 @@ XSLoader::load(
 
 Create a new instance of L<FFI::Platypus>.
 
-Any types defined with this instance will be valid for this
-instance only, so you do not need to worry about stepping on
-the toes of other CPAN FFI Authors.
+Any types defined with this instance will be valid for this instance 
+only, so you do not need to worry about stepping on the toes of other 
+CPAN FFI Authors.
 
-Any functions found will be out of the list of libraries
-specified with the L<lib|FFI::Platypus#lib> attribute.
+Any functions found will be out of the list of libraries specified with 
+the L<lib|FFI::Platypus#lib> attribute.
 
 =head3 options
 
@@ -143,7 +143,7 @@ specified with the L<lib|FFI::Platypus#lib> attribute.
 
 =item lib
 
-Either a pathname (string) or a list of pathnames (array ref of strings)
+Either a pathname (string) or a list of pathnames (array ref of strings) 
 to pre-populate the L<lib|FFI::Platypus#lib> attribute.
 
 =back
@@ -181,7 +181,7 @@ sub new
 
 The list of libraries to search for symbols in.
 
-The most portable and reliable way to find dynamic libraries is by using
+The most portable and reliable way to find dynamic libraries is by using 
 L<FFI::CheckLib>, like this:
 
  use FFI::CheckLib 0.06;
@@ -193,13 +193,13 @@ L<FFI::CheckLib>, like this:
    #       ...
    # and will die if it isn't found
 
-L<FFI::CheckLib> has a number of options, such as checking for specific
+L<FFI::CheckLib> has a number of options, such as checking for specific 
 symbols, etc.  You should consult the documentation for that module.
 
-As a special case, if you add C<undef> as a "library" to be searched,
-L<FFI::Platypus> will also search the current process for symbols.
-This is mostly useful for finding functions in the standard C library,
-without having to know the name of libc for your platform (as it turns
+As a special case, if you add C<undef> as a "library" to be searched, 
+L<FFI::Platypus> will also search the current process for symbols. This 
+is mostly useful for finding functions in the standard C library, 
+without having to know the name of libc for your platform (as it turns 
 out it is different just about everywhere!).
 
 =cut
@@ -223,8 +223,10 @@ sub lib
  $ffi->type($typename);
  $ffi->type($typename => $alias);
 
-Define a type.  The first argument is the native or C name of the type.  The second argument (optional) is an alias name
-that you can use to refer to this new type.  See L<FFI:Platypus::Type> for legal type definitions.
+Define a type.  The first argument is the native or C name of the type.  
+The second argument (optional) is an alias name that you can use to 
+refer to this new type.  See L<FFI:Platypus::Type> for legal type 
+definitions.
 
 Examples:
 
@@ -325,12 +327,14 @@ sub custom_type
 
  $ffi->load_custom_type($name => $alias, @type_args);
 
-Load the custom type defined in the module I<$name>, and make an alias with the name I<$alias>.
-If the custom type requires any arguments, they may be passed in as I<@type_args>.
-See L<FFI::Platypus::Type#Custom Types> for details.
+Load the custom type defined in the module I<$name>, and make an alias 
+with the name I<$alias>. If the custom type requires any arguments, they 
+may be passed in as I<@type_args>. See L<FFI::Platypus::Type#Custom 
+Types> for details.
 
-If I<$name> contains C<::> then it will be assumed to be a fully qualified package name.
-If not, then C<FFI::Platypus::Type::> will be prepended to it.
+If I<$name> contains C<::> then it will be assumed to be a fully 
+qualified package name. If not, then C<FFI::Platypus::Type::> will be 
+prepended to it.
 
 =cut
 
@@ -373,10 +377,13 @@ sub _type_lookup
  my @types = $ffi->types;
  my @types = FFI::Platypus->types;
 
-Returns the list of types that FFI knows about.  This may be either built in FFI types (example: I<sint32>) or
-detected C types (example: I<signed int>), or types that you have defined using the L<type|FFI::Platypus#type> method.
+Returns the list of types that FFI knows about.  This may be either 
+built in FFI types (example: I<sint32>) or detected C types (example: 
+I<signed int>), or types that you have defined using the 
+L<type|FFI::Platypus#type> method.
 
-It can also be called as a class method, in which case, no user defined types will be included.
+It can also be called as a class method, in which case, no user defined 
+types will be included.
 
 =cut
 
@@ -397,7 +404,8 @@ sub types
 
 Returns a hash reference with the meta information for the given type.
 
-It can also be called as a class method, in which case, you won't be able to get meta data on user defined types.
+It can also be called as a class method, in which case, you won't be 
+able to get meta data on user defined types.
 
 Examples:
 
@@ -421,25 +429,29 @@ sub type_meta
  my $function = $ffi->function($name => \@argument_types => $return_type);
  my $function = $ffi->function($address => \@argument_types => $return_type);
  
-Returns an object that is similar to a code reference in that it can be called like one.
+Returns an object that is similar to a code reference in that it can be 
+called like one.
 
-Caveat: many situations require a real code reference, at the price of a performance
-penalty you can get one like this:
+Caveat: many situations require a real code reference, at the price of a 
+performance penalty you can get one like this:
 
  my $function = $ffi->function(...);
  my $coderef = sub { $function->(@_) };
 
-It may be better, and faster to create a real Perl function using the L<attach|FFI::Platypus#attach> method.
+It may be better, and faster to create a real Perl function using the 
+L<attach|FFI::Platypus#attach> method.
 
-In addition to looking up a function by name you can provide the address of the symbol
-yourself:
+In addition to looking up a function by name you can provide the address 
+of the symbol yourself:
 
  my $address = $ffi->find_symbol('my_functon');
  my $function = $ffi->function($address => ...);
 
-Under the covers this function uses L<find_symbol|FFI::Platypus#find_symbol> when you provide it
-with a name rather than an address, but you may have alternative ways of obtaining a function's
-address, such as it could be returned as an C<opaque> pointer.
+Under the covers this function uses 
+L<find_symbol|FFI::Platypus#find_symbol> when you provide it with a name 
+rather than an address, but you may have alternative ways of obtaining a 
+function's address, such as it could be returned as an C<opaque> 
+pointer.
 
 Examples:
 
@@ -465,15 +477,17 @@ sub function
  $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
  $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
 
-Find and attach a C function as a Perl function as a real live xsub.  The advantage of
-attaching a function over using the L<function|FFI::Platypus#function> method is that
-it is much much much faster since no object resolution needs to be done.  The disadvantage
-is that it locks the function and the L<FFI::Platypus> instance into memory permanently,
-since there is no way to deallocate an xsub.
+Find and attach a C function as a Perl function as a real live xsub.  
+The advantage of attaching a function over using the 
+L<function|FFI::Platypus#function> method is that it is much much much 
+faster since no object resolution needs to be done.  The disadvantage is 
+that it locks the function and the L<FFI::Platypus> instance into memory 
+permanently, since there is no way to deallocate an xsub.
 
-If just one I<$name> is given, then the function will be attached in Perl with the same
-name as it has in C.  The second form allows you to give the Perl function a different
-name.  You can also provide an address (the third form), just like with the 
+If just one I<$name> is given, then the function will be attached in 
+Perl with the same name as it has in C.  The second form allows you to 
+give the Perl function a different name.  You can also provide an 
+address (the third form), just like with the 
 L<function|FFI::Platypus#function> method.
 
 Examples:
@@ -508,8 +522,9 @@ sub attach
 
  my $closure = $ffi->closure($coderef);
 
-Prepares a code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
-from C code).  For details on closures, see L<FFI::Platypus::Type#Closures>.
+Prepares a code reference so that it can be used as a FFI closure (a 
+Perl subroutine that can be called from C code).  For details on 
+closures, see L<FFI::Platypus::Type#Closures>.
 
 =cut
 
@@ -523,10 +538,10 @@ sub closure
 
  my $converted_value = $ffi->cast($original_type, $converted_type, $original_value);
 
-The C<cast> function converts an existing I<$original_value> of type
-I<$original_type> into one of type I<$converted_type>.  Not all types are
-supported, so care must be taken.  For example, to get the address of a
-string, you can do this:
+The C<cast> function converts an existing I<$original_value> of type 
+I<$original_type> into one of type I<$converted_type>.  Not all types 
+are supported, so care must be taken.  For example, to get the address 
+of a string, you can do this:
 
  my $address = $ffi->cast('string' => 'opaque', $string_value);
 
@@ -542,8 +557,8 @@ sub cast
  $ffi->attach_cast("cast_name", $original_type, $converted_type);
  my $converted_value = cast_name($original_value);
 
-This function attaches a cast as a permanent xsub.  This will make it faster
-and may be useful if you are calling a particular cast a lot.
+This function attaches a cast as a permanent xsub.  This will make it 
+faster and may be useful if you are calling a particular cast a lot.
 
 =cut
 
@@ -560,8 +575,8 @@ sub attach_cast
 
  my $size = $ffi->sizeof($type);
 
-Returns the total size of the given type.  For example to get the size of
-an integer:
+Returns the total size of the given type.  For example to get the size 
+of an integer:
 
  my $intsize = $ffi->sizeof('int'); # usually 4 or 8 depending on platform
 
@@ -569,12 +584,12 @@ You can also get the size of arrays
 
  my $intarraysize = $ffi->sizeof('int[64]');
 
-Keep in mind that "pointer" types will always be the pointer / word size
-for the platform that you are using.  This includes strings, opaque and
+Keep in mind that "pointer" types will always be the pointer / word size 
+for the platform that you are using.  This includes strings, opaque and 
 pointers to other types.
 
-This function is not very fast, so you might want to save this value as a
-constant, particularly if you need the size in a loop with many
+This function is not very fast, so you might want to save this value as 
+a constant, particularly if you need the size in a loop with many 
 iterations.
 
 =cut
@@ -590,10 +605,10 @@ sub sizeof
 
  my $address = $ffi->find_symbol($name);
 
-Return the address of the given symbol (usually function).  Usually you
+Return the address of the given symbol (usually function).  Usually you 
 can use the L<function|FFI::Platypus#function> method or the 
-L<attach|FFI::Platypus#attach> function directly and will not need
-to use this.
+L<attach|FFI::Platypus#attach> function directly and will not need to 
+use this.
 
 =cut
 
@@ -621,118 +636,146 @@ sub find_symbol
 
 =head1 EXAMPLES
 
-Here are some examples.  Some of them use the L<FFI::Platypus::Declare> interface,
-but the principles apply to the OO interface.  These examples are provided in full
-with the Platypus distribution in the "examples" directory.  There are also some more
-examples in L<FFI::Platypus::Type> that are related to types.
+Here are some examples.  Some of them use the L<FFI::Platypus::Declare> 
+interface, but the principles apply to the OO interface.  These examples 
+are provided in full with the Platypus distribution in the "examples" 
+directory.  There are also some more examples in L<FFI::Platypus::Type> 
+that are related to types.
 
 =head2 Integer conversions
 
 # EXAMPLE: examples/integer.pl
 
-B<Discussion>: C<puts> and C<atoi> should be part of libc on all platforms.  C<puts> prints
-a string to standard output, and C<atoi> converts a string to integer.  Specifying C<undef>
-as a library tells Platypus to search the current process for symbols, which includes the
+B<Discussion>: C<puts> and C<atoi> should be part of libc on all 
+platforms.  C<puts> prints a string to standard output, and C<atoi> 
+converts a string to integer.  Specifying C<undef> as a library tells 
+Platypus to search the current process for symbols, which includes the 
 standard c library.
 
 =head2 libnotify
 
 # EXAMPLE: examples/notify.pl
 
-B<Discussion>: libnotify is a desktop GUI notification library for the GNOME Desktop environment.
-This script sends a notification event that should show up as a balloon, for me it did so in the
-upper right hand corner of my screen.
+B<Discussion>: libnotify is a desktop GUI notification library for the 
+GNOME Desktop environment. This script sends a notification event that 
+should show up as a balloon, for me it did so in the upper right hand 
+corner of my screen.
 
-The most portable way to find the correct name and location of a dynamic library
-is via the L<FFI::CheckLib#find_lib> family of functions.  If you are putting together a
-CPAN distribution, you should also consider using L<FFI::CheckLib#check_lib_or_exit> function
-in your C<Build.PL> or C<Makefile.PL> file. This will provide a user friendly diagnostic letting
-the user know that the required library is missing, and reduce the number of bogus CPAN testers
-results that you will get.
+The most portable way to find the correct name and location of a dynamic 
+library is via the L<FFI::CheckLib#find_lib> family of functions.  If 
+you are putting together a CPAN distribution, you should also consider 
+using L<FFI::CheckLib#check_lib_or_exit> function in your C<Build.PL> or 
+C<Makefile.PL> file. This will provide a user friendly diagnostic 
+letting the user know that the required library is missing, and reduce 
+the number of bogus CPAN testers results that you will get.
 
 =head2 Allocating and freeing memory
 
 # EXAMPLE: examples/malloc.pl
 
-B<Discussion>: C<malloc> and C<free> are standard memory allocation functions available from
-the standard c library and.  Interfaces to these and other memory related functions are provided
-by the L<FFI::Platypus::Memory> module.
+B<Discussion>: C<malloc> and C<free> are standard memory allocation 
+functions available from the standard c library and.  Interfaces to 
+these and other memory related functions are provided by the 
+L<FFI::Platypus::Memory> module.
 
 =head2 libuuid
 
 # EXAMPLE: examples/uuid.pl
 
-B<Discussion>: libuuid is a library used to generate unique identifiers (UUID) for objects that
-may be accessible beyond the local system.  The library is or was part of the Linux e2fsprogs
-package.
+B<Discussion>: libuuid is a library used to generate unique identifiers 
+(UUID) for objects that may be accessible beyond the local system.  The 
+library is or was part of the Linux e2fsprogs package.
 
-Knowing the size of objects is sometimes important.  In this example, we use
-the L<sizeof|FFI::Platypus#sizeof> function to get the size of 16 characters (in this case
-it is simply 16 bytes).  We also know that the strings "deparsed" by C<uuid_unparse> are exactly
-37 bytes.
+Knowing the size of objects is sometimes important.  In this example, we 
+use the L<sizeof|FFI::Platypus#sizeof> function to get the size of 16 
+characters (in this case it is simply 16 bytes).  We also know that the 
+strings "deparsed" by C<uuid_unparse> are exactly 37 bytes.
 
 =head2 puts and getpid
 
 # EXAMPLE: examples/getpid.pl
 
-B<Discussion>: C<puts> is part of libc on all platforms.  C<getpid> is available as part of libc 
-on Unix type platforms.
+B<Discussion>: C<puts> is part of libc on all platforms.  C<getpid> is 
+available as part of libc on Unix type platforms.
 
 =head2 Math library
 
 # EXAMPLE: examples/math.pl
 
-B<Discussion>: On UNIX the standard c library math functions are frequently provided in a separate
-library C<libm>, so you could search for those symbols in "libm.so", but that won't work on non-UNIX
-platforms like Microsoft Windows.  Fortunately Perl uses the math library so these symbols are
-already in the current process so you can use C<undef> as the library.
+B<Discussion>: On UNIX the standard c library math functions are 
+frequently provided in a separate library C<libm>, so you could search 
+for those symbols in "libm.so", but that won't work on non-UNIX 
+platforms like Microsoft Windows.  Fortunately Perl uses the math 
+library so these symbols are already in the current process so you can 
+use C<undef> as the library.
 
 =head2 Strings
 
 # EXAMPLE: examples/string.pl
 
-B<Discussion>: Strings are not a native type to C<libffi> but the are handled seamlessly by
-Platypus.
+B<Discussion>: Strings are not a native type to C<libffi> but the are 
+handled seamlessly by Platypus.
 
 =head2 Attach function from pointer
 
 # EXAMPLE: examples/attach_from_pointer.pl
 
-B<Discussion>: Sometimes you will have a pointer to a function from a source other than Platypus
-that you want to call.  You can use that address instead of a function name for either
-of the L<FFI::Platypus#function> or L<FFI::Platypus#attach> methods.  In this example we use
-L<FFI::TinyCC> to compile a short piece of C code and to give us the address of one of its
-functions, which we then use to create a perl xsub to call it.
+B<Discussion>: Sometimes you will have a pointer to a function from a 
+source other than Platypus that you want to call.  You can use that 
+address instead of a function name for either of the 
+L<FFI::Platypus#function> or L<FFI::Platypus#attach> methods.  In this 
+example we use L<FFI::TinyCC> to compile a short piece of C code and to 
+give us the address of one of its functions, which we then use to create 
+a perl xsub to call it.
 
-L<FFI::TinyCC> embeds the Tiny C Compiler (tcc) to provide a just-in-time (JIT) compilation
-service for FFI.
+L<FFI::TinyCC> embeds the Tiny C Compiler (tcc) to provide a 
+just-in-time (JIT) compilation service for FFI.
 
 =head2 libzmq
 
 # EXAMPLE: examples/zmq3.pl
 
-B<Discussion>: ØMQ is a high-performance asynchronous messaging library.  There are a few things
-to note here.
+B<Discussion>: ØMQ is a high-performance asynchronous messaging library.  
+There are a few things to note here.
 
-Firstly, sometimes there may be multiple versions of a library in the wild and you may need to
-verify that the library on a system meets your needs.  Here we use C<zmq_version> to ask
-libzmq which version it is.
+Firstly, sometimes there may be multiple versions of a library in the 
+wild and you may need to verify that the library on a system meets your 
+needs.  Here we use C<zmq_version> to ask libzmq which version it is.
 
-C<zmq_version> returns the version number via three integer pointer arguments, so we use the 
-pointer to integer type: C<int *>.  In order to pass pointer types, we pass a reference.
-In this case it is a reference to an undefined value, because zmq_version will write into
-the pointers the output values, but you can also pass in references to integers, floating
-point values and opaque pointer types.  When the function returns the C<$major> variable
-(and the others) has been updated and we can use it to verify that it supports the API
-that we require.
+C<zmq_version> returns the version number via three integer pointer 
+arguments, so we use the pointer to integer type: C<int *>.  In order to 
+pass pointer types, we pass a reference. In this case it is a reference 
+to an undefined value, because zmq_version will write into the pointers 
+the output values, but you can also pass in references to integers, 
+floating point values and opaque pointer types.  When the function 
+returns the C<$major> variable (and the others) has been updated and we 
+can use it to verify that it supports the API that we require.
 
-Notice that we define three aliases for the C<opaque> type: C<zmq_context>, C<zmq_socket>
-and C<zmq_msg_t>.  While this isn't strictly necessary, since Platypus and C treat all
-three of these types the same, it is useful form of documentation that helps describe
-the functionality of the interface.
+Notice that we define three aliases for the C<opaque> type: 
+C<zmq_context>, C<zmq_socket> and C<zmq_msg_t>.  While this isn't 
+strictly necessary, since Platypus and C treat all three of these types 
+the same, it is useful form of documentation that helps describe the 
+functionality of the interface.
 
-Finally we attach the necessary functions, send and receive a message.  If you are interested,
-there is a fully fleshed out ØMQ Perl interface implemented using FFI called L<ZMQ::FFI>.
+Finally we attach the necessary functions, send and receive a message.  
+If you are interested, there is a fully fleshed out ØMQ Perl interface 
+implemented using FFI called L<ZMQ::FFI>.
+
+=head2 libarchive
+
+# EXAMPLE: examples/archive.pl
+
+B<Discussion>: libarchive is the implementation of C<tar> from BSD 
+provided as a library.
+
+One interesting thing about libarchive is that it provides a kind of 
+object oriented interface via opaque pointers.  This approach to writing 
+an interface to it creates an abstract class C<Archive>, and concrete 
+classes C<ArchiveWrite>, C<ArchiveRead> and C<ArchiveEntry>.  The 
+concrete classes can even be inherited from and extended just like any 
+Perl classes because of the way the custom types are implemented.  For 
+more details on custom types see L<FFI::Platypus::Custom> and 
+L<FFI::Platypus::API>.
 
 =cut
 
