@@ -24,7 +24,7 @@ my %module_build_args = (
     "Module::Build" => "0.28",
     "perl" => "5.008001"
   },
-  "dist_abstract" => "Write Perl bindings to foreign language libraries without XS",
+  "dist_abstract" => "Write Perl bindings to non-Perl libraries without C or XS",
   "dist_author" => [
     "Graham Ollis <plicease\@cpan.org>"
   ],

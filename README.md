@@ -1,6 +1,6 @@
 # FFI::Platypus
 
-Write Perl bindings to foreign language libraries without XS
+Write Perl bindings to non-Perl libraries without C or XS
 
 # SYNOPSIS
 

@@ -5,7 +5,7 @@ use warnings;
 use 5.008001;
 use Carp qw( croak );
 
-# ABSTRACT: Write Perl bindings to foreign language libraries without XS
+# ABSTRACT: Write Perl bindings to non-Perl libraries without C or XS
 # VERSION
 
 # Platypus Man,
