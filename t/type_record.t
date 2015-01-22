@@ -16,14 +16,14 @@ subtest 'not a reference' => sub {
 
   $ffi->type("record($record_size)" => 'foo_record_t');
   my $get_name  = $ffi->function( foo_get_name    => [ 'foo_record_t' ] => 'string' );
-  my $get_value = $ffi->function( foo_get_value   => [ 'foo_record_t' ] => 'sint64' );
+  my $get_value = $ffi->function( foo_get_value   => [ 'foo_record_t' ] => 'sint32' );
   my $is_null   = $ffi->function( pointer_is_null => [ 'foo_record_t' ] => 'int' );
-  my $create    = $ffi->function( foo_create      => [ 'string', 'sint64' ] => 'foo_record_t' );
+  my $create    = $ffi->function( foo_create      => [ 'string', 'sint32' ] => 'foo_record_t' );
   my $null      = $ffi->function( pointer_null    => [] => 'foo_record_t' );
   
   subtest in => sub {
     plan tests => 3;
-    my $packed = pack('A16q', "hi there\0", 42);
+    my $packed = pack('A16l', "hi there\0", 42);
     note "packed size = ", length $packed;
   
     is $get_value->($packed), 42, "get_value(\$packed) = 42";
@@ -52,14 +52,14 @@ subtest 'is a reference' => sub {
 
   $ffi->type("record(My::FooRecord)" => 'foo_record_t');
   my $get_name  = $ffi->function( foo_get_name    => [ 'foo_record_t' ] => 'string' );
-  my $get_value = $ffi->function( foo_get_value   => [ 'foo_record_t' ] => 'sint64' );
+  my $get_value = $ffi->function( foo_get_value   => [ 'foo_record_t' ] => 'sint32' );
   my $is_null   = $ffi->function( pointer_is_null => [ 'foo_record_t' ] => 'int' );
-  my $create    = $ffi->function( foo_create      => [ 'string', 'sint64' ] => 'foo_record_t' );
+  my $create    = $ffi->function( foo_create      => [ 'string', 'sint32' ] => 'foo_record_t' );
   my $null      = $ffi->function( pointer_null    => [] => 'foo_record_t' );
   
   subtest in => sub {
     plan tests => 3;
-    my $packed = pack('A16q', "hi there\0", 42);
+    my $packed = pack('A16l', "hi there\0", 42);
     note "packed size = ", length $packed;
   
     is $get_value->(\$packed), 42, "get_value(\\\$packed) = 42";
@@ -87,7 +87,7 @@ package
 
 use constant ffi_record_size => do {
   my $ffi = FFI::Platypus->new;
-  $ffi->sizeof('char[16]') + $ffi->sizeof('sint64');
+  $ffi->sizeof('char[16]') + $ffi->sizeof('sint32');
 };
 
 sub my_method { "starscream" }

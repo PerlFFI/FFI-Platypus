@@ -3,7 +3,7 @@
 
 typedef struct {
   const char name[16];
-  int64_t value;
+  int32_t value;
 } foo_record_t;
 
 EXTERN const char *
@@ -14,7 +14,7 @@ foo_get_name(foo_record_t *self)
   return self->name;
 }
 
-EXTERN int64_t
+EXTERN int32_t
 foo_get_value(foo_record_t *self)
 {
   if(self == NULL)
@@ -23,7 +23,7 @@ foo_get_value(foo_record_t *self)
 }
 
 EXTERN foo_record_t *
-foo_create(const char *name, int64_t value)
+foo_create(const char *name, int32_t value)
 {
   static foo_record_t myfoo;
   
