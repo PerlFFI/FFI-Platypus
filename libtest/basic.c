@@ -12,3 +12,8 @@ my_atoi(const char *string)
 {
   return atoi(string);
 }
+
+EXTERN void
+f1(void)
+{
+}

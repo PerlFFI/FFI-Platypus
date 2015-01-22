@@ -103,6 +103,10 @@ the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
     Either a pathname (string) or a list of pathnames (array ref of strings) 
     to pre-populate the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
 
+- ignore\_not\_found
+
+    Set the [ignore\_not\_found](https://metacpan.org/pod/FFI::Platypus#ignore_not_found) attribute.
+
 # ATTRIBUTES
 
 ## lib
@@ -132,6 +136,22 @@ Platypus will also search the current process for symbols. This is
 mostly useful for finding functions in the standard C library, without 
 having to know the name of the standard c library for your platform (as 
 it turns out it is different just about everywhere!).
+
+## ignore\_not\_found
+
+    $ffi->ignore_not_found(1);
+    my $ignore_not_found = $ffi->ignore_not_found;
+
+Normally the [attach](https://metacpan.org/pod/FFI::Platypus#attach) and 
+[function](https://metacpan.org/pod/FFI::Platypus#function) methods will throw an exception if it 
+cannot find the name of the function you provide it.  This will change 
+the behavior such that [function](https://metacpan.org/pod/FFI::Platypus#function) will return 
+`undef` when the function is not found and 
+[attach](https://metacpan.org/pod/FFI::Platypus#attach) will ignore functions that are not found. 
+This is useful when you are writing bindings to a library and have many 
+optional functions and you do not wish to wrap every call to 
+[function](https://metacpan.org/pod/FFI::Platypus#function) or [attach](https://metacpan.org/pod/FFI::Platypus#attach) in 
+an `eval`.
 
 # METHODS
 

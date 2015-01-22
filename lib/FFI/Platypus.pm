@@ -147,6 +147,10 @@ the L<lib|FFI::Platypus#lib> attribute.
 Either a pathname (string) or a list of pathnames (array ref of strings) 
 to pre-populate the L<lib|FFI::Platypus#lib> attribute.
 
+=item ignore_not_found
+
+Set the L<ignore_not_found|FFI::Platypus#ignore_not_found> attribute.
+
 =back
 
 =cut
@@ -170,7 +174,12 @@ sub new
       croak "lib argument must be a scalar or array reference";
     }
   }
-  bless { lib => \@lib, handles => {}, types => {} }, $class;
+  bless {
+    lib              => \@lib,
+    handles          => {},
+    types            => {},
+    ignore_not_found => defined $args{ignore_not_found} ? $args{ignore_not_found} : 0,
+  }, $class;
 }
 
 =head1 ATTRIBUTES
@@ -215,6 +224,36 @@ sub lib
   }
   
   @{ $self->{lib} };
+}
+
+=head2 ignore_not_found
+
+ $ffi->ignore_not_found(1);
+ my $ignore_not_found = $ffi->ignore_not_found;
+
+Normally the L<attach|FFI::Platypus#attach> and 
+L<function|FFI::Platypus#function> methods will throw an exception if it 
+cannot find the name of the function you provide it.  This will change 
+the behavior such that L<function|FFI::Platypus#function> will return 
+C<undef> when the function is not found and 
+L<attach|FFI::Platypus#attach> will ignore functions that are not found. 
+This is useful when you are writing bindings to a library and have many 
+optional functions and you do not wish to wrap every call to 
+L<function|FFI::Platypus#function> or L<attach|FFI::Platypus#attach> in 
+an C<eval>.
+
+=cut
+
+sub ignore_not_found
+{
+  my($self, $value) = @_;
+  
+  if(defined $value)
+  {
+    $self->{ignore_not_found} = $value;
+  }
+  
+  $self->{ignore_not_found};
 }
 
 =head1 METHODS
@@ -475,7 +514,8 @@ sub function
   my @args = map { $self->_type_lookup($_) || croak "unknown type: $_" } @$args;
   $ret = $self->_type_lookup($ret) || croak "unknown type: $ret";
   my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
-  croak "unable to find $name" unless defined $address;
+  croak "unable to find $name" unless defined $address || $self->ignore_not_found;
+  return unless defined $address;
   FFI::Platypus::Function->new($self, $address, $ret, @args);
 }
 
@@ -517,11 +557,14 @@ sub attach
   
   my $function = $self->function($c_name, $args, $ret);
   
-  my($caller, $filename, $line) = caller;
-  $perl_name = join '::', $caller, $perl_name
-    unless $perl_name =~ /::/;
+  if(defined $function)
+  {
+    my($caller, $filename, $line) = caller;
+    $perl_name = join '::', $caller, $perl_name
+      unless $perl_name =~ /::/;
     
-  $function->attach($perl_name, "$filename:$line", $proto);
+    $function->attach($perl_name, "$filename:$line", $proto);
+  }
   
   $self;
 }
