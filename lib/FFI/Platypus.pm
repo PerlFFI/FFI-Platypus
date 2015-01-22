@@ -94,7 +94,7 @@ language that you want to interface with is a bit of an anti-pattern.
 This document consists of an API reference, a set of examples, some 
 support and development (for contributors) information.  If you are new 
 to Platypus or FFI, you may want to skip down to the 
-L<EXAMPLES|FFI::Platypus#Examples> to get a taste of what you can do 
+L<EXAMPLES|FFI::Platypus#EXAMPLES> to get a taste of what you can do 
 with Platypus.
 
 Platypus also provides an declarative interface you may want to use 
@@ -226,7 +226,7 @@ sub lib
 
 Define a type.  The first argument is the native or C name of the type.  
 The second argument (optional) is an alias name that you can use to 
-refer to this new type.  See L<FFI:Platypus::Type> for legal type 
+refer to this new type.  See L<FFI::Platypus::Type> for legal type 
 definitions.
 
 Examples:
@@ -286,7 +286,7 @@ sub type
    perl_to_native_post => $coderef,
  });
 
-Define a custom type.  See L<FFI::Platypus::Type#Custom Types> for details.
+Define a custom type.  See L<FFI::Platypus::Type#Custom-Types> for details.
 
 =cut
 
@@ -330,7 +330,7 @@ sub custom_type
 
 Load the custom type defined in the module I<$name>, and make an alias 
 I<$alias>. If the custom type requires any arguments, they may be passed 
-in as I<@type_args>. See L<FFI::Platypus::Type#Custom Types> for 
+in as I<@type_args>. See L<FFI::Platypus::Type#Custom-Types> for 
 details.
 
 If I<$name> contains C<::> then it will be assumed to be a fully 

@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fixed some broken links in the documentation
 
 0.12      2015-01-21 23:22:16 -0500
   - First CPAN release

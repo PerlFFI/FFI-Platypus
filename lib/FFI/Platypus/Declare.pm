@@ -90,7 +90,7 @@ sub type ($;$)
 
  custom_type $alias => \%args;
 
-Declare the given custom type.  See L<FFI::Platypus::Type#Custom Types> 
+Declare the given custom type.  See L<FFI::Platypus::Type#Custom-Types> 
 for details.
 
 =cut
