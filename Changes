@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - First CPAN release
+  - Improved documentation
+  - Functionally identically to 0.11
 
 0.11      2015-01-21 16:33:58 -0500
   - Release candidate 2

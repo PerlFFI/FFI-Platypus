@@ -18,7 +18,7 @@ Write Perl bindings to non-Perl libraries without C or XS
 
 # DESCRIPTION
 
-Platypus provides an interface for creating interfaces to machine code 
+Platypus provides a method for creating interfaces to machine code 
 libraries.  This implementation uses `libffi`, a library that provides 
 Foreign Function Interfaces for a number of other languages, including 
 Ruby and Python.  Platypus can be used in stand alone scripts, or to 
@@ -28,47 +28,49 @@ might want to write extensions with FFI instead of XS:
 - FFI / Platypus does not require messing with the guts of Perl
 
     XS is less of an API and more of the guts of perl splayed out to do 
-    whatever you want.  That may sometimes be very powerful, but it may also 
+    whatever you want.  That may at times be very powerful, but it may also 
     sometimes be very dangerous to your mental health.
 
 - FFI / Platypus is portable
 
     Lots of languages have FFI interfaces, and it is subjectively easier to 
     port an extension written in FFI in Perl or another language to FFI in 
-    another language or Perl.  One goal of Platypus is to reduce interface 
-    information to a common format like JSON that could be shared between 
-    different languages.
+    another language or Perl.  One goal of the Platypus Project is to reduce 
+    common interface specifications to a common format like JSON that could 
+    be shared between different languages.
 
 - FFI / Platypus could be a bridge to Perl 6
 
-    One of those "other" languages could be Perl 6.  Perl 6 already has an 
-    FFI interface.
+    One of those "other" languages could be Perl 6 and Perl 6 already has an 
+    FFI interface I am told.
 
 - FFI / Platypus is pure perl (sorta)
 
     One Platypus script or module works on any platform where the libraries 
-    are available.  That means you can deploy your Platypus script in a 
-    shared filesystem where they may be run on different platforms.  It also 
-    means that Platypus modules do not need to be installed in the platform 
-    specific Perl library path.
+    it uses are available.  That means you can deploy your Platypus script 
+    in a shared filesystem where they may be run on different platforms.  It 
+    also means that Platypus modules do not need to be installed in the 
+    platform specific Perl library path.
 
 - FFI / Platypus is not C or C++ centric
 
     XS is implemented primarily as a bunch of C macros, which requires at 
-    least some understanding of C, the C pre-processor, some C++ caveats. 
-    Platypus on the other hand could be used to call other compiled 
-    languages, like Rust or Go.
+    least some understanding of C, (sadly) the C pre-processor, and some C++ 
+    caveats (since on some platforms Perl is compiled and linked with a C++ 
+    compiler). Platypus on the other hand could be used to call other 
+    compiled languages, like Rust, Go or even assembly, allowing you to 
+    focus on your strengths.
 
-- FFI does not require a parser
+- FFI / Platypus does not require a parser
 
-    [Inline](https://metacpan.org/pod/Inline) isolates the extension developer from XS, but it also requires 
-    a parser.  I salute the [Inline](https://metacpan.org/pod/Inline) developers for what they have 
-    accomplished, but I think writing a parser for every language that you 
-    want to interface with is a bit of an anti-pattern.
+    [Inline](https://metacpan.org/pod/Inline) isolates the extension developer from XS to some extent, but 
+    it also requires a parser.  The various [Inline](https://metacpan.org/pod/Inline) language bindings are 
+    a great technical achievement, but I think writing a parser for every 
+    language that you want to interface with is a bit of an anti-pattern.
 
-This document consists of an API reference, a set of examples and some 
-support and development (contributing) information.  If you are new to 
-Platypus or FFI, you may want to skip down to the 
+This document consists of an API reference, a set of examples, some 
+support and development (for contributors) information.  If you are new 
+to Platypus or FFI, you may want to skip down to the 
 [EXAMPLES](https://metacpan.org/pod/FFI::Platypus#Examples) to get a taste of what you can do 
 with Platypus.
 
@@ -76,9 +78,8 @@ Platypus also provides an declarative interface you may want to use
 instead of the object oriented interface called 
 [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare).
 
-Platypus has an extensive documentation of Platypus types at 
-[FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) and the the Platypus custom types API at 
-[FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
+Platypus has extensive documentation of types at [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) 
+and its custom types API at [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
 
 # CONSTRUCTORS
 
@@ -90,7 +91,7 @@ Create a new instance of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus)
 
 Any types defined with this instance will be valid for this instance 
 only, so you do not need to worry about stepping on the toes of other 
-CPAN FFI Authors.
+CPAN FFI / Platypus Authors.
 
 Any functions found will be out of the list of libraries specified with 
 the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
@@ -127,10 +128,10 @@ The most portable and reliable way to find dynamic libraries is by using
 symbols, etc.  You should consult the documentation for that module.
 
 As a special case, if you add `undef` as a "library" to be searched, 
-[FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) will also search the current process for symbols. This 
-is mostly useful for finding functions in the standard C library, 
-without having to know the name of libc for your platform (as it turns 
-out it is different just about everywhere!).
+Platypus will also search the current process for symbols. This is 
+mostly useful for finding functions in the standard C library, without 
+having to know the name of the standard c library for your platform (as 
+it turns out it is different just about everywhere!).
 
 # METHODS
 
@@ -166,9 +167,9 @@ Define a custom type.  See ["FFI::Platypus::Type#Custom Types"](#ffi-platypus-ty
     $ffi->load_custom_type($name => $alias, @type_args);
 
 Load the custom type defined in the module _$name_, and make an alias 
-with the name _$alias_. If the custom type requires any arguments, they 
-may be passed in as _@type\_args_. See ["FFI::Platypus::Type#Custom 
-Types"](#ffi-platypus-type-custom-types) for details.
+_$alias_. If the custom type requires any arguments, they may be passed 
+in as _@type\_args_. See ["FFI::Platypus::Type#Custom Types"](#ffi-platypus-type-custom-types) for 
+details.
 
 If _$name_ contains `::` then it will be assumed to be a fully 
 qualified package name. If not, then `FFI::Platypus::Type::` will be 
@@ -179,13 +180,18 @@ prepended to it.
     my @types = $ffi->types;
     my @types = FFI::Platypus->types;
 
-Returns the list of types that FFI knows about.  This may be either 
-built in FFI types (example: _sint32_) or detected C types (example: 
-_signed int_), or types that you have defined using the 
-[type](https://metacpan.org/pod/FFI::Platypus#type) method.
+Returns the list of types that FFI knows about.  This will include the 
+native `libffi` types (example: `sint32`, `opaque` and `double`) and 
+the normal C types (example: `unsigned int`, `uint32_t`), any types 
+that you have defined using the [type](https://metacpan.org/pod/FFI::Platypus#type) method, and
+custom types.
+
+The list of types that Platypus knows about varies somewhat from 
+platform to platform, [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) includes a list of the core 
+types that you can always count on having access to.
 
 It can also be called as a class method, in which case, no user defined 
-types will be included.
+or custom types will be included in the list.
 
 ## type\_meta
 
@@ -212,8 +218,8 @@ Examples:
 Returns an object that is similar to a code reference in that it can be 
 called like one.
 
-Caveat: many situations require a real code reference, at the price of a 
-performance penalty you can get one like this:
+Caveat: many situations require a real code reference, so at the price 
+of a performance penalty you can get one like this:
 
     my $function = $ffi->function(...);
     my $coderef = sub { $function->(@_) };
@@ -227,11 +233,13 @@ of the symbol yourself:
     my $address = $ffi->find_symbol('my_functon');
     my $function = $ffi->function($address => ...);
 
-Under the covers this function uses 
-[find\_symbol](https://metacpan.org/pod/FFI::Platypus#find_symbol) when you provide it with a name 
-rather than an address, but you may have alternative ways of obtaining a 
-function's address, such as it could be returned as an `opaque` 
-pointer.
+Under the covers, [function](https://metacpan.org/pod/FFI::Platypus#function) uses 
+[find\_symbol](https://metacpan.org/pod/FFI::Platypus#find_symbol) when you provide it with a 
+name, but it is useful to keep this in mind as there are alternative 
+ways of obtaining a functions address.  Example: a C function could 
+return the address of another C function that you might want to call, or 
+modules such as [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) produce machine code at runtime that you 
+can call from Platypus.
 
 Examples:
 
@@ -244,12 +252,12 @@ Examples:
     $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
     $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
 
-Find and attach a C function as a Perl function as a real live xsub.  
-The advantage of attaching a function over using the 
-[function](https://metacpan.org/pod/FFI::Platypus#function) method is that it is much much much 
-faster since no object resolution needs to be done.  The disadvantage is 
-that it locks the function and the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance into memory 
-permanently, since there is no way to deallocate an xsub.
+Find and attach a C function as a real live Perl xsub.  The advantage of 
+attaching a function over using the [function](https://metacpan.org/pod/FFI::Platypus#function) 
+method is that it is much much much faster since no object resolution 
+needs to be done.  The disadvantage is that it locks the function and 
+the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance into memory permanently, since there is no 
+way to deallocate an xsub.
 
 If just one _$name_ is given, then the function will be attached in 
 Perl with the same name as it has in C.  The second form allows you to 
@@ -283,6 +291,10 @@ of a string, you can do this:
 
     my $address = $ffi->cast('string' => 'opaque', $string_value);
 
+Something that won't work is trying to cast an array to anything:
+
+    my $address = $ffi->cast('int[10]' => 'opaque', \@list);  # WRONG
+
 ## attach\_cast
 
     $ffi->attach_cast("cast_name", $original_type, $converted_type);
@@ -295,14 +307,14 @@ faster and may be useful if you are calling a particular cast a lot.
 
     my $size = $ffi->sizeof($type);
 
-Returns the total size of the given type.  For example to get the size 
-of an integer:
+Returns the total size of the given type in bytes.  For example to get 
+the size of an integer:
 
     my $intsize = $ffi->sizeof('int'); # usually 4 or 8 depending on platform
 
 You can also get the size of arrays
 
-    my $intarraysize = $ffi->sizeof('int[64]');
+    my $intarraysize = $ffi->sizeof('int[64]'); # usually 4*64 or 8*64
 
 Keep in mind that "pointer" types will always be the pointer / word size 
 for the platform that you are using.  This includes strings, opaque and 
@@ -316,10 +328,7 @@ iterations.
 
     my $address = $ffi->find_symbol($name);
 
-Return the address of the given symbol (usually function).  Usually you 
-can use the [function](https://metacpan.org/pod/FFI::Platypus#function) method or the 
-[attach](https://metacpan.org/pod/FFI::Platypus#attach) function directly and will not need to 
-use this.
+Return the address of the given symbol (usually function).
 
 # EXAMPLES
 
@@ -339,11 +348,11 @@ that are related to types.
     
     puts(atoi('56'));
 
-**Discussion**: `puts` and `atoi` should be part of libc on all 
-platforms.  `puts` prints a string to standard output, and `atoi` 
-converts a string to integer.  Specifying `undef` as a library tells 
-Platypus to search the current process for symbols, which includes the 
-standard c library.
+**Discussion**: `puts` and `atoi` should be part of the standard C 
+library on all platforms.  `puts` prints a string to standard output, 
+and `atoi` converts a string to integer.  Specifying `undef` as a 
+library tells Platypus to search the current process for symbols, which 
+includes the standard c library.
 
 ## libnotify
 
@@ -378,9 +387,11 @@ The most portable way to find the correct name and location of a dynamic
 library is via the [FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib) family of functions.  If 
 you are putting together a CPAN distribution, you should also consider 
 using [FFI::CheckLib#check\_lib\_or\_exit](https://metacpan.org/pod/FFI::CheckLib#check_lib_or_exit) function in your `Build.PL` or 
-`Makefile.PL` file. This will provide a user friendly diagnostic 
-letting the user know that the required library is missing, and reduce 
-the number of bogus CPAN testers results that you will get.
+`Makefile.PL` file (If you are using [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla), check out the 
+[Dist::Zilla::Plugin::FFI::CheckLib](https://metacpan.org/pod/Dist::Zilla::Plugin::FFI::CheckLib) plugin). This will provide a user 
+friendly diagnostic letting the user know that the required library is 
+missing, and reduce the number of bogus CPAN testers results that you 
+will get.
 
 ## Allocating and freeing memory
 
@@ -438,8 +449,8 @@ strings "deparsed" by `uuid_unparse` are exactly 37 bytes.
     
     puts(getpid());
 
-**Discussion**: `puts` is part of libc on all platforms.  `getpid` is 
-available as part of libc on Unix type platforms.
+**Discussion**: `puts` is part of standard C library on all platforms.  
+`getpid` is available on Unix type platforms.
 
 ## Math library
 
@@ -465,7 +476,7 @@ frequently provided in a separate library `libm`, so you could search
 for those symbols in "libm.so", but that won't work on non-UNIX 
 platforms like Microsoft Windows.  Fortunately Perl uses the math 
 library so these symbols are already in the current process so you can 
-use `undef` as the library.
+use `undef` as the library to find them.
 
 ## Strings
 
@@ -517,10 +528,10 @@ handled seamlessly by Platypus.
 **Discussion**: Sometimes you will have a pointer to a function from a 
 source other than Platypus that you want to call.  You can use that 
 address instead of a function name for either of the 
-[FFI::Platypus#function](https://metacpan.org/pod/FFI::Platypus#function) or [FFI::Platypus#attach](https://metacpan.org/pod/FFI::Platypus#attach) methods.  In this 
-example we use [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) to compile a short piece of C code and to 
-give us the address of one of its functions, which we then use to create 
-a perl xsub to call it.
+[function](https://metacpan.org/pod/FFI::Platypus#function) or [attach](https://metacpan.org/pod/FFI::Platypus#attach) 
+methods.  In this example we use [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) to compile a short piece 
+of C code and to give us the address of one of its functions, which we 
+then use to create a perl xsub to call it.
 
 [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) embeds the Tiny C Compiler (tcc) to provide a 
 just-in-time (JIT) compilation service for FFI.
@@ -597,7 +608,9 @@ There are a few things to note here.
 
 Firstly, sometimes there may be multiple versions of a library in the 
 wild and you may need to verify that the library on a system meets your 
-needs.  Here we use `zmq_version` to ask libzmq which version it is.
+needs (alternatively you could support multiple versions and configure 
+your bindings dynamically).  Here we use `zmq_version` to ask libzmq 
+which version it is.
 
 `zmq_version` returns the version number via three integer pointer 
 arguments, so we use the pointer to integer type: `int *`.  In order to 
@@ -614,7 +627,7 @@ strictly necessary, since Platypus and C treat all three of these types
 the same, it is useful form of documentation that helps describe the 
 functionality of the interface.
 
-Finally we attach the necessary functions, send and receive a message.  
+Finally we attach the necessary functions, send and receive a message. 
 If you are interested, there is a fully fleshed out ØMQ Perl interface 
 implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
 
@@ -713,59 +726,65 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
       $archive->data_skip;
     }
 
-**Discussion**: libarchive is the implementation of `tar` from BSD 
-provided as a library.
+**Discussion**: libarchive is the implementation of `tar` for FreeBSD 
+provided as a library and available on a number of platforms.
 
 One interesting thing about libarchive is that it provides a kind of 
-object oriented interface via opaque pointers.  This approach to writing 
-an interface to it creates an abstract class `Archive`, and concrete 
-classes `ArchiveWrite`, `ArchiveRead` and `ArchiveEntry`.  The 
-concrete classes can even be inherited from and extended just like any 
-Perl classes because of the way the custom types are implemented.  For 
-more details on custom types see [FFI::Platypus::Custom](https://metacpan.org/pod/FFI::Platypus::Custom) and 
-[FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
+object oriented interface via opaque pointers.  This example creates an 
+abstract class `Archive`, and concrete classes `ArchiveWrite`, 
+`ArchiveRead` and `ArchiveEntry`.  The concrete classes can even be 
+inherited from and extended just like any Perl classes because of the 
+way the custom types are implemented.  For more details on custom types 
+see [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) and [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
 
 # SUPPORT
 
-If something does not work the way you think it should, or if you have a feature
-request, please open an issue on this project's GitHub Issue tracker:
+If something does not work the way you think it should, or if you have a 
+feature request, please open an issue on this project's GitHub Issue 
+tracker:
 
 [https://github.com/plicease/FFI-Platypus/issues](https://github.com/plicease/FFI-Platypus/issues)
 
 # CONTRIBUTING
 
-If you have implemented a new feature or fixed a bug then you may make a pull request on
-this project's GitHub repository:
+If you have implemented a new feature or fixed a bug then you may make a 
+pull request on this project's GitHub repository:
 
 [https://github.com/plicease/FFI-Platypus/pulls](https://github.com/plicease/FFI-Platypus/pulls)
 
-This project is developed using [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  The project's git repository also
-comes with `Build.PL` and `cpanfile` files necessary for building, testing 
-(and even installing if necessary) without [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  Please keep in mind
-though that these files are generated so if changes need to be made to those files
-they should be done through the project's `dist.ini` file.  If you do use [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla)
-and already have the necessary plugins installed, then I encourage you to run
-`dzil test` before making any pull requests.  This is not a requirement, however,
-I am happy to integrate especially smaller patches that need tweaking to fit the project
-standards.  I may push back and ask you to write a test case or alter the formatting of 
-a patch depending on the amount of time I have and the amount of code that your patch 
-touches.
+This project is developed using [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  The project's git 
+repository also comes with `Build.PL` and `cpanfile` files necessary 
+for building, testing (and even installing if necessary) without 
+[Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  Please keep in mind though that these files are 
+generated so if changes need to be made to those files they should be 
+done through the project's `dist.ini` file.  If you do use 
+[Dist::Zilla](https://metacpan.org/pod/Dist::Zilla) and already have the necessary plugins installed, then I 
+encourage you to run `dzil test` before making any pull requests.  This 
+is not a requirement, however, I am happy to integrate especially 
+smaller patches that need tweaking to fit the project standards.  I may 
+push back and ask you to write a test case or alter the formatting of a 
+patch depending on the amount of time I have and the amount of code that 
+your patch touches.
 
-This project's GitHub issue tracker listed above is not Write-Only.  If you want to
-contribute then feel free to browse through the existing issues and see if there is
-something you feel you might be good at and take a whack at the problem.  I frequently
-open issues myself that I hope will be accomplished by someone in the future but do
-not have time to immediately implement.
+This project's GitHub issue tracker listed above is not Write-Only.  If 
+you want to contribute then feel free to browse through the existing 
+issues and see if there is something you feel you might be good at and 
+take a whack at the problem.  I frequently open issues myself that I 
+hope will be accomplished by someone in the future but do not have time 
+to immediately implement myself.
 
-Another good area to help out in is documentation.  I try to make sure that there is
-good document coverage, that is there should be documentation describing all the public
-features and warnings about common pitfalls, but an outsider's or alternate view point
-on such things would be welcome; if you see something confusing or lacks sufficient
-detail I encourage documentation only pull requests to improve things.
+Another good area to help out in is documentation.  I try to make sure 
+that there is good document coverage, that is there should be 
+documentation describing all the public features and warnings about 
+common pitfalls, but an outsider's or alternate view point on such 
+things would be welcome; if you see something confusing or lacks 
+sufficient detail I encourage documentation only pull requests to 
+improve things.
 
-The Platypus distribution comes with a test library named `libtest` that is normally
-automatically built before `./Build test`.  If you prefer to use `prove` or run tests
-directly, you can use the `./Build libtest` command to build it.  Example:
+The Platypus distribution comes with a test library named `libtest` 
+that is normally automatically built by `./Build test`.  If you prefer 
+to use `prove` or run tests directly, you can use the `./Build 
+libtest` command to build it.  Example:
 
     % perl Build.PL
     % ./Build
@@ -778,9 +797,10 @@ The build process also respects these environment variables:
 
 - FFI\_PLATYPUS\_DEBUG
 
-    Build the XS code portion of Platypus with -g3 instead of what ever optimizing flags
-    that your Perl normally uses.  This is useful if you need to debug the C or XS code
-    that comes with Platypus, but do not have a debugging Perl.
+    Build the XS code portion of Platypus with -g3 instead of what ever 
+    optimizing flags that your Perl normally uses.  This is useful if you 
+    need to debug the C or XS code that comes with Platypus, but do not have 
+    a debugging Perl.
 
         % env FFI_PLATYPUS_DEBUG=1 perl Build.PL
         
@@ -797,9 +817,10 @@ The build process also respects these environment variables:
 
 - FFI\_PLATYPUS\_DEBUG\_FAKE32
 
-    When building Platypus on 32 bit Perls, it will use the [Math::Int64](https://metacpan.org/pod/Math::Int64) C API
-    and make [Math::Int64](https://metacpan.org/pod/Math::Int64) a prerequisite.  Setting this environment variable
-    will force Platypus to build with both of those options on a 64 bit Perl as well.
+    When building Platypus on 32 bit Perls, it will use the [Math::Int64](https://metacpan.org/pod/Math::Int64) C 
+    API and make [Math::Int64](https://metacpan.org/pod/Math::Int64) a prerequisite.  Setting this environment 
+    variable will force Platypus to build with both of those options on a 64 
+    bit Perl as well.
 
         % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Build.PL
         
@@ -813,11 +834,12 @@ The build process also respects these environment variables:
 
 - FFI\_PLATYPUS\_NO\_ALLOCA
 
-    Platypus uses the non-standard and somewhat controversial C function `alloca` 
-    by default on platforms that support it.  I believe that Platypus uses it
-    responsibly to allocate small amounts of memory for argument type parameters,
-    and does not use it to allocate large structures like arrays or buffers.  If 
-    you prefer not to use `alloca`, then you can turn its use off by setting this
+    Platypus uses the non-standard and somewhat controversial C function 
+    `alloca` by default on platforms that support it.  I believe that 
+    Platypus uses it responsibly to allocate small amounts of memory for 
+    argument type parameters, and does not use it to allocate large 
+    structures like arrays or buffers.  If you prefer not to use `alloca` 
+    despite these precautions, then you can turn its use off by setting this 
     environment variable when you run `Build.PL`:
 
         % env FFI_PLATYPUS_NO_ALLOCA=1 perl Build.PL 
@@ -846,7 +868,7 @@ The build process also respects these environment variables:
 
 - [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory)
 
-    memory functions for FFI.
+    Memory functions for FFI.
 
 - [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib)
 
@@ -858,9 +880,9 @@ The build process also respects these environment variables:
 
 - [Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C)
 
-    An interface for interacting with C `struct` types.  Unfortunately it appears to
-    be unmaintained, and has a failing pod test, so I cannot recommend it for use 
-    by CPAN modules.
+    An interface for interacting with C `struct` types.  Unfortunately it 
+    appears to be unmaintained, and has a failing pod test, so I cannot 
+    recommend it for use by CPAN modules.
 
 - [pack](https://metacpan.org/pod/perlfunc#pack) and [unpack](https://metacpan.org/pod/perlfunc#unpack)
 
@@ -868,10 +890,11 @@ The build process also respects these environment variables:
 
 - [FFI::Raw](https://metacpan.org/pod/FFI::Raw)
 
-    Alternate interface to libffi with fewer features.  It notably lacks the ability to
-    create real xsubs, which may make [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) much faster.  Also lacking are
-    pointers to native types, arrays and custom types.  In its favor, it has been around
-    for longer that Platypus, and has been battle tested to some success.
+    Alternate interface to libffi with fewer features.  It notably lacks the 
+    ability to create real xsubs, which may make [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) much 
+    faster.  Also lacking are pointers to native types, arrays and custom 
+    types.  In its favor, it has been around for longer that Platypus, and 
+    has been battle tested to some success.
 
 - [Win32::API](https://metacpan.org/pod/Win32::API)
 
@@ -879,14 +902,15 @@ The build process also respects these environment variables:
 
 - [Ctypes](https://gitorious.org/perl-ctypes)
 
-    Ctypes was intended as a FFI style interface for Perl, but was never part of CPAN,
-    and at least the last time I tried it did not work with recent versions of Perl.
+    Ctypes was intended as a FFI style interface for Perl, but was never 
+    part of CPAN, and at least the last time I tried it did not work with 
+    recent versions of Perl.
 
 - [FFI](https://metacpan.org/pod/FFI)
 
-    Foreign function interface based on (nomenclature is everything) FSF's `ffcall`.
-    It hasn't worked for quite some time, and `ffcall` is no longer supported or
-    distributed.
+    Foreign function interface based on (nomenclature is everything) FSF's 
+    `ffcall`. It hasn't worked for quite some time, and `ffcall` is no 
+    longer supported or distributed.
 
 - [C::DynaLib](https://metacpan.org/pod/C::DynaLib)
 

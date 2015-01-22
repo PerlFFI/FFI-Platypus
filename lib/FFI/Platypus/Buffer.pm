@@ -29,15 +29,10 @@ L<unpack|perlfunc#unpack> so they should be relatively fast.
 Both functions are exported by default, but you can explicitly export 
 one or neither if you so choose.
 
-Now for the history lesson.  These functions were originally provided as 
-part of the L<FFI::Util> module.  The intent of L<FFI::Platypus> was to 
-provide a C<libffi> interface with custom types as a core feature that 
-would render most of L<FFI::Util> obsolete.  For the most part 
-L<FFI::Platypus> has done this, except it isn't currently possible to 
-implement buffers with custom types YET, so I am including this module 
-as part of L<FFI::Platypus> so that real FFI modules can be written on 
-CPAN right away.  Just keep in mind that a better way may eventually 
-find its way into the core of L<FFI::Platypus>.
+A better way to do this might be with custom types see 
+L<FFI::Platypus::API> and L<FFI::Platypus::Type>.  These functions were 
+taken from the now obsolete L<FFI::Util> module, as they may be useful 
+in some cases.
 
 =head1 FUNCTIONS
 

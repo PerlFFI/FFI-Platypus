@@ -22,6 +22,20 @@ This module provides a declarative interface to L<FFI::Platypus>. It
 provides a more concise interface at the cost of a little less power, 
 and a little more namespace pollution.
 
+Any strings passed into the C<use> line will be declared as types and 
+exported as constants into your namespace, so that you can use them 
+without quotation marks.
+
+Aliases can be declared using a list reference:
+
+ use FFI::Platypus [ 'int[48]' => 'my_integer_array' ];
+
+Custom types can also be declared as a list reference (the type name
+must include a ::):
+
+ use FFI::Platypus [ '::StringPointer' => 'my_string_pointer' ];
+ # short for FFI::Platypus::Type::StringPointer
+
 =cut
 
 our $ffi    = {};
@@ -34,6 +48,9 @@ sub _ffi_object
 }
 
 =head1 FUNCTIONS
+
+All functions are exported into your namespace.  If you do not want that,
+then use the OO interface (see L<FFI::Platypus>).
 
 =head2 lib
 
@@ -214,6 +231,17 @@ sub cast ($$$)
 
  attach_cast "cast_name", $original_type, $converted_type;
  my $converted_value = cast_name($original_value);
+
+This function creates a subroutine which can be used to convert 
+variables just like the L<cast|FFI::Platypus::Declare#cast> function 
+above.  The above synopsis is roughly equivalent to this:
+
+ sub cast_name { cast($original_type, $converted_type, $_[0]) }
+ my $converted_value = cast_name($original_value);
+
+Except that the L<attach_cast|FFI::Platypus::Declare#attach_cast> 
+variant will be much faster if called multiple times since the cast does 
+not need to be dynamically allocated on each instance.
 
 =cut
 
