@@ -238,7 +238,7 @@ sub _build_dynamic_lib ($$$;$)
   
   $dest_dir ||= $dir;
   
-  my $header_time = reverse sort map { (stat $_)[9] } @{ _ffi_headers $self, $dir };
+  my $header_time = do { no warnings; reverse sort map { (stat $_)[9] } @{ _ffi_headers $self, $dir } };
   my $compile_count = 0;
   my $b = ExtUtils::CBuilder->new;
 
