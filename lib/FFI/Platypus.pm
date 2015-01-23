@@ -1087,6 +1087,10 @@ Memory functions for FFI.
 
 Find dynamic libraries in a portable way.
 
+=item L<Module::Build::FFI>
+
+Bundle C code with your FFI extension.
+
 =item L<FFI::TinyCC>
 
 JIT compiler for FFI.

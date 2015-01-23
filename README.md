@@ -898,6 +898,10 @@ The build process also respects these environment variables:
 
     Find dynamic libraries in a portable way.
 
+- [Module::Build::FFI](https://metacpan.org/pod/Module::Build::FFI)
+
+    Bundle C code with your FFI extension.
+
 - [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC)
 
     JIT compiler for FFI.
