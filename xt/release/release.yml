@@ -28,6 +28,7 @@ pod_spelling_system:
     - tcc
     - fsprogs
     - DLLs
+    - libtest
 
 pod_coverage:
   skip: 0

@@ -66,15 +66,77 @@ Module::Build variant for writing Perl extensions in C and FFI (sans XS).
 
 =over 4
 
+=item ffi_source_dir
+
+[version 0.15]
+
+By default, C source files in the C<ffi> directory are compiled and
+linked, if that directory exists.  You can change that directory
+with this property.
+
 =item ffi_libtest_dir
+
+[version 0.15]
+
+If the libtest directory (C<libtest> by default) exists, then C source
+files will be compiled and linked into a test dynamic library that you
+can use to test your FFI module with.  You can use FFI::CheckLib to
+find the library from your test:
+
+ use Test::More;
+ use FFI::Platypus::Declare;
+ use FFI::CheckLib;
+ 
+ lib find_lib lib => 'test', libpath => 'libtest';
 
 =item ffi_include_dir
 
+[version 0.15]
+
+If there is an C<include> directory with your distribution with C header
+files in it, it will be included in the search path for the C files in
+both the C<ffi> and C<libtest> directories.
+
 =item ffi_libtest_optional
 
-=item ffi_source_dir
+[version 0.15]
+
+If there is no compiler then libtest cannot be built.  By default this is
+not fatal.  Your tests need to be written in such a way that any that use
+libtest are skipped when it is not there.
+
+ use Test::More;
+ use FFI::CheckLib;
+ 
+ plan skip_all => 'test requires a compiler'
+   unless find_lib lib => 'test', libpath => 'libtest';
+
+If you do not want to support environments without a compiler you can set
+this property to C<1> and you won't need to have that check in your test
+files.
 
 =back
+
+=head1 ACTIONS
+
+=head2 ffi
+
+ ./Build ffi
+
+This builds any C files that are bundled with your distribution (usually
+in the C<ffi> directory).  If there is no C<ffi> directory, then this
+action does nothing.
+
+This action is triggered automatically before C<./Build build>.
+
+=head2 libtest
+
+ ./Build libtest
+
+This builds libtest.  If you do not have a libtest directory, then
+this action does nothing.
+
+This action is triggered automatically before C<./Build test>.
 
 =head1 MACROS
 
