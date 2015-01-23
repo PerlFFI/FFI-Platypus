@@ -77,7 +77,7 @@ sub build
     {
       @cmd = ($cc, @obj, '/link', '/dll', '/out:' . $dll);
     }
-    print "@cmd";
+    print "@cmd\n";
     system @cmd;
     exit 2 if $?;
   }
