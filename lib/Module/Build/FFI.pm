@@ -180,6 +180,29 @@ __PACKAGE__->add_property( ffi_source_dir =>
   default => 'ffi',
 );
 
+sub new
+{
+  my($class, %args) = @_;
+
+  my $self = $class->SUPER::new(%args);
+
+  my $have_compiler = ExtUtils::CBuilder->new->have_compiler;
+
+  if(-d $self->ffi_source_dir && !$have_compiler)
+  {
+    print STDERR "This distribution requires a compiler\n";
+    exit;
+  }
+  
+  if(-d $self->ffi_libtest_dir && !$self->ffi_libtest_optional && !$have_compiler)
+  {
+    print STDERR "This distribution requires a compiler\n";
+    exit;
+  }
+
+  $self;
+}
+
 sub _ffi_headers ($$)
 {
   my($self, $dir) = @_;
