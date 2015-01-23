@@ -172,6 +172,10 @@ C<uint64_t>)
 
 =back
 
+You may also use C<uchar>, C<ushort>, C<uint> and C<ulong> as short
+names for C<unsigned char>, C<unsigned short>, C<unsigned int> and
+C<unsigned long>.
+
 These integer types are also available, but there actual size and sign 
 may depend on the platform.
 

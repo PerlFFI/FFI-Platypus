@@ -5,6 +5,7 @@ Revision history for {{$dist->name}}
   - add FFI::Platypus#package method
   - Module::Build::FFI was moved into this distribution
     (formerly distributed as part of FFI-Util)
+  - added aliases: uchar, ushort, uint and ulong
 
 0.14      2015-01-22 08:19:42 -0500
   - Fixed some broken links in the documentation

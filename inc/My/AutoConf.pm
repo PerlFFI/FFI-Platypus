@@ -159,6 +159,11 @@ sub configure
       }
     }
   }
+
+  $type_map{uchar}  = $type_map{'unsigned char'};
+  $type_map{ushort} = $type_map{'unsigned short'};
+  $type_map{uint}   = $type_map{'unsigned int'};
+  $type_map{ulong}  = $type_map{'unsigned long'};
   
   $ac->write_config_h( $config_h );
   $mb->config_data( type_map => \%type_map);
