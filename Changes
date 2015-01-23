@@ -1,8 +1,6 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-
-0.14_02   2015-01-23 13:29:06 -0500
   - add FFI::Platypus#ignore_not_found attribute
   - add FFI::Platypus#package method
   - Module::Build::FFI was moved into this distribution
