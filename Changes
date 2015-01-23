@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.16      2015-01-23 17:31:00 -0500
+  - Bumping Alien::FFI version requirement up to 0.04
+    Thus indirectly Alien::Base to 0.07
+    Believe this may fix a cpan testers failure that I am seeing 
+
 0.15      2015-01-23 16:46:27 -0500
   - add FFI::Platypus#ignore_not_found attribute
   - add FFI::Platypus#package method
