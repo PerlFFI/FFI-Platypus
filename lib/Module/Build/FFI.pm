@@ -3,10 +3,11 @@ package Module::Build::FFI;
 use strict;
 use warnings;
 use ExtUtils::CBuilder;
-use File::Glob     qw( bsd_glob );
-use File::Spec     ();
-use File::ShareDir ();
-use File::Path     ();
+use File::Glob       qw( bsd_glob );
+use File::Spec       ();
+use File::ShareDir   ();
+use File::Path       ();
+use Text::ParseWords ();
 use Config;
 use base qw( Module::Build );
 
@@ -196,7 +197,7 @@ sub _build_dynamic_lib ($$$;$)
     {
       my $lddlflags = $Config{lddlflags};
       $lddlflags =~ s{\\}{/}g;
-      @cmd = ($cc, shellwords($lddlflags), -o => $dll, "-Wl,--export-all-symbols", @obj);
+      @cmd = ($cc, Text::ParseWords::shellwords($lddlflags), -o => $dll, "-Wl,--export-all-symbols", @obj);
     }
     else
     {
