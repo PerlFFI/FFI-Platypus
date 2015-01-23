@@ -269,6 +269,13 @@ sub ACTION_ffi
   my $arch_dir = File::Spec->catdir($self->blib, 'arch', 'auto', @parts);  
   File::Path::mkpath($arch_dir, 0, oct(777)) unless -d $arch_dir;
 
+  my $name = $parts[-1];
+  # yes, of course Strawberry has to be "different"
+  if($^O eq 'MSWin32' && $Config{dlext} eq 'xs.dll')
+  {
+    $name = "$name.xs";
+  }
+
   _build_dynamic_lib $self, $dir, $parts[-1], $arch_dir;  
 }
 
