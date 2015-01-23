@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - add ignore_not_found attribute
+  - Module::Build::FFI was moved into this distribution
+    (formerly distributed as part of FFI-Util)
 
 0.14      2015-01-22 08:19:42 -0500
   - Fixed some broken links in the documentation

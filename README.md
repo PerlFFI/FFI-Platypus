@@ -105,6 +105,8 @@ the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
 
 - ignore\_not\_found
 
+    \[version 0.15\]
+
     Set the [ignore\_not\_found](https://metacpan.org/pod/FFI::Platypus#ignore_not_found) attribute.
 
 # ATTRIBUTES
@@ -138,6 +140,8 @@ having to know the name of the standard c library for your platform (as
 it turns out it is different just about everywhere!).
 
 ## ignore\_not\_found
+
+\[version 0.15\]
 
     $ffi->ignore_not_found(1);
     my $ignore_not_found = $ffi->ignore_not_found;

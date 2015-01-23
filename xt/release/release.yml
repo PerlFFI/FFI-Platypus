@@ -27,6 +27,7 @@ pod_spelling_system:
     - deparsed
     - tcc
     - fsprogs
+    - DLLs
 
 pod_coverage:
   skip: 0
@@ -34,6 +35,7 @@ pod_coverage:
   # for either Class or method.
   private:
     - FFI::Platypus::Type::.*
+    - Module::Build::FFI#ACTION_.*
 
 unused_vars:
   skip: 0

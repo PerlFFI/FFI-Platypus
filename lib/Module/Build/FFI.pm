@@ -85,8 +85,8 @@ Defined in C<ffi_util.h>
 
 [version 0.04]
 
-This is the L<FFI::Platypus> (prior to vesion 0.15 it was the 
-L<FFI::Util> version number) version number multipled by 100 (so it 
+This is the L<FFI::Platypus> (prior to version 0.15 it was the 
+L<FFI::Util> version number) version number multiplied by 100 (so it 
 would be 4 for 0.04 and 101 for 1.01).
 
 =item FFI_UTIL_EXPORT

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 use_ok 'FFI::Platypus';
 use_ok 'FFI::Platypus::Declare';
@@ -9,3 +9,4 @@ use_ok 'FFI::Platypus::Buffer';
 use_ok 'FFI::Platypus::API';
 use_ok 'FFI::Platypus::Type::PointerSizeBuffer';
 use_ok 'FFI::Platypus::Type::StringPointer';
+use_ok 'Module::Build::FFI';
