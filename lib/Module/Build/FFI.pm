@@ -276,7 +276,7 @@ sub ACTION_ffi
     $name = "$name.xs";
   }
 
-  _build_dynamic_lib $self, $dir, $parts[-1], $arch_dir;  
+  _build_dynamic_lib $self, $dir, $name, $arch_dir;  
 }
 
 sub ACTION_build
