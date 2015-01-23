@@ -96,6 +96,8 @@ sub new
     'core',
   );
 
+  $self->config_data(config_dlext => $Config{dlext});
+
   $self;
 }
 

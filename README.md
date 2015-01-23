@@ -354,6 +354,16 @@ iterations.
 
 Return the address of the given symbol (usually function).
 
+## package
+
+    $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
+    $ffi->package;                  # autodetect
+
+If you have used [Module::Build::FFI](https://metacpan.org/pod/Module::Build::FFI) to bundle C code with your
+distribution, you can use this method to tell the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance
+to look for symbols that came with the dynamic library that was built
+when your distribution was installed.
+
 # EXAMPLES
 
 Here are some examples.  Some of them use the [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare) 

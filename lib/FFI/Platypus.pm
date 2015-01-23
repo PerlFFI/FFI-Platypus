@@ -690,6 +690,43 @@ sub find_symbol
   return;
 }
 
+=head2 package
+
+ $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
+ $ffi->package;                  # autodetect
+
+If you have used L<Module::Build::FFI> to bundle C code with your
+distribution, you can use this method to tell the L<FFI::Platypus> instance
+to look for symbols that came with the dynamic library that was built
+when your distribution was installed.
+
+=cut
+
+sub package
+{
+  my($self, $module, $modlibname) = @_;
+  
+  require FFI::Platypus::ConfigData;
+  my $dlext = FFI::Platypus::ConfigData->config("config_dlext");
+
+  ($module, $modlibname) = caller() unless defined $modlibname;  
+  my @modparts = split /::/, $module;
+  my $modfname = $modparts[-1];
+  my $modpname = join('/',@modparts);
+  my $c = @modparts;
+  $modlibname =~ s,[\\/][^\\/]+$,, while $c--;    # Q&D basename
+  my $file = "$modlibname/auto/$modpname/$modfname.$dlext";
+  unless(-e $file)
+  {
+    $modlibname =~ s,[\\/][^\\/]+$,,;
+    $file = "$modlibname/arch/auto/$modpname/$modfname.$dlext";
+  }
+  
+  $self->lib($file) if -e $file;
+  
+  $self;
+}
+
 =head1 EXAMPLES
 
 Here are some examples.  Some of them use the L<FFI::Platypus::Declare> 
