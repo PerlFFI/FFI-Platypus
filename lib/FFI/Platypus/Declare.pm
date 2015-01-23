@@ -43,8 +43,8 @@ our $types  = {};
 
 sub _ffi_object
 {
-  my $caller = caller(1);
-  $ffi->{$caller} ||= FFI::Platypus->new;
+  my($package, $filename) = caller(1);
+  $ffi->{$package} ||= FFI::Platypus->new->package($package,$filename);
 }
 
 =head1 FUNCTIONS
