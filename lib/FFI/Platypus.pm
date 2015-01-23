@@ -149,6 +149,8 @@ to pre-populate the L<lib|FFI::Platypus#lib> attribute.
 
 =item ignore_not_found
 
+[version 0.15]
+
 Set the L<ignore_not_found|FFI::Platypus#ignore_not_found> attribute.
 
 =back
@@ -227,6 +229,8 @@ sub lib
 }
 
 =head2 ignore_not_found
+
+[version 0.15]
 
  $ffi->ignore_not_found(1);
  my $ignore_not_found = $ffi->ignore_not_found;
