@@ -53,8 +53,8 @@ sub new
       next unless defined $value;
       if($value =~ s/-O[0-9]?/-g3/g)
       {
-        print "  + \$Config{$key} = ", $config->{$key}, "\n";
-        print "  - \$Config{$key} = $value\n";
+        print "  - \$Config{$key} = ", $config->{$key}, "\n";
+        print "  + \$Config{$key} = $value\n";
         $self->config($key, $value);
       }
     }

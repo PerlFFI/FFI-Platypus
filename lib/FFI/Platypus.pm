@@ -1052,10 +1052,10 @@ a debugging Perl.
  
  
  DEBUG:
-   + $Config{lddlflags} = -shared -O2 -L/usr/local/lib -fstack-protector
-   - $Config{lddlflags} = -shared -g3 -L/usr/local/lib -fstack-protector
-   + $Config{optimize} = -O2
-   - $Config{optimize} = -g3
+   - $Config{lddlflags} = -shared -O2 -L/usr/local/lib -fstack-protector
+   + $Config{lddlflags} = -shared -g3 -L/usr/local/lib -fstack-protector
+   - $Config{optimize} = -O2
+   + $Config{optimize} = -g3
  
  
  Created MYMETA.yml and MYMETA.json
