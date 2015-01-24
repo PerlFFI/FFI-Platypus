@@ -43,17 +43,26 @@ Put your .c and .h files in C<ffi> (C<ffi/example.c>):
    printf("hello world\n");
  }
 
-Attach it to Perl in your main module (C<lib/Foo/Bar.pm>):
+Attach it to Perl in your main module (C<lib/Foo/Bar.pm>) using
+the declarative interface:
 
  package Foo::Bar;
  
  use FFI::Platypus::Declare qw( void );
- use FFI::Util qw( locate_module_share_lib );
  
- lib locate_module_share_lib();
  attach hello_world => [] => void;
 
-Use it from your perl script or module:
+or use the OO interface:
+
+ package Foo::Bar;
+ 
+ use FFI::Platypus;
+ 
+ my $ffi = FFI::Platypus->new;
+ $ffi->package;  # search for symbols in your bundled C code
+ $ffi->attach( hello_world => [] => 'void');
+
+Finally, use it from your perl script or module:
 
  use Foo::Bar;
  Foo::Bar::hello_world();  # prints "hello world\n"
