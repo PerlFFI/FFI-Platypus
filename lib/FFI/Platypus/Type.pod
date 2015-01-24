@@ -518,6 +518,17 @@ TODO
 
 See example L<FFI::Platypus::Type::PointerSizeBuffer>.
 
+=head4 Example 5: Custom Type on CPAN
+
+You can distribute your own Platypus custom types on CPAN, if you think
+they may be aplicable to others.  The default namespace is prefex with
+C<FFI::Platypus::Type::>, though you can stick it anywhere (under your
+own namespace may make more sense if the custom type is specific to your
+application).
+
+A good example and pattern to follow is
+L<FFI::Platypus::Type::StringArray>.
+
 =head3 Custom Types in C/XS
 
 Custom types written in C or XS are a future goal of the 
