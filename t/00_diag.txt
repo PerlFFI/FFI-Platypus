@@ -1,3 +1,4 @@
+Alien::Base
 Alien::FFI
 Config::AutoConf
 ExtUtils::CBuilder
@@ -5,4 +6,5 @@ FFI::CheckLib
 File::ShareDir
 JSON::PP
 Module::Build
+PkgConfig
 Test::More
