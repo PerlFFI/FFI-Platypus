@@ -25,7 +25,9 @@ script:
   - ./Build --verbose
   - ./Build test --verbose
   - ./Build install --verbose
+  - cpanm -n --installdeps FFI::Platypus::Type::StringArray
   - cpanm -v FFI::Platypus::Type::StringArray
+  - cpanm -n --installdeps FFI::TinyCC
   - cpanm -v FFI::TinyCC
 
 env:
