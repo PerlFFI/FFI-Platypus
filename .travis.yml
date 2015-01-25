@@ -29,6 +29,10 @@ script:
   - cpanm -v FFI::Platypus::Type::StringArray
   - cpanm -n --installdeps FFI::TinyCC
   - cpanm -v FFI::TinyCC
+  - cpanm -n --installdeps FFI::Util
+  - cpanm -v FFI::Util
+  - cpanm -n --installdeps UUID::FFI
+  - cpanm -v UUID::FFI
 
 env:
   - FFI_PLATYPUS=1
