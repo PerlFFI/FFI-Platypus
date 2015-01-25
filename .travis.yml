@@ -21,6 +21,7 @@ perl:
 
 script:
   - perl Build.PL
+  - perl inc/run/travis.pl
   - ./Build --verbose
   - ./Build test --verbose
   - ./Build install --verbose
