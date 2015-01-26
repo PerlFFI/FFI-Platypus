@@ -58,8 +58,8 @@ might want to write extensions with FFI instead of XS:
     least some understanding of C, (sadly) the C pre-processor, and some C++ 
     caveats (since on some platforms Perl is compiled and linked with a C++ 
     compiler). Platypus on the other hand could be used to call other 
-    compiled languages, like Rust, Go or even assembly, allowing you to 
-    focus on your strengths.
+    compiled languages, like Fortran, Rust, Go or even assembly, allowing 
+    you to focus on your strengths.
 
 - FFI / Platypus does not require a parser
 
