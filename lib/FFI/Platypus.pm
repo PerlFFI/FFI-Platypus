@@ -873,6 +873,21 @@ inherited from and extended just like any Perl classes because of the
 way the custom types are implemented.  For more details on custom types 
 see L<FFI::Platypus::Type> and L<FFI::Platypus::API>.
 
+=head2 bzip2
+
+# EXAMPLE: examples/bzip2.pl
+
+B<Discussion>: bzip2 is a compression library.  For simple one shot
+attempts at compression/decompression when you expect the original
+and the result to fit within memory it provides two convenience functions
+C<BZ2_bzBuffToBuffCompress> and C<BZ2_bzBuffToBuffDecompress>.
+
+The first four arguments of both of these functions are identical, and 
+represent two buffers.  For the destination buffer, the length is passed 
+in as an pointer to an integer.  The value of this integer going in is 
+the maximum size of the buffer (the amount of memory preallocated).  On 
+output, the bzip2 library updates it with the actual number of bytes used.
+
 =cut
 
 sub DESTROY
