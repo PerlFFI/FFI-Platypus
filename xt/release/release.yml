@@ -29,6 +29,8 @@ pod_spelling_system:
     - fsprogs
     - DLLs
     - libtest
+    - bzip
+    - Fortran
 
 pod_coverage:
   skip: 0
