@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Allow integer and floating point type default to 0 when not provided
+    without warning
 
 0.16      2015-01-23 17:31:00 -0500
   - Bumping Alien::FFI version requirement up to 0.04

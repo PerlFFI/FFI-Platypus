@@ -24,43 +24,43 @@
         switch(self->argument_types[i]->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
-            ffi_pl_arguments_set_uint8(arguments, i, SvUV(arg));
+            ffi_pl_arguments_set_uint8(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
           case FFI_TYPE_SINT8:
-            ffi_pl_arguments_set_sint8(arguments, i, SvIV(arg));
+            ffi_pl_arguments_set_sint8(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
             break;
           case FFI_TYPE_UINT16:
-            ffi_pl_arguments_set_uint16(arguments, i, SvUV(arg));
+            ffi_pl_arguments_set_uint16(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
           case FFI_TYPE_SINT16:
-            ffi_pl_arguments_set_sint16(arguments, i, SvIV(arg));
+            ffi_pl_arguments_set_sint16(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
             break;
           case FFI_TYPE_UINT32:
-            ffi_pl_arguments_set_uint32(arguments, i, SvUV(arg));
+            ffi_pl_arguments_set_uint32(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
           case FFI_TYPE_SINT32:
-            ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg));
+            ffi_pl_arguments_set_sint32(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
             break;
 #ifdef HAVE_IV_IS_64
           case FFI_TYPE_UINT64:
-            ffi_pl_arguments_set_uint64(arguments, i, SvUV(arg));
+            ffi_pl_arguments_set_uint64(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
           case FFI_TYPE_SINT64:
-            ffi_pl_arguments_set_sint64(arguments, i, SvIV(arg));
+            ffi_pl_arguments_set_sint64(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
             break;
 #else
           case FFI_TYPE_UINT64:
-            ffi_pl_arguments_set_uint64(arguments, i, SvU64(arg));
+            ffi_pl_arguments_set_uint64(arguments, i, SvOK(arg) ? SvU64(arg) : 0);
             break;
           case FFI_TYPE_SINT64:
-            ffi_pl_arguments_set_sint64(arguments, i, SvI64(arg));
+            ffi_pl_arguments_set_sint64(arguments, i, SvOK(arg) ? SvI64(arg) : 0);
             break;
 #endif
           case FFI_TYPE_FLOAT:
-            ffi_pl_arguments_set_float(arguments, i, SvNV(arg));
+            ffi_pl_arguments_set_float(arguments, i, SvOK(arg) ? SvNV(arg) : 0.0);
             break;
           case FFI_TYPE_DOUBLE:
-            ffi_pl_arguments_set_double(arguments, i, SvNV(arg));
+            ffi_pl_arguments_set_double(arguments, i, SvOK(arg) ? SvNV(arg) : 0.0);
             break;
           case FFI_TYPE_POINTER:
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
