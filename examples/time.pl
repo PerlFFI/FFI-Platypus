@@ -29,15 +29,23 @@ my $tm_size = $c->sizeof("tm");
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
 $ffi->type("record($tm_size)" => 'tm');
+$ffi->attach( [ localtime => 'my_localtime' ] => ['time_t*'] => 'tm'     );
+$ffi->attach( [ time      => 'my_time'      ] => ['tm']      => 'time_t' );
 
-$ffi->attach( [ localtime => 'my_localtime' ] => ['time_t*'] => 'tm' );
-
-my $packed = my_localtime(\time);
-my $unpacked = $c->unpack(tm => $packed);
+# ===============================================
+# get the tm struct from the C localtime function
+my $time_hashref = $c->unpack( tm => my_localtime(\time) );
 
 # tm_zone comes back from Convert::Binary::C as an opaque,
 # cast it into a string:
-$unpacked->{tm_zone} = $ffi->cast(opaque => string => $unpacked->{tm_zone});
+do {
+  local $time_hashref->{tm_zone} = $ffi->cast(opaque => string => $time_hashref->{tm_zone});
+  print YAML::Dump($time_hashref);
+};
 
-print YAML::Dump($unpacked);
+# ===============================================
+# convert the tm struct back into an epoch value
+my $time = my_time( $c->pack( tm => $time_hashref ) );
 
+print "time      = $time\n";
+print "perl time = ", time, "\n";
