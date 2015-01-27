@@ -94,8 +94,7 @@ language that you want to interface with is a bit of an anti-pattern.
 This document consists of an API reference, a set of examples, some 
 support and development (for contributors) information.  If you are new 
 to Platypus or FFI, you may want to skip down to the 
-L<EXAMPLES|FFI::Platypus#EXAMPLES> to get a taste of what you can do 
-with Platypus.
+L<EXAMPLES|/EXAMPLES> to get a taste of what you can do with Platypus.
 
 Platypus also provides an declarative interface you may want to use 
 instead of the object oriented interface called 
@@ -136,7 +135,7 @@ only, so you do not need to worry about stepping on the toes of other
 CPAN FFI / Platypus Authors.
 
 Any functions found will be out of the list of libraries specified with 
-the L<lib|FFI::Platypus#lib> attribute.
+the L<lib|/lib> attribute.
 
 =head3 options
 
@@ -145,13 +144,13 @@ the L<lib|FFI::Platypus#lib> attribute.
 =item lib
 
 Either a pathname (string) or a list of pathnames (array ref of strings) 
-to pre-populate the L<lib|FFI::Platypus#lib> attribute.
+to pre-populate the L<lib|/lib> attribute.
 
 =item ignore_not_found
 
 [version 0.15]
 
-Set the L<ignore_not_found|FFI::Platypus#ignore_not_found> attribute.
+Set the L<ignore_not_found|/ignore_not_found> attribute.
 
 =back
 
@@ -235,16 +234,14 @@ sub lib
  $ffi->ignore_not_found(1);
  my $ignore_not_found = $ffi->ignore_not_found;
 
-Normally the L<attach|FFI::Platypus#attach> and 
-L<function|FFI::Platypus#function> methods will throw an exception if it 
-cannot find the name of the function you provide it.  This will change 
-the behavior such that L<function|FFI::Platypus#function> will return 
-C<undef> when the function is not found and 
-L<attach|FFI::Platypus#attach> will ignore functions that are not found. 
+Normally the L<attach|/attach> and L<function|/function> methods will 
+throw an exception if it cannot find the name of the function you 
+provide it.  This will change the behavior such that 
+L<function|/function> will return C<undef> when the function is not 
+found and L<attach|/attach> will ignore functions that are not found. 
 This is useful when you are writing bindings to a library and have many 
 optional functions and you do not wish to wrap every call to 
-L<function|FFI::Platypus#function> or L<attach|FFI::Platypus#attach> in 
-an C<eval>.
+L<function|/function> or L<attach|/attach> in an C<eval>.
 
 =cut
 
@@ -424,7 +421,7 @@ sub _type_lookup
 Returns the list of types that FFI knows about.  This will include the 
 native C<libffi> types (example: C<sint32>, C<opaque> and C<double>) and 
 the normal C types (example: C<unsigned int>, C<uint32_t>), any types 
-that you have defined using the L<type|FFI::Platypus#type> method, and
+that you have defined using the L<type|/type> method, and
 custom types.
 
 The list of types that Platypus knows about varies somewhat from 
@@ -488,7 +485,7 @@ of a performance penalty you can get one like this:
  my $coderef = sub { $function->(@_) };
 
 It may be better, and faster to create a real Perl function using the 
-L<attach|FFI::Platypus#attach> method.
+L<attach|/attach> method.
 
 In addition to looking up a function by name you can provide the address 
 of the symbol yourself:
@@ -496,8 +493,8 @@ of the symbol yourself:
  my $address = $ffi->find_symbol('my_functon');
  my $function = $ffi->function($address => ...);
 
-Under the covers, L<function|FFI::Platypus#function> uses 
-L<find_symbol|FFI::Platypus#find_symbol> when you provide it with a 
+Under the covers, L<function|/function> uses 
+L<find_symbol|/find_symbol> when you provide it with a 
 name, but it is useful to keep this in mind as there are alternative 
 ways of obtaining a functions address.  Example: a C function could 
 return the address of another C function that you might want to call, or 
@@ -530,7 +527,7 @@ sub function
  $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
 
 Find and attach a C function as a real live Perl xsub.  The advantage of 
-attaching a function over using the L<function|FFI::Platypus#function> 
+attaching a function over using the L<function|/function> 
 method is that it is much much much faster since no object resolution 
 needs to be done.  The disadvantage is that it locks the function and 
 the L<FFI::Platypus> instance into memory permanently, since there is no 
@@ -540,7 +537,7 @@ If just one I<$name> is given, then the function will be attached in
 Perl with the same name as it has in C.  The second form allows you to 
 give the Perl function a different name.  You can also provide an 
 address (the third form), just like with the 
-L<function|FFI::Platypus#function> method.
+L<function|/function> method.
 
 Examples:
 
@@ -782,7 +779,7 @@ B<Discussion>: libuuid is a library used to generate unique identifiers
 library is or was part of the Linux e2fsprogs package.
 
 Knowing the size of objects is sometimes important.  In this example, we 
-use the L<sizeof|FFI::Platypus#sizeof> function to get the size of 16 
+use the L<sizeof|/sizeof> function to get the size of 16 
 characters (in this case it is simply 16 bytes).  We also know that the 
 strings "deparsed" by C<uuid_unparse> are exactly 37 bytes.
 
@@ -818,7 +815,7 @@ handled seamlessly by Platypus.
 B<Discussion>: Sometimes you will have a pointer to a function from a 
 source other than Platypus that you want to call.  You can use that 
 address instead of a function name for either of the 
-L<function|FFI::Platypus#function> or L<attach|FFI::Platypus#attach> 
+L<function|/function> or L<attach|/attach> 
 methods.  In this example we use L<FFI::TinyCC> to compile a short piece 
 of C code and to give us the address of one of its functions, which we 
 then use to create a perl xsub to call it.

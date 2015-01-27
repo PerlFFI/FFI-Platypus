@@ -71,8 +71,7 @@ might want to write extensions with FFI instead of XS:
 This document consists of an API reference, a set of examples, some 
 support and development (for contributors) information.  If you are new 
 to Platypus or FFI, you may want to skip down to the 
-[EXAMPLES](https://metacpan.org/pod/FFI::Platypus#EXAMPLES) to get a taste of what you can do 
-with Platypus.
+[EXAMPLES](#examples) to get a taste of what you can do with Platypus.
 
 Platypus also provides an declarative interface you may want to use 
 instead of the object oriented interface called 
@@ -94,20 +93,20 @@ only, so you do not need to worry about stepping on the toes of other
 CPAN FFI / Platypus Authors.
 
 Any functions found will be out of the list of libraries specified with 
-the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
+the [lib](#lib) attribute.
 
 ### options
 
 - lib
 
     Either a pathname (string) or a list of pathnames (array ref of strings) 
-    to pre-populate the [lib](https://metacpan.org/pod/FFI::Platypus#lib) attribute.
+    to pre-populate the [lib](#lib) attribute.
 
 - ignore\_not\_found
 
     \[version 0.15\]
 
-    Set the [ignore\_not\_found](https://metacpan.org/pod/FFI::Platypus#ignore_not_found) attribute.
+    Set the [ignore\_not\_found](#ignore_not_found) attribute.
 
 # ATTRIBUTES
 
@@ -146,16 +145,14 @@ it turns out it is different just about everywhere!).
     $ffi->ignore_not_found(1);
     my $ignore_not_found = $ffi->ignore_not_found;
 
-Normally the [attach](https://metacpan.org/pod/FFI::Platypus#attach) and 
-[function](https://metacpan.org/pod/FFI::Platypus#function) methods will throw an exception if it 
-cannot find the name of the function you provide it.  This will change 
-the behavior such that [function](https://metacpan.org/pod/FFI::Platypus#function) will return 
-`undef` when the function is not found and 
-[attach](https://metacpan.org/pod/FFI::Platypus#attach) will ignore functions that are not found. 
+Normally the [attach](#attach) and [function](#function) methods will 
+throw an exception if it cannot find the name of the function you 
+provide it.  This will change the behavior such that 
+[function](#function) will return `undef` when the function is not 
+found and [attach](#attach) will ignore functions that are not found. 
 This is useful when you are writing bindings to a library and have many 
 optional functions and you do not wish to wrap every call to 
-[function](https://metacpan.org/pod/FFI::Platypus#function) or [attach](https://metacpan.org/pod/FFI::Platypus#attach) in 
-an `eval`.
+[function](#function) or [attach](#attach) in an `eval`.
 
 # METHODS
 
@@ -207,7 +204,7 @@ prepended to it.
 Returns the list of types that FFI knows about.  This will include the 
 native `libffi` types (example: `sint32`, `opaque` and `double`) and 
 the normal C types (example: `unsigned int`, `uint32_t`), any types 
-that you have defined using the [type](https://metacpan.org/pod/FFI::Platypus#type) method, and
+that you have defined using the [type](#type) method, and
 custom types.
 
 The list of types that Platypus knows about varies somewhat from 
@@ -249,7 +246,7 @@ of a performance penalty you can get one like this:
     my $coderef = sub { $function->(@_) };
 
 It may be better, and faster to create a real Perl function using the 
-[attach](https://metacpan.org/pod/FFI::Platypus#attach) method.
+[attach](#attach) method.
 
 In addition to looking up a function by name you can provide the address 
 of the symbol yourself:
@@ -257,8 +254,8 @@ of the symbol yourself:
     my $address = $ffi->find_symbol('my_functon');
     my $function = $ffi->function($address => ...);
 
-Under the covers, [function](https://metacpan.org/pod/FFI::Platypus#function) uses 
-[find\_symbol](https://metacpan.org/pod/FFI::Platypus#find_symbol) when you provide it with a 
+Under the covers, [function](#function) uses 
+[find\_symbol](#find_symbol) when you provide it with a 
 name, but it is useful to keep this in mind as there are alternative 
 ways of obtaining a functions address.  Example: a C function could 
 return the address of another C function that you might want to call, or 
@@ -277,7 +274,7 @@ Examples:
     $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
 
 Find and attach a C function as a real live Perl xsub.  The advantage of 
-attaching a function over using the [function](https://metacpan.org/pod/FFI::Platypus#function) 
+attaching a function over using the [function](#function) 
 method is that it is much much much faster since no object resolution 
 needs to be done.  The disadvantage is that it locks the function and 
 the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance into memory permanently, since there is no 
@@ -287,7 +284,7 @@ If just one _$name_ is given, then the function will be attached in
 Perl with the same name as it has in C.  The second form allows you to 
 give the Perl function a different name.  You can also provide an 
 address (the third form), just like with the 
-[function](https://metacpan.org/pod/FFI::Platypus#function) method.
+[function](#function) method.
 
 Examples:
 
@@ -469,7 +466,7 @@ these and other memory related functions are provided by the
 library is or was part of the Linux e2fsprogs package.
 
 Knowing the size of objects is sometimes important.  In this example, we 
-use the [sizeof](https://metacpan.org/pod/FFI::Platypus#sizeof) function to get the size of 16 
+use the [sizeof](#sizeof) function to get the size of 16 
 characters (in this case it is simply 16 bytes).  We also know that the 
 strings "deparsed" by `uuid_unparse` are exactly 37 bytes.
 
@@ -562,7 +559,7 @@ handled seamlessly by Platypus.
 **Discussion**: Sometimes you will have a pointer to a function from a 
 source other than Platypus that you want to call.  You can use that 
 address instead of a function name for either of the 
-[function](https://metacpan.org/pod/FFI::Platypus#function) or [attach](https://metacpan.org/pod/FFI::Platypus#attach) 
+[function](#function) or [attach](#attach) 
 methods.  In this example we use [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) to compile a short piece 
 of C code and to give us the address of one of its functions, which we 
 then use to create a perl xsub to call it.
