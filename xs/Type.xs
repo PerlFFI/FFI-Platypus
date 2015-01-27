@@ -1,11 +1,12 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type
 
 ffi_pl_type *
-_new(class, type, platypus_type, array_or_record_size)
+_new(class, type, platypus_type, array_or_record_size, type_classname)
     const char *class
     const char *type
     const char *platypus_type
     size_t array_or_record_size
+    ffi_pl_string type_classname
   PREINIT:
     ffi_pl_type *self;
     char *buffer;
@@ -44,8 +45,7 @@ _new(class, type, platypus_type, array_or_record_size)
       self->ffi_type = NULL;
       self->platypus_type = FFI_PL_RECORD;
       self->extra[0].record.size = array_or_record_size;
-      self->extra[0].record.ref = 0;
-      self->extra[0].record.stash = NULL;
+      self->extra[0].record.stash = type_classname != NULL ? gv_stashpv(type_classname, GV_ADD) : NULL;
     }
     else
     {

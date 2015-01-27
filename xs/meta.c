@@ -101,6 +101,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
   else if(self->platypus_type == FFI_PL_RECORD)
   {
     hv_store(meta, "type",          4, newSVpv("record",0),0);
+    hv_store(meta, "ref",           3, newSViv(self->extra[0].record.stash != NULL ? 1 : 0),0);
   }
 
   switch(self->ffi_type->type)

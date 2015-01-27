@@ -139,6 +139,7 @@ subtest 'closure types' => sub {
 };
 
 subtest 'record' => sub {
+  plan tests => 4;
 
   my $ffi = FFI::Platypus->new;
   
@@ -147,5 +148,26 @@ subtest 'record' => sub {
   $ffi->type('record (32)' => 'my_record_32');
   note xdump($ffi->type_meta('my_record_32'));
 
-  pass "hokay";
+  is $ffi->type_meta('my_record_1')->{size}, 1, "sizeof my_record_1 = 1";
+  is $ffi->type_meta('my_record_32')->{size}, 32, "sizeof my_record_32 = 32";
+
+  $ffi->type('record(My::Record22)' => 'my_record_22');
+  note xdump($ffi->type_meta('my_record_22'));
+  $ffi->type('record (My::Record44)' => 'my_record_44');
+  note xdump($ffi->type_meta('my_record_44'));
+
+  is $ffi->type_meta('my_record_22')->{size}, 22, "sizeof my_record_22 = 22";
+  is $ffi->type_meta('my_record_44')->{size}, 44, "sizeof my_record_44 = 44";
 };
+
+
+package
+  My::Record22;
+
+use constant ffi_record_size => 22;
+
+package
+  My::Record44;
+
+use constant _ffi_record_size => 44;
+

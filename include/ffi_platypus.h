@@ -65,7 +65,6 @@ typedef enum _platypus_type {
 
 typedef struct _ffi_pl_type_extra_record {
   size_t size;
-  int ref;
   void *stash; /* really a HV* pointing to the package stash, or NULL */
 } ffi_pl_type_extra_record;
 

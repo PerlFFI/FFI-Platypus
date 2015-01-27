@@ -31,8 +31,6 @@ foreach my $fn (@list)
   
   @list = map { s/^(# VERSION.*)$/our \$VERSION = '$meta{version}'; $1/; $_ } @list;
 
-  $DB::single = 1;
-  
   open my $out, '>', $fn;
   print $out @list;
   close $out;

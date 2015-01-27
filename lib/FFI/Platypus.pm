@@ -289,7 +289,7 @@ sub type
 
   croak "alias conflicts with existing type" if defined $alias && (defined $type_map->{$alias} || defined $self->{types}->{$alias});
 
-  if($name =~ /-\>/ || $name =~ /^record\s*\([0-9]+\)$/)
+  if($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/)
   {
     # for closure and record types we do not try to convet into the
     # basic type so you can have many many many copies of a given
@@ -965,20 +965,44 @@ sub new
   my $ffi_type;
   my $platypus_type;
   my $array_or_record_size = 0;
+  my $classname;
   
   if($type eq 'string')
   {
     $ffi_type = 'pointer';
     $platypus_type = 'string';
   }
-  elsif($type =~ /^record\s*\(([0-9]+)\)$/)
+  elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
   {
     $ffi_type = 'pointer';
     $platypus_type = 'record';
-    $array_or_record_size = $1;
+    if($1 =~ /^([0-9]+)$/)
+    {
+      $array_or_record_size = $1;
+    }
+    else
+    {
+      $classname = $1;
+      unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
+      {
+        eval qq{ require $classname };
+        warn "error requiring $classname: $@";
+      }
+      if($classname->can('ffi_record_size'))
+      {
+        $array_or_record_size = $classname->ffi_record_size;
+      }
+      elsif($classname->can('_ffi_record_size'))
+      {
+        $array_or_record_size = $classname->_ffi_record_size;
+      }
+      else
+      {
+        croak "$classname has not ffi_record_size or _ffi_record_size method";
+      }
+    }
   }
-  elsif($type =~ s/\s+\*$//)
-  {
+  elsif($type =~ s/\s+\*$//) {
     $ffi_type = $type;
     $platypus_type = 'pointer';
   }
@@ -994,7 +1018,7 @@ sub new
     $platypus_type = 'ffi';
   }
   
-  $class->_new($ffi_type, $platypus_type, $array_or_record_size);
+  $class->_new($ffi_type, $platypus_type, $array_or_record_size, $classname);
 }
 
 1;
