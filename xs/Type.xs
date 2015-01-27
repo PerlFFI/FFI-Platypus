@@ -197,10 +197,17 @@ meta(self)
     ffi_pl_type *self
   PREINIT:
     HV *meta;
-    extern void *ffi_pl_get_type_meta(ffi_pl_type*);
   CODE:
-    meta = (HV*) ffi_pl_get_type_meta(self);
+    meta = ffi_pl_get_type_meta(self);
     RETVAL = newRV_noinc((SV*)meta);
+  OUTPUT:
+    RETVAL
+
+int
+sizeof(self)
+    ffi_pl_type *self
+  CODE:
+    RETVAL = ffi_pl_sizeof(self);
   OUTPUT:
     RETVAL
 

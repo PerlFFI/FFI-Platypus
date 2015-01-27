@@ -67,7 +67,6 @@ subtest custom_type => sub {
   {
     my $expected = $ffi->sizeof($type);
     $ffi->custom_type( "my_$type" => { native_type => $type, native_to_perl => sub {} } );
-    $DB::single = 1;
     is $ffi->sizeof("my_$type"), $expected, "sizeof my_$type = $expected";
   }
 };

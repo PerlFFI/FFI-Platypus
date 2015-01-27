@@ -652,8 +652,9 @@ iterations.
 
 sub sizeof
 {
-  my($self,$type) = @_;
-  $self->type_meta($type)->{size};
+  my($self,$name) = @_;
+  my $type = $self->{types}->{$name} || $self->_type_lookup($name);
+  FFI::Platypus::Type::sizeof($type);
 }
 
 =head2 find_symbol

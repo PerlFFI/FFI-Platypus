@@ -5,7 +5,26 @@
 
 #include "ffi_platypus.h"
 
-void *
+size_t
+ffi_pl_sizeof(ffi_pl_type *self)
+{
+  switch(self->platypus_type)
+  {
+    case FFI_PL_NATIVE:
+    case FFI_PL_CUSTOM_PERL:
+      return self->ffi_type->size;
+    case FFI_PL_STRING:
+    case FFI_PL_POINTER:
+    case FFI_PL_CLOSURE:
+      return sizeof(void*);
+    case FFI_PL_ARRAY:
+      return self->ffi_type->size * self->extra[0].array.element_count;
+    default:
+      return 0;
+  }
+}
+
+HV *
 ffi_pl_get_type_meta(ffi_pl_type *self)
 {
   HV *meta;
@@ -13,27 +32,25 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
   meta = newHV();
 
+  hv_store(meta, "size", 4, newSViv(ffi_pl_sizeof(self)), 0);
+
   if(self->platypus_type == FFI_PL_NATIVE)
   {
-    hv_store(meta, "size",          4, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "type",          4, newSVpv("scalar",0),0);
   }
   else if(self->platypus_type == FFI_PL_STRING)
   {
-    hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
     hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
     hv_store(meta, "type",          4, newSVpv("string",0),0);
   }
   else if(self->platypus_type == FFI_PL_POINTER)
   {
-    hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
     hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "type",          4, newSVpv("opaque_pointer",0),0);
   }
   else if(self->platypus_type == FFI_PL_ARRAY)
   {
-    hv_store(meta, "size",           4, newSViv(self->ffi_type->size * self->extra[0].array.element_count), 0);
     hv_store(meta, "element_size",  12, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "type",           4, newSVpv("array",0),0);
     hv_store(meta, "element_count", 13, newSViv(self->extra[0].array.element_count), 0);
@@ -63,14 +80,12 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
     hv_store(meta, "signature",     9, newRV_noinc((SV*)signature), 0);
 
-    hv_store(meta, "size",          4, newSViv(sizeof(void*)), 0);
     hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
     hv_store(meta, "type",          4, newSVpv("closure",0),0);
   }
   else if(self->platypus_type == FFI_PL_CUSTOM_PERL)
   {
     hv_store(meta, "type",          4, newSVpv("custom_perl",0),0);
-    hv_store(meta, "size",          4, newSViv(self->ffi_type->size), 0);
 
     if(self->extra[0].custom_perl.perl_to_native != NULL)
       hv_store(meta, "custom_perl_to_native", 18, newRV_inc((SV*)self->extra[0].custom_perl.perl_to_native), 0);

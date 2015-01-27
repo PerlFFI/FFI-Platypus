@@ -5,6 +5,8 @@ Revision history for {{$dist->name}}
     without warning
   - You can now take the sizeof a custom type (it will be the size of
     the native type that is actually passed on the C argument stack).
+  - sizeof should be faster now as it doesn't look up the other meta
+    information
 
 0.16      2015-01-23 17:31:00 -0500
   - Bumping Alien::FFI version requirement up to 0.04
