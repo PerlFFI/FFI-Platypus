@@ -3,10 +3,11 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - Allow integer and floating point type default to 0 when not provided
     without warning
-  - You can now take the sizeof a custom type (it will be the size of
+  - Uou can now take the sizeof a custom type (it will be the size of
     the native type that is actually passed on the C argument stack).
-  - sizeof should be faster now as it doesn't look up the other meta
+  - Sizeof should be faster now as it doesn't look up the other meta
     information
+  - Added record type see FFI::Platypus::Type#Records
 
 0.16      2015-01-23 17:31:00 -0500
   - Bumping Alien::FFI version requirement up to 0.04

@@ -2,6 +2,12 @@
 # ABSTRACT: Defining types for FFI::Platypus
 # VERSION
 
+=begin stopwords
+
+tm
+
+=end stopwords
+
 =head1 SYNOPSIS
 
 OO Interface:
@@ -52,6 +58,11 @@ Unless you are using aliases the L<FFI::Platypus#type> method or
 L<FFI::Platypus::Declare#type> function are not necessary, but they
 will throw an exception if the type is incorrectly specified or not
 supported, which may be helpful.
+
+Note: This document sometimes uses the term "C Function" as short hand 
+for function implemented in a compiled language.  Unless the term is 
+referring literally to a C function example code, you can assume that 
+it should also work with another compiled language.
 
 =head2 meta information about types
 
@@ -330,7 +341,29 @@ of bytes stored as a scalar.  There are a number of tools you can use
 to create record in Perl, two notable examples are
 L<pack and unpack|perlpacktut> and L<Convert::Binary::C>.
 
-TODO: examples
+Here is an example with commentary that uses L<Convert::Binary::C> to
+extract the component time values from the C C<localtime> function,
+and then smushes them back together to get the original C<time_t> (an
+integer).
+
+# EXAMPLE: examples/time.pl
+
+You can also link a record type to a class.  It will then be accepted 
+when blessed into that class as an argument passed into a C function, 
+and when it is returned from a C function it will be blessed into that 
+class.  Basically:
+
+ $ffi->type( 'record(My::Class)' => 'my_class' );
+ $ffi->attach( my_function1 => [ 'my_class' ] => 'void' );
+ $ffi->attach( my_function2 => [ ] => 'my_class' );
+
+The only thing that your class MUST provide is either a 
+C<ffi_record_size> or C<_ffi_record_size> class method that returns the 
+size of the record in bytes.
+
+Here is a longer practical example, once again using the tm struct:
+
+# EXAMPLE: examples/time_oo.pl
 
 =head2 Fixed length arrays
 

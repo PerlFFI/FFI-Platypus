@@ -31,6 +31,7 @@ pod_spelling_system:
     - libtest
     - bzip
     - Fortran
+    - smushes
 
 pod_coverage:
   skip: 0
