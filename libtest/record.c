@@ -14,10 +14,21 @@ foo_get_name(foo_record_t *self)
   return self->name;
 }
 
-EXTERN int
+EXTERN int64_t
 foo_get_value(foo_record_t *self)
 {
   if(self == NULL)
     return 0;
   return self->value;
+}
+
+EXTERN foo_record_t *
+foo_create(const char *name, int64_t value)
+{
+  static foo_record_t myfoo;
+  
+  strcpy((char*)myfoo.name, name);
+  myfoo.value = value;
+  
+  return &myfoo;
 }

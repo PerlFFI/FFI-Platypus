@@ -776,6 +776,28 @@
         XSRETURN(1);
       }
     }
+    else if(self->return_type->platypus_type == FFI_PL_RECORD)
+    {
+      if(result.pointer != NULL)
+      {
+        SV *value = sv_newmortal();
+        sv_setpvn(value, result.pointer, self->return_type->extra[0].record.size);
+        if(self->return_type->extra[0].record.stash)
+        {
+          SV *ref = ST(0) = newRV_inc(value);
+          sv_bless(ref, self->return_type->extra[0].record.stash);
+        }
+        else
+        {
+          ST(0) = value;
+        }
+        XSRETURN(1);
+      }
+      else
+      {
+        XSRETURN_EMPTY;
+      }
+    }
     else if(self->return_type->platypus_type == FFI_PL_ARRAY)
     {
       if(result.pointer == NULL)
