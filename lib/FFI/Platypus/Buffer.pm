@@ -23,8 +23,8 @@ memory region.  In Perl the equivalent structure is a scalar containing
 a string of bytes.  This module provides portable functions for 
 converting a Perl string or scalar into a buffer and back.
 
-These functions are implemented using L<pack|perlfunc#pack> and 
-L<unpack|perlfunc#unpack> so they should be relatively fast.
+These functions are implemented using L<pack and unpack|perlpacktut> and 
+so they should be relatively fast.
 
 Both functions are exported by default, but you can explicitly export 
 one or neither if you so choose.

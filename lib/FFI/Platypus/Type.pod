@@ -327,8 +327,8 @@ Platypus does not manage the structure of a record (that is up to you),
 it just keeps track of their size and makes sure that they are copied
 correctly when used as a return type.  A record in Perl is just a string
 of bytes stored as a scalar.  There are a number of tools you can use
-to create record in Perl, two notable examples are L<pack|perlfunc#pack> /
-L<unpack|perlfunc#unpack> and L<Convert::Binary::C>.
+to create record in Perl, two notable examples are
+L<pack and unpack|perlpacktut> and L<Convert::Binary::C>.
 
 TODO: examples
 

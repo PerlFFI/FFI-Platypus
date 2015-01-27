@@ -989,7 +989,7 @@ The build process also respects these environment variables:
     appears to be unmaintained, and has a failing pod test, so I cannot 
     recommend it for use by CPAN modules.
 
-- [pack](https://metacpan.org/pod/perlfunc#pack) and [unpack](https://metacpan.org/pod/perlfunc#unpack)
+- [pack and unpack](https://metacpan.org/pod/perlpacktut)
 
     Native to Perl functions that can be used to decode C `struct` types.
 

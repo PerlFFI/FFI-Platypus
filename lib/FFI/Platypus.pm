@@ -1180,7 +1180,7 @@ An interface for interacting with C C<struct> types.  Unfortunately it
 appears to be unmaintained, and has a failing pod test, so I cannot 
 recommend it for use by CPAN modules.
 
-=item L<pack|perlfunc#pack> and L<unpack|perlfunc#unpack>
+=item L<pack and unpack|perlpacktut>
 
 Native to Perl functions that can be used to decode C C<struct> types.
 
