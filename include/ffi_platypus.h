@@ -59,8 +59,15 @@ typedef enum _platypus_type {
   FFI_PL_POINTER,
   FFI_PL_ARRAY,
   FFI_PL_CLOSURE,
-  FFI_PL_CUSTOM_PERL
+  FFI_PL_CUSTOM_PERL,
+  FFI_PL_RECORD
 } platypus_type;
+
+typedef struct _ffi_pl_type_extra_record {
+  size_t size;
+  int ref;
+  void *stash; /* really a HV* pointing to the package stash, or NULL */
+} ffi_pl_type_extra_record;
 
 typedef struct _ffi_pl_type_extra_custom_perl {
   void *perl_to_native;
@@ -86,6 +93,7 @@ typedef union _ffi_pl_type_extra {
   ffi_pl_type_extra_custom_perl  custom_perl;
   ffi_pl_type_extra_array        array;
   ffi_pl_type_extra_closure      closure;
+  ffi_pl_type_extra_record       record;
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {

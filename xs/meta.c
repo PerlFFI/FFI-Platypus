@@ -19,6 +19,8 @@ ffi_pl_sizeof(ffi_pl_type *self)
       return sizeof(void*);
     case FFI_PL_ARRAY:
       return self->ffi_type->size * self->extra[0].array.element_count;
+    case FFI_PL_RECORD:
+      return self->extra[0].record.size;
     default:
       return 0;
   }
@@ -95,6 +97,10 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
     if(self->extra[0].custom_perl.native_to_perl != NULL)
       hv_store(meta, "custom_native_to_perl", 18, newRV_inc((SV*)self->extra[0].custom_perl.native_to_perl), 0);
+  }
+  else if(self->platypus_type == FFI_PL_RECORD)
+  {
+    hv_store(meta, "type",          4, newSVpv("record",0),0);
   }
 
   switch(self->ffi_type->type)

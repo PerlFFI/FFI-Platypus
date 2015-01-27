@@ -289,12 +289,12 @@ sub type
 
   croak "alias conflicts with existing type" if defined $alias && (defined $type_map->{$alias} || defined $self->{types}->{$alias});
 
-  if($name =~ /-\>/)
+  if($name =~ /-\>/ || $name =~ /^record\s*\([0-9]+\)$/)
   {
-    # for closure types we do not try to convet into the basic type
-    # so you can have many many many copies of a given closure type
-    # if you do not spell it exactly the same each time.  Recommended
-    # thsat you use an alias for a closure type anyway.
+    # for closure and record types we do not try to convet into the
+    # basic type so you can have many many many copies of a given
+    # closure type if you do not spell it exactly the same each time.
+    # Recommended that you use an alias for a closure type anyway.
     $self->{types}->{$name} ||= FFI::Platypus::Type->new($name, $self);
   }
   else
@@ -964,12 +964,18 @@ sub new
   
   my $ffi_type;
   my $platypus_type;
-  my $array_size = 0;
+  my $array_or_record_size = 0;
   
   if($type eq 'string')
   {
     $ffi_type = 'pointer';
     $platypus_type = 'string';
+  }
+  elsif($type =~ /^record\s*\(([0-9]+)\)$/)
+  {
+    $ffi_type = 'pointer';
+    $platypus_type = 'record';
+    $array_or_record_size = $1;
   }
   elsif($type =~ s/\s+\*$//)
   {
@@ -980,7 +986,7 @@ sub new
   {
     $ffi_type = $type;
     $platypus_type = 'array';
-    $array_size = $1;
+    $array_or_record_size = $1;
   }
   else
   {
@@ -988,7 +994,7 @@ sub new
     $platypus_type = 'ffi';
   }
   
-  $class->_new($ffi_type, $platypus_type, $array_size);
+  $class->_new($ffi_type, $platypus_type, $array_or_record_size);
 }
 
 1;

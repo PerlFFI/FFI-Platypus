@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 6;
+use Test::More tests => 7;
 use FFI::Platypus;
 use JSON::PP qw( encode_json );
 BEGIN { eval q{ use YAML () } };
@@ -136,4 +136,16 @@ subtest 'closure types' => sub {
   is $ffi->type_meta('baz')->{type}, 'closure', 'a more complicated closure';
   note xdump($ffi->type_meta('baz'));
   
+};
+
+subtest 'record' => sub {
+
+  my $ffi = FFI::Platypus->new;
+  
+  $ffi->type('record(1)' => 'my_record_1');
+  note xdump($ffi->type_meta('my_record_1'));
+  $ffi->type('record (32)' => 'my_record_32');
+  note xdump($ffi->type_meta('my_record_32'));
+
+  pass "hokay";
 };
