@@ -149,6 +149,20 @@
         }
         ffi_pl_arguments_set_pointer(arguments, i, ptr);
       }
+      else if(platypus_type == FFI_PL_RECORD)
+      {
+        void *ptr;
+        if(SvROK(arg))
+        {
+          SV *arg2 = SvRV(arg);
+          ptr = SvOK(arg2) ? SvPV_nolen(arg2) : NULL;
+        }
+        else
+        {
+          ptr = SvOK(arg) ? SvPV_nolen(arg) : NULL;
+        }
+        ffi_pl_arguments_set_pointer(arguments, i, ptr);
+      }
       else if(platypus_type == FFI_PL_ARRAY)
       {
         void *ptr;
