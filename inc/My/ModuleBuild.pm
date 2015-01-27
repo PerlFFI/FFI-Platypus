@@ -88,6 +88,7 @@ sub new
     'examples/*.so',
     'examples/*.dll',
     'examples/*.bundle',
+    'examples/rust/*.so',
     'xs/ffi_platypus_config.h',
     'config.log',
     'test*.o',
