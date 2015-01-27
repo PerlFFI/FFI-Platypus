@@ -466,7 +466,7 @@ sub type_meta
 {
   my($self, $name) = @_;
   $self = $self->new unless ref $self && eval { $self->isa('FFI::Platypus') };
-  my $type = $self->_type_lookup($name);
+  my $type = $self->{types}->{$name} || $self->_type_lookup($name);
   $type->meta;
 }
 
@@ -653,7 +653,6 @@ iterations.
 sub sizeof
 {
   my($self,$type) = @_;
-  $self->type($type);
   $self->type_meta($type)->{size};
 }
 
