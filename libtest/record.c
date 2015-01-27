@@ -18,9 +18,6 @@ EXTERN int
 foo_get_value(foo_record_t *self)
 {
   if(self == NULL)
-  {
-    printf("self is NULL\n");
     return 0;
-  }
   return self->value;
 }
