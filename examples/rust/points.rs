@@ -1,5 +1,7 @@
 #![feature(box_syntax)]
 
+// compile with: rustc --crate-type dylib points.rs
+
 use std::num::{Int,Float};
 
 #[deriving(Copy)]
