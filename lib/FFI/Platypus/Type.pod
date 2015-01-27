@@ -316,6 +316,22 @@ code.
  increment_int(\$i);   # $i == 3
  increment_int(undef); # prints "NULL pointer!\n"
 
+=head2 Records
+
+Records are structured data of a fixed length.  In C they are called
+C<strict>s To declare a record type, use C<record>:
+
+ $ffi->type( 'record (42)' => 'my_record_of_size_42_bytes' );
+
+Platypus does not manage the structure of a record (that is up to you),
+it just keeps track of their size and makes sure that they are copied
+correctly when used as a return type.  A record in Perl is just a string
+of bytes stored as a scalar.  There are a number of tools you can use
+to create record in Perl, two notable examples are L<pack|perlfunc#pack> /
+L<unpack|perlfunc#unpack> and L<Convert::Binary::C>.
+
+TODO: examples
+
 =head2 Fixed length arrays
 
 Fixed length arrays of native types are supported by L<FFI::Platypus>.  
