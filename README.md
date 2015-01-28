@@ -108,11 +108,11 @@ the [lib](#lib) attribute.
 
     Set the [ignore\_not\_found](#ignore_not_found) attribute.
 
-- with
+- lang
 
     \[version 0.18\]
 
-    Set the [with](#with) attribute.
+    Set the [lang](#lang) attribute.
 
 # ATTRIBUTES
 
@@ -160,11 +160,11 @@ This is useful when you are writing bindings to a library and have many
 optional functions and you do not wish to wrap every call to 
 [function](#function) or [attach](#attach) in an `eval`.
 
-## with
+## lang
 
 \[version 0.18\]
 
-    $ffi->with($language);
+    $ffi->lang($language);
 
 Specifies the foreign language that you will be interfacing with. The 
 default is C.  The foreign language specified with this attribute 

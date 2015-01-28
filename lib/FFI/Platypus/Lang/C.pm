@@ -10,14 +10,14 @@ use warnings;
 
  use FFI::Platypus;
  my $ffi = FFI::Platypus->new;
- $ffi->with('C'); # the default
+ $ffi->lang('C'); # the default
 
 =head1 DESCRIPTION
 
 This module provides some hooks for Platypus to interact with the C 
 programming language.  It is generally used by default if you do not 
 specify another foreign programming language with the 
-L<FFI::Platypus#with> method.
+L<FFI::Platypus#lang> attribute.
 
 =head1 METHODS
 

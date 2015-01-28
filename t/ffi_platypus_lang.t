@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More tests => 3;
 use FFI::Platypus;
 
 subtest C => sub {
@@ -17,10 +17,29 @@ subtest C => sub {
 
 };
 
-subtest 'Foo' => sub {
+subtest 'Foo constructor' => sub {
   plan tests => 5;
 
-  my $ffi = FFI::Platypus->new(with => 'Foo');
+  my $ffi = FFI::Platypus->new(lang => 'Foo');
+  
+  eval { $ffi->type('int') };
+  isnt $@, '', 'int is not an okay type';
+  note $@;
+  eval { $ffi->type('foo_t') };
+  is $@, '', 'foo_t is an okay type';
+  eval { $ffi->type('sint16') };
+  is $@, '', 'sint16 is an okay type';
+  
+  is $ffi->sizeof('foo_t'), 2, 'sizeof foo_t = 2';
+  is $ffi->sizeof('bar_t'), 4, 'sizeof foo_t = 4';
+  
+};
+
+subtest 'Foo attribute' => sub {
+  plan tests => 5;
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lang('Foo');
   
   eval { $ffi->type('int') };
   isnt $@, '', 'int is not an okay type';

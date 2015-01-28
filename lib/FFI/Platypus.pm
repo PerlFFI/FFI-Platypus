@@ -152,11 +152,11 @@ to pre-populate the L<lib|/lib> attribute.
 
 Set the L<ignore_not_found|/ignore_not_found> attribute.
 
-=item with
+=item lang
 
 [version 0.18]
 
-Set the L<with|/with> attribute.
+Set the L<lang|/lang> attribute.
 
 =back
 
@@ -185,7 +185,7 @@ sub new
     lib              => \@lib,
     handles          => {},
     types            => {},
-    with             => $args{with} || 'C',
+    lang             => $args{lang} || 'C',
     ignore_not_found => defined $args{ignore_not_found} ? $args{ignore_not_found} : 0,
   }, $class;
 }
@@ -196,7 +196,7 @@ sub _type_map
   
   unless(defined $self->{type_map})
   {
-    my $class = "FFI::Platypus::Lang::".$self->{with};
+    my $class = "FFI::Platypus::Lang::".$self->{lang};
     unless($class->can("native_type_map"))
     {
       eval qq{ require $class };
@@ -290,11 +290,11 @@ sub ignore_not_found
   $self->{ignore_not_found};
 }
 
-=head2 with
+=head2 lang
 
 [version 0.18]
 
- $ffi->with($language);
+ $ffi->lang($language);
 
 Specifies the foreign language that you will be interfacing with. The 
 default is C.  The foreign language specified with this attribute 
@@ -307,16 +307,16 @@ of languages that require it like L<C++|FFI::Platypus::Lang::CPP>.
 
 =cut
 
-sub with
+sub lang
 {
   my($self, $value) = @_;
   
   if(defined $value)
   {
-    $self->{with} = $value;
+    $self->{lang} = $value;
   }
   
-  $self->{with};
+  $self->{lang};
 }
 
 =head1 METHODS
