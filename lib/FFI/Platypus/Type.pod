@@ -365,6 +365,20 @@ Here is a longer practical example, once again using the tm struct:
 
 # EXAMPLE: examples/time_oo.pl
 
+Contrast a record type which is stored as a scalar string of bytes in 
+Perl to an opaque pointer which is stored as an integer in Perl.  Both 
+are treated as pointers in C functions.  The situations when you usually 
+want to use a record are when you know ahead of time what the size of 
+the object that you are working with and probably something about its 
+structure.  Because a function that returns a structure copies the 
+structure into a Perl data structure, you want to make sure that it is 
+okay to copy the record objects that you are dealing with if any of your 
+functions will be returning one of them.
+
+Opaque pointers should be used when you do not know the size of the 
+object that you are using, or if the objects are created and free'd 
+through an API interface other than C<malloc> and C<free>.
+
 =head2 Fixed length arrays
 
 Fixed length arrays of native types are supported by L<FFI::Platypus>.  
