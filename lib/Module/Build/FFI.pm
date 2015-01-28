@@ -195,7 +195,7 @@ sub new
 
   my $self = $class->SUPER::new(%args);
 
-  my $have_compiler = ExtUtils::CBuilder->new->have_compiler;
+  my $have_compiler = $self->cbuilder->have_compiler;
 
   if(-d $self->ffi_source_dir && !$have_compiler)
   {
@@ -247,9 +247,12 @@ sub _build_dynamic_lib ($$$;$)
   
   $dest_dir ||= $dir;
   
-  my $header_time = do { no warnings; reverse sort map { (stat $_)[9] } @{ _ffi_headers $self, $dir } };
+  my $header_time = do {
+    my @list = sort map { (stat $_)[9] } @{ _ffi_headers $self, $dir };
+    $list[-1];
+  };
   my $compile_count = 0;
-  my $b = ExtUtils::CBuilder->new;
+  my $b = $self->cbuilder;
 
   my @obj = map {
     my $filename = $_;
@@ -257,17 +260,21 @@ sub _build_dynamic_lib ($$$;$)
     my $obj_name = $b->object_file($filename);
     $self->add_to_cleanup($obj_name);
     my $obj_time = -e $obj_name ? ((stat $obj_name)[9]) : 0;
+
+    my %compile_options = (
+      source               => $filename,
+      include_dirs         => _ffi_include_dirs($self, $dir),
+      extra_compiler_flags => $self->extra_compiler_flags,
+    );
+    $compile_options{"C++"} = 1 if $filename =~ /\.(cpp|cxx|cc|\c\+\+)$/;
+
     if($obj_time < $source_time)
     {
-      $b->compile(
-        source               => $filename,
-        include_dirs         => _ffi_include_dirs($self, $dir),
-        extra_compiler_flags => $self->extra_compiler_flags,
-      );
+      $b->compile(%compile_options);
       $compile_count++;
     }
     $obj_name;
-  } bsd_glob("$dir/*.c");
+  } sort map { bsd_glob("$dir/*.$_") } qw( c cpp cxx cc c++ );
 
   return unless $compile_count > 0;
 
@@ -324,7 +331,7 @@ sub ACTION_libtest
     *.bundle
   ));
   
-  my $have_compiler = ExtUtils::CBuilder->new->have_compiler;
+  my $have_compiler = $self->cbuilder->have_compiler;
   
   unless($have_compiler)
   {
@@ -351,7 +358,7 @@ sub ACTION_ffi
     *.bundle
   ));
   
-  unless(ExtUtils::CBuilder->new->have_compiler)
+  unless($self->cbuilder->have_compiler)
   {
     print STDERR "a compiler is required.\n";
     exit 2;
