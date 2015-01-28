@@ -1023,7 +1023,11 @@ The build process also respects these environment variables:
 
 # AUTHOR
 
-Graham Ollis <plicease@cpan.org>
+Author: Graham Ollis <plicease@cpan.org>
+
+Contributors:
+
+Bakkiaraj Murugesan (bakkiaraj)
 
 # COPYRIGHT AND LICENSE
 
