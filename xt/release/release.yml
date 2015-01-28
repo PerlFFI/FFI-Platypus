@@ -32,6 +32,9 @@ pod_spelling_system:
     - bzip
     - Fortran
     - smushes
+    - Bakkiaraj
+    - Murugesan
+    - bakkiaraj
 
 pod_coverage:
   skip: 0
