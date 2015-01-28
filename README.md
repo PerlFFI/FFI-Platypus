@@ -1023,9 +1023,9 @@ The build process also respects these environment variables:
 
 # AUTHOR
 
-Author: Graham Ollis <plicease@cpan.org>
+author: Graham Ollis <plicease@cpan.org>
 
-Contributors:
+contributors:
 
 Bakkiaraj Murugesan (bakkiaraj)
 

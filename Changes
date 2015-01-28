@@ -1,12 +1,14 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.17      2015-01-28 11:11:02 -0500
   - Allow integer and floating point type default to 0 when not provided
     without warning
-  - Uou can now take the sizeof a custom type (it will be the size of
+  - You can now take the sizeof a custom type (it will be the size of
     the native type that is actually passed on the C argument stack).
   - Sizeof should be faster now as it doesn't look up the other meta
-    information
+    information or create a hash to contain it
   - Added record type see FFI::Platypus::Type#Records
   - Added bool as a primitive type.
 

@@ -17,7 +17,7 @@ my %module_build_args = (
     "Module::Build" => "0.3601"
   },
   "configure_requires" => {
-    "Alien::FFI" => "0.04",
+    "Alien::FFI" => "0.05",
     "Config::AutoConf" => 0,
     "ExtUtils::CBuilder" => 0,
     "FFI::CheckLib" => "0.05",
@@ -29,7 +29,7 @@ my %module_build_args = (
     "Graham Ollis <plicease\@cpan.org>"
   ],
   "dist_name" => "FFI-Platypus",
-  "dist_version" => "0.16",
+  "dist_version" => "0.17",
   "license" => "perl",
   "module_name" => "FFI::Platypus",
   "recommends" => {},
