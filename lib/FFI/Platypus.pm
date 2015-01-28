@@ -152,6 +152,12 @@ to pre-populate the L<lib|/lib> attribute.
 
 Set the L<ignore_not_found|/ignore_not_found> attribute.
 
+=item with
+
+[version 0.18]
+
+Set the L<with|/with> attribute.
+
 =back
 
 =cut
@@ -179,8 +185,35 @@ sub new
     lib              => \@lib,
     handles          => {},
     types            => {},
+    with             => $args{with} || 'C',
     ignore_not_found => defined $args{ignore_not_found} ? $args{ignore_not_found} : 0,
   }, $class;
+}
+
+sub _type_map
+{
+  my($self) = @_;
+  
+  unless(defined $self->{type_map})
+  {
+    my $class = "FFI::Platypus::Lang::".$self->{with};
+    unless($class->can("native_type_map"))
+    {
+      eval qq{ require $class };
+      croak $@ if $@;
+    }
+    unless($class->can("native_type_map"))
+    {
+      croak "$class does not provide a native_type_map method";
+    }
+    my %type_map = %{ $class->native_type_map };
+    # include the standard libffi types
+    $type_map{$_} = $_ for qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque );
+    $type_map{pointer} = 'opaque';
+    $self->{type_map} = \%type_map;
+  }
+  
+  $self->{type_map};
 }
 
 =head1 ATTRIBUTES
@@ -257,6 +290,35 @@ sub ignore_not_found
   $self->{ignore_not_found};
 }
 
+=head2 with
+
+[version 0.18]
+
+ $ffi->with($language);
+
+Specifies the foreign language that you will be interfacing with. The 
+default is C.  The foreign language specified with this attribute 
+changes the default native types (for example, if you specify 
+L<Rust|FFI::Platypus::Lang::Rust>, you will get C<i32> as an alias for 
+C<sint32> instead of C<int> as you do with L<C|FFI::Platypus::Lang::C>).
+
+In the future this may attribute may offer hints when doing demangling
+of languages that require it like L<C++|FFI::Platypus::Lang::CPP>.
+
+=cut
+
+sub with
+{
+  my($self, $value) = @_;
+  
+  if(defined $value)
+  {
+    $self->{with} = $value;
+  }
+  
+  $self->{with};
+}
+
 =head1 METHODS
 
 =head2 type
@@ -284,8 +346,7 @@ sub type
   croak "spaces not allowed in alias" if defined $alias && $alias =~ /\s/;
   croak "allowed characters for alias: [A-Za-z0-9_]+" if defined $alias && $alias =~ /[^A-Za-z0-9_]/;
 
-  require FFI::Platypus::ConfigData;
-  my $type_map = FFI::Platypus::ConfigData->config("type_map");
+  my $type_map = $self->_type_map;
 
   croak "alias conflicts with existing type" if defined $alias && (defined $type_map->{$alias} || defined $self->{types}->{$alias});
 
@@ -348,8 +409,7 @@ sub custom_type
   croak "must define at least one of native_to_perl, perl_to_native, or perl_to_native_post"
     unless defined $cb->{native_to_perl} || defined $cb->{perl_to_native} || defined $cb->{perl_to_native_post};
   
-  require FFI::Platypus::ConfigData;
-  my $type_map = FFI::Platypus::ConfigData->config("type_map");  
+  my $type_map = $self->_type_map;
   croak "$type is not a native type" unless defined $type_map->{$type} || $type eq 'string';
   croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
   
@@ -437,8 +497,7 @@ sub types
 {
   my($self) = @_;
   $self = $self->new unless ref $self && eval { $self->isa('FFI::Platypus') };
-  require FFI::Platypus::ConfigData;
-  my %types = map { $_ => 1 } keys %{ FFI::Platypus::ConfigData->config("type_map") };
+  my %types = map { $_ => 1 } keys %{ $self->_type_map };
   $types{$_} ||= 1 foreach keys %{ $self->{types} };
   sort keys %types;
 }

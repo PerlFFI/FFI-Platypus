@@ -35,6 +35,7 @@ pod_spelling_system:
     - Bakkiaraj
     - Murugesan
     - bakkiaraj
+    - demangling
 
 pod_coverage:
   skip: 0

@@ -249,8 +249,8 @@ sub _build_dynamic_lib ($$$;$)
   
   my $header_time = do {
     my @list = sort map { (stat $_)[9] } @{ _ffi_headers $self, $dir };
-    $list[-1];
-  };
+    pop @list;
+  } || 0;
   my $compile_count = 0;
   my $b = $self->cbuilder;
 

@@ -67,7 +67,6 @@ wchar_t
 wint_t
 float
 double
-long double
 bool
 _Bool
 EOF
@@ -129,8 +128,7 @@ sub configure
     }
   }
 
-  my %type_map = map { $_ => $_ } qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque );
-  $type_map{pointer} = 'opaque';
+  my %type_map;
 
   foreach my $type (@probe_types)
   {
@@ -151,13 +149,6 @@ sub configure
         $signed = $ac->compute_int("signed($type)", { prologue => $prologue })
           unless defined $signed;
         $type_map{$type} = sprintf "%sint%d", ($signed ? 's' : 'u'), $size*8;
-      }
-      else
-      {
-        if($type eq 'long double' && $size)
-        {
-          $type_map{'long double'} = $type_map{'longdouble'} = 'longdouble';
-        }
       }
     }
   }

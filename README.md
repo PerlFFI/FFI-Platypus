@@ -108,6 +108,12 @@ the [lib](#lib) attribute.
 
     Set the [ignore\_not\_found](#ignore_not_found) attribute.
 
+- with
+
+    \[version 0.18\]
+
+    Set the [with](#with) attribute.
+
 # ATTRIBUTES
 
 ## lib
@@ -153,6 +159,21 @@ found and [attach](#attach) will ignore functions that are not found.
 This is useful when you are writing bindings to a library and have many 
 optional functions and you do not wish to wrap every call to 
 [function](#function) or [attach](#attach) in an `eval`.
+
+## with
+
+\[version 0.18\]
+
+    $ffi->with($language);
+
+Specifies the foreign language that you will be interfacing with. The 
+default is C.  The foreign language specified with this attribute 
+changes the default native types (for example, if you specify 
+[Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), you will get `i32` as an alias for 
+`sint32` instead of `int` as you do with [C](https://metacpan.org/pod/FFI::Platypus::Lang::C)).
+
+In the future this may attribute may offer hints when doing demangling
+of languages that require it like [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP).
 
 # METHODS
 
@@ -1023,9 +1044,9 @@ The build process also respects these environment variables:
 
 # AUTHOR
 
-author: Graham Ollis <plicease@cpan.org>
+Author: Graham Ollis <plicease@cpan.org>
 
-contributors:
+Contributors:
 
 Bakkiaraj Murugesan (bakkiaraj)
 
