@@ -68,6 +68,8 @@ wint_t
 float
 double
 long double
+bool
+_Bool
 EOF
 
 my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypus_config.h' ) );
@@ -91,7 +93,7 @@ sub configure
   
   $ac->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin)$/;
   
-  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio ))
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool ))
   {
     $ac->check_header("$header.h");
   }
@@ -164,6 +166,13 @@ sub configure
   $type_map{ushort} = $type_map{'unsigned short'};
   $type_map{uint}   = $type_map{'unsigned int'};
   $type_map{ulong}  = $type_map{'unsigned long'};
+
+  # on Linux and OS X at least the test for bool fails
+  # but _Bool works (even though code using bool seems
+  # to work for both).  May be because bool is a macro
+  # for _Bool or something.
+  $type_map{bool} ||= delete $type_map{_Bool};
+  delete $type_map{_Bool};
   
   $ac->write_config_h( $config_h );
   $mb->config_data( type_map => \%type_map);

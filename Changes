@@ -8,6 +8,7 @@ Revision history for {{$dist->name}}
   - Sizeof should be faster now as it doesn't look up the other meta
     information
   - Added record type see FFI::Platypus::Type#Records
+  - Added bool as a primitive type.
 
 0.16      2015-01-23 17:31:00 -0500
   - Bumping Alien::FFI version requirement up to 0.04
