@@ -216,6 +216,8 @@ sub new
 
 =head2 ffi_have_compiler
 
+[version 0.18]
+
  my $has_compiler = $mb->ffi_have_compiler;
 
 Returns true if a C or C++ compiler is available.
@@ -275,6 +277,8 @@ sub _ffi_include_dirs ($$)
 }
 
 =head2 ffi_build_dynamic_lib
+
+[version 0.18]
 
  my $dll_path = $mb->ffi_build_dynamic_lib($src_dir, $name, $target_dir);
  my $dll_path = $mb->ffi_build_dynamic_lib($src_dir, $name);
