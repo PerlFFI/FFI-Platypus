@@ -740,7 +740,7 @@ sub find_symbol
     }
     if($class->can('mangler'))
     {
-      $self->{mangler} = $class->mangler;
+      $self->{mangler} = $class->mangler($self->lib);
     }
     else
     {

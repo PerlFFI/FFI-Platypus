@@ -4,11 +4,13 @@ use Test::More tests => 3;
 use FFI::CheckLib;
 use FFI::Platypus;
 
+my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+
 subtest C => sub {
   plan tests => 4;
 
   my $ffi = FFI::Platypus->new;
-  $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 'libtest');
+  $ffi->lib($libtest);
 
   eval { $ffi->type('int') };
   is $@, '', 'int is an okay type';
@@ -26,7 +28,7 @@ subtest 'Foo constructor' => sub {
   plan tests => 6;
 
   my $ffi = FFI::Platypus->new(lang => 'Foo');
-  $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 'libtest');
+  $ffi->lib($libtest);
   
   eval { $ffi->type('int') };
   isnt $@, '', 'int is not an okay type';
@@ -47,7 +49,7 @@ subtest 'Foo attribute' => sub {
   plan tests => 6;
 
   my $ffi = FFI::Platypus->new;
-  $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 'libtest');
+  $ffi->lib($libtest);
   $ffi->lang('Foo');
   
   eval { $ffi->type('int') };
@@ -78,6 +80,11 @@ sub native_type_map
 
 sub mangler
 {
+  die "not a class method of FFI::Platypus::Lang::Foo"
+    unless $_[0] eq 'FFI::Platypus::Lang::Foo';
+  die "libtest not passed in as second argument"
+    unless $_[1] eq $libtest;
+
   my %mangle = (
     'UnMangled::Name(int i)' => 'f0',
   );
