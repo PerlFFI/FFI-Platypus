@@ -195,7 +195,7 @@ sub new
 
   my $self = $class->SUPER::new(%args);
 
-  my $have_compiler = $self->cbuilder->have_compiler;
+  my $have_compiler = $self->ffi_have_compiler;
 
   if(-d $self->ffi_source_dir && !$have_compiler)
   {
@@ -211,6 +211,39 @@ sub new
 
   $self;
 }
+
+=head1 METHODS
+
+=head2 ffi_have_compiler
+
+ my $has_compiler = $mb->ffi_have_compiler;
+
+Returns true if a C or C++ compiler is available.
+
+Only checks for C++ if you appear to have C++ source.
+
+Override for other foreign language subclasses.
+
+=cut
+
+my @cpp_extensions = qw( c cpp cxx cc c++ );
+
+sub ffi_have_compiler
+{
+  my($self) = @_;
+  
+  my $cpp = 0;
+  
+  foreach my $dir ($self->ffi_source_dir, $self->ffi_libtest_dir)
+  {
+    next unless -d $dir;
+    $cpp = 1 if scalar map { bsd_glob("$dir/*.$_") } @cpp_extensions;
+  }
+  
+  my $cb = $self->cbuilder;
+  $cpp ? $cb->have_cplusplus && $cb->have_compiler : $cb->have_compiler;
+}
+
 
 sub _ffi_headers ($$)
 {
@@ -241,7 +274,21 @@ sub _ffi_include_dirs ($$)
   \@includes;
 }
 
-sub _build_dynamic_lib ($$$;$)
+=head2 ffi_build_dynamic_lib
+
+ my $dll_path = $mb->ffi_build_dynamic_lib($src_dir, $name, $target_dir);
+ my $dll_path = $mb->ffi_build_dynamic_lib($src_dir, $name);
+
+Compiles the C and C++ source in the C<$src_dir> and link it into a
+dynamic library with base name of C<$name.$Config{dlext}>.  If
+C<$target_dir> is specified then the dynamic library will be delivered
+into that directory.
+
+Override for other foreign language subclasses.
+
+=cut
+
+sub ffi_build_dynamic_lib ($$$;$)
 {
   my($self, $dir, $name, $dest_dir) = @_;
   
@@ -331,7 +378,7 @@ sub ACTION_libtest
     *.bundle
   ));
   
-  my $have_compiler = $self->cbuilder->have_compiler;
+  my $have_compiler = $self->ffi_have_compiler;
   
   unless($have_compiler)
   {
@@ -340,7 +387,7 @@ sub ACTION_libtest
     return;
   }
   
-  _build_dynamic_lib $self, $dir, _ffi_libtest_name;
+  $self->ffi_build_dynamic_lib($dir, _ffi_libtest_name);
 }
 
 sub ACTION_ffi
@@ -358,7 +405,7 @@ sub ACTION_ffi
     *.bundle
   ));
   
-  unless($self->cbuilder->have_compiler)
+  unless($self->ffi_have_compiler)
   {
     print STDERR "a compiler is required.\n";
     exit 2;
@@ -377,7 +424,7 @@ sub ACTION_ffi
     $name = "$name.xs";
   }
 
-  _build_dynamic_lib $self, $dir, $name, $arch_dir;  
+  $self->ffi_build_dynamic_lib($dir, $name, $arch_dir);
 }
 
 sub ACTION_build
