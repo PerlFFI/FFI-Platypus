@@ -22,9 +22,20 @@ the Rust programming language
 This module provides some hooks for Platypus to interact with the 
 Rust programming language.
 
+=head1 METHODS
+
+=head2 native_type_map
+
+ my $hashref = FFI::Platypus::Lang::Rust->native_type_map;
+
+This returns a hash reference containing the native aliases for the Rust 
+programming languages.  That is the keys are native Rust types and the 
+values are libffi native types.
+
+
 =cut
 
-sub primitive_type_map
+sub native_type_map
 {
   {
     u8       => 'uint8',
@@ -49,3 +60,16 @@ sub primitive_type_map
 }
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus>
+
+The Core Platypus documentation.
+
+=back
+
+=cut
+

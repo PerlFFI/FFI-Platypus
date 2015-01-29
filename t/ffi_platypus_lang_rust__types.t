@@ -3,7 +3,7 @@ use warnings;
 use Test::More tests => 1;
 use FFI::Platypus::Lang::Rust;
 
-my $types = FFI::Platypus::Lang::Rust->primitive_type_map;
+my $types = FFI::Platypus::Lang::Rust->native_type_map;
 
 foreach my $rust_type (sort keys %$types)
 {
