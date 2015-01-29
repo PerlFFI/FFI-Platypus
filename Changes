@@ -2,7 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Improved support for C++ in Module::Build::FFI
-  - Module::Build::FFI can now be subclasses to support foreign 
+  - Module::Build::FFI can now be subclassed to support foreign 
     languages other than C and C++.  See Module::Build::FFI::Rust as an 
     example.
   - Added a hook to allow different names for native types.  See 
