@@ -199,8 +199,8 @@ sub _type_map
     my $class = "FFI::Platypus::Lang::".$self->{lang};
     unless($class->can("native_type_map"))
     {
-      eval qq{ require $class };
-      croak $@ if $@;
+      eval qq{ use $class };
+      croak "erro loding $class: $@" if $@;
     }
     unless($class->can("native_type_map"))
     {
@@ -255,6 +255,7 @@ sub lib
   if(@new)
   {
     push @{ $self->{lib} }, @new;
+    delete $self->{mangler};
   }
   
   @{ $self->{lib} };
@@ -314,6 +315,7 @@ sub lang
   if(defined $value)
   {
     $self->{lang} = $value;
+    delete $self->{type_map};
   }
   
   $self->{lang};
@@ -728,11 +730,29 @@ sub find_symbol
 {
   my($self, $name) = @_;
 
+  unless(defined $self->{mangler})
+  {
+    my $class = "FFI::Platypus::Lang::".$self->{lang};
+    unless($class->can('native_type_map'))
+    {
+      eval qq{ use $class };
+      croak "unable to load $class: $@" if $@;
+    }
+    if($class->can('mangler'))
+    {
+      $self->{mangler} = $class->mangler;
+    }
+    else
+    {
+      $self->{mangler} = sub { $_[0] };
+    }
+  }
+
   foreach my $path (@{ $self->{lib} })
   {
     my $handle = do { no warnings; $self->{handles}->{$path||0} } || FFI::Platypus::dl::dlopen($path);
     next unless $handle;
-    my $address = FFI::Platypus::dl::dlsym($handle, $name);
+    my $address = FFI::Platypus::dl::dlsym($handle, $self->{mangler}->($name));
     if($address)
     {
       $self->{handles}->{$path||0} = $handle;
@@ -1044,7 +1064,7 @@ sub new
       $classname = $1;
       unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
       {
-        eval qq{ require $classname };
+        eval qq{ use $classname };
         warn "error requiring $classname: $@";
       }
       if($classname->can('ffi_record_size'))
