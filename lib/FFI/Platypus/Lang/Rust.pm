@@ -47,7 +47,7 @@ pull request or two on the project's GitHub.
 
 Note that in addition to using pre-compiled Rust libraries, you can 
 bundle Rust code with your Perl distribution using 
-L<Module::Build::FFI>.
+L<Module::Build::FFI::Rust>.
 
 =head1 CAVEATS
 
