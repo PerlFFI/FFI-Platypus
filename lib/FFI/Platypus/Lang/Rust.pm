@@ -2,7 +2,10 @@ package FFI::Platypus::Lang::Rust;
 
 use strict;
 use warnings;
-use FFI::Platypus;
+use File::Glob qw( bsd_glob );
+use File::Which qw( which );
+use File::Spec;
+use Env qw( @PATH );
 
 our $VERSION = '0.01';
 
@@ -37,6 +40,7 @@ values are libffi native types.
 
 sub native_type_map
 {
+  require FFI::Platypus;
   {
     u8       => 'uint8',
     u16      => 'uint16',
@@ -57,6 +61,38 @@ sub native_type_map
       $ffi_type;
     },
   },
+}
+
+sub build_dynamic_lib
+{
+  my(undef, $mb, $dir, $name, $dest_dir) = @_;
+  
+  my @source = bsd_glob("$dir/*.rs");
+  return unless @source;
+  
+  die "only one Rust source file at a time is allowed"
+    unless @source == 1;
+  
+  my $rustc = which('rustc');
+  die "This extension requires a Rust compiler"
+    unless defined $rustc;
+  
+  require Config;
+  
+  my $dll = File::Spec->catfile($dir, "$name.$Config::Config{dlext}");
+
+  my @cmd = (
+    $rustc,
+    '--crate-type' => 'dylib',
+    @source,
+    '-o' => $dll,
+  );
+
+  print "@cmd\n";
+  system @cmd;
+  exit 2 if $?;
+
+  $dll;
 }
 
 1;
