@@ -172,8 +172,10 @@ changes the default native types (for example, if you specify
 [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), you will get `i32` as an alias for 
 `sint32` instead of `int` as you do with [C](https://metacpan.org/pod/FFI::Platypus::Lang::C)).
 
-In the future this may attribute may offer hints when doing demangling
-of languages that require it like [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP).
+If the foreign language plugin supports it, this will also enable 
+Platypus to find symbols using the demangled names (for example, if you 
+specify [CPP](https://metacpan.org/pod/FFI::Platypus::Lang::CPP) for C++ you can use method names 
+like `Foo::get_bar()` with ["attach"](#attach) or ["function"](#function).
 
 # METHODS
 

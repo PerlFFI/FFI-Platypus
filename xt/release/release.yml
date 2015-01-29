@@ -37,6 +37,7 @@ pod_spelling_system:
     - bakkiaraj
     - demangling
     - lang
+    - demangled
 
 pod_coverage:
   skip: 0

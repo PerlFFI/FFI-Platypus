@@ -2,6 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Improved support for C++ in Module::Build::FFI
+  - Module::Build::FFI can now be subclasses to support foreign 
+    languages other than C and C++.  See Module::Build::FFI::Rust as an 
+    example.
+  - Added a hook to allow different names for native types.  See 
+    FFI::Platypus::Lang::Rust for an example.
+  - Added a hook to allow mangling of symbol (function) names.  See 
+    FFI::Platypus::Lang::CPP for an example with C++
 
 0.17      2015-01-28 11:11:02 -0500
   - Allow integer and floating point type default to 0 when not provided

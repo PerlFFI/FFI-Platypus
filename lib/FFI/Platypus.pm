@@ -303,8 +303,10 @@ changes the default native types (for example, if you specify
 L<Rust|FFI::Platypus::Lang::Rust>, you will get C<i32> as an alias for 
 C<sint32> instead of C<int> as you do with L<C|FFI::Platypus::Lang::C>).
 
-In the future this may attribute may offer hints when doing demangling
-of languages that require it like L<C++|FFI::Platypus::Lang::CPP>.
+If the foreign language plugin supports it, this will also enable 
+Platypus to find symbols using the demangled names (for example, if you 
+specify L<CPP|FFI::Platypus::Lang::CPP> for C++ you can use method names 
+like C<Foo::get_bar()> with L</attach> or L</function>.
 
 =cut
 
