@@ -751,7 +751,12 @@ sub find_symbol
   foreach my $path (@{ $self->{lib} })
   {
     my $handle = do { no warnings; $self->{handles}->{$path||0} } || FFI::Platypus::dl::dlopen($path);
-    next unless $handle;
+    unless($handle)
+    {
+      warn "error loading $path: ", FFI::Platypus::dl::dlerror()
+        if $ENV{FFI_PLATYPUS_DLERROR};
+      next;
+    }
     my $address = FFI::Platypus::dl::dlsym($handle, $self->{mangler}->($name));
     if($address)
     {
