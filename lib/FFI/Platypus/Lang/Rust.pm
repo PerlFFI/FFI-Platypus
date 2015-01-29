@@ -35,7 +35,6 @@ This returns a hash reference containing the native aliases for the Rust
 programming languages.  That is the keys are native Rust types and the 
 values are libffi native types.
 
-
 =cut
 
 sub native_type_map
@@ -61,38 +60,6 @@ sub native_type_map
       $ffi_type;
     },
   },
-}
-
-sub build_dynamic_lib
-{
-  my(undef, $mb, $dir, $name, $dest_dir) = @_;
-  
-  my @source = bsd_glob("$dir/*.rs");
-  return unless @source;
-  
-  die "only one Rust source file at a time is allowed"
-    unless @source == 1;
-  
-  my $rustc = which('rustc');
-  die "This extension requires a Rust compiler"
-    unless defined $rustc;
-  
-  require Config;
-  
-  my $dll = File::Spec->catfile($dir, "$name.$Config::Config{dlext}");
-
-  my @cmd = (
-    $rustc,
-    '--crate-type' => 'dylib',
-    @source,
-    '-o' => $dll,
-  );
-
-  print "@cmd\n";
-  system @cmd;
-  exit 2 if $?;
-
-  $dll;
 }
 
 1;
