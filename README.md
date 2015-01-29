@@ -1004,6 +1004,21 @@ The build process also respects these environment variables:
 
     JIT compiler for FFI.
 
+- [FFI::Platypus::Lang::C](https://metacpan.org/pod/FFI::Platypus::Lang::C)
+
+    Documentation and tools for using Platypus with the C programming 
+    language
+
+- [FFI::Platypus::Lang::CPP](https://metacpan.org/pod/FFI::Platypus::Lang::CPP)
+
+    Documentation and tools for using Platypus with the C++ programming 
+    language
+
+- [FFI::Platypus::Lang::Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust)
+
+    Documentation and tools for using Platypus with the Rust programming 
+    language
+
 - [Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C)
 
     An interface for interacting with C `struct` types.  Unfortunately it 

@@ -281,6 +281,26 @@ sub sizeof ($)
   _ffi_object->sizeof($_[0]);
 }
 
+=head2 lang
+
+ lang $language;
+
+Specifies the foreign language that you will be interfacing with. The 
+default is C.  The foreign language specified with this attribute 
+changes the default native types (for example, if you specify 
+L<Rust|FFI::Platypus::Lang::Rust>, you will get C<i32> as an alias for 
+C<sint32> instead of C<int> as you do with L<C|FFI::Platypus::Lang::C>).
+
+In the future this may attribute may offer hints when doing demangling
+of languages that require it like L<C++|FFI::Platypus::Lang::CPP>.
+
+=cut
+
+sub lang ($)
+{
+  _ffi_object->lang($_[0]);
+}
+
 sub import
 {
   my $caller = caller;
@@ -323,6 +343,7 @@ sub import
   *{join '::', $caller, 'cast'} = \&cast;
   *{join '::', $caller, 'attach_cast'} = \&attach_cast;
   *{join '::', $caller, 'sizeof'} = \&sizeof;
+  *{join '::', $caller, 'lang'} = \&lang;
 }
 
 1;

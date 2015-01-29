@@ -1233,6 +1233,21 @@ Bundle C code with your FFI extension.
 
 JIT compiler for FFI.
 
+=item L<FFI::Platypus::Lang::C>
+
+Documentation and tools for using Platypus with the C programming 
+language
+
+=item L<FFI::Platypus::Lang::CPP>
+
+Documentation and tools for using Platypus with the C++ programming 
+language
+
+=item L<FFI::Platypus::Lang::Rust>
+
+Documentation and tools for using Platypus with the Rust programming 
+language
+
 =item L<Convert::Binary::C>
 
 An interface for interacting with C C<struct> types.  Unfortunately it 
