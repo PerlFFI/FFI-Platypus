@@ -353,7 +353,7 @@ sub ffi_build_dynamic_lib ($$$;$)
         $compile_count++;
       }
       $obj_name;
-    } sort map { bsd_glob("$dir/*.$_") } qw( c cpp cxx cc c++ );
+    } sort map { bsd_glob("$dir/*.$_") } qw( c cpp cxx cc c++ s );
   }
 
   return unless $compile_count > 0;

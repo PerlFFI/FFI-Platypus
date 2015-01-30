@@ -12,6 +12,8 @@ Revision history for {{$dist->name}}
   - Module::Build::FFI#ffi_include_dir can now be an array reference
   - Module::Build::FFI#ffi_source_dir can now be an array reference
   - Module::Build::FFI#ffi_libtest_dir can now be an array reference
+  - Module::Build::FFI will build assembly source files (with .s
+    extensions) in the libtest and ffi directories
 
 0.17      2015-01-28 11:11:02 -0500
   - Allow integer and floating point type default to 0 when not provided
