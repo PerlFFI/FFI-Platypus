@@ -31,7 +31,7 @@ Perl:
  $ffi->with('Rust');
  $ffi->lib('./libadd.so');
  
- $ffi->attach( add => ['i32', 'i32'] => 'i32 );
+ $ffi->attach( add => ['i32', 'i32'] => 'i32' );
  
  print add(1,2), "\n";  # prints 3
 
