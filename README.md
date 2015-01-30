@@ -1021,6 +1021,10 @@ The build process also respects these environment variables:
     Documentation and tools for using Platypus with the Rust programming 
     language
 
+- [FFI::Platypus::Lang::ASM](https://metacpan.org/pod/FFI::Platypus::Lang::ASM)
+
+    Documentation and tools for using Platypus with the Assembly
+
 - [Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C)
 
     An interface for interacting with C `struct` types.  Unfortunately it 

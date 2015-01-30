@@ -1275,6 +1275,10 @@ language
 Documentation and tools for using Platypus with the Rust programming 
 language
 
+=item L<FFI::Platypus::Lang::ASM>
+
+Documentation and tools for using Platypus with the Assembly
+
 =item L<Convert::Binary::C>
 
 An interface for interacting with C C<struct> types.  Unfortunately it 

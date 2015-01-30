@@ -276,9 +276,10 @@ sub _ffi_headers ($$)
 
   my @headers;
   
-  my @include_dirs = grep { -d $_ } ref $self->ffi_include_dir ? @{ $self->ffi_include_dir } : ($self->ffi_include_dir);
+  my @dirs = @$dir;
+  push @dirs, grep { -d $_ } ref $self->ffi_include_dir ? @{ $self->ffi_include_dir } : ($self->ffi_include_dir);
 
-  push @headers, map { bsd_glob("$_/*.h") } @$dir;
+  push @headers, map { bsd_glob("$_/*.h") } @dirs;
   
   \@headers;
 }
