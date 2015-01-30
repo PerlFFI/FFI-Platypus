@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.18      2015-01-30 15:22:07 -0500
   - Improved support for C++ in Module::Build::FFI
   - Module::Build::FFI can now be subclassed to support foreign 
     languages other than C and C++.  See Module::Build::FFI::Rust as an 
