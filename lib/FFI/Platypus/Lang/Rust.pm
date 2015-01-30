@@ -24,6 +24,8 @@ Rust:
    a+b
  }
 
+Perl:
+
  use FFI::Platypus;
  my $ffi = FFI::Platypus->new;
  $ffi->with('Rust');
