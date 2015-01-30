@@ -106,6 +106,10 @@ If there is an C<include> directory with your distribution with C header
 files in it, it will be included in the search path for the C files in
 both the C<ffi> and C<libtest> directories.
 
+[version 0.18]
+
+This can be a scalar or a array reference.
+
 =item ffi_libtest_optional
 
 [version 0.15]
@@ -178,7 +182,7 @@ __PACKAGE__->add_property( ffi_libtest_dir =>
 );
 
 __PACKAGE__->add_property( ffi_include_dir =>
-  default => 'include',
+  default => [ 'include' ],
 );
 
 __PACKAGE__->add_property( ffi_libtest_optional =>
@@ -252,8 +256,9 @@ sub _ffi_headers ($$)
   my($self, $dir) = @_;
 
   my @headers;
-  push @headers, bsd_glob($self->ffi_include_dir . "/*.h")
-    if -d $self->ffi_include_dir;
+  
+  my @include_dirs = grep { -d $_ } ref $self->ffi_include_dir ? @{ $self->ffi_include_dir } : ($self->ffi_include_dir);
+
   push @headers, bsd_glob("$dir/*.h");
   
   \@headers;
@@ -265,8 +270,7 @@ sub _ffi_include_dirs ($$)
   
   my @includes = ($dir);
 
-  push @includes, $self->ffi_include_dir
-    if defined $self->ffi_include_dir;
+  push @includes, grep { -d $_ } ref $self->ffi_include_dir ? @{ $self->ffi_include_dir } : ($self->ffi_include_dir);
 
   push @includes, $ENV{FFI_PLATYPUS_INCLUDE_DIR} || File::Spec->catdir(File::ShareDir::dist_dir('FFI-Platypus'), 'include');
 
