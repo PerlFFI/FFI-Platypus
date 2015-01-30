@@ -151,6 +151,21 @@ L<https://github.com/plicease/FFI-Platypus-Lang-Rust/issues>
 Caution: if you do this too frequently I may nominate you as the new
 maintainer.  Extreme caution: if you like that sort of thing.
 
+This project's GitHub issue tracker listed above is not Write-Only.  If
+you want to contribute then feel free to browse through the existing
+issues and see if there is something you feel you might be good at and
+take a whack at the problem.  I frequently open issues myself that I
+hope will be accomplished by someone in the future but do not have time
+to immediately implement myself.
+
+Another good area to help out in is documentation.  I try to make sure
+that there is good document coverage, that is there should be
+documentation describing all the public features and warnings about
+common pitfalls, but an outsider's or alternate view point on such
+things would be welcome; if you see something confusing or lacks
+sufficient detail I encourage documentation only pull requests to
+improve things.
+
 =head1 SEE ALSO
 
 =over 4
