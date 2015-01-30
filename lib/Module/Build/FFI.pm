@@ -83,6 +83,10 @@ By default, C source files in the C<ffi> directory are compiled and
 linked, if that directory exists.  You can change that directory
 with this property.
 
+[version 0.18]
+
+This can be a scalar or a array reference.
+
 =item ffi_libtest_dir
 
 [version 0.15]
@@ -97,6 +101,10 @@ find the library from your test:
  use FFI::CheckLib;
  
  lib find_lib lib => 'test', libpath => 'libtest';
+
+[version 0.18]
+
+This can be a scalar or a array reference.
 
 =item ffi_include_dir
 
@@ -178,7 +186,7 @@ Microsoft Visual C++, but it may be necessary elsewhere in the future.
 =cut
 
 __PACKAGE__->add_property( ffi_libtest_dir =>
-  default => 'libtest',
+  default => [ 'libtest' ],
 );
 
 __PACKAGE__->add_property( ffi_include_dir =>
@@ -190,8 +198,18 @@ __PACKAGE__->add_property( ffi_libtest_optional =>
 );
 
 __PACKAGE__->add_property( ffi_source_dir => 
-  default => 'ffi',
+  default => [ 'ffi' ],
 );
+
+sub _inflate ($)
+{
+  my($self) = @_;
+  $self->ffi_source_dir([$self->ffi_source_dir])
+    unless ref $self->ffi_source_dir;
+
+  $self->ffi_libtest_dir([$self->ffi_libtest_dir])
+    unless ref $self->ffi_libtest_dir;
+}
 
 sub new
 {
@@ -199,15 +217,16 @@ sub new
 
   my $self = $class->SUPER::new(%args);
 
+  _inflate($self);
   my $have_compiler = $self->ffi_have_compiler;
 
-  if(-d $self->ffi_source_dir && !$have_compiler)
+  if(-d $self->ffi_source_dir->[0] && !$have_compiler)
   {
     print STDERR "This distribution requires a compiler\n";
     exit;
   }
   
-  if(-d $self->ffi_libtest_dir && !$self->ffi_libtest_optional && !$have_compiler)
+  if(-d $self->ffi_libtest_dir->[0] && !$self->ffi_libtest_optional && !$have_compiler)
   {
     print STDERR "This distribution requires a compiler\n";
     exit;
@@ -240,7 +259,7 @@ sub ffi_have_compiler
   
   my $cpp = 0;
   
-  foreach my $dir ($self->ffi_source_dir, $self->ffi_libtest_dir)
+  foreach my $dir (@{ $self->ffi_source_dir }, @{ $self->ffi_libtest_dir })
   {
     next unless -d $dir;
     $cpp = 1 if scalar map { bsd_glob("$dir/*.$_") } @cpp_extensions;
@@ -259,7 +278,7 @@ sub _ffi_headers ($$)
   
   my @include_dirs = grep { -d $_ } ref $self->ffi_include_dir ? @{ $self->ffi_include_dir } : ($self->ffi_include_dir);
 
-  push @headers, bsd_glob("$dir/*.h");
+  push @headers, map { bsd_glob("$_/*.h") } @$dir;
   
   \@headers;
 }
@@ -268,7 +287,7 @@ sub _ffi_include_dirs ($$)
 {
   my($self, $dir) = @_;
   
-  my @includes = ($dir);
+  my @includes = (@$dir);
 
   push @includes, grep { -d $_ } ref $self->ffi_include_dir ? @{ $self->ffi_include_dir } : ($self->ffi_include_dir);
 
@@ -298,38 +317,43 @@ Override for other foreign language subclasses.
 
 sub ffi_build_dynamic_lib ($$$;$)
 {
-  my($self, $dir, $name, $dest_dir) = @_;
+  my($self, $dirs, $name, $dest_dir) = @_;
   
-  $dest_dir ||= $dir;
+  $dest_dir ||= $dirs->[0];
   
   my $header_time = do {
-    my @list = sort map { (stat $_)[9] } @{ _ffi_headers $self, $dir };
+    my @list = sort map { (stat $_)[9] } @{ _ffi_headers $self, $dirs };
     pop @list;
   } || 0;
   my $compile_count = 0;
   my $b = $self->cbuilder;
 
-  my @obj = map {
-    my $filename = $_;
-    my($source_time) = reverse sort ((stat $filename)[9], $header_time);
-    my $obj_name = $b->object_file($filename);
-    $self->add_to_cleanup($obj_name);
-    my $obj_time = -e $obj_name ? ((stat $obj_name)[9]) : 0;
+  my @obj;
+  
+  foreach my $dir (@$dirs)
+  {
+    push @obj,  map {
+      my $filename = $_;
+      my($source_time) = reverse sort ((stat $filename)[9], $header_time);
+      my $obj_name = $b->object_file($filename);
+      $self->add_to_cleanup($obj_name);
+      my $obj_time = -e $obj_name ? ((stat $obj_name)[9]) : 0;
 
-    my %compile_options = (
-      source               => $filename,
-      include_dirs         => _ffi_include_dirs($self, $dir),
-      extra_compiler_flags => $self->extra_compiler_flags,
-    );
-    $compile_options{"C++"} = 1 if $filename =~ /\.(cpp|cxx|cc|\c\+\+)$/;
+      my %compile_options = (
+        source               => $filename,
+        include_dirs         => _ffi_include_dirs($self, $dirs),
+        extra_compiler_flags => $self->extra_compiler_flags,
+      );
+      $compile_options{"C++"} = 1 if $filename =~ /\.(cpp|cxx|cc|\c\+\+)$/;
 
-    if($obj_time < $source_time)
-    {
-      $b->compile(%compile_options);
-      $compile_count++;
-    }
-    $obj_name;
-  } sort map { bsd_glob("$dir/*.$_") } qw( c cpp cxx cc c++ );
+      if($obj_time < $source_time)
+      {
+        $b->compile(%compile_options);
+        $compile_count++;
+      }
+      $obj_name;
+    } sort map { bsd_glob("$dir/*.$_") } qw( c cpp cxx cc c++ );
+  }
 
   return unless $compile_count > 0;
 
@@ -374,17 +398,21 @@ sub _ffi_libtest_name ()
 sub ACTION_libtest
 {
   my $self = shift;
-  my $dir = $self->ffi_libtest_dir;
+  _inflate($self);
+  my @dirs = @{ $self->ffi_libtest_dir };
   
-  return unless -d $dir;
+  return unless -d $dirs[0];
   
-  $self->add_to_cleanup(map { "$dir/$_" } qw(
-    *.o
-    *.obj
-    *.so
-    *.dll
-    *.bundle
-  ));
+  foreach my $dir (@dirs)
+  {
+    $self->add_to_cleanup(map { "$dir/$_" } qw(
+      *.o
+      *.obj
+      *.so
+      *.dll
+      *.bundle
+    ));
+  }
   
   my $have_compiler = $self->ffi_have_compiler;
   
@@ -395,23 +423,27 @@ sub ACTION_libtest
     return;
   }
   
-  $self->ffi_build_dynamic_lib($dir, _ffi_libtest_name);
+  $self->ffi_build_dynamic_lib(\@dirs, _ffi_libtest_name);
 }
 
 sub ACTION_ffi
 {
   my $self = shift;
-  my $dir = $self->ffi_source_dir;
+  _inflate($self);
+  my @dirs = @{ $self->ffi_source_dir };
   
-  return unless -d $dir;
+  return unless -d $dirs[0];
   
-  $self->add_to_cleanup(map { "$dir/$_" } qw(
-    *.o
-    *.obj
-    *.so
-    *.dll
-    *.bundle
-  ));
+  foreach my $dir (@dirs)
+  {
+    $self->add_to_cleanup(map { "$dir/$_" } qw(
+      *.o
+      *.obj
+      *.so
+      *.dll
+      *.bundle
+    ));
+  }
   
   unless($self->ffi_have_compiler)
   {
@@ -432,7 +464,7 @@ sub ACTION_ffi
     $name = "$name.xs";
   }
 
-  $self->ffi_build_dynamic_lib($dir, $name, $arch_dir);
+  $self->ffi_build_dynamic_lib(\@dirs, $name, $arch_dir);
 }
 
 sub ACTION_build

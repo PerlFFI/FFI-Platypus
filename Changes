@@ -9,7 +9,9 @@ Revision history for {{$dist->name}}
     FFI::Platypus::Lang::Rust for an example.
   - Added a hook to allow mangling of symbol (function) names.  See 
     FFI::Platypus::Lang::CPP for an example with C++
-  - Module::Build::FFI#ffi_include_dir can now be a array reference
+  - Module::Build::FFI#ffi_include_dir can now be an array reference
+  - Module::Build::FFI#ffi_source_dir can now be an array reference
+  - Module::Build::FFI#ffi_libtest_dir can now be an array reference
 
 0.17      2015-01-28 11:11:02 -0500
   - Allow integer and floating point type default to 0 when not provided
