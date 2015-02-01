@@ -1,13 +1,31 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.18      2015-01-30 15:22:07 -0500
+  - Improved support for C++ in Module::Build::FFI
+  - Module::Build::FFI can now be subclassed to support foreign 
+    languages other than C and C++.  See Module::Build::FFI::Rust as an 
+    example.
+  - Added a hook to allow different names for native types.  See 
+    FFI::Platypus::Lang::Rust for an example.
+  - Added a hook to allow mangling of symbol (function) names.  See 
+    FFI::Platypus::Lang::CPP for an example with C++
+  - Module::Build::FFI#ffi_include_dir can now be an array reference
+  - Module::Build::FFI#ffi_source_dir can now be an array reference
+  - Module::Build::FFI#ffi_libtest_dir can now be an array reference
+  - Module::Build::FFI will build assembly source files (with .s
+    extensions) in the libtest and ffi directories
+
+0.17      2015-01-28 11:11:02 -0500
   - Allow integer and floating point type default to 0 when not provided
     without warning
-  - Uou can now take the sizeof a custom type (it will be the size of
+  - You can now take the sizeof a custom type (it will be the size of
     the native type that is actually passed on the C argument stack).
   - Sizeof should be faster now as it doesn't look up the other meta
-    information
+    information or create a hash to contain it
   - Added record type see FFI::Platypus::Type#Records
+  - Added bool as a primitive type.
 
 0.16      2015-01-23 17:31:00 -0500
   - Bumping Alien::FFI version requirement up to 0.04

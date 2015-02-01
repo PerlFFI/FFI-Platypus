@@ -152,15 +152,20 @@
       else if(platypus_type == FFI_PL_RECORD)
       {
         void *ptr;
+        STRLEN size;
+        int expected;
+        expected = self->argument_types[i]->extra[0].record.size;
         if(SvROK(arg))
         {
           SV *arg2 = SvRV(arg);
-          ptr = SvOK(arg2) ? SvPV_nolen(arg2) : NULL;
+          ptr = SvOK(arg2) ? SvPV(arg2, size) : NULL;
         }
         else
         {
-          ptr = SvOK(arg) ? SvPV_nolen(arg) : NULL;
+          ptr = SvOK(arg) ? SvPV(arg, size) : NULL;
         }
+        if(ptr != NULL && expected != 0 && size != expected)
+          warn("record argument %d has wrong size (is %d, expected %d)", i, (int)size, expected);
         ffi_pl_arguments_set_pointer(arguments, i, ptr);
       }
       else if(platypus_type == FFI_PL_ARRAY)

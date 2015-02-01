@@ -16,7 +16,7 @@ my $ffiObj = FFI::Platypus->new();
 $ffiObj->lib($libPath);
 
 #Import the GetLocalTime function
-$ffiObj->attach('GetLocalTime',['opaque'],'void');
+$ffiObj->attach('GetLocalTime',['record(16)'],'void');
 
 #Define SYSTEMTIME Struct as per https://msdn.microsoft.com/en-us/library/windows/desktop/ms724950(v=vs.85).aspx
 #As per, C:\MinGW\include\windef.h, WORD id unsigned short
@@ -48,20 +48,19 @@ my $dateStruct = {
 };
 
 my $packed = $c->pack('SYSTEMTIME', $dateStruct);
-my $pointerToDateStruct = $ffiObj->cast('string','opaque',$packed); #Get the pointer to the Struct
 
 #Call the function by passing the structure reference
-GetLocalTime($pointerToDateStruct);
+GetLocalTime($packed);
 
 if (defined ($packed))
 {
 	#Unpack the structure 
 	my $sysDate = $c->unpack('SYSTEMTIME', $packed);
-	print "\n WINDOWS SYSTEM TIME: ",$$sysDate{'wHour'},':',$$sysDate{'wMinute'},':',$$sysDate{'wSecond'},'.',$$sysDate{'wMilliseconds'},' ',$$sysDate{'wDay'},'/',$$sysDate{'wMonth'},'/',$$sysDate{'wYear'};
+	print "\n WINDOWS SYSTEM TIME: ",$$sysDate{'wHour'},':',$$sysDate{'wMinute'},':',$$sysDate{'wSecond'},'.',$$sysDate{'wMilliseconds'},' ',$$sysDate{'wDay'},'/',$$sysDate{'wMonth'},'/',$$sysDate{'wYear'}, "\n";
 }
 else
 {
-	print "\n Something is wrong";
+	print "\n Something is wrong\n";
 }
 
 exit 0;

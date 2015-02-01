@@ -108,6 +108,12 @@ the [lib](#lib) attribute.
 
     Set the [ignore\_not\_found](#ignore_not_found) attribute.
 
+- lang
+
+    \[version 0.18\]
+
+    Set the [lang](#lang) attribute.
+
 # ATTRIBUTES
 
 ## lib
@@ -153,6 +159,23 @@ found and [attach](#attach) will ignore functions that are not found.
 This is useful when you are writing bindings to a library and have many 
 optional functions and you do not wish to wrap every call to 
 [function](#function) or [attach](#attach) in an `eval`.
+
+## lang
+
+\[version 0.18\]
+
+    $ffi->lang($language);
+
+Specifies the foreign language that you will be interfacing with. The 
+default is C.  The foreign language specified with this attribute 
+changes the default native types (for example, if you specify 
+[Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), you will get `i32` as an alias for 
+`sint32` instead of `int` as you do with [C](https://metacpan.org/pod/FFI::Platypus::Lang::C)).
+
+If the foreign language plugin supports it, this will also enable 
+Platypus to find symbols using the demangled names (for example, if you 
+specify [CPP](https://metacpan.org/pod/FFI::Platypus::Lang::CPP) for C++ you can use method names 
+like `Foo::get_bar()` with ["attach"](#attach) or ["function"](#function).
 
 # METHODS
 
@@ -983,6 +1006,25 @@ The build process also respects these environment variables:
 
     JIT compiler for FFI.
 
+- [FFI::Platypus::Lang::C](https://metacpan.org/pod/FFI::Platypus::Lang::C)
+
+    Documentation and tools for using Platypus with the C programming 
+    language
+
+- [FFI::Platypus::Lang::CPP](https://metacpan.org/pod/FFI::Platypus::Lang::CPP)
+
+    Documentation and tools for using Platypus with the C++ programming 
+    language
+
+- [FFI::Platypus::Lang::Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust)
+
+    Documentation and tools for using Platypus with the Rust programming 
+    language
+
+- [FFI::Platypus::Lang::ASM](https://metacpan.org/pod/FFI::Platypus::Lang::ASM)
+
+    Documentation and tools for using Platypus with the Assembly
+
 - [Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C)
 
     An interface for interacting with C `struct` types.  Unfortunately it 
@@ -1023,7 +1065,11 @@ The build process also respects these environment variables:
 
 # AUTHOR
 
-Graham Ollis <plicease@cpan.org>
+Author: Graham Ollis <plicease@cpan.org>
+
+Contributors:
+
+Bakkiaraj Murugesan (bakkiaraj)
 
 # COPYRIGHT AND LICENSE
 

@@ -83,6 +83,10 @@ By default, C source files in the C<ffi> directory are compiled and
 linked, if that directory exists.  You can change that directory
 with this property.
 
+[version 0.18]
+
+This can be a scalar or a array reference.
+
 =item ffi_libtest_dir
 
 [version 0.15]
@@ -98,6 +102,10 @@ find the library from your test:
  
  lib find_lib lib => 'test', libpath => 'libtest';
 
+[version 0.18]
+
+This can be a scalar or a array reference.
+
 =item ffi_include_dir
 
 [version 0.15]
@@ -105,6 +113,10 @@ find the library from your test:
 If there is an C<include> directory with your distribution with C header
 files in it, it will be included in the search path for the C files in
 both the C<ffi> and C<libtest> directories.
+
+[version 0.18]
+
+This can be a scalar or a array reference.
 
 =item ffi_libtest_optional
 
@@ -174,11 +186,11 @@ Microsoft Visual C++, but it may be necessary elsewhere in the future.
 =cut
 
 __PACKAGE__->add_property( ffi_libtest_dir =>
-  default => 'libtest',
+  default => [ 'libtest' ],
 );
 
 __PACKAGE__->add_property( ffi_include_dir =>
-  default => 'include',
+  default => [ 'include' ],
 );
 
 __PACKAGE__->add_property( ffi_libtest_optional =>
@@ -186,8 +198,18 @@ __PACKAGE__->add_property( ffi_libtest_optional =>
 );
 
 __PACKAGE__->add_property( ffi_source_dir => 
-  default => 'ffi',
+  default => [ 'ffi' ],
 );
+
+sub _inflate ($)
+{
+  my($self) = @_;
+  $self->ffi_source_dir([$self->ffi_source_dir])
+    unless ref $self->ffi_source_dir;
+
+  $self->ffi_libtest_dir([$self->ffi_libtest_dir])
+    unless ref $self->ffi_libtest_dir;
+}
 
 sub new
 {
@@ -195,15 +217,16 @@ sub new
 
   my $self = $class->SUPER::new(%args);
 
-  my $have_compiler = ExtUtils::CBuilder->new->have_compiler;
+  _inflate($self);
+  my $have_compiler = $self->ffi_have_compiler;
 
-  if(-d $self->ffi_source_dir && !$have_compiler)
+  if(-d $self->ffi_source_dir->[0] && !$have_compiler)
   {
     print STDERR "This distribution requires a compiler\n";
     exit;
   }
   
-  if(-d $self->ffi_libtest_dir && !$self->ffi_libtest_optional && !$have_compiler)
+  if(-d $self->ffi_libtest_dir->[0] && !$self->ffi_libtest_optional && !$have_compiler)
   {
     print STDERR "This distribution requires a compiler\n";
     exit;
@@ -212,14 +235,51 @@ sub new
   $self;
 }
 
+=head1 METHODS
+
+=head2 ffi_have_compiler
+
+[version 0.18]
+
+ my $has_compiler = $mb->ffi_have_compiler;
+
+Returns true if a C or C++ compiler is available.
+
+Only checks for C++ if you appear to have C++ source.
+
+Override for other foreign language subclasses.
+
+=cut
+
+my @cpp_extensions = qw( c cpp cxx cc c++ );
+
+sub ffi_have_compiler
+{
+  my($self) = @_;
+  
+  my $cpp = 0;
+  
+  foreach my $dir (@{ $self->ffi_source_dir }, @{ $self->ffi_libtest_dir })
+  {
+    next unless -d $dir;
+    $cpp = 1 if scalar map { bsd_glob("$dir/*.$_") } @cpp_extensions;
+  }
+  
+  my $cb = $self->cbuilder;
+  $cpp ? $cb->have_cplusplus && $cb->have_compiler : $cb->have_compiler;
+}
+
+
 sub _ffi_headers ($$)
 {
   my($self, $dir) = @_;
 
   my @headers;
-  push @headers, bsd_glob($self->ffi_include_dir . "/*.h")
-    if -d $self->ffi_include_dir;
-  push @headers, bsd_glob("$dir/*.h");
+  
+  my @dirs = @$dir;
+  push @dirs, grep { -d $_ } ref $self->ffi_include_dir ? @{ $self->ffi_include_dir } : ($self->ffi_include_dir);
+
+  push @headers, map { bsd_glob("$_/*.h") } @dirs;
   
   \@headers;
 }
@@ -228,10 +288,9 @@ sub _ffi_include_dirs ($$)
 {
   my($self, $dir) = @_;
   
-  my @includes = ($dir);
+  my @includes = (@$dir);
 
-  push @includes, $self->ffi_include_dir
-    if defined $self->ffi_include_dir;
+  push @includes, grep { -d $_ } ref $self->ffi_include_dir ? @{ $self->ffi_include_dir } : ($self->ffi_include_dir);
 
   push @includes, $ENV{FFI_PLATYPUS_INCLUDE_DIR} || File::Spec->catdir(File::ShareDir::dist_dir('FFI-Platypus'), 'include');
 
@@ -241,33 +300,61 @@ sub _ffi_include_dirs ($$)
   \@includes;
 }
 
-sub _build_dynamic_lib ($$$;$)
-{
-  my($self, $dir, $name, $dest_dir) = @_;
-  
-  $dest_dir ||= $dir;
-  
-  my $header_time = do { no warnings; reverse sort map { (stat $_)[9] } @{ _ffi_headers $self, $dir } };
-  my $compile_count = 0;
-  my $b = ExtUtils::CBuilder->new;
+=head2 ffi_build_dynamic_lib
 
-  my @obj = map {
-    my $filename = $_;
-    my($source_time) = reverse sort ((stat $filename)[9], $header_time);
-    my $obj_name = $b->object_file($filename);
-    $self->add_to_cleanup($obj_name);
-    my $obj_time = -e $obj_name ? ((stat $obj_name)[9]) : 0;
-    if($obj_time < $source_time)
-    {
-      $b->compile(
+[version 0.18]
+
+ my $dll_path = $mb->ffi_build_dynamic_lib($src_dir, $name, $target_dir);
+ my $dll_path = $mb->ffi_build_dynamic_lib($src_dir, $name);
+
+Compiles the C and C++ source in the C<$src_dir> and link it into a
+dynamic library with base name of C<$name.$Config{dlext}>.  If
+C<$target_dir> is specified then the dynamic library will be delivered
+into that directory.
+
+Override for other foreign language subclasses.
+
+=cut
+
+sub ffi_build_dynamic_lib ($$$;$)
+{
+  my($self, $dirs, $name, $dest_dir) = @_;
+  
+  $dest_dir ||= $dirs->[0];
+  
+  my $header_time = do {
+    my @list = sort map { (stat $_)[9] } @{ _ffi_headers $self, $dirs };
+    pop @list;
+  } || 0;
+  my $compile_count = 0;
+  my $b = $self->cbuilder;
+
+  my @obj;
+  
+  foreach my $dir (@$dirs)
+  {
+    push @obj,  map {
+      my $filename = $_;
+      my($source_time) = reverse sort ((stat $filename)[9], $header_time);
+      my $obj_name = $b->object_file($filename);
+      $self->add_to_cleanup($obj_name);
+      my $obj_time = -e $obj_name ? ((stat $obj_name)[9]) : 0;
+
+      my %compile_options = (
         source               => $filename,
-        include_dirs         => _ffi_include_dirs($self, $dir),
+        include_dirs         => _ffi_include_dirs($self, $dirs),
         extra_compiler_flags => $self->extra_compiler_flags,
       );
-      $compile_count++;
-    }
-    $obj_name;
-  } bsd_glob("$dir/*.c");
+      $compile_options{"C++"} = 1 if $filename =~ /\.(cpp|cxx|cc|\c\+\+)$/;
+
+      if($obj_time < $source_time)
+      {
+        $b->compile(%compile_options);
+        $compile_count++;
+      }
+      $obj_name;
+    } sort map { bsd_glob("$dir/*.$_") } qw( c cpp cxx cc c++ s );
+  }
 
   return unless $compile_count > 0;
 
@@ -312,19 +399,23 @@ sub _ffi_libtest_name ()
 sub ACTION_libtest
 {
   my $self = shift;
-  my $dir = $self->ffi_libtest_dir;
+  _inflate($self);
+  my @dirs = @{ $self->ffi_libtest_dir };
   
-  return unless -d $dir;
+  return unless -d $dirs[0];
   
-  $self->add_to_cleanup(map { "$dir/$_" } qw(
-    *.o
-    *.obj
-    *.so
-    *.dll
-    *.bundle
-  ));
+  foreach my $dir (@dirs)
+  {
+    $self->add_to_cleanup(map { "$dir/$_" } qw(
+      *.o
+      *.obj
+      *.so
+      *.dll
+      *.bundle
+    ));
+  }
   
-  my $have_compiler = ExtUtils::CBuilder->new->have_compiler;
+  my $have_compiler = $self->ffi_have_compiler;
   
   unless($have_compiler)
   {
@@ -333,25 +424,29 @@ sub ACTION_libtest
     return;
   }
   
-  _build_dynamic_lib $self, $dir, _ffi_libtest_name;
+  $self->ffi_build_dynamic_lib(\@dirs, _ffi_libtest_name);
 }
 
 sub ACTION_ffi
 {
   my $self = shift;
-  my $dir = $self->ffi_source_dir;
+  _inflate($self);
+  my @dirs = @{ $self->ffi_source_dir };
   
-  return unless -d $dir;
+  return unless -d $dirs[0];
   
-  $self->add_to_cleanup(map { "$dir/$_" } qw(
-    *.o
-    *.obj
-    *.so
-    *.dll
-    *.bundle
-  ));
+  foreach my $dir (@dirs)
+  {
+    $self->add_to_cleanup(map { "$dir/$_" } qw(
+      *.o
+      *.obj
+      *.so
+      *.dll
+      *.bundle
+    ));
+  }
   
-  unless(ExtUtils::CBuilder->new->have_compiler)
+  unless($self->ffi_have_compiler)
   {
     print STDERR "a compiler is required.\n";
     exit 2;
@@ -370,7 +465,7 @@ sub ACTION_ffi
     $name = "$name.xs";
   }
 
-  _build_dynamic_lib $self, $dir, $name, $arch_dir;  
+  $self->ffi_build_dynamic_lib(\@dirs, $name, $arch_dir);
 }
 
 sub ACTION_build
