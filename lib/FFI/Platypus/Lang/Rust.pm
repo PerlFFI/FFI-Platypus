@@ -28,7 +28,7 @@ Perl:
 
  use FFI::Platypus;
  my $ffi = FFI::Platypus->new;
- $ffi->with('Rust');
+ $ffi->lang('Rust');
  $ffi->lib('./libadd.so');
  
  $ffi->attach( add => ['i32', 'i32'] => 'i32' );
