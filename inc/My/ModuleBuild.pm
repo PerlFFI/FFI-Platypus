@@ -97,7 +97,21 @@ sub new
     'core',
   );
 
-  $self->config_data(config_dlext => $Config{dlext});
+  # dlext as understood by MB and MM
+  my @dlext = ($Config{dlext});
+  
+  # extra dlext as understood by the OS
+  push @dlext, 'dll'             if $^O =~ /^(cygwin|MSWin32)$/;
+  push @dlext, 'xs.dll'          if $^O =~ /^(MSWin32)$/;
+  push @dlext, 'so'              if $^O =~ /^(cygwin|darwin)$/;
+  push @dlext, 'bundle', 'dylib' if $^O =~ /^(darwin)$/;
+
+  # uniq'ify it
+  @dlext = do { my %seen; grep { !$seen{$_}++ } @dlext };
+
+  #print "dlext[]=$_\n" for @dlext;
+
+  $self->config_data(config_dlext => \@dlext);
 
   $self;
 }

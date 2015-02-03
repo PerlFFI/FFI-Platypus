@@ -391,6 +391,24 @@ sub ffi_build_dynamic_lib ($$$;$)
   }
 }
 
+=head2 ffi_dlext
+
+ my @dlext = Module::Build::FFI->ffi_dlext;
+
+Returns a list of legal dynamic library extensions.  C<$Config{dlext}> is good,
+but many platforms use more than one extension for dynamic libraries.  For
+example, on Mac OS X, there are two different dynamic library types C<.bundle>
+and C<.dylib> and sometimes these renamed C<.so> files.  Although C<.bundle>
+and C<.dylib> have subtle differences, they can both be used by L<FFI::Platypus>.
+
+=cut
+
+sub ffi_dlext
+{
+  require FFI::Platypus::ConfigData;
+  @{ FFI::Platypus::ConfigData->config('config_dlext') };
+}
+
 sub _ffi_libtest_name ()
 {
   $^O eq 'cygwin' ? 'cygtest-1' : 'libtest';

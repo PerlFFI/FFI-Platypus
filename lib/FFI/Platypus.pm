@@ -790,7 +790,7 @@ sub package
   my($self, $module, $modlibname) = @_;
   
   require FFI::Platypus::ConfigData;
-  my $dlext = FFI::Platypus::ConfigData->config("config_dlext");
+  my @dlext = @{ FFI::Platypus::ConfigData->config("config_dlext") };
 
   ($module, $modlibname) = caller() unless defined $modlibname;  
   my @modparts = split /::/, $module;
@@ -798,14 +798,22 @@ sub package
   my $modpname = join('/',@modparts);
   my $c = @modparts;
   $modlibname =~ s,[\\/][^\\/]+$,, while $c--;    # Q&D basename
-  my $file = "$modlibname/auto/$modpname/$modfname.$dlext";
-  unless(-e $file)
-  {
-    $modlibname =~ s,[\\/][^\\/]+$,,;
-    $file = "$modlibname/arch/auto/$modpname/$modfname.$dlext";
-  }
   
-  $self->lib($file) if -e $file;
+  foreach my $dlext (@dlext)
+  {
+    my $file = "$modlibname/auto/$modpname/$modfname.$dlext";
+    unless(-e $file)
+    {
+      $modlibname =~ s,[\\/][^\\/]+$,,;
+      $file = "$modlibname/arch/auto/$modpname/$modfname.$dlext";
+    }
+  
+    if(-e $file)
+    {
+      $self->lib($file);
+      return $self;
+    }
+  }
   
   $self;
 }
