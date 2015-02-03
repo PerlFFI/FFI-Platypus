@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Accept additional extensions, in addition to dlext
+    Example: on OS X both .bundle and .dylib can be used
+    Example: although arguably wrong, on cygwin sometimes .so is used
+  - Added Module::Build::FFI->ffi_dlext class method
 
 0.18      2015-01-30 15:22:07 -0500
   - Improved support for C++ in Module::Build::FFI
