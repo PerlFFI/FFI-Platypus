@@ -17,7 +17,7 @@ my %module_build_args = (
     "Module::Build" => "0.3601"
   },
   "configure_requires" => {
-    "Alien::FFI" => "0.05",
+    "Alien::FFI" => "0.06",
     "Config::AutoConf" => 0,
     "ExtUtils::CBuilder" => 0,
     "FFI::CheckLib" => "0.05",
