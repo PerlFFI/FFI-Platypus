@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.19      2015-02-03 13:34:53 -0500
   - Accept additional extensions, in addition to dlext
     Example: on OS X both .bundle and .dylib can be used
     Example: although arguably wrong, on cygwin sometimes .so is used
