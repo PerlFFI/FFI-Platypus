@@ -397,6 +397,8 @@ Return the address of the given symbol (usually function).
 
 ## package
 
+\[version 0.15\]
+
     $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
     $ffi->package;                  # autodetect
 

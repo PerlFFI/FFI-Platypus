@@ -816,6 +816,8 @@ sub find_symbol
 
 =head2 package
 
+[version 0.15]
+
  $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
  $ffi->package;                  # autodetect
 
