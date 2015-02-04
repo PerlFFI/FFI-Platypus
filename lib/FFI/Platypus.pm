@@ -588,6 +588,9 @@ sub function
  $ffi->attach($name => \@argument_types => $return_type);
  $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
  $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
+ $ffi->attach($name => \@argument_types => $return_type, sub { ... });
+ $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type, sub { ... });
+ $ffi->attach([$address => $perl_name] => \@argument_types => $return_type, sub { ... });
 
 Find and attach a C function as a real live Perl xsub.  The advantage of 
 attaching a function over using the L<function|/function> 
@@ -609,10 +612,31 @@ Examples:
  my $string1 = my_function_name($int);
  my $string2 = my_perl_function_name($int);
 
+If the last argument is a code reference, then it will be used as a wrapper
+around the attached xsub.  The first argument to the wrapper will be the
+inner xsub.  This can be used if you need to verify/modify input/output
+data.
+
+Examples:
+
+ $ffi->attach('my_function', ['int', 'string'] => 'string', sub {
+   my($my_function_xsub, $integer, $string) = @_;
+   $integer++;
+   $string .= " and another thing";
+   my $return_string = $my_function->($integer, $string);
+   $return_string =~ /Belgium//; # HHGG remove profanity
+   $return_string;
+ });
+
 =cut
+
+my $inner_counter=0;
 
 sub attach
 {
+  my $wrapper;
+  $wrapper = pop if ref $_[-1] eq 'CODE';
+
   my($self, $name, $args, $ret, $proto) = @_;
   my($c_name, $perl_name) = ref($name) ? @$name : ($name, $name);
 
@@ -627,7 +651,22 @@ sub attach
     $perl_name = join '::', $caller, $perl_name
       unless $perl_name =~ /::/;
     
-    $function->attach($perl_name, "$filename:$line", $proto);
+    my $attach_name = $perl_name;
+    if($wrapper)
+    {
+      $attach_name = "FFI::Platypus::Inner::xsub$inner_counter";
+      $inner_counter++;
+    }
+    
+    $function->attach($attach_name, "$filename:$line", $proto);
+    
+    if($wrapper)
+    {
+      my $inner_coderef = \&{$attach_name};
+      no strict 'refs';
+      # TODO: Sub::Name ?
+      *{$perl_name} = sub { $wrapper->($inner_coderef, @_) };
+    }
   }
   
   $self;

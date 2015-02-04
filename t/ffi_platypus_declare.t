@@ -12,12 +12,24 @@ do {
   lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
   attach 'f0', ['uint8'] => 'uint8';
   attach [f0 => 'f1'], ['uint8'] => 'uint8';
+  
+  attach [f0 => 'f0_wrap'] => ['uint8'] => 'uint8' => sub {
+    my($inner, $value) = @_;
+    $inner->($value+1)+2;
+  };
+
+  attach [f0 => 'f0_wrap2'] => ['uint8'] => 'uint8' => '$' => sub {
+    my($inner, $value) = @_;
+    $inner->($value+1)+2;
+  };
 };
 
 subtest normal => sub {
-  plan tests => 2;
+  plan tests => 4;
   is Normal::f0(22), 22, 'f0(22) = 22';
   is Normal::f1(22), 22, 'f1(22) = 22';
+  is Normal::f0_wrap(22), 25, 'f0_wrap(22) = 25';
+  is Normal::f0_wrap2(22), 25, 'f0_wrap2(22) = 25';
 };
 
 do {

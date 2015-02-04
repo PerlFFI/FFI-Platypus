@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added optional wrapper argument to FFI::Platypus#attach
+    and FFI::Platypus::Declare#attach
 
 0.19      2015-02-03 13:34:53 -0500
   - Accept additional extensions, in addition to dlext
