@@ -14,7 +14,11 @@ use warnings;
 
 =head1 DESCRIPTION
 
-Setting your lang to C<ASM> removes all non ffi types.  
+Setting your lang to C<ASM> includes no native type aliases, so types
+like C<int> or C<unsigned long> will not work.  You need to specify
+instead C<sint32> or C<sint64>.  Although intended for use with Assembly
+it could also be used for other languages if you did not want to use
+the normal C aliases for native types.
 
 This document will one day include information on bundling Assembly
 with your Perl / FFI / Platypus distribution.  Pull requests welcome!
@@ -23,11 +27,11 @@ with your Perl / FFI / Platypus distribution.  Pull requests welcome!
 
 =head2 native_type_map
 
- my $hashref = FFI::Platypus::Lang::C->native_type_map;
+ my $hashref = FFI::Platypus::Lang::ASM->native_type_map;
 
-This returns a hash reference containing the native aliases for the
-C programming languages.  That is the keys are native C types and the
-values are libffi native types.
+This returns an empty hash reference.  For other languages it returns
+a hash reference that defines the aliases for the types normally used
+for that language.
 
 =cut
 
