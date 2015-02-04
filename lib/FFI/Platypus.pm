@@ -612,6 +612,8 @@ Examples:
  my $string1 = my_function_name($int);
  my $string2 = my_perl_function_name($int);
 
+[version 0.20]
+
 If the last argument is a code reference, then it will be used as a wrapper
 around the attached xsub.  The first argument to the wrapper will be the
 inner xsub.  This can be used if you need to verify/modify input/output

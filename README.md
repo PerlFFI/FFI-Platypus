@@ -295,6 +295,9 @@ Examples:
     $ffi->attach($name => \@argument_types => $return_type);
     $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
     $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
+    $ffi->attach($name => \@argument_types => $return_type, sub { ... });
+    $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type, sub { ... });
+    $ffi->attach([$address => $perl_name] => \@argument_types => $return_type, sub { ... });
 
 Find and attach a C function as a real live Perl xsub.  The advantage of 
 attaching a function over using the [function](#function) 
@@ -315,6 +318,24 @@ Examples:
     $ffi->attach(['my_c_functon_name' => 'my_perl_function_name'], ['int', 'string'] => 'string');
     my $string1 = my_function_name($int);
     my $string2 = my_perl_function_name($int);
+
+\[version 0.20\]
+
+If the last argument is a code reference, then it will be used as a wrapper
+around the attached xsub.  The first argument to the wrapper will be the
+inner xsub.  This can be used if you need to verify/modify input/output
+data.
+
+Examples:
+
+    $ffi->attach('my_function', ['int', 'string'] => 'string', sub {
+      my($my_function_xsub, $integer, $string) = @_;
+      $integer++;
+      $string .= " and another thing";
+      my $return_string = $my_function->($integer, $string);
+      $return_string =~ /Belgium//; # HHGG remove profanity
+      $return_string;
+    });
 
 ## closure
 
