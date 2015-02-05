@@ -1,4 +1,5 @@
 requires "ExtUtils::CBuilder" => "0";
+requires "FFI::CheckLib" => "0";
 requires "File::ShareDir" => "0";
 requires "JSON::PP" => "0";
 requires "Module::Build" => "0.3601";
@@ -9,7 +10,6 @@ on 'build' => sub {
 };
 
 on 'test' => sub {
-  requires "FFI::CheckLib" => "0";
   requires "Test::More" => "0.94";
   requires "perl" => "5.008001";
 };

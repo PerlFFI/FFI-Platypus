@@ -36,6 +36,7 @@ my %module_build_args = (
   "recursive_test_files" => 1,
   "requires" => {
     "ExtUtils::CBuilder" => 0,
+    "FFI::CheckLib" => 0,
     "File::ShareDir" => 0,
     "JSON::PP" => 0,
     "Module::Build" => "0.3601",
@@ -46,7 +47,6 @@ my %module_build_args = (
     "dist" => "share"
   },
   "test_requires" => {
-    "FFI::CheckLib" => 0,
     "Test::More" => "0.94",
     "perl" => "5.008001"
   }
@@ -54,7 +54,6 @@ my %module_build_args = (
 
 
 my %fallback_build_requires = (
-  "FFI::CheckLib" => 0,
   "Module::Build" => "0.3601",
   "Test::More" => "0.94",
   "perl" => "5.008001"

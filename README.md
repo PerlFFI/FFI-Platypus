@@ -389,6 +389,19 @@ This function is not very fast, so you might want to save this value as
 a constant, particularly if you need the size in a loop with many 
 iterations.
 
+## find\_lib
+
+\[version 0.20\]
+
+    $ffi->find_lib( lib => $libname );
+
+This is just a shortcut for calling [FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib) and
+updating the ["lib"](#lib) attribute appropriately.  Care should be taken
+though, as this method simply passes its arguments to
+[FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib), so if your module or script is depending
+on a specific feature in [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib) then make sure that you
+update your prerequisites appropriately.
+
 ## find\_symbol
 
     my $address = $ffi->find_symbol($name);
