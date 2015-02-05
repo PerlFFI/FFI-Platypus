@@ -765,6 +765,39 @@ sub sizeof
   FFI::Platypus::Type::sizeof($type);
 }
 
+=head2 alignof
+
+[version 0.21]
+
+ my $align = $ffi->alignof($type);
+
+Returns the alignment of the given type in bytes.
+
+=cut
+
+sub alignof
+{
+  my($self, $name) = @_;
+  my $meta = $self->type_meta($name);
+  
+  croak "cannot determine alignment of record"
+    if $meta->{type} eq 'record';
+  
+  require FFI::Platypus::ConfigData;
+
+  my $ffi_type;
+  if($meta->{type} eq 'pointer')
+  {
+    $ffi_type = 'pointer';
+  }
+  else
+  {
+    $ffi_type = $meta->{ffi_type};
+  }
+  
+  FFI::Platypus::ConfigData->config('align')->{$ffi_type};
+}
+
 =head2 find_lib
 
 [version 0.20]

@@ -49,7 +49,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
   else if(self->platypus_type == FFI_PL_POINTER)
   {
     hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
-    hv_store(meta, "type",          4, newSVpv("opaque_pointer",0),0);
+    hv_store(meta, "type",          4, newSVpv("pointer",0),0);
   }
   else if(self->platypus_type == FFI_PL_ARRAY)
   {

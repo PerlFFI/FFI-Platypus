@@ -164,9 +164,21 @@ sub configure
   # for _Bool or something.
   $type_map{bool} ||= delete $type_map{_Bool};
   delete $type_map{_Bool};
+
+  my %align = (
+    pointer => $ac->check_alignof_type('void*'),
+    float   => $ac->check_alignof_type('float'),
+    double  => $ac->check_alignof_type('double'),
+  );
+
+  foreach my $bits (qw( 8 16 32 64 ))
+  {
+    $align{'sint'.$bits} = $align{'uint'.$bits} = $ac->check_alignof_type("int${bits}_t");
+  }
   
   $ac->write_config_h( $config_h );
-  $mb->config_data( type_map => \%type_map);
+  $mb->config_data( type_map => \%type_map );
+  $mb->config_data( align    => \%align    );
 }
 
 sub clean
