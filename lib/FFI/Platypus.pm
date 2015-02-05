@@ -761,6 +761,29 @@ sub sizeof
   FFI::Platypus::Type::sizeof($type);
 }
 
+=head2 find_lib
+
+[version 0.20]
+
+ $ffi->find_lib( lib => $libname );
+
+This is just a shortcut for calling L<FFI::CheckLib#find_lib> and
+updating the L</lib> attribute appropriately.  Care should be taken
+though, as this method simply passes its arguments to
+L<FFI::CheckLib#find_lib>, so if your module or script is depending
+on a specific feature in L<FFI::CheckLib> then make sure that you
+update your prerequisites appropriately.
+
+=cut
+
+sub find_lib
+{
+  my $self = shift;
+  require FFI::CheckLib;
+  $self->lib(FFI::CheckLib::find_lib(@_));
+  $self;
+}
+
 =head2 find_symbol
 
  my $address = $ffi->find_symbol($name);
