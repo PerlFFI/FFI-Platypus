@@ -38,6 +38,7 @@ pod_spelling_system:
     - demangling
     - lang
     - demangled
+    - alignof
 
 pod_coverage:
   skip: 0

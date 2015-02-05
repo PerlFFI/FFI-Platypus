@@ -138,6 +138,11 @@ typedef struct _ffi_pl_arguments {
   ffi_pl_argument slot[0];
 } ffi_pl_arguments;
 
+typedef struct _ffi_pl_record_member {
+  int offset;
+  int count;
+} ffi_pl_record_member;
+
 #define ffi_pl_arguments_count(arguments)                 (arguments->count)
 #define ffi_pl_arguments_set_pointer(arguments, i, value) (arguments->slot[i].pointer = value)
 #define ffi_pl_arguments_get_pointer(arguments, i)        (arguments->slot[i].pointer)

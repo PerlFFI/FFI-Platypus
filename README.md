@@ -393,6 +393,14 @@ This function is not very fast, so you might want to save this value as
 a constant, particularly if you need the size in a loop with many 
 iterations.
 
+## alignof
+
+\[version 0.21\]
+
+    my $align = $ffi->alignof($type);
+
+Returns the alignment of the given type in bytes.
+
 ## find\_lib
 
 \[version 0.20\]

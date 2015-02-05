@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Added FFI::Platypus#alignof method
+  - Added FFI::Platypus::Record module
 
 0.20      2015-02-05 14:06:11 -0500
   - Added optional wrapper argument to FFI::Platypus#attach
