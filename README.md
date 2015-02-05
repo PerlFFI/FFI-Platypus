@@ -880,7 +880,7 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
 
 ## bzip2
 
-    use FFI::Platypus;
+    use FFI::Platypus 0.20 (); # 0.20 required for using wrappers
     use FFI::CheckLib qw( find_lib_or_die );
     use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
     use FFI::Platypus::Memory qw( malloc free );
@@ -889,7 +889,7 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
     $ffi->lib(find_lib_or_die lib => 'bz2');
     
     $ffi->attach(
-      BZ2_bzBuffToBuffCompress => [
+      [ BZ2_bzBuffToBuffCompress => 'compress' ] => [
         'opaque',                          # dest
         'unsigned int *',                  # dest length
         'opaque',                          # source
@@ -898,10 +898,21 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
         'int',                             # verbosity
         'int',                             # workFactor
       ] => 'int',
+      sub {
+        my $sub = shift;
+        my($source,$source_length) = scalar_to_buffer $_[0];
+        my $dest_length = int(length($source)*1.01) + 1 + 600;
+        my $dest = malloc $dest_length;
+        my $r = $sub->($dest, \$dest_length, $source, $source_length, 9, 0, 30);
+        die "bzip2 error $r" unless $r == 0;
+        my $compressed = buffer_to_scalar($dest, $dest_length);
+        free $dest;
+        $compressed;
+      },
     );
     
     $ffi->attach(
-      BZ2_bzBuffToBuffDecompress => [
+      [ BZ2_bzBuffToBuffDecompress => 'decompress' ] => [
         'opaque',                          # dest
         'unsigned int *',                  # dest length
         'opaque',                          # source
@@ -909,44 +920,45 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
         'int',                             # small
         'int',                             # verbosity
       ] => 'int',
+      sub {
+        my $sub = shift;
+        my($source, $source_length) = scalar_to_buffer $_[0];
+        my $dest_length = $_[1];
+        my $dest = malloc $dest_length;
+        my $r = $sub->($dest, \$dest_length, $source, $source_length, 0, 0);
+        die "bzip2 error $r" unless $r == 0;
+        my $decompressed = buffer_to_scalar($dest, $dest_length);
+        free $dest;
+        $decompressed;
+      },
     );
     
-    sub compress ($)
-    {
-      my($source,$source_length) = scalar_to_buffer($_[0]);
-      my $dest_length = int(length($source)*1.01) + 1 + 600;
-      my $dest = malloc $dest_length;
-      my $r = BZ2_bzBuffToBuffCompress($dest, \$dest_length, $source, $source_length, 9, 0, 30);
-      die "bzip2 error $r" unless $r == 0;
-      my $compressed = buffer_to_scalar($dest, $dest_length);
-      free $dest;
-      $compressed;
-    };
-    
-    sub decompress ($$)
-    {
-      my($source, $source_length) = scalar_to_buffer($_[0]);
-      my $dest_length = $_[1];
-      my $dest = malloc $dest_length;
-      my $r = BZ2_bzBuffToBuffDecompress($dest, \$dest_length, $source, $source_length, 0, 0);
-      die "bzip2 error $r" unless $r == 0;
-      my $decompressed = buffer_to_scalar($dest, $dest_length);
-    }
-    
     my $original = "hello compression world\n";
-    my $compressed = compress $original;
-    print decompress $compressed, length $original;
+    my $compressed = compress($original);
+    print decompress($compressed, length $original);
 
 **Discussion**: bzip2 is a compression library.  For simple one shot
 attempts at compression/decompression when you expect the original
 and the result to fit within memory it provides two convenience functions
 `BZ2_bzBuffToBuffCompress` and `BZ2_bzBuffToBuffDecompress`.
 
-The first four arguments of both of these functions are identical, and 
-represent two buffers.  For the destination buffer, the length is passed 
-in as an pointer to an integer.  The value of this integer going in is 
-the maximum size of the buffer (the amount of memory preallocated).  On 
-output, the bzip2 library updates it with the actual number of bytes used.
+The first four arguments of both of these C functions are identical, and 
+represent two buffers.  One buffer is the source, the second is the 
+destination.  For the destination, the length is passed in as a pointer 
+to an integer.  On input this integer is the size of the destination 
+buffer, and thus the maximum size of the compressed or decompressed 
+data.  When the function returns the actual size of compressed or 
+compressed data is stored in this integer.
+
+This is normal stuff for C, but in Perl our buffers are scalars and they 
+already know how large they are.  In this sort of situation, wrapping 
+the C function in some Perl code can make your interface a little more 
+Perl like.  In order to do this, just provide a code reference as the 
+last argument to the ["attach"](#attach) method.  The first argument to this 
+wrapper will be a code reference to the C function.  The Perl arguments 
+will come in after that.  This allows you to modify / convert the 
+arguments to conform to the C API.  What ever value you return from the 
+wrapper function will be returned back to the original caller.
 
 # SUPPORT
 

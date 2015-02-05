@@ -1078,11 +1078,23 @@ attempts at compression/decompression when you expect the original
 and the result to fit within memory it provides two convenience functions
 C<BZ2_bzBuffToBuffCompress> and C<BZ2_bzBuffToBuffDecompress>.
 
-The first four arguments of both of these functions are identical, and 
-represent two buffers.  For the destination buffer, the length is passed 
-in as an pointer to an integer.  The value of this integer going in is 
-the maximum size of the buffer (the amount of memory preallocated).  On 
-output, the bzip2 library updates it with the actual number of bytes used.
+The first four arguments of both of these C functions are identical, and 
+represent two buffers.  One buffer is the source, the second is the 
+destination.  For the destination, the length is passed in as a pointer 
+to an integer.  On input this integer is the size of the destination 
+buffer, and thus the maximum size of the compressed or decompressed 
+data.  When the function returns the actual size of compressed or 
+compressed data is stored in this integer.
+
+This is normal stuff for C, but in Perl our buffers are scalars and they 
+already know how large they are.  In this sort of situation, wrapping 
+the C function in some Perl code can make your interface a little more 
+Perl like.  In order to do this, just provide a code reference as the 
+last argument to the L</attach> method.  The first argument to this 
+wrapper will be a code reference to the C function.  The Perl arguments 
+will come in after that.  This allows you to modify / convert the 
+arguments to conform to the C API.  What ever value you return from the 
+wrapper function will be returned back to the original caller.
 
 =cut
 
