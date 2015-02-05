@@ -144,6 +144,10 @@ mostly useful for finding functions in the standard C library, without
 having to know the name of the standard c library for your platform (as 
 it turns out it is different just about everywhere!).
 
+You may also use the ["find\_lib"](#find_lib) method as a shortcut:
+
+    $ffi->find_lib( lib => 'archive' );
+
 ## ignore\_not\_found
 
 \[version 0.15\]
