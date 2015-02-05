@@ -470,6 +470,23 @@ friendly diagnostic letting the user know that the required library is
 missing, and reduce the number of bogus CPAN testers results that you 
 will get.
 
+Also in this example, we rename some of the functions when they are
+placed into Perl space to save typing:
+
+    attach [notify_notification_new => 'notify_new']
+      => [string,string,string]
+      => opaque;
+
+When you specify a list reference as the "name" of the function the
+first element is the symbol name as understood by the dynamic library.
+The second element is the name as it will be placed in Perl space.
+
+Later, when we call `notify_new`:
+
+    my $n = notify_new('','','');
+
+We are really calling the C function `notify_notification_new`.
+
 ## Allocating and freeing memory
 
     use FFI::Platypus::Declare;
@@ -719,7 +736,7 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
     # the ArchiveWrite class that could be used for writing archive formats
     # supported by libarchive
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = My::Platypus->new;
     $ffi->lib(FFI::CheckLib::find_lib_or_exit lib => 'archive');
     
     $ffi->custom_type(archive => {
@@ -743,38 +760,50 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
       },
     });
     
+    package My::Platypus;
+    
+    use base qw( FFI::Platypus );
+    
+    sub find_symbol
+    {
+      my($self, $name) = @_;
+      my $prefix = lcfirst caller(2);
+      $prefix =~ s{([A-Z])}{"_" . lc $1}eg;
+      $self->SUPER::find_symbol(join '_', $prefix, $name);
+    }
+    
     package Archive;
     
     # base class is "abstract" having no constructor or destructor
     
-    $ffi->attach( [ archive_error_string => 'error_string' ] => ['archive'] => 'string' );
+    $ffi->attach( error_string => ['archive'] => 'string' );
     
     package ArchiveRead;
     
     our @ISA = qw( Archive );
     
-    $ffi->attach( [ archive_read_new => 'new' ] => ['string'] => 'archive' );
-    $ffi->attach( [ archive_read_free => 'DESTROY' ] => ['archive'] => 'void' );
-    $ffi->attach( [ archive_read_support_filter_all => 'support_filter_all' ] => ['archive'] => 'int' );
-    $ffi->attach( [ archive_read_support_format_all => 'support_format_all' ] => ['archive'] => 'int' );
-    $ffi->attach( [ archive_read_open_filename => 'open_filename' ] => ['archive','string','size_t'] => 'int' );
-    $ffi->attach( [ archive_read_next_header2 => 'next_header2' ] => ['archive', 'archive_entry' ] => 'int' );
-    $ffi->attach( [ archive_read_data_skip => 'data_skip' ] => ['archive'] => 'int' );
+    $ffi->attach( new                   => ['string']                    => 'archive' );
+    $ffi->attach( [ free => 'DESTROY' ] => ['archive']                   => 'void' );
+    $ffi->attach( support_filter_all    => ['archive']                   => 'int' );
+    $ffi->attach( support_format_all    => ['archive']                   => 'int' );
+    $ffi->attach( open_filename         => ['archive','string','size_t'] => 'int' );
+    $ffi->attach( next_header2          => ['archive', 'archive_entry' ] => 'int' );
+    $ffi->attach( data_skip             => ['archive']                   => 'int' );
     # ... define additional read methods
     
     package ArchiveWrite;
     
     our @ISA = qw( Archive );
     
-    $ffi->attach( [ archive_write_new => 'new' ] => ['string'] => 'archive' );
-    $ffi->attach( [ archive_write_free => 'DESTROY' ] => ['archive'] => 'void' );
+    $ffi->attach( new                   => ['string'] => 'archive' );
+    $ffi->attach( [ free => 'DESTROY' ] => ['archive'] => 'void' );
     # ... define additional write methods
     
     package ArchiveEntry;
     
-    $ffi->attach( [ archive_entry_new => 'new' ] => ['string'] => 'archive_entry' );
-    $ffi->attach( [ archive_entry_free => 'DESTROY' ] => ['archive_entry'] => 'void' );
-    $ffi->attach( [ archive_entry_pathname => 'pathname' ] => ['archive_entry'] => 'string' );
+    $ffi->attach( new => ['string']     => 'archive_entry' );
+    $ffi->attach( [ free => 'DESTROY' ] => ['archive_entry'] => 'void' );
+    $ffi->attach( pathname              => ['archive_entry'] => 'string' );
     # ... define additional entry methods
     
     package main;
@@ -813,6 +842,24 @@ abstract class `Archive`, and concrete classes `ArchiveWrite`,
 inherited from and extended just like any Perl classes because of the 
 way the custom types are implemented.  For more details on custom types 
 see [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) and [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
+
+Another advanced feature of this example is that we extend the 
+[FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) class to define our own find\_symbol method that prefixes
+the symbol names depending on the class in which they are defined.
+This means we can do this when we define a method for Archive:
+
+    $ffi->attach( support_filter_all => ['archive'] => 'int' );
+
+Rather than this:
+
+    $ffi->attach(
+      [ archive_read_support_filter_all => 'support_read_filter_all' ] => 
+      ['archive'] => 'int' );
+    );
+
+If you didn't want to create an entire new class just for this little
+trick you could also use something like [Object::Method](https://metacpan.org/pod/Object::Method) to extend
+`find_symbol`.
 
 ## bzip2
 

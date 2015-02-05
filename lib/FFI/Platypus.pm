@@ -898,6 +898,23 @@ friendly diagnostic letting the user know that the required library is
 missing, and reduce the number of bogus CPAN testers results that you 
 will get.
 
+Also in this example, we rename some of the functions when they are
+placed into Perl space to save typing:
+
+ attach [notify_notification_new => 'notify_new']
+   => [string,string,string]
+   => opaque;
+
+When you specify a list reference as the "name" of the function the
+first element is the symbol name as understood by the dynamic library.
+The second element is the name as it will be placed in Perl space.
+
+Later, when we call C<notify_new>:
+
+ my $n = notify_new('','','');
+
+We are really calling the C function C<notify_notification_new>.
+
 =head2 Allocating and freeing memory
 
 # EXAMPLE: examples/malloc.pl
@@ -1006,6 +1023,24 @@ C<ArchiveRead> and C<ArchiveEntry>.  The concrete classes can even be
 inherited from and extended just like any Perl classes because of the 
 way the custom types are implemented.  For more details on custom types 
 see L<FFI::Platypus::Type> and L<FFI::Platypus::API>.
+
+Another advanced feature of this example is that we extend the 
+L<FFI::Platypus> class to define our own find_symbol method that prefixes
+the symbol names depending on the class in which they are defined.
+This means we can do this when we define a method for Archive:
+
+ $ffi->attach( support_filter_all => ['archive'] => 'int' );
+
+Rather than this:
+
+ $ffi->attach(
+   [ archive_read_support_filter_all => 'support_read_filter_all' ] => 
+   ['archive'] => 'int' );
+ );
+
+If you didn't want to create an entire new class just for this little
+trick you could also use something like L<Object::Method> to extend
+C<find_symbol>.
 
 =head2 bzip2
 
