@@ -667,7 +667,6 @@ just-in-time (JIT) compilation service for FFI.
     use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
     
     my $endpoint = "ipc://zmq-ffi-$$";
-    #my $endpoint = "tcp://localhost:3000";
     my $ffi = FFI::Platypus->new;
     
     $ffi->lib(undef); # for puts
