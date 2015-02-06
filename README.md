@@ -55,11 +55,13 @@ might want to write extensions with FFI instead of XS:
 - FFI / Platypus is not C or C++ centric
 
     XS is implemented primarily as a bunch of C macros, which requires at 
-    least some understanding of C, (sadly) the C pre-processor, and some C++ 
+    least some understanding of C, the C pre-processor, and some C++ 
     caveats (since on some platforms Perl is compiled and linked with a C++ 
     compiler). Platypus on the other hand could be used to call other 
-    compiled languages, like Fortran, Rust, Go or even assembly, allowing 
-    you to focus on your strengths.
+    compiled languages, like Fortran, [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust),
+    [Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal), [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP),
+    Go or even [assembly](https://metacpan.org/pod/FFI::Platypus::Lang::ASM), allowing you to focus
+    on your strengths.
 
 - FFI / Platypus does not require a parser
 
