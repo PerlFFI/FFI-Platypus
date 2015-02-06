@@ -168,6 +168,8 @@ sub configure
   $type_map{bool} ||= delete $type_map{_Bool};
   delete $type_map{_Bool};
 
+  $ac->check_default_headers;
+
   my %align = (
     pointer => _alignment($ac, 'void*'),
     float   => _alignment($ac, 'float'),
@@ -184,12 +186,15 @@ sub configure
   $mb->config_data( align    => \%align    );
 }
 
-# https://github.com/ambs/Config-AutoConf/issues/7
 sub _alignment
 {
   my($ac, $type) = @_;
-  my $align = $ac->check_alignof_type($type, { prologue => $prologue });
+  my $align = $ac->check_alignof_type($type);
   return $align if $align;
+  
+  # This no longer seems necessary now that we do a
+  # check_default_headers above.  See:
+  # # https://github.com/ambs/Config-AutoConf/issues/7
   my $btype = $type eq 'void*' ? 'vpointer' : "b$type";
   my $prologue2 = $prologue . <<EOF;
 struct align {
