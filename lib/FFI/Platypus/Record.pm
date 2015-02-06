@@ -63,7 +63,7 @@ Platypus type.
 
 =cut
 
-sub record_layout ($;@)
+sub record_layout
 {
   my $ffi = ref($_[0]) ? shift : FFI::Platypus->new;
   my $offset = 0;

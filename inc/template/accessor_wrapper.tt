@@ -1,0 +1,14 @@
+/* DO NOT MODIFY THIS FILE it is generated from these files: 
+ * inc/template/accessor.tt
+ * inc/template/accessor_wrapper.tt
+ * inc/run/generate_record_accessor.pl
+ */
+#include "EXTERN.h"
+#include "perl.h"
+#include "XSUB.h"
+#include "ppport.h"
+
+#include "ffi_platypus.h"
+#include "ffi_platypus_guts.h"
+
+[% content %]

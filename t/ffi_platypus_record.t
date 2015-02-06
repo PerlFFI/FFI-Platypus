@@ -1,8 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
-
-my $ffi = FFI::Platypus->new;
+use Test::More tests => 3;
 
 do {
   package
@@ -18,6 +16,7 @@ do {
 };
 
 subtest 'integer accessor' => sub {
+  plan tests => 6;
 
   my $foo = Foo1->new( first => 1, second => 2 );
   isa_ok $foo, 'Foo1';
@@ -59,6 +58,7 @@ do {
 };
 
 subtest 'values match in C' => sub {
+  plan tests => 4;
 
   my $color = Color->new(
     red   => 50,
@@ -71,5 +71,80 @@ subtest 'values match in C' => sub {
   is $color->get_red,    50, "color.get_red   =  50";
   is $color->get_green, 100, "color.get_green = 100";
   is $color->get_blue,  150, "color.get_blue  = 150";
+  
+};
+
+do {
+  package
+    Foo2;
+
+  use FFI::Platypus::Record;
+  
+  record_layout(qw(
+    char     x1
+    uint64_t uint64
+    char     x2
+    uint64_t uint32
+    char     x3
+    uint64_t uint16
+    char x4
+    uint64_t uint8
+
+    char x5
+    int64_t sint64
+    char x6
+    int64_t sint32
+    char x7
+    int64_t sint16
+    char x8
+    int64_t sint8
+
+    char x9
+    float float
+    char x10
+    double double 
+  ));
+  
+  my $ffi = FFI::Platypus->new;
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 'libtest');
+  
+  $ffi->attach(["align_get_$_" => "get_$_"] => [ 'record(Foo2)' ] => $_)
+    for qw( uint8 sint8 uint16 sint16 uint32 sint32 uint64 sint64 float double );
+};
+
+subtest 'complex alignment' => sub {
+  
+  my $foo = Foo2->new;
+  isa_ok $foo, 'Foo2';
+
+  $foo->uint64(512);
+  is $foo->get_uint64, 512, "uint64 = 512";
+  
+  $foo->sint64(-512);
+  is $foo->get_sint64, -512, "sint64 = -512";
+
+  $foo->uint32(1024);
+  is $foo->get_uint32, 1024, "uint32 = 1024";
+  
+  $foo->sint32(-1024);
+  is $foo->get_sint32, -1024, "sint32 = -1024";
+
+  $foo->uint16(2048);
+  is $foo->get_uint16, 2048, "uint16 = 2048";
+  
+  $foo->sint16(-2048);
+  is $foo->get_sint16, -2048, "sint16 = -2048";
+
+  $foo->uint8(48);
+  is $foo->get_uint8, 48, "uint8 = 48";
+  
+  $foo->sint8(-48);
+  is $foo->get_sint8, -48, "sint8 = -48";
+
+  $foo->float(1.5);
+  is $foo->get_float, 1.5, "float = 1.5";
+
+  $foo->double(-1.5);
+  is $foo->get_double, -1.5, "double = -1.5";
   
 };
