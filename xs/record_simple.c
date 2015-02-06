@@ -45,6 +45,73 @@ XS(ffi_pl_record_accessor_uint8)
   XSRETURN_UV(*ptr2);
 }
 
+XS(ffi_pl_record_accessor_uint8_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  uint8_t *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (uint8_t*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvUV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setuv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
+}
+
 XS(ffi_pl_record_accessor_sint8)
 {
   ffi_pl_record_member *member;
@@ -76,6 +143,73 @@ XS(ffi_pl_record_accessor_sint8)
     XSRETURN_EMPTY;
 
   XSRETURN_IV(*ptr2);
+}
+
+XS(ffi_pl_record_accessor_sint8_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  int8_t *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (int8_t*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvIV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setiv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
 }
 
 XS(ffi_pl_record_accessor_uint16)
@@ -111,6 +245,73 @@ XS(ffi_pl_record_accessor_uint16)
   XSRETURN_UV(*ptr2);
 }
 
+XS(ffi_pl_record_accessor_uint16_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  uint16_t *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (uint16_t*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvUV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setuv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
+}
+
 XS(ffi_pl_record_accessor_sint16)
 {
   ffi_pl_record_member *member;
@@ -142,6 +343,73 @@ XS(ffi_pl_record_accessor_sint16)
     XSRETURN_EMPTY;
 
   XSRETURN_IV(*ptr2);
+}
+
+XS(ffi_pl_record_accessor_sint16_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  int16_t *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (int16_t*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvIV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setiv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
 }
 
 XS(ffi_pl_record_accessor_uint32)
@@ -177,6 +445,73 @@ XS(ffi_pl_record_accessor_uint32)
   XSRETURN_UV(*ptr2);
 }
 
+XS(ffi_pl_record_accessor_uint32_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  uint32_t *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (uint32_t*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvUV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setuv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
+}
+
 XS(ffi_pl_record_accessor_sint32)
 {
   ffi_pl_record_member *member;
@@ -208,6 +543,73 @@ XS(ffi_pl_record_accessor_sint32)
     XSRETURN_EMPTY;
 
   XSRETURN_IV(*ptr2);
+}
+
+XS(ffi_pl_record_accessor_sint32_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  int32_t *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (int32_t*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvIV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setiv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
 }
 
 XS(ffi_pl_record_accessor_uint64)
@@ -243,6 +645,73 @@ XS(ffi_pl_record_accessor_uint64)
   XSRETURN_UV(*ptr2);
 }
 
+XS(ffi_pl_record_accessor_uint64_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  uint64_t *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (uint64_t*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvUV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setuv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
+}
+
 XS(ffi_pl_record_accessor_sint64)
 {
   ffi_pl_record_member *member;
@@ -274,6 +743,73 @@ XS(ffi_pl_record_accessor_sint64)
     XSRETURN_EMPTY;
 
   XSRETURN_IV(*ptr2);
+}
+
+XS(ffi_pl_record_accessor_sint64_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  int64_t *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (int64_t*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvIV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setiv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
 }
 
 XS(ffi_pl_record_accessor_float)
@@ -309,6 +845,73 @@ XS(ffi_pl_record_accessor_float)
   XSRETURN_NV(*ptr2);
 }
 
+XS(ffi_pl_record_accessor_float_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  float *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (float*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvNV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0.0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setnv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
+}
+
 XS(ffi_pl_record_accessor_double)
 {
   ffi_pl_record_member *member;
@@ -340,5 +943,72 @@ XS(ffi_pl_record_accessor_double)
     XSRETURN_EMPTY;
 
   XSRETURN_NV(*ptr2);
+}
+
+XS(ffi_pl_record_accessor_double_array)
+{
+  ffi_pl_record_member *member;
+  SV *self;
+  SV *arg;
+  SV **item;
+  AV *av;
+  char *ptr1;
+  int i;
+  double *ptr2;
+
+  dVAR; dXSARGS;
+
+  if(items == 0)
+    croak("This is a method, you must provide at least the object");
+
+  member = (ffi_pl_record_member*) CvXSUBANY(cv).any_ptr;
+
+  self = ST(0);
+  if(SvROK(self))
+    self = SvRV(self);
+
+  ptr1 = (char*) SvPV_nolen(self);
+  ptr2 = (double*) &ptr1[member->offset];
+
+  if(items > 1)
+  {
+    arg = ST(1);
+    if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+    {
+      av = (AV*) SvRV(arg);
+      for(i=0; i < member->count; i++)
+      {
+        item = av_fetch(av, i, 0);
+        if(item != NULL && SvOK(*item))
+        {
+          ptr2[i] = SvNV(*item);
+        }
+        else
+        {
+          ptr2[i] = 0.0;
+        }
+      }
+    }
+    else
+    {
+      /*
+       * TODO: consider using these values to populate the array.
+       * downside: it wouldn't be round trip.
+       */
+      warn("passing non array reference into ffi/platypus array argument type");
+    }
+  }
+
+  if(GIMME_V == G_VOID)
+    XSRETURN_EMPTY;
+
+  av = newAV();
+  av_fill(av, member->count);
+  for(i=0; i < member->count; i++)
+  {
+    sv_setnv(*av_fetch(av, i, 1), ptr2[i]);
+  }
+  ST(0) = newRV_inc((SV*)av);
+  XSRETURN(1);
 }
 

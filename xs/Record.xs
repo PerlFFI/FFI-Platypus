@@ -23,53 +23,113 @@ _accessor(perl_name, path_name, type, offset)
     extern void ffi_pl_record_accessor_float();
     extern void ffi_pl_record_accessor_double();
     extern void ffi_pl_record_accessor_opaque();
+    extern void ffi_pl_record_accessor_uint8_array();
+    extern void ffi_pl_record_accessor_uint16_array();
+    extern void ffi_pl_record_accessor_uint32_array();
+    extern void ffi_pl_record_accessor_uint64_array();
+    extern void ffi_pl_record_accessor_sint8_array();
+    extern void ffi_pl_record_accessor_sint16_array();
+    extern void ffi_pl_record_accessor_sint32_array();
+    extern void ffi_pl_record_accessor_sint64_array();
+    extern void ffi_pl_record_accessor_float_array();
+    extern void ffi_pl_record_accessor_double_array();
+    extern void ffi_pl_record_accessor_opaque_array();
   CODE:
-    if(type->platypus_type != FFI_PL_NATIVE)
-      croak("type not supported");
-  
     Newx(member, 1, ffi_pl_record_member);
     member->offset = offset;
-    member->count  = 1;
     
-    switch(type->ffi_type->type)
+    if(type->platypus_type != FFI_PL_NATIVE)
     {
-      case FFI_TYPE_UINT8:
-        function = ffi_pl_record_accessor_uint8;
-        break;
-      case FFI_TYPE_SINT8:
-        function = ffi_pl_record_accessor_sint8;
-        break;
-      case FFI_TYPE_UINT16:
-        function = ffi_pl_record_accessor_uint16;
-        break;
-      case FFI_TYPE_SINT16:
-        function = ffi_pl_record_accessor_sint16;
-        break;
-      case FFI_TYPE_UINT32:
-        function = ffi_pl_record_accessor_uint32;
-        break;
-      case FFI_TYPE_SINT32:
-        function = ffi_pl_record_accessor_sint32;
-        break;
-      case FFI_TYPE_UINT64:
-        function = ffi_pl_record_accessor_uint64;
-        break;
-      case FFI_TYPE_SINT64:
-        function = ffi_pl_record_accessor_sint64;
-        break;
-      case FFI_TYPE_FLOAT:
-        function = ffi_pl_record_accessor_float;
-        break;
-      case FFI_TYPE_DOUBLE:
-        function = ffi_pl_record_accessor_double;
-        break;
-      case FFI_TYPE_POINTER:
-        function = ffi_pl_record_accessor_opaque;
-        break;
-      default:
-        Safefree(member);
-        croak("type not supported");
-        break;
+      member->count = 1;
+      switch(type->ffi_type->type)
+      {
+        case FFI_TYPE_UINT8:
+          function = ffi_pl_record_accessor_uint8;
+          break;
+        case FFI_TYPE_SINT8:
+          function = ffi_pl_record_accessor_sint8;
+          break;
+        case FFI_TYPE_UINT16:
+          function = ffi_pl_record_accessor_uint16;
+          break;
+        case FFI_TYPE_SINT16:
+          function = ffi_pl_record_accessor_sint16;
+          break;
+        case FFI_TYPE_UINT32:
+          function = ffi_pl_record_accessor_uint32;
+          break;
+        case FFI_TYPE_SINT32:
+          function = ffi_pl_record_accessor_sint32;
+          break;
+        case FFI_TYPE_UINT64:
+          function = ffi_pl_record_accessor_uint64;
+          break;
+        case FFI_TYPE_SINT64:
+          function = ffi_pl_record_accessor_sint64;
+          break;
+        case FFI_TYPE_FLOAT:
+          function = ffi_pl_record_accessor_float;
+          break;
+        case FFI_TYPE_DOUBLE:
+          function = ffi_pl_record_accessor_double;
+          break;
+        case FFI_TYPE_POINTER:
+          function = ffi_pl_record_accessor_opaque;
+          break;
+        default:
+          Safefree(member);
+          croak("type not supported");
+          break;
+      }
+    }
+    else if(type->platypus_type != FFI_PL_ARRAY)
+    {
+      member->count = type->extra[0].array.element_count;
+      switch(type->ffi_type->type)
+      {
+        case FFI_TYPE_UINT8:
+          function = ffi_pl_record_accessor_uint8_array;
+          break;
+        case FFI_TYPE_SINT8:
+          function = ffi_pl_record_accessor_sint8_array;
+          break;
+        case FFI_TYPE_UINT16:
+          function = ffi_pl_record_accessor_uint16_array;
+          break;
+        case FFI_TYPE_SINT16:
+          function = ffi_pl_record_accessor_sint16_array;
+          break;
+        case FFI_TYPE_UINT32:
+          function = ffi_pl_record_accessor_uint32_array;
+          break;
+        case FFI_TYPE_SINT32:
+          function = ffi_pl_record_accessor_sint32_array;
+          break;
+        case FFI_TYPE_UINT64:
+          function = ffi_pl_record_accessor_uint64_array;
+          break;
+        case FFI_TYPE_SINT64:
+          function = ffi_pl_record_accessor_sint64_array;
+          break;
+        case FFI_TYPE_FLOAT:
+          function = ffi_pl_record_accessor_float_array;
+          break;
+        case FFI_TYPE_DOUBLE:
+          function = ffi_pl_record_accessor_double_array;
+          break;
+        //case FFI_TYPE_POINTER:
+        //  function = ffi_pl_record_accessor_opaque_array;
+        //  break;
+        default:
+          Safefree(member);
+          croak("type not supported");
+          break;
+      }
+    }
+    else
+    {
+      Safefree(member);
+      croak("type not supported");
     }
     
     if(path_name == NULL)

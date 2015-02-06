@@ -5,20 +5,20 @@ typedef struct _my_struct {
   char x1;
   uint64_t my_uint64;
   char x2;
-  uint64_t my_uint32;
+  uint32_t my_uint32;
   char x3;
-  uint64_t my_uint16;
+  uint16_t my_uint16;
   char x4;
-  uint64_t my_uint8;
+  uint8_t my_uint8;
 
   char x5;
   int64_t my_sint64;
   char x6;
-  int64_t my_sint32;
+  int32_t my_sint32;
   char x7;
-  int64_t my_sint16;
+  int16_t my_sint16;
   char x8;
-  int64_t my_sint8;
+  int8_t my_sint8;
 
   char x9;
   float my_float;
