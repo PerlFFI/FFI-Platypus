@@ -38,7 +38,7 @@ _accessor(perl_name, path_name, type, offset)
     Newx(member, 1, ffi_pl_record_member);
     member->offset = offset;
     
-    if(type->platypus_type != FFI_PL_NATIVE)
+    if(type->platypus_type == FFI_PL_NATIVE)
     {
       member->count = 1;
       switch(type->ffi_type->type)
@@ -78,11 +78,11 @@ _accessor(perl_name, path_name, type, offset)
           break;
         default:
           Safefree(member);
-          croak("type not supported");
+          XSRETURN_PV("type not supported");
           break;
       }
     }
-    else if(type->platypus_type != FFI_PL_ARRAY)
+    else if(type->platypus_type == FFI_PL_ARRAY)
     {
       member->count = type->extra[0].array.element_count;
       switch(type->ffi_type->type)
@@ -122,14 +122,14 @@ _accessor(perl_name, path_name, type, offset)
         //  break;
         default:
           Safefree(member);
-          croak("type not supported");
+          XSRETURN_PV("type not supported");
           break;
       }
     }
     else
     {
       Safefree(member);
-      croak("type not supported");
+      XSRETURN_PV("type not supported");
     }
     
     if(path_name == NULL)
@@ -148,4 +148,5 @@ _accessor(perl_name, path_name, type, offset)
 #endif
 
     CvXSUBANY(cv).any_ptr = (void*) member;
+    XSRETURN_EMPTY;
 

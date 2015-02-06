@@ -85,20 +85,20 @@ do {
     char     x1
     uint64_t uint64
     char     x2
-    uint64_t uint32
+    uint32_t uint32
     char     x3
-    uint64_t uint16
+    uint16_t uint16
     char x4
-    uint64_t uint8
+    uint8_t uint8
 
     char x5
     int64_t sint64
     char x6
-    int64_t sint32
+    int32_t sint32
     char x7
-    int64_t sint16
+    int16_t sint16
     char x8
-    int64_t sint8
+    int8_t sint8
 
     char x9
     float float

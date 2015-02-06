@@ -93,7 +93,13 @@ sub record_layout
     
     $offset++ while $offset % $align;    
     
-    _accessor $name, "$filename:$line", $ffi->_type_lookup($type), $offset;
+    my $error_str =_accessor
+      $name,
+      "$filename:$line",
+      $ffi->_type_lookup($type),
+      $offset;
+
+    croak($error_str) if $error_str;
     
     $offset += $size;
   }
