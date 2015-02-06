@@ -22,6 +22,7 @@ _accessor(perl_name, path_name, type, offset)
     extern void ffi_pl_record_accessor_sint64();
     extern void ffi_pl_record_accessor_float();
     extern void ffi_pl_record_accessor_double();
+    extern void ffi_pl_record_accessor_opaque();
   CODE:
     if(type->platypus_type != FFI_PL_NATIVE)
       croak("type not supported");
@@ -62,6 +63,9 @@ _accessor(perl_name, path_name, type, offset)
       case FFI_TYPE_DOUBLE:
         function = ffi_pl_record_accessor_double;
         break;
+      case FFI_TYPE_POINTER:
+        function = ffi_pl_record_accessor_opaque;
+        break;
       default:
         Safefree(member);
         croak("type not supported");
@@ -85,5 +89,3 @@ _accessor(perl_name, path_name, type, offset)
 
     CvXSUBANY(cv).any_ptr = (void*) member;
 
-    
-    

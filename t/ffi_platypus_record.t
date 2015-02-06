@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use FFI::Platypus::Memory qw( malloc free );
 use Test::More tests => 3;
 
 do {
@@ -103,16 +104,20 @@ do {
     float float
     char x10
     double double 
+
+    char x11
+    opaque opaque
   ));
   
   my $ffi = FFI::Platypus->new;
   $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 'libtest');
   
   $ffi->attach(["align_get_$_" => "get_$_"] => [ 'record(Foo2)' ] => $_)
-    for qw( uint8 sint8 uint16 sint16 uint32 sint32 uint64 sint64 float double );
+    for qw( uint8 sint8 uint16 sint16 uint32 sint32 uint64 sint64 float double opaque );
 };
 
 subtest 'complex alignment' => sub {
+  plan tests => 15;
   
   my $foo = Foo2->new;
   isa_ok $foo, 'Foo2';
@@ -146,5 +151,15 @@ subtest 'complex alignment' => sub {
 
   $foo->double(-1.5);
   is $foo->get_double, -1.5, "double = -1.5";
+
+  my $ptr = malloc 32;
+  
+  $foo->opaque($ptr);
+  is $foo->get_opaque, $ptr, "get_opaque = $ptr";
+  is $foo->opaque, $ptr, "opaque = $ptr";
+
+  $foo->opaque(undef);
+  is $foo->get_opaque, undef,  "get_opaque = undef";
+  is $foo->opaque, undef,  "opaque = undef";
   
 };

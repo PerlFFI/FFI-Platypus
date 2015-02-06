@@ -24,6 +24,9 @@ typedef struct _my_struct {
   float my_float;
   char x10;
   double my_double;
+
+  char x11;
+  void *my_opaque;
 } my_struct;
 
 
@@ -85,4 +88,10 @@ EXTERN double
 align_get_double(my_struct *my_struct)
 {
   return my_struct->my_double;
+}
+
+EXTERN void *
+align_get_opaque(my_struct *my_struct)
+{
+  return my_struct->my_opaque;
 }

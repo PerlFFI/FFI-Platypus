@@ -93,7 +93,7 @@ sub record_layout
     
     $offset++ while $offset % $align;    
     
-    _accessor($name, "$filename:$line", $ffi->_type_lookup($type), $offset);
+    _accessor $name, "$filename:$line", $ffi->_type_lookup($type), $offset;
     
     $offset += $size;
   }
@@ -106,7 +106,7 @@ sub record_layout
     my $class = shift;
     croak "uneven number of arguments to record constructor"
       if @_ % 2;
-    my $record = " " x $size;
+    my $record = "\0" x $size;
     my $self = bless \$record, $class;
     
     while(@_)
