@@ -85,6 +85,8 @@ sub record_layout
     
     croak "illegal name $name"
       unless $name =~ /^[A-Za-z_][A-Za-z_0-9]*$/;
+    croak "accessor/method $name already exists"
+      if $caller->can($name);
     $name = join '::', $caller, $name;
     
     my $size  = $ffi->sizeof($type);
@@ -92,7 +94,7 @@ sub record_layout
     #my $meta  = $ffi->type_meta($type);
     
     $offset++ while $offset % $align;    
-    
+
     my $error_str =_accessor
       $name,
       "$filename:$line",

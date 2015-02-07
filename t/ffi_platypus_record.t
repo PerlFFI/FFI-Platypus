@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::Platypus::Memory qw( malloc free );
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 do {
   package
@@ -162,4 +162,23 @@ subtest 'complex alignment' => sub {
   is $foo->get_opaque, undef,  "get_opaque = undef";
   is $foo->opaque, undef,  "opaque = undef";
   
+};
+
+subtest 'same name' => sub {
+  plan tests => 1;
+
+  eval {
+    package
+      Foo3;
+      
+    use FFI::Platypus::Record;
+    
+    record_layout
+      int => 'foo',
+      int => 'foo',
+    ;
+  };
+  
+  isnt $@, '', 'two members of the same name not allowed';
+  note $@ if $@;
 };
