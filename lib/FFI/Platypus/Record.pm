@@ -84,10 +84,10 @@ sub record_layout
     my $name = shift;
     
     croak "illegal name $name"
-      unless $name =~ /^[A-Za-z_][A-Za-z_0-9]*$/;
+      unless $name =~ /^[A-Za-z_][A-Za-z_0-9]*$/
+      ||     $name eq ':';
     croak "accessor/method $name already exists"
       if $caller->can($name);
-    $name = join '::', $caller, $name;
     
     my $size  = $ffi->sizeof($type);
     my $align = $ffi->alignof($type);
@@ -95,13 +95,16 @@ sub record_layout
     
     $offset++ while $offset % $align;    
 
-    my $error_str =_accessor
-      $name,
-      "$filename:$line",
-      $ffi->_type_lookup($type),
-      $offset;
-
-    croak($error_str) if $error_str;
+    if($name ne ':')
+    {
+      $name = join '::', $caller, $name;
+      my $error_str =_accessor
+        $name,
+        "$filename:$line",
+        $ffi->_type_lookup($type),
+        $offset;
+      croak($error_str) if $error_str;
+    };
     
     $offset += $size;
   }

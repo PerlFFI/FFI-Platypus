@@ -82,31 +82,31 @@ do {
   use FFI::Platypus::Record;
   
   record_layout(qw(
-    char     x1
+    char     :
     uint64_t uint64
-    char     x2
+    char     :
     uint32_t uint32
-    char     x3
+    char     :
     uint16_t uint16
-    char x4
-    uint8_t uint8
+    char     :
+    uint8_t  uint8
 
-    char x5
-    int64_t sint64
-    char x6
-    int32_t sint32
-    char x7
-    int16_t sint16
-    char x8
-    int8_t sint8
+    char     :
+    int64_t  sint64
+    char     :
+    int32_t  sint32
+    char     :
+    int16_t  sint16
+    char     :
+    int8_t   sint8
 
-    char x9
-    float float
-    char x10
-    double double 
+    char     :
+    float    float
+    char     :
+    double   double 
 
-    char x11
-    opaque opaque
+    char     :
+    opaque   opaque
   ));
   
   my $ffi = FFI::Platypus->new;
@@ -191,30 +191,30 @@ do {
   use FFI::Platypus::Record;
   
   record_layout(qw(
-    char        x1
+    char        :
     uint64_t[3] uint64
-    char        x2
+    char        :
     uint32_t[3] uint32
-    char        x3
+    char        :
     uint16_t[3] uint16
-    char        x4
+    char        :
     uint8_t[3]  uint8
 
-    char        x5
+    char        :
     int64_t[3]  sint64
-    char        x6
+    char        :
     int32_t[3]  sint32
-    char        x7
+    char        :
     int16_t[3]  sint16
-    char        x8
+    char        :
     int8_t[3]   sint8
 
-    char        x9
+    char        :
     float[3]    float
-    char        x10
+    char        :
     double[3]   double 
 
-    char        x11
+    char        :
     opaque[3]   opaque
   ));
   
