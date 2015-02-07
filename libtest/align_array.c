@@ -3,30 +3,30 @@
 
 typedef struct _my_struct {
   char x1;
-  uint64_t my_uint64[10];
+  uint64_t my_uint64[3];
   char x2;
-  uint32_t my_uint32[10];
+  uint32_t my_uint32[3];
   char x3;
-  uint16_t my_uint16[10];
+  uint16_t my_uint16[3];
   char x4;
-  uint8_t my_uint8[10];
+  uint8_t my_uint8[3];
 
   char x5;
-  int64_t my_sint64[10];
+  int64_t my_sint64[3];
   char x6;
-  int32_t my_sint32[10];
+  int32_t my_sint32[3];
   char x7;
-  int16_t my_sint16[10];
+  int16_t my_sint16[3];
   char x8;
-  int8_t my_sint8[10];
+  int8_t my_sint8[3];
 
   char x9;
-  float my_float[10];
+  float my_float[3];
   char x10;
-  double my_double[10];
+  double my_double[3];
 
   char x11;
-  void *my_opaque[10];
+  void *my_opaque[3];
 } my_struct;
 
 

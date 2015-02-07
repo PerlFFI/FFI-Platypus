@@ -103,7 +103,7 @@ XS(ffi_pl_record_accessor_uint8_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setuv(*av_fetch(av, i, 1), ptr2[i]);
@@ -203,7 +203,7 @@ XS(ffi_pl_record_accessor_sint8_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setiv(*av_fetch(av, i, 1), ptr2[i]);
@@ -303,7 +303,7 @@ XS(ffi_pl_record_accessor_uint16_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setuv(*av_fetch(av, i, 1), ptr2[i]);
@@ -403,7 +403,7 @@ XS(ffi_pl_record_accessor_sint16_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setiv(*av_fetch(av, i, 1), ptr2[i]);
@@ -503,7 +503,7 @@ XS(ffi_pl_record_accessor_uint32_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setuv(*av_fetch(av, i, 1), ptr2[i]);
@@ -603,7 +603,7 @@ XS(ffi_pl_record_accessor_sint32_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setiv(*av_fetch(av, i, 1), ptr2[i]);
@@ -703,7 +703,7 @@ XS(ffi_pl_record_accessor_uint64_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setuv(*av_fetch(av, i, 1), ptr2[i]);
@@ -803,7 +803,7 @@ XS(ffi_pl_record_accessor_sint64_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setiv(*av_fetch(av, i, 1), ptr2[i]);
@@ -903,7 +903,7 @@ XS(ffi_pl_record_accessor_float_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setnv(*av_fetch(av, i, 1), ptr2[i]);
@@ -1003,7 +1003,7 @@ XS(ffi_pl_record_accessor_double_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_setnv(*av_fetch(av, i, 1), ptr2[i]);

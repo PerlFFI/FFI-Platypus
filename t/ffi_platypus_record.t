@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::Platypus::Memory qw( malloc free );
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 do {
   package
@@ -162,6 +162,7 @@ subtest 'complex alignment' => sub {
   is $foo->get_opaque, undef,  "get_opaque = undef";
   is $foo->opaque, undef,  "opaque = undef";
   
+  free $ptr;
 };
 
 subtest 'same name' => sub {
@@ -181,4 +182,93 @@ subtest 'same name' => sub {
   
   isnt $@, '', 'two members of the same name not allowed';
   note $@ if $@;
+};
+
+do {
+  package
+    Foo4;
+
+  use FFI::Platypus::Record;
+  
+  record_layout(qw(
+    char        x1
+    uint64_t[3] uint64
+    char        x2
+    uint32_t[3] uint32
+    char        x3
+    uint16_t[3] uint16
+    char        x4
+    uint8_t[3]  uint8
+
+    char        x5
+    int64_t[3]  sint64
+    char        x6
+    int32_t[3]  sint32
+    char        x7
+    int16_t[3]  sint16
+    char        x8
+    int8_t[3]   sint8
+
+    char        x9
+    float[3]    float
+    char        x10
+    double[3]   double 
+
+    char        x11
+    opaque[3]   opaque
+  ));
+  
+  my $ffi = FFI::Platypus->new;
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 'libtest');
+  
+  $ffi->attach(["align_array_get_$_" => "get_$_"] => [ 'record(Foo4)' ] => "${_}[3]" )
+    for qw( uint8 sint8 uint16 sint16 uint32 sint32 uint64 sint64 float double opaque );
+};
+
+subtest 'array alignment' => sub {
+
+  my $foo = Foo4->new;
+  isa_ok $foo, 'Foo4';
+  
+  $foo->uint64([1,2,3]);
+  is_deeply $foo->uint64,     [1,2,3],   "uint64     = 1,2,3";
+  is_deeply $foo->get_uint64, [1,2,3],   "get_uint64 = 1,2,3";  
+  $foo->sint64([-1,2,-3]);
+  is_deeply $foo->sint64,     [-1,2,-3], "sint64     = -1,2,-3";
+  is_deeply $foo->get_sint64, [-1,2,-3], "get_sint64 = -1,2,-3";  
+
+  $foo->uint32([1,2,3]);
+  is_deeply $foo->uint32,     [1,2,3],   "uint32     = 1,2,3";
+  is_deeply $foo->get_uint32, [1,2,3],   "get_uint32 = 1,2,3";  
+  $foo->sint32([-1,2,-3]);
+  is_deeply $foo->sint32,     [-1,2,-3], "sint32     = -1,2,-3";
+  is_deeply $foo->get_sint32, [-1,2,-3], "get_sint32 = -1,2,-3";  
+
+  $foo->uint16([1,2,3]);
+  is_deeply $foo->uint16,     [1,2,3],   "uint16     = 1,2,3";
+  is_deeply $foo->get_uint16, [1,2,3],   "get_uint16 = 1,2,3";  
+  $foo->sint16([-1,2,-3]);
+  is_deeply $foo->sint16,     [-1,2,-3], "sint16     = -1,2,-3";
+  is_deeply $foo->get_sint16, [-1,2,-3], "get_sint16 = -1,2,-3";  
+
+  $foo->uint8([1,2,3]);
+  is_deeply $foo->uint8,      [1,2,3],   "uint8      = 1,2,3";
+  is_deeply $foo->get_uint8,  [1,2,3],   "get_uint8  = 1,2,3";  
+  $foo->sint8([-1,2,-3]);
+  is_deeply $foo->sint8,      [-1,2,-3], "sint8      = -1,2,-3";
+  is_deeply $foo->get_sint8,  [-1,2,-3], "get_sint8  = -1,2,-3";  
+  
+  $foo->float([1.5,undef,-1.5]);
+  is_deeply $foo->float, [1.5,0.0,-1.5], "float      = 1.5,0,-1.5";
+  $foo->double([1.5,undef,-1.5]);
+  is_deeply $foo->double, [1.5,0.0,-1.5], "double     = 1.5,0,-1.5";
+  
+  my $ptr1 = malloc 32;
+  my $ptr2 = malloc 64;
+
+  $foo->opaque([$ptr1,undef,$ptr2]);
+  is_deeply $foo->opaque, [$ptr1,undef,$ptr2], "opaque     = $ptr1,undef,$ptr2";
+  
+  free $ptr1;
+  free $ptr2;
 };

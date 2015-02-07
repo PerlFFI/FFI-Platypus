@@ -117,9 +117,9 @@ _accessor(perl_name, path_name, type, offset)
         case FFI_TYPE_DOUBLE:
           function = ffi_pl_record_accessor_double_array;
           break;
-        //case FFI_TYPE_POINTER:
-        //  function = ffi_pl_record_accessor_opaque_array;
-        //  break;
+        case FFI_TYPE_POINTER:
+          function = ffi_pl_record_accessor_opaque_array;
+          break;
         default:
           Safefree(member);
           XSRETURN_PV("type not supported");

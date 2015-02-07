@@ -90,7 +90,7 @@ XS(ffi_pl_record_accessor_[% ffi_type %]_array)
     XSRETURN_EMPTY;
 
   av = newAV();
-  av_fill(av, member->count);
+  av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)
   {
     sv_set[% perl_type | lower %](*av_fetch(av, i, 1), ptr2[i]);
