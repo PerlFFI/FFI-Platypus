@@ -39,6 +39,11 @@ pod_spelling_system:
     - lang
     - demangled
     - alignof
+    - ALEXBIO
+    - AWWAIID
+    - Alessandro
+    - Ghedini
+    - MHOWARD
 
 pod_coverage:
   skip: 0

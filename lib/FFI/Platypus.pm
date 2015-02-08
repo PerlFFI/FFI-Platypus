@@ -1487,17 +1487,17 @@ Another FFI for Perl that doesn't appear to have worked for a long time.
 
 =back
 
-=head1 ACKNOWLEDMENTS
+=head1 ACKNOWLEDGMENTS
 
 In addition to the contributors mentioned below, I would like to
 acknowledge Brock Wilcox (AWWAIID) and Meredith Howard (MHOWARD)
-whos work on
+whose work on
 L<FFI::Sweet|https://github.com/merrilymeredith/p5-FFI-Sweet>
 not only helped me get started with FFI but significantly influenced
 the design of Platypus.
 
 In addition I'd like to thank Alessandro Ghedini (ALEXBIO) who
-was always responsive to bug reports and pull requests on
+was always responsive to bug reports and pull requests for
 L<FFI::Raw>, which was important in the development of the ideas on
 which Platypus is based.
 
