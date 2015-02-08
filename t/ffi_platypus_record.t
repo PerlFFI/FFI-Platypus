@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::Platypus::Memory qw( malloc free );
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 do {
   package
@@ -275,4 +275,51 @@ subtest 'array alignment' => sub {
 
   my $align = $foo->_ffi_record_align;
   like $align, qr{^[0-9]+$}, "align = $align";
+};
+
+do {
+  package
+    Foo5;
+
+  use FFI::Platypus::Record;
+
+  record_layout(qw(
+    char   :
+    string value
+  ));
+  
+  my $ffi = FFI::Platypus->new;
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 'libtest');
+  
+  $ffi->attach( 
+    [align_string_get_value => 'get_value'] => ['record(Foo5)'] => 'string',
+  );
+  
+  $ffi->attach(
+    [align_string_set_value => 'set_value']  => ['record(Foo5)','string'] => 'void',
+  );
+};
+
+subtest 'string ro' => sub {
+  plan tests => 8;
+
+  my $foo = Foo5->new;
+  isa_ok $foo, 'Foo5';
+
+  is $foo->value, undef, 'foo.value = undef';
+  is $foo->get_value, undef, 'foo.get_value = undef';
+
+  $foo->set_value("my value");
+  
+  is $foo->value, 'my value', 'foo.value = my value';
+  is $foo->get_value, 'my value', 'foo.get_value = my value';
+
+  eval { $foo->value("stuff") };
+  isnt $@, '', 'value is ro';
+  note $@ if $@;
+
+  $foo->set_value(undef);
+
+  is $foo->value, undef, 'foo.value = undef';
+  is $foo->get_value, undef, 'foo.get_value = undef';
 };

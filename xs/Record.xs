@@ -34,6 +34,7 @@ _accessor(perl_name, path_name, type, offset)
     extern void ffi_pl_record_accessor_float_array();
     extern void ffi_pl_record_accessor_double_array();
     extern void ffi_pl_record_accessor_opaque_array();
+    extern void ffi_pl_record_accessor_string_ro();
   CODE:
     Newx(member, 1, ffi_pl_record_member);
     member->offset = offset;
@@ -125,6 +126,11 @@ _accessor(perl_name, path_name, type, offset)
           XSRETURN_PV("type not supported");
           break;
       }
+    }
+    else if(type->platypus_type == FFI_PL_STRING)
+    {
+      member->count = 1;
+      function = ffi_pl_record_accessor_string_ro;
     }
     else
     {
