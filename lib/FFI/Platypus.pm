@@ -796,6 +796,10 @@ sub alignof
   {
     $ffi_type = 'pointer';
   }
+  elsif($meta->{type} eq 'string' && $meta->{fixed_size})
+  {
+    $ffi_type = 'uint8';
+  }
   else
   {
     $ffi_type = $meta->{ffi_type};

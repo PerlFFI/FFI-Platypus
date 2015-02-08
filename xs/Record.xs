@@ -35,6 +35,7 @@ _accessor(perl_name, path_name, type, offset)
     extern void ffi_pl_record_accessor_double_array();
     extern void ffi_pl_record_accessor_opaque_array();
     extern void ffi_pl_record_accessor_string_ro();
+    extern void ffi_pl_record_accessor_string_fixed();
   CODE:
     Newx(member, 1, ffi_pl_record_member);
     member->offset = offset;
@@ -129,8 +130,17 @@ _accessor(perl_name, path_name, type, offset)
     }
     else if(type->platypus_type == FFI_PL_STRING)
     {
-      member->count = 1;
-      function = ffi_pl_record_accessor_string_ro;
+      switch(type->extra[0].string.platypus_string_type)
+      {
+        case FFI_PL_STRING_RO:
+          member->count = 1;
+          function = ffi_pl_record_accessor_string_ro;
+          break;
+        case FFI_PL_STRING_FIXED:
+          member->count = type->extra[0].string.size;
+          function = ffi_pl_record_accessor_string_fixed;
+          break;
+      }
     }
     else
     {

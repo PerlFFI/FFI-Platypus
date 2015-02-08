@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::Platypus::Memory qw( malloc free );
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 do {
   package
@@ -322,4 +322,39 @@ subtest 'string ro' => sub {
 
   is $foo->value, undef, 'foo.value = undef';
   is $foo->get_value, undef, 'foo.get_value = undef';
+};
+
+do {
+  package
+    Foo6;
+
+  use FFI::Platypus::Record;
+
+  record_layout(qw(
+    char       :
+    string(10) value
+  ));
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 'libtest');
+
+  $ffi->attach([align_fixed_get_value=>'get_value'] => ['record(Foo6)'] => 'string');
+};
+
+subtest 'fixed string' => sub {
+
+  my $foo = Foo6->new;
+  isa_ok $foo, 'Foo6';
+
+  is $foo->value, "\0\0\0\0\0\0\0\0\0\0", 'foo.value = "\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0"';
+  is $foo->get_value, "", 'foo.get_value = ""';
+  
+  $foo->value("one two three four five six seven eight");
+
+  is $foo->value, "one two th", 'foo.value = "one two th"';
+  
+  $foo->value("123456789\0");
+  
+  is $foo->value, "123456789\0", "foo.value = 123456789\\0";
+  is $foo->get_value, "123456789", "foo.get_value = 123456789";
 };
