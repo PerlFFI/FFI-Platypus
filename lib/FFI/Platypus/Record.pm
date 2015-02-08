@@ -67,6 +67,7 @@ sub record_layout
 {
   my $ffi = ref($_[0]) ? shift : FFI::Platypus->new;
   my $offset = 0;
+  my $record_align = 0;
   
   croak "uneven number of arguments!" if scalar(@_) % 2;
   
@@ -91,6 +92,7 @@ sub record_layout
     
     my $size  = $ffi->sizeof($type);
     my $align = $ffi->alignof($type);
+    $record_align = $align if $align > $record_align;
     #my $meta  = $ffi->type_meta($type);
     
     $offset++ while $offset % $align;    
@@ -112,7 +114,8 @@ sub record_layout
   my $size = $offset;
   
   no strict 'refs';
-  *{join '::', $caller, "_ffi_record_size"} = sub () { $size };
+  *{join '::', $caller, "_ffi_record_size"}  = sub () { $size         };
+  *{join '::', $caller, "_ffi_record_align"} = sub () { $record_align };
   *{join '::', $caller, "new"} = sub {
     my $class = shift;
     croak "uneven number of arguments to record constructor"

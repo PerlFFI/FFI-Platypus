@@ -226,6 +226,7 @@ do {
 };
 
 subtest 'array alignment' => sub {
+  plan tests => 21;
 
   my $foo = Foo4->new;
   isa_ok $foo, 'Foo4';
@@ -271,4 +272,7 @@ subtest 'array alignment' => sub {
   
   free $ptr1;
   free $ptr2;
+
+  my $align = $foo->_ffi_record_align;
+  like $align, qr{^[0-9]+$}, "align = $align";
 };
