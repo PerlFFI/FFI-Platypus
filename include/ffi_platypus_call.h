@@ -72,7 +72,25 @@
       }
       else if(platypus_type == FFI_PL_STRING)
       {
-        ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
+        switch(self->argument_types[i]->extra[0].string.platypus_string_type)
+        {
+          case FFI_PL_STRING_RW:
+          case FFI_PL_STRING_RO:
+            ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
+            break;
+          case FFI_PL_STRING_FIXED:
+            {
+              int expected;
+              STRLEN size;
+              void *ptr;
+              expected = self->argument_types[i]->extra[0].string.size;
+              ptr = SvOK(arg) ? SvPV(arg, size) : NULL;
+              if(ptr != NULL && expected != 0 && size != expected)
+                warn("fixed string argument %d has wrong size (is %d, expected %d)", i, (int)size, expected);
+              ffi_pl_arguments_set_pointer(arguments, i, ptr);
+            }
+            break;
+        }
       }
       else if(platypus_type == FFI_PL_POINTER)
       {
@@ -704,7 +722,17 @@
       }
       else
       {
-        XSRETURN_PV(result.pointer);
+        if(self->return_type->extra[0].string.platypus_string_type == FFI_PL_STRING_FIXED)
+        {
+          SV *value = sv_newmortal();
+          sv_setpvn(value, result.pointer, self->return_type->extra[0].string.size);
+          ST(0) = value;
+          XSRETURN(1);
+        }
+        else
+        {
+          XSRETURN_PV(result.pointer);
+        }
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_POINTER)

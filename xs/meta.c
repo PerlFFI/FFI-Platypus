@@ -14,6 +14,10 @@ ffi_pl_sizeof(ffi_pl_type *self)
     case FFI_PL_CUSTOM_PERL:
       return self->ffi_type->size;
     case FFI_PL_STRING:
+      if(self->extra[0].string.platypus_string_type == FFI_PL_STRING_FIXED)
+        return self->extra[0].string.size;
+      else
+        return sizeof(void*);
     case FFI_PL_POINTER:
     case FFI_PL_CLOSURE:
       return sizeof(void*);
@@ -43,8 +47,23 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
   }
   else if(self->platypus_type == FFI_PL_STRING)
   {
-    hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
-    hv_store(meta, "type",          4, newSVpv("string",0),0);
+    hv_store(meta, "element_size",  12, newSViv(sizeof(void*)), 0);
+    hv_store(meta, "type",           4, newSVpv("string",0),0);
+    switch(self->extra[0].string.platypus_string_type)
+    {
+      case FFI_PL_STRING_RO:
+        hv_store(meta, "access",        6, newSVpv("ro",0), 0);
+        hv_store(meta, "fixed_size",    10, newSViv(0), 0);
+        break;
+      case FFI_PL_STRING_RW:
+        hv_store(meta, "access",        6, newSVpv("rw",0), 0);
+        hv_store(meta, "fixed_size",    10, newSViv(0), 0);
+        break;
+      case FFI_PL_STRING_FIXED:
+        hv_store(meta, "access",        6, newSVpv("rw",0), 0);
+        hv_store(meta, "fixed_size",    10, newSViv(1), 0);
+        break;
+    }
   }
   else if(self->platypus_type == FFI_PL_POINTER)
   {

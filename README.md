@@ -253,6 +253,9 @@ Returns a hash reference with the meta information for the given type.
 It can also be called as a class method, in which case, you won't be 
 able to get meta data on user defined types.
 
+The format of the meta data is implementation dependent and subject
+to change.  It may be useful for display or debugging.
+
 Examples:
 
     my $meta = $ffi->type_meta('int');        # standard int type

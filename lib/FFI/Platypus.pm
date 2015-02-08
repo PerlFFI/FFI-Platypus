@@ -360,7 +360,8 @@ sub type
 
   croak "alias conflicts with existing type" if defined $alias && (defined $type_map->{$alias} || defined $self->{types}->{$alias});
 
-  if($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/)
+  if($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/
+  || $name =~ /^string(_rw|_ro|\s+rw|\s+ro|\s*\([0-9]+\))$/)
   {
     # for closure and record types we do not try to convet into the
     # basic type so you can have many many many copies of a given
@@ -521,6 +522,9 @@ Returns a hash reference with the meta information for the given type.
 
 It can also be called as a class method, in which case, you won't be 
 able to get meta data on user defined types.
+
+The format of the meta data is implementation dependent and subject
+to change.  It may be useful for display or debugging.
 
 Examples:
 
@@ -1210,13 +1214,17 @@ sub new
   
   my $ffi_type;
   my $platypus_type;
-  my $array_or_record_size = 0;
+  my $size = 0;
   my $classname;
-  
-  if($type eq 'string')
+  my $rw = 0;
+
+  if($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
   {
+    my $extra = $1;
     $ffi_type = 'pointer';
     $platypus_type = 'string';
+    $rw = 1 if $extra =~ /rw$/;
+    $size = $1 if $extra =~ /\(([0-9]+)\)$/;
   }
   elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
   {
@@ -1224,7 +1232,7 @@ sub new
     $platypus_type = 'record';
     if($1 =~ /^([0-9]+)$/)
     {
-      $array_or_record_size = $1;
+      $size = $1;
     }
     else
     {
@@ -1236,11 +1244,11 @@ sub new
       }
       if($classname->can('ffi_record_size'))
       {
-        $array_or_record_size = $classname->ffi_record_size;
+        $size = $classname->ffi_record_size;
       }
       elsif($classname->can('_ffi_record_size'))
       {
-        $array_or_record_size = $classname->_ffi_record_size;
+        $size = $classname->_ffi_record_size;
       }
       else
       {
@@ -1256,7 +1264,7 @@ sub new
   {
     $ffi_type = $type;
     $platypus_type = 'array';
-    $array_or_record_size = $1;
+    $size = $1;
   }
   else
   {
@@ -1264,7 +1272,7 @@ sub new
     $platypus_type = 'ffi';
   }
   
-  $class->_new($ffi_type, $platypus_type, $array_or_record_size, $classname);
+  $class->_new($ffi_type, $platypus_type, $size, $classname, $rw);
 }
 
 1;
