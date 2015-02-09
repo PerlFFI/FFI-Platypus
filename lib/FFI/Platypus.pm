@@ -37,12 +37,15 @@ use Carp qw( croak );
 
 =head1 DESCRIPTION
 
-Platypus provides a method for creating interfaces to machine code 
-libraries.  This implementation uses C<libffi>, a library that provides 
-Foreign Function Interfaces for a number of other languages, including 
-Ruby and Python.  Platypus can be used in stand alone scripts, or to 
-create Perl extensions for CPAN.  There are a number of reasons why you 
-might want to write extensions with FFI instead of XS:
+Platypus is an library for creating interfaces to machine code 
+libraries like C, L<C++|FFI::Platypus::Lang::CPP>, Fortran, 
+L<Rust|FFI::Platypus::Lang::Rust>, L<Pascal|FFI::Platypus::Lang::Pascal>.
+Essentially anything that gets compiled into machine code.  This
+implementation uses C<libffi> to accomplish this task.  C<libffi>
+is battle tested by a number of other scripting and virtual machine
+languages, such as Python and Ruby to serve a similar role.  There
+are a number of reasons why you might want to write an extension
+with Platypus instead of XS:
 
 =over 4
 
@@ -64,6 +67,14 @@ be shared between different languages.
 
 One of those "other" languages could be Perl 6 and Perl 6 already has an 
 FFI interface I am told.
+
+=item FFI / Platypus can be reimplemented
+
+In a bright future with multiple implementations of Perl 5, each
+interpreter will have its own implementation of Platypus, allowing
+extensions to be written once and used on multiple platforms, in
+much the same way that Ruby-FFI extensions can be use in Ruby,
+JRuby and Rubinius.
 
 =item FFI / Platypus is pure perl (sorta)
 
