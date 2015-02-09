@@ -79,6 +79,8 @@ sub record_layout
     croak "record already defined for the class $caller";
   }
   
+  my @destroy;
+  
   while(@_)
   {
     my $type = shift;
@@ -93,12 +95,25 @@ sub record_layout
     my $size  = $ffi->sizeof($type);
     my $align = $ffi->alignof($type);
     $record_align = $align if $align > $record_align;
-    #my $meta  = $ffi->type_meta($type);
-    
+    my $meta  = $ffi->type_meta($type);
+
     $offset++ while $offset % $align;    
 
     if($name ne ':')
     {
+
+      if($meta->{type} eq 'string'
+      && $meta->{access} eq 'rw'
+      && $meta->{fixed_size} == 0)
+      {
+        push @destroy, eval qq{
+          sub {
+            shift->$name(undef);
+          };
+        };
+        die $@ if $@;
+      }
+
       $name = join '::', $caller, $name;
       my $error_str =_accessor
         $name,
@@ -114,25 +129,46 @@ sub record_layout
   my $size = $offset;
   
   no strict 'refs';
-  *{join '::', $caller, "_ffi_record_size"}  = sub () { $size         };
-  *{join '::', $caller, "_ffi_record_align"} = sub () { $record_align };
-  *{join '::', $caller, "new"} = sub {
+  *{join '::', $caller, '_ffi_record_size'}  = sub () { $size         };
+  *{join '::', $caller, '_ffi_record_align'} = sub () { $record_align };
+  *{join '::', $caller, 'new'} = sub {
     my $class = shift;
     croak "uneven number of arguments to record constructor"
       if @_ % 2;
-    my $record = "\0" x $size;
+    my $record = "\0" x $class->_ffi_record_size;
     my $self = bless \$record, $class;
     
     while(@_)
     {
       my $key = shift;
       my $value = shift;
-      
       $self->$key($value);
     }
     
     $self;
   };
+  if(@destroy)
+  {
+    eval qq{
+      package
+        $caller;
+      sub DESTROY
+      {
+        \$_->(\$_[0]) for \@destroy;
+      }
+    };
+    die $@ if $@;
+  }
+  else
+  {
+    eval qq{
+      package
+        $caller;
+      sub DESTROY { }
+    };
+    die $@ if $@;
+  }
+  ();
 }
 
 1;
