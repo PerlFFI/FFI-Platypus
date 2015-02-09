@@ -601,21 +601,25 @@ structured data records).
 ## libuuid
 
     use FFI::CheckLib;
-    use FFI::Platypus::Declare qw( void opaque string );
+    use FFI::Platypus::Declare
+      'void',
+      [ 'string(37)' => 'uuid_string' ],
+      [ 'record(16)' => 'uuid_t' ];
     use FFI::Platypus::Memory qw( malloc free );
     
     lib find_lib_or_exit lib => 'uuid';
     
-    attach uuid_generate => [opaque] => void;
-    attach uuid_unparse  => [opaque,opaque] => void;
+    attach uuid_generate => [uuid_t] => void;
+    attach uuid_unparse  => [uuid_t,uuid_string] => void;
     
-    my $uuid = malloc sizeof 'char[16]';  # uuid_t
+    my $uuid = "\0" x 16;  # uuid_t
     uuid_generate($uuid);
     
-    my $string_opaque = malloc 37;       # 36 bytes to store a UUID string
-    uuid_unparse($uuid, $string_opaque);
+    my $string = "\0" x 37; # 36 bytes to store a UUID string 
+                            # + NUL termination
+    uuid_unparse($uuid, $string);
     
-    print cast( opaque => string, $string_opaque), "\n";
+    print "$string\n";
 
 **Discussion**: libuuid is a library used to generate unique identifiers 
 (UUID) for objects that may be accessible beyond the local system.  The 
