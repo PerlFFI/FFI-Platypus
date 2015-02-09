@@ -329,30 +329,30 @@ code.
 
 =head2 Records
 
-Records are structured data of a fixed length.  In C they are called
+Records are structured data of a fixed length.  In C they are called 
 C<strict>s To declare a record type, use C<record>:
 
  $ffi->type( 'record (42)' => 'my_record_of_size_42_bytes' );
 
-The easiest way to mange records with Platypus is by using
-L<FFI::Platypus::Record> to define a record layout for a record class.
+The easiest way to mange records with Platypus is by using 
+L<FFI::Platypus::Record> to define a record layout for a record class. 
 Here is a brief example:
 
 # EXAMPLE: examples/time_record.pl
 
 For more detailed usage, see L<FFI::Platypus::Record>.
 
-Platypus does not manage the structure of a record (that is up to you),
-it just keeps track of their size and makes sure that they are copied
-correctly when used as a return type.  A record in Perl is just a string
-of bytes stored as a scalar.  In addition to defining a record layout
-for a record class, there are a number of tools you can use manipulate
-records in Perl, two notable examples are L<pack and unpack|perlpacktut>
+Platypus does not manage the structure of a record (that is up to you), 
+it just keeps track of their size and makes sure that they are copied 
+correctly when used as a return type.  A record in Perl is just a string 
+of bytes stored as a scalar.  In addition to defining a record layout 
+for a record class, there are a number of tools you can use manipulate 
+records in Perl, two notable examples are L<pack and unpack|perlpacktut> 
 and L<Convert::Binary::C>.
 
-Here is an example with commentary that uses L<Convert::Binary::C> to
-extract the component time values from the C C<localtime> function,
-and then smushes them back together to get the original C<time_t> (an
+Here is an example with commentary that uses L<Convert::Binary::C> to 
+extract the component time values from the C C<localtime> function, and 
+then smushes them back together to get the original C<time_t> (an 
 integer).
 
 # EXAMPLE: examples/time.pl

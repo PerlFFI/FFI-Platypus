@@ -64,13 +64,12 @@ Perl:
 
 [version 0.21]
 
-This module provides a mechanism for building classes that can
-be used to mange structured data records (known as C as "structs"
-and in some languages as "records").  A structured record is a
-series of bytes that have structure understood by the C or other
-foreign language library that you are interfacing with.  It is
-designed for use with FFI and L<FFI::Platypus>, though it may have
-other applications.
+This module provides a mechanism for building classes that can be used 
+to mange structured data records (known as C as "structs" and in some 
+languages as "records").  A structured record is a series of bytes that 
+have structure understood by the C or other foreign language library 
+that you are interfacing with.  It is designed for use with FFI and 
+L<FFI::Platypus>, though it may have other applications.
 
 =head1 FUNCTIONS
 
@@ -79,14 +78,13 @@ other applications.
  record_layout($ffi, $type => $name, ... );
  record_layout($type => $name, ... );
 
-Define the layout of the record.  You may optionally provide
-an instance of L<FFI::Platypus> as the first argument in order
-to use its type aliases.  Then you provide members as type/name
-pairs.
+Define the layout of the record.  You may optionally provide an instance 
+of L<FFI::Platypus> as the first argument in order to use its type 
+aliases.  Then you provide members as type/name pairs.
 
-For each member you declare, C<record_layout> will create an
-accessor which can be used to read and write its value.
-For example imagine a class C<Foo>:
+For each member you declare, C<record_layout> will create an accessor 
+which can be used to read and write its value. For example imagine a 
+class C<Foo>:
 
  package Foo;
  
@@ -97,7 +95,7 @@ For example imagine a class C<Foo>:
    'string(10)' => 'baz',  #  In C: char baz[10];
  );
 
-You can get and set its fields with like named C<bar> and C<baz>
+You can get and set its fields with like named C<bar> and C<baz> 
 accessors:
 
  my $foo = Foo->new;
@@ -108,9 +106,8 @@ accessors:
  $foo->baz("grimlock\0\0"); # should be 10 characters long
  my $string_value = $foo->baz; # includes the trailing \0\0
 
-You can also pass initial values in to the constructor, either
-passing as a list of key value pairs or by passing a hash
-reference:
+You can also pass initial values in to the constructor, either passing 
+as a list of key value pairs or by passing a hash reference:
 
  $foo = Foo->new(
    bar => 22,
@@ -124,24 +121,23 @@ reference:
    baz => "grimlock\0\0",
  } );
 
-If there are members of a record that you need to account for
-in terms of size and alignment, but do not want to have an
-accessor for, you can use C<:> as a place holder for its name:
+If there are members of a record that you need to account for in terms 
+of size and alignment, but do not want to have an accessor for, you can 
+use C<:> as a place holder for its name:
 
  record_layout(
    'int'        => ':',
    'string(10)' => 'baz',
  );
 
-So far I've shown fixed length strings.  These are declared with
-the word C<string> followed by the length of the string in 
-parentheticals.  Fixed length strings are included inside the
-record itself and do not need to be allocated or deallocated
-separately from the record.  Variable length strings must be
-allocated on the heap, and thus require a sense of "ownership",
-that is whomever allocates variable length strings should be
-responsible for also free'ing them.  To handle this, you can
-add a C<ro> or C<rw> trait to a string field.  The default is
+So far I've shown fixed length strings.  These are declared with the 
+word C<string> followed by the length of the string in parentheticals.  
+Fixed length strings are included inside the record itself and do not 
+need to be allocated or deallocated separately from the record.  
+Variable length strings must be allocated on the heap, and thus require 
+a sense of "ownership", that is whomever allocates variable length 
+strings should be responsible for also free'ing them.  To handle this, 
+you can add a C<ro> or C<rw> trait to a string field.  The default is 
 C<ro>, means that you can get, but not set its value:
 
  package Foo;
@@ -172,11 +168,11 @@ If you specify a field is C<rw>, then you can set its value:
  my $string = $foo->bar;  # GOOD
  $foo->bar("starscream"); # GOOD
 
-Any string value that is pointed to by the record will be free'd
-when it falls out of scope, so you must be very careful that any
-C<string rw> fields are not set or modified by C code.  You should
-also take care not to copy any record that has a C<rw> string in
-it because its values will be free'd twice!
+Any string value that is pointed to by the record will be free'd when it 
+falls out of scope, so you must be very careful that any C<string rw> 
+fields are not set or modified by C code.  You should also take care not 
+to copy any record that has a C<rw> string in it because its values will 
+be free'd twice!
 
  use Clone qw( clone );
  
@@ -317,13 +313,12 @@ The main platypus documentation.
 
 =item L<Convert::Binary::C>
 
-Another method for constructing and dissecting structured
-data records.
+Another method for constructing and dissecting structured data records.
 
 =item L<pack and unpack|perlpacktut>
 
-Built-in Perl functions for constructing and dissecting
-structured data records.
+Built-in Perl functions for constructing and dissecting structured data 
+records.
 
 =back
 
