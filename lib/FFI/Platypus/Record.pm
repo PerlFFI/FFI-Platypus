@@ -91,8 +91,8 @@ class C<Foo>:
  use FFI::Platypus::Record;
  
  record_layout(
-   int          => 'bar',  #  In C: int baz;
-   'string(10)' => 'baz',  #  In C: char baz[10];
+   int          => 'bar',  #  int bar;
+   'string(10)' => 'baz',  #  char baz[10];
  );
 
 You can get and set its fields with like named C<bar> and C<baz> 
