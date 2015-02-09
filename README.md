@@ -546,6 +546,58 @@ functions available from the standard c library and.  Interfaces to
 these and other memory related functions are provided by the 
 [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory) module.
 
+## structured  data records
+
+    package My::UnixTime;
+    
+    use FFI::Platypus::Record;
+    
+    record_layout(qw(
+        int    tm_sec
+        int    tm_min
+        int    tm_hour
+        int    tm_mday
+        int    tm_mon
+        int    tm_year
+        int    tm_wday
+        int    tm_yday
+        int    tm_isdst
+        long   tm_gmtoff
+        string tm_zone
+    ));
+    
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(undef);
+    # define a record class My::UnixTime and alias it to "tm"
+    $ffi->type("record(My::UnixTime)" => 'tm');
+    
+    # attach the C localtime function as a constructor
+    $ffi->attach( localtime => ['time_t*'] => 'tm', sub {
+      my($inner, $class, $time) = @_;
+      $time = time unless defined $time;
+      $inner->(\$time);
+    });
+    
+    package main;
+    
+    # now we can actually use our My::UnixTime class
+    my $time = My::UnixTime->localtime;
+    printf "time is %d:%d:%d %s\n",
+      $time->tm_hour,
+      $time->tm_min,
+      $time->tm_sec,
+      $time->tm_zone;
+
+**Discussion**: C and other machine code languages frequently provide
+interfaces that include structured data records (known as "structs"
+in C).  They sometimes provide an API in which you are expected to
+manipulate these records before and/or after passing them along to
+C functions.  There are a few ways of dealing with such interfaces,
+but the easiest way is demonstrated here defines a record class
+using a specific layout.  For more details see [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record).
+([FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) includes some other ways of manipulating
+structured data records).
+
 ## libuuid
 
     use FFI::CheckLib;

@@ -64,7 +64,7 @@ Perl:
 
 [version 0.21]
 
-This module provides a mechanisim for building classes that can
+This module provides a mechanism for building classes that can
 be used to mange structured data records (known as C as "structs"
 and in some languages as "records").  A structured record is a
 series of bytes that have structure understood by the C or other
@@ -140,7 +140,7 @@ record itself and do not need to be allocated or deallocated
 separately from the record.  Variable length strings must be
 allocated on the heap, and thus require a sense of "ownership",
 that is whomever allocates variable length strings should be
-resposible for also free'ing them.  To handle this, you can
+responsible for also free'ing them.  To handle this, you can
 add a C<ro> or C<rw> trait to a string field.  The default is
 C<ro>, means that you can get, but not set its value:
 
@@ -314,6 +314,16 @@ These useful features (and probably more) are missing:
 =item L<FFI::Platypus>
 
 The main platypus documentation.
+
+=item L<Convert::Binary::C>
+
+Another method for constructing and dissecting structured
+data records.
+
+=item L<pack and unpack|perlpacktut>
+
+Built-in Perl functions for constructing and dissecting
+structured data records.
 
 =back
 

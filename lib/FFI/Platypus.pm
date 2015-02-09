@@ -1005,6 +1005,20 @@ functions available from the standard c library and.  Interfaces to
 these and other memory related functions are provided by the 
 L<FFI::Platypus::Memory> module.
 
+=head2 structured  data records
+
+# EXAMPLE: examples/time_record.pl
+
+B<Discussion>: C and other machine code languages frequently provide
+interfaces that include structured data records (known as "structs"
+in C).  They sometimes provide an API in which you are expected to
+manipulate these records before and/or after passing them along to
+C functions.  There are a few ways of dealing with such interfaces,
+but the easiest way is demonstrated here defines a record class
+using a specific layout.  For more details see L<FFI::Platypus::Record>.
+(L<FFI::Platypus::Type> includes some other ways of manipulating
+structured data records).
+
 =head2 libuuid
 
 # EXAMPLE: examples/uuid.pl

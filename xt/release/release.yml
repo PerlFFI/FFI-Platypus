@@ -44,6 +44,9 @@ pod_spelling_system:
     - Alessandro
     - Ghedini
     - MHOWARD
+    - JRuby
+    - Rubinius
+    - reimplemented
 
 pod_coverage:
   skip: 0
