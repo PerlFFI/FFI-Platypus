@@ -1423,6 +1423,11 @@ Declarative interface to Platypus.
 
 Type definitions for Platypus.
 
+=item L<FFI::Platypus::Record>
+
+Define structured data records (C "structs") for use with
+Platypus.
+
 =item L<FFI::Platypus::API>
 
 The custom types API for Platypus.

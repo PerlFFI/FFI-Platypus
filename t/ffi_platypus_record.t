@@ -17,7 +17,7 @@ do {
 };
 
 subtest 'integer accessor' => sub {
-  plan tests => 6;
+  plan tests => 8;
 
   my $foo = Foo1->new( first => 1, second => 2 );
   isa_ok $foo, 'Foo1';
@@ -33,6 +33,11 @@ subtest 'integer accessor' => sub {
   
   $foo->second(42);
   is $foo->second, 42, 'foo.second = 42';
+
+  $foo = Foo1->new( { first => 3, second => 4 } );
+  
+  is $foo->first,  3, 'foo.first   = 3';
+  is $foo->second, 4, 'foo.second  = 4';
 
 };
 

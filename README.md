@@ -1108,6 +1108,11 @@ The build process also respects these environment variables:
 
     Type definitions for Platypus.
 
+- [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record)
+
+    Define structured data records (C "structs") for use with
+    Platypus.
+
 - [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API)
 
     The custom types API for Platypus.

@@ -13,37 +13,64 @@ our @EXPORT = qw( record_layout );
 
 =head1 SYNOPSIS
 
- package MyRecord;
+C:
+
+ struct my_person {
+   int         age;
+   const char  title[3];
+   const char *name
+ };
+ 
+ void process_person(struct my_person *person)
+ {
+   /* ... */
+ }
+
+Perl:
+
+ package MyPerson;
  
  use FFI::Platypus::Record;
  
- record_layout(
-   int => 'my_int_member',
-   short => 'my_short_member',
+ record_layout(qw(
+   int       age
+   string(3) title
+   string_rw name
  );
  
  package main;
  
- my $record = MyRecord->new(
-   my_int_member => 42,
-   my_short_member => -2,
+ use FFI::Platypus;
+ 
+ my $ffi = FFI::Platypus->new;
+ $ffi->lib("myperson.so");
+ $ffi->type("record(MyPerson)" => 'MyPerson');
+ 
+ my $person = MyPerson->new(
+   age   => 40,
+   title => "Mr.",
+   name  => "John Smith",
  );
  
- print "my_int_member = ", $record->my_int_member, "\n";
- print "my_short_member = ", $record->my_short_member, "\n";
+ $ffi->attach( process_person => [ 'MyPerson' ] => 'void' );
  
- $record->my_int_member(100);
- $record->my_short_member(400);
+ process_person($person);
+ 
+ $person->age($person->age + 1); # another year older
+ 
+ process_person($person);
 
 =head1 DESCRIPTION
 
 [version 0.21]
 
-This module provides an interface for creating accessors to
-record members.  A record is a series of bytes that have a
-structure understood by the C library that you are interfacing
-with.  In C structured data records are known simply as
-a C<struct>.
+This module provides a mechanisim for building classes that can
+be used to mange structured data records (known as C as "structs"
+and in some languages as "records").  A structured record is a
+series of bytes that have structure understood by the C or other
+foreign language library that you are interfacing with.  It is
+designed for use with FFI and L<FFI::Platypus>, though it may have
+other applications.
 
 =head1 FUNCTIONS
 
@@ -57,9 +84,103 @@ an instance of L<FFI::Platypus> as the first argument in order
 to use its type aliases.  Then you provide members as type/name
 pairs.
 
-This function will also generate a constructor C<new> and a
-size accessor C<_ffi_record_size> so that it can be used as a
-Platypus type.
+For each member you declare, C<record_layout> will create an
+accessor which can be used to read and write its value.
+For example imagine a class C<Foo>:
+
+ package Foo;
+ 
+ use FFI::Platypus::Record;
+ 
+ record_layout(
+   int          => 'bar',  #  In C: int baz;
+   'string(10)' => 'baz',  #  In C: char baz[10];
+ );
+
+You can get and set its fields with like named C<bar> and C<baz>
+accessors:
+
+ my $foo = Foo->new;
+ 
+ $foo->bar(22);
+ my $value = $foo->bar;
+ 
+ $foo->baz("grimlock\0\0"); # should be 10 characters long
+ my $string_value = $foo->baz; # includes the trailing \0\0
+
+You can also pass initial values in to the constructor, either
+passing as a list of key value pairs or by passing a hash
+reference:
+
+ $foo = Foo->new(
+   bar => 22,
+   baz => "grimlock\0\0",
+ );
+ 
+ # same as:
+ 
+ $foo = Foo->new( {
+   bar => 22,
+   baz => "grimlock\0\0",
+ } );
+
+If there are members of a record that you need to account for
+in terms of size and alignment, but do not want to have an
+accessor for, you can use C<:> as a place holder for its name:
+
+ record_layout(
+   'int'        => ':',
+   'string(10)' => 'baz',
+ );
+
+So far I've shown fixed length strings.  These are declared with
+the word C<string> followed by the length of the string in 
+parentheticals.  Fixed length strings are included inside the
+record itself and do not need to be allocated or deallocated
+separately from the record.  Variable length strings must be
+allocated on the heap, and thus require a sense of "ownership",
+that is whomever allocates variable length strings should be
+resposible for also free'ing them.  To handle this, you can
+add a C<ro> or C<rw> trait to a string field.  The default is
+C<ro>, means that you can get, but not set its value:
+
+ package Foo;
+ 
+ record_layout(
+   'string ro' => 'bar',  # same type as 'string' and 'string_ro'
+ );
+ 
+ package main;
+ 
+ my $foo = Foo->new;
+ 
+ my $string = $foo->bar;  # GOOD
+ $foo->bar("starscream"); # BAD
+
+If you specify a field is C<rw>, then you can set its value:
+
+ package Foo;
+ 
+ record_layout(
+   'string rw' => 'bar',  # same type as 'string_rw'
+ );
+ 
+ package main;
+ 
+ my $foo = Foo->new;
+ 
+ my $string = $foo->bar;  # GOOD
+ $foo->bar("starscream"); # GOOD
+
+Any string value that is pointed to by the record will be free'd
+when it falls out of scope, so you must be very careful that any
+C<string rw> fields are not set or modified by C code.  You should
+also take care not to copy any record that has a C<rw> string in
+it because its values will be free'd twice!
+
+ use Clone qw( clone );
+ 
+ my $foo2 = clone $foo;  # BAD  bar will be free'd twice
 
 =cut
 
@@ -133,15 +254,16 @@ sub record_layout
   *{join '::', $caller, '_ffi_record_align'} = sub () { $record_align };
   *{join '::', $caller, 'new'} = sub {
     my $class = shift;
+    my $args = ref($_[0]) ? [%{$_[0]}] : \@_;
     croak "uneven number of arguments to record constructor"
-      if @_ % 2;
+      if @$args % 2;
     my $record = "\0" x $class->_ffi_record_size;
     my $self = bless \$record, $class;
     
-    while(@_)
+    while(@$args)
     {
-      my $key = shift;
-      my $value = shift;
+      my $key = shift @$args;
+      my $value = shift @$args;
       $self->$key($value);
     }
     
@@ -172,6 +294,18 @@ sub record_layout
 }
 
 1;
+
+=head1 TODO
+
+These useful features (and probably more) are missing:
+
+=over 4
+
+=item Unions
+
+=item Nested records
+
+=back
 
 =head1 SEE ALSO
 
