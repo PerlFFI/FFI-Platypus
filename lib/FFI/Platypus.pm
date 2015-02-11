@@ -38,7 +38,8 @@ use Carp qw( croak );
 =head1 DESCRIPTION
 
 Platypus is an library for creating interfaces to machine code libraries 
-written in languages like C, L<C++|FFI::Platypus::Lang::CPP>, Fortran, 
+written in languages like C, L<C++|FFI::Platypus::Lang::CPP>, 
+L<Fortran|FFI::Platypus::Lang::Fortran>, 
 L<Rust|FFI::Platypus::Lang::Rust>, 
 L<Pascal|FFI::Platypus::Lang::Pascal>. Essentially anything that gets 
 compiled into machine code.  This implementation uses C<libffi> to 
@@ -90,7 +91,8 @@ XS is implemented primarily as a bunch of C macros, which requires at
 least some understanding of C, the C pre-processor, and some C++ caveats 
 (since on some platforms Perl is compiled and linked with a C++ 
 compiler). Platypus on the other hand could be used to call other 
-compiled languages, like Fortran, L<Rust|FFI::Platypus::Lang::Rust>, 
+compiled languages, like L<Fortran|FFI::Platypus::Lang::Fortran>, 
+L<Rust|FFI::Platypus::Lang::Rust>, 
 L<Pascal|FFI::Platypus::Lang::Pascal>, L<C++|FFI::Platypus::Lang::CPP>, 
 Go or even L<assembly|FFI::Platypus::Lang::ASM>, allowing you to focus 
 on your strengths.
@@ -1469,6 +1471,14 @@ language
 
 Documentation and tools for using Platypus with the C++ programming 
 language
+
+=item L<FFI::Platypus::Lang::Fortran>
+
+Documentation and tools for using Platypus with Fortran
+
+=item L<FFI::Platypus::Lang::Pascal>
+
+Documentation and tools for using Platypus with Free Pascal
 
 =item L<FFI::Platypus::Lang::Rust>
 

@@ -19,7 +19,8 @@ Write Perl bindings to non-Perl libraries with FFI. No XS required.
 # DESCRIPTION
 
 Platypus is an library for creating interfaces to machine code libraries 
-written in languages like C, [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP), Fortran, 
+written in languages like C, [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP), 
+[Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran), 
 [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), 
 [Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal). Essentially anything that gets 
 compiled into machine code.  This implementation uses `libffi` to 
@@ -69,7 +70,8 @@ to write an extension with Platypus instead of XS:
     least some understanding of C, the C pre-processor, and some C++ caveats 
     (since on some platforms Perl is compiled and linked with a C++ 
     compiler). Platypus on the other hand could be used to call other 
-    compiled languages, like Fortran, [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), 
+    compiled languages, like [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran), 
+    [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), 
     [Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal), [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP), 
     Go or even [assembly](https://metacpan.org/pod/FFI::Platypus::Lang::ASM), allowing you to focus 
     on your strengths.
@@ -1196,6 +1198,14 @@ The build process also respects these environment variables:
 
     Documentation and tools for using Platypus with the C++ programming 
     language
+
+- [FFI::Platypus::Lang::Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran)
+
+    Documentation and tools for using Platypus with Fortran
+
+- [FFI::Platypus::Lang::Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal)
+
+    Documentation and tools for using Platypus with Free Pascal
 
 - [FFI::Platypus::Lang::Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust)
 
