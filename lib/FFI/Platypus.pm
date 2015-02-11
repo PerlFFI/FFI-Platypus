@@ -37,7 +37,7 @@ use Carp qw( croak );
 
 =head1 DESCRIPTION
 
-Platypus is an library for creating interfaces to machine code libraries 
+Platypus is a library for creating interfaces to machine code libraries 
 written in languages like C, L<C++|FFI::Platypus::Lang::CPP>, 
 L<Fortran|FFI::Platypus::Lang::Fortran>, 
 L<Rust|FFI::Platypus::Lang::Rust>, 

@@ -18,7 +18,7 @@ Write Perl bindings to non-Perl libraries with FFI. No XS required.
 
 # DESCRIPTION
 
-Platypus is an library for creating interfaces to machine code libraries 
+Platypus is a library for creating interfaces to machine code libraries 
 written in languages like C, [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP), 
 [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran), 
 [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), 
