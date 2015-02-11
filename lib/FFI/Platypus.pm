@@ -942,6 +942,148 @@ sub package
   $self;
 }
 
+sub DESTROY
+{
+  my($self) = @_;
+  foreach my $handle (values %{ $self->{handles} })
+  {
+    next unless $handle;
+    FFI::Platypus::dl::dlclose($handle);
+  }
+  delete $self->{handles};
+}
+
+package FFI::Platypus::Function;
+
+# VERSION
+
+use overload '&{}' => sub {
+  my $ffi = shift;
+  sub { $ffi->call(@_) };
+};
+
+package FFI::Platypus::Closure;
+
+use Scalar::Util qw( refaddr);
+use Carp qw( croak );
+
+# VERSION
+
+our %cbdata;
+
+sub new
+{
+  my($class, $coderef) = @_;
+  croak "not a coderef" unless ref($coderef) eq 'CODE';
+  my $self = bless $coderef, $class;
+  $cbdata{refaddr $self} = [];
+  $self;
+}
+
+sub add_data
+{
+  my($self, $payload) = @_;
+  push @{ $cbdata{refaddr $self} }, bless \$payload, 'FFI::Platypus::ClosureData';
+}
+
+sub DESTROY
+{
+  my($self) = @_;
+  delete $cbdata{refaddr $self};
+}
+
+package FFI::Platypus::ClosureData;
+
+# VERSION
+
+package FFI::Platypus::Type;
+
+use Carp qw( croak );
+
+# VERSION
+
+sub new
+{
+  my($class, $type, $platypus) = @_;
+
+  # the platypus object is only needed for closures, so
+  # that it can lookup existing types.
+
+  if($type =~ m/^\((.*)\)-\>\s*(.*)\s*$/)
+  {
+    croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
+    my @argument_types = map { $platypus->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
+    my $return_type = $platypus->_type_lookup($2);
+    return $class->_new_closure($return_type, @argument_types);
+  }
+  
+  my $ffi_type;
+  my $platypus_type;
+  my $size = 0;
+  my $classname;
+  my $rw = 0;
+
+  if($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
+  {
+    my $extra = $1;
+    $ffi_type = 'pointer';
+    $platypus_type = 'string';
+    $rw = 1 if $extra =~ /rw$/;
+    $size = $1 if $extra =~ /\(([0-9]+)\)$/;
+  }
+  elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
+  {
+    $ffi_type = 'pointer';
+    $platypus_type = 'record';
+    if($1 =~ /^([0-9]+)$/)
+    {
+      $size = $1;
+    }
+    else
+    {
+      $classname = $1;
+      unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
+      {
+        eval qq{ use $classname };
+        warn "error requiring $classname: $@";
+      }
+      if($classname->can('ffi_record_size'))
+      {
+        $size = $classname->ffi_record_size;
+      }
+      elsif($classname->can('_ffi_record_size'))
+      {
+        $size = $classname->_ffi_record_size;
+      }
+      else
+      {
+        croak "$classname has not ffi_record_size or _ffi_record_size method";
+      }
+    }
+  }
+  elsif($type =~ s/\s+\*$//) {
+    $ffi_type = $type;
+    $platypus_type = 'pointer';
+  }
+  elsif($type =~ s/\s+\[([0-9]+)\]$//)
+  {
+    $ffi_type = $type;
+    $platypus_type = 'array';
+    $size = $1;
+  }
+  else
+  {
+    $ffi_type = $type;
+    $platypus_type = 'ffi';
+  }
+  
+  $class->_new($ffi_type, $platypus_type, $size, $classname, $rw);
+}
+
+1;
+
+__END__
+
 =head1 EXAMPLES
 
 Here are some examples.  Some of them use the L<FFI::Platypus::Declare> 
@@ -1163,148 +1305,6 @@ wrapper will be a code reference to the C function.  The Perl arguments
 will come in after that.  This allows you to modify / convert the 
 arguments to conform to the C API.  What ever value you return from the 
 wrapper function will be returned back to the original caller.
-
-=cut
-
-sub DESTROY
-{
-  my($self) = @_;
-  foreach my $handle (values %{ $self->{handles} })
-  {
-    next unless $handle;
-    FFI::Platypus::dl::dlclose($handle);
-  }
-  delete $self->{handles};
-}
-
-package FFI::Platypus::Function;
-
-# VERSION
-
-use overload '&{}' => sub {
-  my $ffi = shift;
-  sub { $ffi->call(@_) };
-};
-
-package FFI::Platypus::Closure;
-
-use Scalar::Util qw( refaddr);
-use Carp qw( croak );
-
-# VERSION
-
-our %cbdata;
-
-sub new
-{
-  my($class, $coderef) = @_;
-  croak "not a coderef" unless ref($coderef) eq 'CODE';
-  my $self = bless $coderef, $class;
-  $cbdata{refaddr $self} = [];
-  $self;
-}
-
-sub add_data
-{
-  my($self, $payload) = @_;
-  push @{ $cbdata{refaddr $self} }, bless \$payload, 'FFI::Platypus::ClosureData';
-}
-
-sub DESTROY
-{
-  my($self) = @_;
-  delete $cbdata{refaddr $self};
-}
-
-package FFI::Platypus::ClosureData;
-
-# VERSION
-
-package FFI::Platypus::Type;
-
-use Carp qw( croak );
-
-# VERSION
-
-sub new
-{
-  my($class, $type, $platypus) = @_;
-
-  # the platypus object is only needed for closures, so
-  # that it can lookup existing types.
-
-  if($type =~ m/^\((.*)\)-\>\s*(.*)\s*$/)
-  {
-    croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
-    my @argument_types = map { $platypus->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
-    my $return_type = $platypus->_type_lookup($2);
-    return $class->_new_closure($return_type, @argument_types);
-  }
-  
-  my $ffi_type;
-  my $platypus_type;
-  my $size = 0;
-  my $classname;
-  my $rw = 0;
-
-  if($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
-  {
-    my $extra = $1;
-    $ffi_type = 'pointer';
-    $platypus_type = 'string';
-    $rw = 1 if $extra =~ /rw$/;
-    $size = $1 if $extra =~ /\(([0-9]+)\)$/;
-  }
-  elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
-  {
-    $ffi_type = 'pointer';
-    $platypus_type = 'record';
-    if($1 =~ /^([0-9]+)$/)
-    {
-      $size = $1;
-    }
-    else
-    {
-      $classname = $1;
-      unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
-      {
-        eval qq{ use $classname };
-        warn "error requiring $classname: $@";
-      }
-      if($classname->can('ffi_record_size'))
-      {
-        $size = $classname->ffi_record_size;
-      }
-      elsif($classname->can('_ffi_record_size'))
-      {
-        $size = $classname->_ffi_record_size;
-      }
-      else
-      {
-        croak "$classname has not ffi_record_size or _ffi_record_size method";
-      }
-    }
-  }
-  elsif($type =~ s/\s+\*$//) {
-    $ffi_type = $type;
-    $platypus_type = 'pointer';
-  }
-  elsif($type =~ s/\s+\[([0-9]+)\]$//)
-  {
-    $ffi_type = $type;
-    $platypus_type = 'array';
-    $size = $1;
-  }
-  else
-  {
-    $ffi_type = $type;
-    $platypus_type = 'ffi';
-  }
-  
-  $class->_new($ffi_type, $platypus_type, $size, $classname, $rw);
-}
-
-1;
 
 =head1 CAVEATS
 
