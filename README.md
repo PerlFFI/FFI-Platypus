@@ -1039,6 +1039,129 @@ will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the 
 wrapper function will be returned back to the original caller.
 
+## Java
+
+Java:
+
+    // On Linux build .so with
+    // % gcj -fPIC -shared -o libexample.so Example.java
+    
+    public class Example
+    {
+      public static void print_hello()
+      {
+        System.out.println("hello world");
+      }
+    
+      public static int add(int a, int b)
+      {
+        return a + b;
+      }
+    }
+
+C++:
+
+    #include <gcj/cni.h>
+    #include <java/lang/System.h>
+    #include <java/io/PrintStream.h>
+    #include <java/lang/Throwable.h>
+    
+    extern "C" void
+    gcj_start()
+    {
+      using namespace java::lang;
+    
+      JvCreateJavaVM(NULL);
+      JvInitClass(&System::class$);
+    }
+    
+    extern "C" void
+    gcj_end()
+    {
+      JvDetachCurrentThread();
+    }
+
+Perl:
+
+    use FFI::Platypus;
+    
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib('./libexample.so');
+    
+    # Java methods are mangled by gcj using the same format as g++
+    
+    $ffi->attach(
+      [ _ZN7Example11print_helloEJvv => 'print_hello' ] => [] => 'void'
+    );
+    
+    $ffi->attach(
+      [ _ZN7Example3addEJiii => 'add' ] => ['int', 'int'] => 'int'
+    );
+    
+    # Initialize the Java runtime
+    
+    $ffi->function( gcj_start => [] => 'void' )->call;
+    
+    print_hello();
+    print add(1,2), "\n";
+    
+    # Wind the java runtime down
+    
+    $ffi->function( gcj_end => [] => 'void' )->call;
+
+Makefile:
+
+    GCJ=gcj
+    CXX=g++
+    CFLAGS=-fPIC
+    LDFLAGS=-shared
+    RM=rm -f
+    
+    libexample.so: between.o Example.o
+           $(GCJ) $(LDFLAGS) -o libexample.so between.o Example.o
+    
+    between.o: between.cpp
+           $(CXX) $(CFLAGS) -c -o between.o between.cpp
+    
+    Example.o: Example.java
+           $(GCJ) $(CFLAGS) -c -o Example.o Example.java
+    
+    clean:
+           $(RM) *.o *.so
+
+Output:
+
+    % make
+    g++ -fPIC -c -o between.o between.cpp
+    gcj -fPIC -c -o Example.o Example.java
+    gcj -shared -o libexample.so between.o Example.o
+    % perl example.pl 
+    hello world
+    3
+
+**Discussion**: You can't call Java .class files directly from FFI / 
+Platypus, but you can compile Java source and .class files into a shared 
+library using the GNU Java Compiler `gcj`.  Because we are calling Java 
+functions from a program (Perl!) that was not started from a Java 
+`main()` we have to initialize the Java runtime ourselves
+([details](https://gcc.gnu.org/onlinedocs/gcj/Invocation.html)).
+This can most easily be accomplished from C++.
+
+The GNU Java Compiler uses the same format to mangle method names as GNU 
+C++.  The [C++ plugin](https://metacpan.org/pod/FFI::Platypus::Lang::CPP) for handles this more 
+transparently by extracting the symbols from the shared library and 
+using either [FFI::Platypus::Lang::CPP::Demangle::XS](https://metacpan.org/pod/FFI::Platypus::Lang::CPP::Demangle::XS) or `c++filt` to 
+determined the unmangled names.
+
+Although the Java source is compiled ahead of time with optimizations, 
+it will not necessarily perform better than a real JVM just because it 
+is compiled.  In fact the gcj developers warn than gcj will optimize 
+Java source better than Java .class files.  The GNU Java Compiler also 
+lags behind modern Java.
+
+Even so this enables you to call Java from Perl and potentially other 
+Java based languages such as Scala, Groovy or JRuby.
+
 # CAVEATS
 
 Platypus and Native Interfaces like libffi rely on the availability of 
@@ -1056,6 +1179,10 @@ dynamic libraries.  Things not supported include:
 
     Like Google's Go.  Although I believe that XS won't help in this 
     regard.
+
+- Languages that do not compile to machine code
+
+    Like .NET based languages and Java that can't be understood by gcj.
 
 The documentation has a bias toward using FFI / Platypus with C.  This 
 is my fault, as my background in mainly in C/C++ programmer (when I am 

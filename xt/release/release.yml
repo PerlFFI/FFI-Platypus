@@ -47,6 +47,12 @@ pod_spelling_system:
     - JRuby
     - Rubinius
     - reimplemented
+    - Mughal
+    - Zaki
+    - zmughal
+    - Scala
+    - JVM
+    - gcj
 
 pod_coverage:
   skip: 0
