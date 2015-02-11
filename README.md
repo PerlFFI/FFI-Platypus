@@ -1307,6 +1307,8 @@ Contributors:
 
 Bakkiaraj Murugesan (bakkiaraj)
 
+Zaki Mughal (zmughal)
+
 # COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2015 by Graham Ollis.
