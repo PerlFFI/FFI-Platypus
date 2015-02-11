@@ -73,7 +73,7 @@ to write an extension with Platypus instead of XS:
     compiled languages, like [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran), 
     [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), 
     [Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal), [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP), 
-    Go or even [assembly](https://metacpan.org/pod/FFI::Platypus::Lang::ASM), allowing you to focus 
+    or even [assembly](https://metacpan.org/pod/FFI::Platypus::Lang::ASM), allowing you to focus 
     on your strengths.
 
 - FFI / Platypus does not require a parser
@@ -1038,6 +1038,38 @@ wrapper will be a code reference to the C function.  The Perl arguments
 will come in after that.  This allows you to modify / convert the 
 arguments to conform to the C API.  What ever value you return from the 
 wrapper function will be returned back to the original caller.
+
+# CAVEATS
+
+Platypus and Native Interfaces like libffi rely on the availability of 
+dynamic libraries.  Things not supported include:
+
+- Systems that lack dynamic library support
+
+    Like MS-DOS
+
+- Systems that are not supported by libffi
+
+    Like OpenVMS
+
+- Languages that do not support using dynamic libraries from other languages
+
+    Like Google's Go.  Although I believe that XS won't help in this 
+    regard.
+
+The documentation has a bias toward using FFI / Platypus with C.  This 
+is my fault, as my background in mainly in C/C++ programmer (when I am 
+not writing Perl).  In many places I use "C" as a short form for "any 
+language that can generate machine code and is callable from C".  I 
+welcome pull requests to the Platypus core to address this issue.  In an 
+attempt to ease usage of Platypus by non C programmers, I have written a 
+number of foreign language plugins for various popular languages (see 
+the SEE ALSO below).  These plugins come with examples specific to those 
+languages, and documentation on common issues related to using those 
+languages with FFI.  In most cases these are available for easy adoption 
+for those with the know-how or the willingness to learn.  If your 
+language doesn't have a plugin YET, that is just because you haven't 
+written it yet.
 
 # SUPPORT
 

@@ -94,7 +94,7 @@ compiler). Platypus on the other hand could be used to call other
 compiled languages, like L<Fortran|FFI::Platypus::Lang::Fortran>, 
 L<Rust|FFI::Platypus::Lang::Rust>, 
 L<Pascal|FFI::Platypus::Lang::Pascal>, L<C++|FFI::Platypus::Lang::CPP>, 
-Go or even L<assembly|FFI::Platypus::Lang::ASM>, allowing you to focus 
+or even L<assembly|FFI::Platypus::Lang::ASM>, allowing you to focus 
 on your strengths.
 
 =item FFI / Platypus does not require a parser
@@ -1305,6 +1305,42 @@ sub new
 }
 
 1;
+
+=head1 CAVEATS
+
+Platypus and Native Interfaces like libffi rely on the availability of 
+dynamic libraries.  Things not supported include:
+
+=over 4
+
+=item Systems that lack dynamic library support
+
+Like MS-DOS
+
+=item Systems that are not supported by libffi
+
+Like OpenVMS
+
+=item Languages that do not support using dynamic libraries from other languages
+
+Like Google's Go.  Although I believe that XS won't help in this 
+regard.
+
+=back
+
+The documentation has a bias toward using FFI / Platypus with C.  This 
+is my fault, as my background in mainly in C/C++ programmer (when I am 
+not writing Perl).  In many places I use "C" as a short form for "any 
+language that can generate machine code and is callable from C".  I 
+welcome pull requests to the Platypus core to address this issue.  In an 
+attempt to ease usage of Platypus by non C programmers, I have written a 
+number of foreign language plugins for various popular languages (see 
+the SEE ALSO below).  These plugins come with examples specific to those 
+languages, and documentation on common issues related to using those 
+languages with FFI.  In most cases these are available for easy adoption 
+for those with the know-how or the willingness to learn.  If your 
+language doesn't have a plugin YET, that is just because you haven't 
+written it yet.
 
 =head1 SUPPORT
 
