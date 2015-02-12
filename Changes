@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Variable length arrays
 
 0.21      2015-02-09 06:23:03 -0500
   - Added FFI::Platypus#alignof method
