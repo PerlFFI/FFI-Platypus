@@ -32,6 +32,18 @@ uint32_sum(uint32_t list[10])
   return total;
 }
 
+EXTERN uint32_t
+uint32_sum2(uint32_t *list, size_t size)
+{
+  int i;
+  uint32_t total;
+  for(i=0,total=0; i<size; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
 EXTERN void
 uint32_array_inc(uint32_t list[10])
 {

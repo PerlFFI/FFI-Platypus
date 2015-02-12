@@ -193,6 +193,8 @@
         if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
         {
           AV *av = (AV*) SvRV(arg);
+          if(count == 0)
+            count = av_len(av)+1;
           switch(self->argument_types[i]->ffi_type->type)
           {
             case FFI_TYPE_UINT8:

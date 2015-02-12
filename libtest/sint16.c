@@ -32,6 +32,18 @@ sint16_sum(int16_t list[10])
   return total;
 }
 
+EXTERN int16_t
+sint16_sum2(int16_t *list, size_t size)
+{
+  int i;
+  int16_t total;
+  for(i=0,total=0; i<size; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
 EXTERN void
 sint16_array_inc(int16_t list[10])
 {

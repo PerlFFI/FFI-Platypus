@@ -1,11 +1,12 @@
 use strict;
 use warnings;
-use Test::More tests => 18;
+use Test::More tests => 19;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
-  'sint8', 'void', 'int',
+  'sint8', 'void', 'int', 'size_t',
   ['sint8 *' => 'sint8_p'],
   ['sint8 [10]' => 'sint8_a'],
+  ['sint8 []' => 'sint8_a2'],
   ['(sint8)->sint8' => 'sint8_c'];
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
@@ -13,6 +14,7 @@ lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 attach [sint8_add => 'add'] => [sint8, sint8] => sint8;
 attach [sint8_inc => 'inc'] => [sint8_p, sint8] => sint8_p;
 attach [sint8_sum => 'sum'] => [sint8_a] => sint8;
+attach [sint8_sum2 => 'sum2'] => [sint8_a2,size_t] => sint8;
 attach [sint8_array_inc => 'array_inc'] => [sint8_a] => void;
 attach [pointer_null => 'null'] => [] => sint8_p;
 attach [pointer_is_null => 'is_null'] => [sint8_p] => int;
@@ -32,6 +34,7 @@ is ${inc(\-3,4)}, 1, 'inc(\-3,4) = \1';
 my @list = (-5,-4,-3,-2,-1,0,1,2,3,4);
 
 is sum(\@list), -5, 'sum([-5..4]) = -5';
+is sum2(\@list,scalar @list), -5, 'sum([-5..4],10) = -5';
 
 array_inc(\@list);
 do { local $SIG{__WARN__} = sub {}; array_inc() };

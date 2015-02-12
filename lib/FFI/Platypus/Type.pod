@@ -398,6 +398,30 @@ list of two file descriptors as an array.
 
 # EXAMPLE: examples/pipe.pl
 
+=head2 Variable length arrays
+
+[version 0.22]
+
+Variable length arrays are supported for argument types can also be 
+specified by using the C<[]> notation but by leaving the size empty:
+
+ $ffi->type('int[]' => 'var_int_array');
+
+When used as an argument type it will probe the array reference that you 
+pass in to determine the correct size.  Usually you will need to 
+communicate the size of the array to the C code.  One way to do this is 
+to pass the length of the array in as an additional argument.  For 
+example the C code:
+
+# EXAMPLE: examples/var_array.c
+
+Can be called from Perl like this:
+
+# EXAMPLE: examples/var_array.pl
+
+Another method might be to have a special value, such as 0 or NULL 
+indicate the termination of the array.
+
 =head2 Closures
 
 A closure (called a "callback" by L<FFI::Raw>, we use the C<libffi> 

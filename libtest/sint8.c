@@ -27,6 +27,18 @@ sint8_sum(int8_t list[10])
   return total;
 }
 
+EXTERN int8_t
+sint8_sum2(int8_t *list, size_t size)
+{
+  int i;
+  int8_t total;
+  for(i=0,total=0; i<size; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
 EXTERN void
 sint8_array_inc(int8_t list[10])
 {

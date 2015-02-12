@@ -1065,11 +1065,11 @@ sub new
     $ffi_type = $type;
     $platypus_type = 'pointer';
   }
-  elsif($type =~ s/\s+\[([0-9]+)\]$//)
+  elsif($type =~ s/\s+\[([0-9]*)\]$//)
   {
     $ffi_type = $type;
     $platypus_type = 'array';
-    $size = $1;
+    $size = $1 ? $1 : 0;
   }
   else
   {

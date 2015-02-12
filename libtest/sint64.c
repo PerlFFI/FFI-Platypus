@@ -32,6 +32,18 @@ sint64_sum(int64_t list[10])
   return total;
 }
 
+EXTERN int64_t
+sint64_sum2(int64_t *list, size_t size)
+{
+  int i;
+  int64_t total;
+  for(i=0,total=0; i<size; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
 EXTERN void
 sint64_array_inc(int64_t list[10])
 {

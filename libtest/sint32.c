@@ -32,6 +32,18 @@ sint32_sum(int32_t list[10])
   return total;
 }
 
+EXTERN int32_t
+sint32_sum2(int32_t *list, size_t size)
+{
+  int i;
+  int32_t total;
+  for(i=0,total=0; i<size; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
 EXTERN void
 sint32_array_inc(int32_t list[10])
 {

@@ -32,6 +32,18 @@ double_sum(double list[10])
   return total;
 }
 
+EXTERN double
+double_sum2(double *list, size_t size)
+{
+  int i;
+  double total;
+  for(i=0,total=0; i<size; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
 EXTERN void
 double_array_inc(double list[10])
 {

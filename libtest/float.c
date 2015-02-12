@@ -27,6 +27,18 @@ float_sum(float list[10])
   return total;
 }
 
+EXTERN float
+float_sum2(float *list, size_t size)
+{
+  int i;
+  float total;
+  for(i=0,total=0; i<size; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
 EXTERN void
 float_array_inc(float list[10])
 {
