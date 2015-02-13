@@ -32,13 +32,15 @@ script:
   - ./Build --verbose
   - ./Build test --verbose
   - ./Build install --verbose
-  - perl inc/run/test_examples.pl
   
   - cpanm -n --installdeps FFI::Platypus::Type::StringArray
   - cpanm -v FFI::Platypus::Type::StringArray
 
   - cpanm -n --installdeps FFI::TinyCC
   - cpanm -v FFI::TinyCC
+
+  - perl inc/run/test_examples.pl
+
   - cpanm -n --installdeps FFI::Util
   - cpanm -v FFI::Util
   - cpanm -n --installdeps UUID::FFI
