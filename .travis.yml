@@ -2,6 +2,7 @@ language: perl
 
 before_install:
   - sudo apt-get install gfortran
+  - sudo apt-get install fp-compiler-2.6.2
 
 # remember need at least one install command, even if there are no
 # prereqs, else travis will try to install deps using cpanm
@@ -38,9 +39,13 @@ script:
   - cpanm -v UUID::FFI
   - cpanm -n --installdeps FFI::Platypus::Lang::Fortran
   - cpanm -v FFI::Platypus::Lang::Fortran
+  - cpanm -n --installdeps FFI::Platypus::Lang::Pascal
+  - cpanm -v FFI::Platypus::Lang::Pascal
+  - cpanm -n --installdeps Acme::Ford::Prefect::FFI
+  - cpanm -v Acme::Ford::Prefect::FFI
 
 env:
   - FFI_PLATYPUS=1
-  - FFI_PLATYPUS_DEBUG_FAKE32=1
-  - FFI_PLATYPUS_NO_ALLOCA=1
+#  - FFI_PLATYPUS_DEBUG_FAKE32=1
+#  - FFI_PLATYPUS_NO_ALLOCA=1
   - FFI_PLATYPUS_DEBUG_FAKE32=1 FFI_PLATYPUS_NO_ALLOCA=1
