@@ -3,6 +3,7 @@ language: perl
 before_install:
   - sudo apt-get install gfortran
   - sudo apt-get install fp-compiler-2.4.4
+  - sudo apt-get install g++
 
 # remember need at least one install command, even if there are no
 # prereqs, else travis will try to install deps using cpanm
@@ -31,20 +32,28 @@ script:
   - ./Build install --verbose
   - cpanm -n --installdeps FFI::Platypus::Type::StringArray
   - cpanm -v FFI::Platypus::Type::StringArray
+
   - cpanm -n --installdeps FFI::TinyCC
   - cpanm -v FFI::TinyCC
   - cpanm -n --installdeps FFI::Util
   - cpanm -v FFI::Util
   - cpanm -n --installdeps UUID::FFI
   - cpanm -v UUID::FFI
+  - cpanm -n --installdeps Phash::FFI
+  - cpanm -v Phash::FFI
+  - cpanm -n --installdeps Acme::Ford::Prefect::FFI
+  - cpanm -v Acme::Ford::Prefect::FFI
+  - cpanm -n --installdeps File::LibMagic::FFI
+  - cpanm -v File::LibMagic::FFI
+
+  - cpanm -n --installdeps FFI::Platypus::Lang::CPP
+  - cpanm -v FFI::Platypus::Lang::CPP
   - cpanm -n --installdeps FFI::Platypus::Lang::Fortran
   - cpanm -v FFI::Platypus::Lang::Fortran
   - cpanm -n --installdeps FFI::Platypus::Lang::Pascal
   - cpanm -v FFI::Platypus::Lang::Pascal
-  - cpanm -n --installdeps Acme::Ford::Prefect::FFI
-  - cpanm -v Acme::Ford::Prefect::FFI
-  - cpanm -n --installdeps Phash::FFI
-  - cpanm -v Phash::FFI
+  - cpanm -n --installdeps FFI::Platypus::Lang::Rust
+  - cpanm -v FFI::Platypus::Lang::Rust
 
 env:
   - FFI_PLATYPUS=1
