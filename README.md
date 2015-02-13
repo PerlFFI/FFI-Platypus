@@ -910,7 +910,11 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
     # https://github.com/libarchive/libarchive/wiki/Examples#List_contents_of_Archive_stored_in_File
     
     my $archive_filename = shift @ARGV;
-    die "usage: $0 archive.tar" unless defined $archive_filename;
+    unless(defined $archive_filename)
+    {
+      print "usage: $0 archive.tar\n";
+      exit;
+    }
     
     my $archive = ArchiveRead->new;
     $archive->support_filter_all;

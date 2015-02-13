@@ -4,6 +4,7 @@ before_install:
   - sudo apt-get install gfortran
   - sudo apt-get install fp-compiler-2.4.4
   - sudo apt-get install g++
+  - sudo apt-get install gcj
 
 # remember need at least one install command, even if there are no
 # prereqs, else travis will try to install deps using cpanm
@@ -14,6 +15,7 @@ install:
   - cpanm -n Config::AutoConf
   - cpanm -n FFI::CheckLib
   - cpanm -n Math::Int64
+  - cpanm -n File::chdir
 
 perl:
 #  - "5.8"
@@ -30,6 +32,8 @@ script:
   - ./Build --verbose
   - ./Build test --verbose
   - ./Build install --verbose
+  - perl inc/run/test_examples.pl
+  
   - cpanm -n --installdeps FFI::Platypus::Type::StringArray
   - cpanm -v FFI::Platypus::Type::StringArray
 

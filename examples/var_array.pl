@@ -3,7 +3,7 @@ use warnings;
 use FFI::Platypus;
 
 my $ffi = FFI::Platypus->new;
-$ffi->lib('./libvar_array.so');
+$ffi->lib('./var_array.so');
 
 $ffi->attach( sum => [ 'int[]', 'int' ] => 'int' );
 
