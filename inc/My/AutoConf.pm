@@ -189,29 +189,29 @@ sub configure
   
   if($ac->check_sizeof_type('long double',    { prologue => $prologue }))
   {
-    $type_map{'long double'} = 'longdouble';
+    #$type_map{'long double'} = 'longdouble';
   }
   
   if(my $size = $ac->check_sizeof_type('complex', { prologue => $prologue }))
   {
     if($size == 8)
     {
-      $type_map{'complex'} = 'complex_float';
+      #$type_map{'complex'} = 'complex_float';
     }
     elsif($size == 16)
     {
-      $type_map{'complex'} = 'complex_double';
+      #$type_map{'complex'} = 'complex_double';
     }
   }
   
   if($ac->check_sizeof_type('float complex',  { prologue => $prologue }))
   {
-    $type_map{'float complex'} = 'complex_float';
+    #$type_map{'float complex'} = 'complex_float';
   }
 
   if($ac->check_sizeof_type('double complex', { prologue => $prologue }))
   {
-    $type_map{'double complex'} = 'complex_double';
+    #$type_map{'double complex'} = 'complex_double';
   }
 
   $ac->write_config_h( $config_h );
