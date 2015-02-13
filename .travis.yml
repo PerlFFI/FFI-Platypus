@@ -5,6 +5,7 @@ before_install:
   - sudo apt-get install fp-compiler-2.4.4
   - sudo apt-get install g++
   - sudo apt-get install gcj-jdk
+  - sudo apt-get install libgtop2
 
 # remember need at least one install command, even if there are no
 # prereqs, else travis will try to install deps using cpanm
