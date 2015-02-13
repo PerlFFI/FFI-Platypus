@@ -412,6 +412,60 @@
           ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
         }
       }
+      else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
+      {
+        switch(self->argument_types[i]->ffi_type->type)
+        {
+#ifdef SIZEOF_LONG_DOUBLE
+          case FFI_TYPE_LONGDOUBLE:
+            {
+              long double *ptr;
+              Newx_or_alloca(ptr, long double);
+              ((void**)&arguments->slot[arguments->count])[i] = (void*)ptr;
+              if(sv_isobject(arg) && sv_derived_from(arg, "Math::LongDouble"))
+              {
+                *ptr = *INT2PTR(long double *, SvIV((SV*) SvRV(arg)));
+              }
+              else
+              {
+                *ptr = SvNV(arg);
+              }
+            }
+            break;
+#endif
+#ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+          case FFI_TYPE_COMPLEX:
+            switch(self->argument_types[i]->ffi_type->size)
+            {
+#if SIZEOF_FLOAT_COMPLEX
+              case  8:
+                {
+                  float complex *ptr;
+                  Newx_or_alloca(ptr, float complex);
+                  ((void**)&arguments->slot[arguments->count])[i] = (void*)ptr;
+                }
+                break;
+#endif
+#if SIZEOF_DOUBLE_COMPLEX
+              case 16:
+                {
+                  double complex *ptr;
+                  Newx_or_alloca(ptr, double complex);
+                  ((void**)&arguments->slot[arguments->count])[i] = (void*)ptr;
+                }
+                break;
+#endif
+              default :
+                warn("argument type not supported (%d)", i);
+                break;
+            }
+            break;
+#endif
+          default:
+            warn("argument type not supported (%d)", i);
+            break;
+        }
+      }
       else
       {
         warn("argument type not supported (%d)", i);
@@ -461,7 +515,9 @@
 
     for(i=self->ffi_cif.nargs-1; i >= 0; i--)
     {
-      if(self->argument_types[i]->platypus_type == FFI_PL_POINTER)
+      platypus_type platypus_type;
+    
+      if(platypus_type == FFI_PL_POINTER)
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         if(ptr != NULL)
@@ -522,8 +578,7 @@
         Safefree(ptr);
 #endif
       }
-
-      if(self->argument_types[i]->platypus_type == FFI_PL_ARRAY)
+      else if(platypus_type == FFI_PL_ARRAY)
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         int count = self->argument_types[i]->extra[0].array.element_count;
@@ -620,7 +675,7 @@
         Safefree(ptr);
 #endif
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_CLOSURE)
+      else if(platypus_type == FFI_PL_CLOSURE)
       {
         arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
         if(SvROK(arg))
@@ -628,7 +683,7 @@
           SvREFCNT_dec(arg);
         }
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
+      else if(platypus_type == FFI_PL_CUSTOM_PERL)
       {
         /* FIXME: need to fill out argument_types for skipping */
         i -= self->argument_types[i]->extra[0].custom_perl.argument_count;
@@ -641,6 +696,13 @@
           }
         }
       }
+#ifndef HAVE_ALLOCA
+      else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
+      {
+        void *ptr = ((void**)&arguments->slot[arguments->count])[i];
+        Safefree(ptr);
+      }
+#endif
     }
 #ifndef HAVE_ALLOCA
     if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)

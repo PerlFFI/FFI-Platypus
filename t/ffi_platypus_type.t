@@ -37,12 +37,20 @@ subtest 'aliased type' => sub {
 my @list = qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double opaque string );
 
 subtest 'ffi basic types' => sub {
-  plan tests => scalar @list;
+  plan tests => 3 + scalar @list;
 
-  foreach my $name (@list)
+  foreach my $name (@list, 'longdouble', 'complex_float', 'complex_double')
   {
     subtest $name => sub {
+      
+      if($name =~ /^(longdouble|complex_(float|double))$/)
+      {
+        plan skip_all => "$name not supported"
+          unless FFI::Platypus::_have_type($name);
+      }
+      
       plan tests => 3;
+
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
       is $@, '', "ffi.type($name)";
@@ -52,7 +60,7 @@ subtest 'ffi basic types' => sub {
       cmp_ok $meta->{size}, '>', 0, "size = " . $meta->{size};
     };
   }
-
+  
 };
 
 subtest 'ffi pointer types' => sub {

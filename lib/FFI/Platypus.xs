@@ -47,6 +47,13 @@ BOOT:
     PERL_MATH_INT64_LOAD_OR_CROAK;
 #endif
 
+int
+_have_type(name)
+    const char *name
+  CODE:
+    RETVAL = ffi_pl_name_to_type(name) != NULL;
+
+
 INCLUDE: ../../xs/dl.xs
 INCLUDE: ../../xs/Type.xs
 INCLUDE: ../../xs/Function.xs

@@ -30,6 +30,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_COMPLEX_H
+#include <complex.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,7 +63,8 @@ typedef enum _platypus_type {
   FFI_PL_ARRAY,
   FFI_PL_CLOSURE,
   FFI_PL_CUSTOM_PERL,
-  FFI_PL_RECORD
+  FFI_PL_RECORD,
+  FFI_PL_EXOTIC_FLOAT
 } platypus_type;
 
 typedef enum _platypus_string_type {

@@ -29,6 +29,20 @@ ffi_pl_name_to_type(const char *name)
   { return &ffi_type_longdouble; }
   else if(!strcmp(name, "opaque") || !strcmp(name, "pointer"))
   { return &ffi_type_pointer; }
+#ifdef SIZEOF_LONG_DOUBLE
+  else if(!strcmp(name, "longdouble"))
+  { return &ffi_type_longdouble; }
+#endif
+#ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+#ifdef SIZEOF_FLOAT_COMPLEX
+  else if(!strcmp(name, "complex_float"))
+  { return &ffi_type_complex_float; }
+#endif
+#ifdef SIZEOF_DOUBLE_COMPLEX
+  else if(!strcmp(name, "complex_double"))
+  { return &ffi_type_complex_double; }
+#endif
+#endif
   else
   { return NULL; }
 }
