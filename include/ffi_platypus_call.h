@@ -516,6 +516,7 @@
     for(i=self->ffi_cif.nargs-1; i >= 0; i--)
     {
       platypus_type platypus_type;
+      platypus_type = self->argument_types[i]->platypus_type;
     
       if(platypus_type == FFI_PL_POINTER)
       {
