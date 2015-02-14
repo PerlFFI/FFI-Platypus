@@ -51,7 +51,9 @@ int
 _have_type(name)
     const char *name
   CODE:
-    RETVAL = ffi_pl_name_to_type(name) != NULL;
+    RETVAL = !strcmp(name, "string") || ffi_pl_name_to_type(name) != NULL;
+  OUTPUT:
+    RETVAL
 
 
 INCLUDE: ../../xs/dl.xs
