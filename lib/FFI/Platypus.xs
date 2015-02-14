@@ -29,7 +29,7 @@ XS(ffi_pl_sub_call)
   size_t buffer_size;
   int i,n;
   SV *arg;
-  ffi_pl_argument result;
+  ffi_pl_result result;
   ffi_pl_arguments *arguments;
   
   dVAR; dXSARGS;
@@ -40,12 +40,40 @@ XS(ffi_pl_sub_call)
 #include "ffi_platypus_call.h"
 }
 
+/*
+ * -1 until we have checked
+ *  0 tried, not there
+ *  1 tried, is there
+ */
+int have_math_longdouble = -1;  /* Math::LongDouble */
+int have_math_complex    = -1;  /* Math::Complex    */
+
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 
 BOOT:
 #ifndef HAVE_IV_IS_64
     PERL_MATH_INT64_LOAD_OR_CROAK;
 #endif
+
+int
+_have_math_longdouble(value = -2)
+    int value
+  CODE:
+    if(value != -2)
+      have_math_longdouble = value;
+    RETVAL = have_math_longdouble;
+  OUTPUT:
+    RETVAL
+
+int
+_have_math_complex(value = -2)
+    int value
+  CODE:
+    if(value != -2)
+      have_math_complex = value;
+    RETVAL = have_math_complex;
+  OUTPUT:
+    RETVAL
 
 int
 _have_type(name)

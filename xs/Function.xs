@@ -37,7 +37,9 @@ new(class, platypus, address, return_type, ...)
     self->address = address;
     self->return_type = return_type;
     
-    if(return_type->platypus_type == FFI_PL_NATIVE || return_type->platypus_type == FFI_PL_CUSTOM_PERL)
+    if(return_type->platypus_type == FFI_PL_NATIVE 
+    || return_type->platypus_type == FFI_PL_CUSTOM_PERL
+    || return_type->platypus_type == FFI_PL_EXOTIC_FLOAT)
     {
       ffi_return_type = return_type->ffi_type;
     }
@@ -50,7 +52,9 @@ new(class, platypus, address, return_type, ...)
     {
       arg = ST(i+4);
       self->argument_types[n] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
-      if(self->argument_types[n]->platypus_type == FFI_PL_NATIVE || self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL)
+      if(self->argument_types[n]->platypus_type == FFI_PL_NATIVE
+      || self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL
+      || self->argument_types[n]->platypus_type == FFI_PL_EXOTIC_FLOAT)
       {
         ffi_argument_types[n] = self->argument_types[n]->ffi_type;
       }
@@ -103,7 +107,7 @@ call(self, ...)
     size_t buffer_size;
     int i, n;
     SV *arg;
-    ffi_pl_argument result;
+    ffi_pl_result result;
     ffi_pl_arguments *arguments;
   CODE:
 #define EXTRA_ARGS 1

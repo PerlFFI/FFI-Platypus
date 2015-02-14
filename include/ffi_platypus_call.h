@@ -16,7 +16,7 @@
     for(i=0; i < self->ffi_cif.nargs; i++)
     {
       int platypus_type = self->argument_types[i]->platypus_type;
-      ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
+      arguments->slot[arguments->count+i].pointer = &arguments->slot[i];
 
       arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
       if(platypus_type == FFI_PL_NATIVE)
@@ -409,7 +409,7 @@
         for(n=0; n < self->argument_types[i]->extra[0].custom_perl.argument_count; n++)
         {
           i++;
-          ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
+          arguments->slot[arguments->count+i].pointer = &arguments->slot[i];
         }
       }
       else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
@@ -421,18 +421,22 @@
             {
               long double *ptr;
               Newx_or_alloca(ptr, long double);
-              ((void**)&arguments->slot[arguments->count])[i] = (void*)ptr;
+              arguments->slot[arguments->count+i].pointer = ptr;
+              arguments->slot[i].uint64 = 0;
               if(sv_isobject(arg) && sv_derived_from(arg, "Math::LongDouble"))
               {
                 *ptr = *INT2PTR(long double *, SvIV((SV*) SvRV(arg)));
               }
               else
               {
-                *ptr = SvNV(arg);
+                printf("arg  = %g\n", SvNV(arg));
+                *ptr = (long double) SvNV(arg);
+                printf("*ptr = %Lg\n", *ptr);
               }
             }
             break;
 #endif
+#if 0
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
           case FFI_TYPE_COMPLEX:
             switch(self->argument_types[i]->ffi_type->size)
@@ -442,7 +446,7 @@
                 {
                   float complex *ptr;
                   Newx_or_alloca(ptr, float complex);
-                  ((void**)&arguments->slot[arguments->count])[i] = (void*)ptr;
+                  arguments->slot[arguments->count+i].pointer = ptr;
                 }
                 break;
 #endif
@@ -451,7 +455,7 @@
                 {
                   double complex *ptr;
                   Newx_or_alloca(ptr, double complex);
-                  ((void**)&arguments->slot[arguments->count])[i] = (void*)ptr;
+                  arguments->slot[arguments->count+i].pointer = ptr;
                 }
                 break;
 #endif
@@ -460,6 +464,7 @@
                 break;
             }
             break;
+#endif
 #endif
           default:
             warn("argument type not supported (%d)", i);
@@ -480,16 +485,23 @@
     fprintf(stderr, "# ===[%p]===\n", self->address);
     for(i=0; i < self->ffi_cif.nargs; i++)
     {
-      fprintf(stderr, "# [%d] <%d:%d> %p %p %016llx \n",
+      fprintf(stderr, "# [%d] <%d:%d> %p %p",
         i,
         self->argument_types[i]->ffi_type->type,
         self->argument_types[i]->platypus_type,
-        ((void**)&arguments->slot[arguments->count])[i],
-        &arguments->slot[i],
-        ffi_pl_arguments_get_uint64(arguments, i)
-        /* ffi_pl_arguments_get_float(arguments, i), *
-         * ffi_pl_arguments_get_double(arguments, i) */
+        arguments->slot[arguments->count+i].pointer,
+        &arguments->slot[i]
       );
+      if(self->argument_types[i]->ffi_type->type == FFI_TYPE_LONGDOUBLE
+      && self->argument_types[i]->platypus_type  == FFI_PL_EXOTIC_FLOAT)
+      {
+        fprintf(stderr, " %Lg", *((long double*)arguments->slot[arguments->count+i].pointer));
+      }
+      else
+      {
+        fprintf(stderr, "%016llx", ffi_pl_arguments_get_uint64(arguments, i));
+      }
+      fprintf(stderr, "\n");
     }
     fprintf(stderr, "# === ===\n");
     fflush(stderr);
@@ -700,7 +712,7 @@
 #ifndef HAVE_ALLOCA
       else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
       {
-        void *ptr = ((void**)&arguments->slot[arguments->count])[i];
+        void *ptr = arguments->slot[arguments->count+i].pointer;
         Safefree(ptr);
       }
 #endif
@@ -1086,6 +1098,32 @@
         XSRETURN(1);
       }
 
+    }
+    else if(self->return_type->platypus_type == FFI_PL_EXOTIC_FLOAT)
+    {
+      switch(self->return_type->ffi_type->type)
+      {
+#ifdef SIZEOF_LONG_DOUBLE
+        case FFI_TYPE_LONGDOUBLE:
+        {
+          if(have_math_longdouble)
+          {
+            SV *sv;
+            long double *ptr;
+            Newx(ptr, 1, long double);
+            *ptr = result.longdouble;
+            sv = sv_newmortal();
+            sv_setref_pv(sv, "Math::LongDouble", (void*)ptr);
+            ST(0) = sv;
+            XSRETURN(1);
+          }
+          else
+          {
+            XSRETURN_NV((double) result.longdouble);
+          }
+        }
+#endif
+      }
     }
 
     warn("return type not supported");

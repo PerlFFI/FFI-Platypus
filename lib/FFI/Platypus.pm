@@ -961,6 +961,13 @@ sub DESTROY
   delete $self->{handles};
 }
 
+sub _have_pm
+{
+  my($class) = @_;
+  my $ok = eval qq{ use $class; 1 };
+  $ok ? $ok : 0;
+}
+
 package FFI::Platypus::Function;
 
 # VERSION

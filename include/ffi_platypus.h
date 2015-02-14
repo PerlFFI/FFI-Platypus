@@ -134,6 +134,32 @@ typedef struct _ffi_pl_closure {
 
 typedef const char *ffi_pl_string;
 
+typedef union _ffi_pl_result {
+  void       *pointer;
+  const char *string;
+  int8_t     sint8;
+  uint8_t    uint8;
+  int16_t    sint16;
+  uint16_t   uint16;
+  int32_t    sint32;
+  uint32_t   uint32;
+  int64_t    sint64;
+  uint64_t   uint64;
+  float      xfloat;
+  double     xdouble;
+#ifdef SIZEOF_LONG_DOUBLE
+  long double longdouble;
+#endif
+#ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+#ifdef SIZEOF_FLOAT_COMPLEX
+  float complex complex_float;
+#endif
+#ifdef SIZEOF_DOUBLE_COMPLEX
+  double complex complex_double;
+#endif
+#endif
+} ffi_pl_result;
+
 typedef union _ffi_pl_argument {
   void       *pointer;
   const char *string;
@@ -200,5 +226,10 @@ ffi_type *ffi_pl_name_to_type(const char *);
 #ifdef __cplusplus
 }
 #endif
+
+extern int have_pm(const char *pm_name);
+
+extern int have_math_longdouble;  /* Math::LongDouble */
+extern int have_math_complex;  /* Math::Complex    */
 
 #endif
