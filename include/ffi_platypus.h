@@ -177,6 +177,7 @@ typedef union _ffi_pl_argument {
 
 typedef struct _ffi_pl_arguments {
   int count;
+  int reserved;
   ffi_pl_argument slot[0];
 } ffi_pl_arguments;
 

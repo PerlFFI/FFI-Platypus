@@ -31,6 +31,7 @@ XS(ffi_pl_sub_call)
   SV *arg;
   ffi_pl_result result;
   ffi_pl_arguments *arguments;
+  void **argument_pointers;
   
   dVAR; dXSARGS;
   

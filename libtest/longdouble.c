@@ -5,8 +5,6 @@
 EXTERN long double
 longdouble_add(long double a, long double b)
 {
-  printf("a = %Lf\n", a);
-  printf("b = %Lf\n", b);
   return a + b;
 }
 

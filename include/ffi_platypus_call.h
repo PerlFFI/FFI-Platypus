@@ -1,5 +1,7 @@
     /* buffer contains the memory required for the arguments structure */
-    buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs * 2 + sizeof(ffi_pl_arguments);
+    buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs +
+                  sizeof(void*) * self->ffi_cif.nargs +
+                  sizeof(ffi_pl_arguments);
 #ifdef HAVE_ALLOCA
     buffer = alloca(buffer_size);
 #else
@@ -8,6 +10,7 @@
     current_argv = arguments = (ffi_pl_arguments*) buffer;
 
     arguments->count = self->ffi_cif.nargs;
+    argument_pointers = (void**) &arguments->slot[arguments->count];
 
     /*
      * ARGUMENT IN
@@ -16,7 +19,7 @@
     for(i=0; i < self->ffi_cif.nargs; i++)
     {
       int platypus_type = self->argument_types[i]->platypus_type;
-      arguments->slot[arguments->count+i].pointer = &arguments->slot[i];
+      argument_pointers[i] = (void*) &arguments->slot[i];
 
       arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
       if(platypus_type == FFI_PL_NATIVE)
@@ -409,7 +412,7 @@
         for(n=0; n < self->argument_types[i]->extra[0].custom_perl.argument_count; n++)
         {
           i++;
-          arguments->slot[arguments->count+i].pointer = &arguments->slot[i];
+          argument_pointers[i] = &arguments->slot[i];
         }
       }
       else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
@@ -421,8 +424,7 @@
             {
               long double *ptr;
               Newx_or_alloca(ptr, long double);
-              arguments->slot[arguments->count+i].pointer = ptr;
-              arguments->slot[i].uint64 = 0;
+              argument_pointers[i] = ptr;
               if(sv_isobject(arg) && sv_derived_from(arg, "Math::LongDouble"))
               {
                 *ptr = *INT2PTR(long double *, SvIV((SV*) SvRV(arg)));
@@ -446,7 +448,7 @@
                 {
                   float complex *ptr;
                   Newx_or_alloca(ptr, float complex);
-                  arguments->slot[arguments->count+i].pointer = ptr;
+                  argument_pointers[i] = ptr;
                 }
                 break;
 #endif
@@ -455,7 +457,7 @@
                 {
                   double complex *ptr;
                   Newx_or_alloca(ptr, double complex);
-                  arguments->slot[arguments->count+i].pointer = ptr;
+                  argument_pointers[i] = ptr;
                 }
                 break;
 #endif
@@ -489,13 +491,13 @@
         i,
         self->argument_types[i]->ffi_type->type,
         self->argument_types[i]->platypus_type,
-        arguments->slot[arguments->count+i].pointer,
+        argument_pointers[i],
         &arguments->slot[i]
       );
       if(self->argument_types[i]->ffi_type->type == FFI_TYPE_LONGDOUBLE
       && self->argument_types[i]->platypus_type  == FFI_PL_EXOTIC_FLOAT)
       {
-        fprintf(stderr, " %Lg", *((long double*)arguments->slot[arguments->count+i].pointer));
+        fprintf(stderr, " %Lg", *((long double*)argument_pointers[i]));
       }
       else
       {
@@ -712,7 +714,7 @@
 #ifndef HAVE_ALLOCA
       else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
       {
-        void *ptr = arguments->slot[arguments->count+i].pointer;
+        void *ptr = argument_pointers[i];
         Safefree(ptr);
       }
 #endif
