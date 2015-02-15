@@ -217,9 +217,9 @@ typedef struct _ffi_pl_record_member {
 #define ffi_pl_arguments_pointers(arguments) ((void**)&arguments->slot[arguments->count])
 
 #ifdef HAVE_ALLOCA
-#define Newx_or_alloca(ptr, type) ptr = alloca(sizeof(type))
+#define Newx_or_alloca(ptr, count, type) ptr = alloca(sizeof(type)*count)
 #else
-#define Newx_or_alloca(ptr, type) Newx(ptr, 1, type)
+#define Newx_or_alloca(ptr, count, type) Newx(ptr, count, type)
 #endif
 
 ffi_type *ffi_pl_name_to_type(const char *);

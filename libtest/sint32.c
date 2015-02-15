@@ -4,7 +4,6 @@
  * all instances of "int8" have been changed to "int32"
  */
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN int32_t
 sint32_add(int32_t a, int32_t b)

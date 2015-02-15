@@ -1,5 +1,4 @@
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN int
 string_matches_foobarbaz(const char *value)

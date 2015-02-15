@@ -3,11 +3,14 @@ use warnings;
 use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
+
+BEGIN {
+  plan skip_all => 'test requires support for long double'
+    unless FFI::Platypus::_have_type('longdouble');
+}
+
 use FFI::Platypus::Declare
   'longdouble';
-
-plan skip_all => 'test requires support for long double'
-  unless FFI::Platypus::_have_type('longdouble');
 
 plan tests => 2;
 

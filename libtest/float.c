@@ -1,5 +1,4 @@
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN float
 float_add(float a, float b)

@@ -4,7 +4,6 @@
  * all instances of "int8" have been changed to "int16"
  */
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN uint16_t
 uint16_add(uint16_t a, uint16_t b)

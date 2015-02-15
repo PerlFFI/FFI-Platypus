@@ -4,7 +4,6 @@
  * all instances of "float" have been changed to "double"
  */
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN double
 double_add(double a, double b)

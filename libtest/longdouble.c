@@ -1,5 +1,4 @@
 #include "libtest.h"
-#include "ffi_platypus.h"
 #ifdef SIZEOF_LONG_DOUBLE
 
 EXTERN long double

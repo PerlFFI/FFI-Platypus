@@ -104,31 +104,31 @@
           switch(self->argument_types[i]->ffi_type->type)
           {
             case FFI_TYPE_UINT8:
-              Newx_or_alloca(ptr, uint8_t);
+              Newx_or_alloca(ptr, 1, uint8_t);
               *((uint8_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
               break;
             case FFI_TYPE_SINT8:
-              Newx_or_alloca(ptr, int8_t);
+              Newx_or_alloca(ptr, 1, int8_t);
               *((int8_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
               break;
             case FFI_TYPE_UINT16:
-              Newx_or_alloca(ptr, uint16_t);
+              Newx_or_alloca(ptr, 1, uint16_t);
               *((uint16_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
               break;
             case FFI_TYPE_SINT16:
-              Newx_or_alloca(ptr, int16_t);
+              Newx_or_alloca(ptr, 1, int16_t);
               *((int16_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
               break;
             case FFI_TYPE_UINT32:
-              Newx_or_alloca(ptr, uint32_t);
+              Newx_or_alloca(ptr, 1, uint32_t);
               *((uint32_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
               break;
             case FFI_TYPE_SINT32:
-              Newx_or_alloca(ptr, int32_t);
+              Newx_or_alloca(ptr, 1, int32_t);
               *((int32_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
               break;
             case FFI_TYPE_UINT64:
-              Newx_or_alloca(ptr, uint64_t);
+              Newx_or_alloca(ptr, 1, uint64_t);
 #ifdef HAVE_IV_IS_64
               *((uint64_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
 #else
@@ -136,7 +136,7 @@
 #endif
               break;
             case FFI_TYPE_SINT64:
-              Newx_or_alloca(ptr, int64_t);
+              Newx_or_alloca(ptr, 1, int64_t);
 #ifdef HAVE_IV_IS_64
               *((int64_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
 #else
@@ -144,15 +144,15 @@
 #endif
               break;
             case FFI_TYPE_FLOAT:
-              Newx_or_alloca(ptr, float);
+              Newx_or_alloca(ptr, 1, float);
               *((float*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
               break;
             case FFI_TYPE_DOUBLE:
-              Newx_or_alloca(ptr, double);
+              Newx_or_alloca(ptr, 1, double);
               *((double*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
               break;
             case FFI_TYPE_POINTER:
-              Newx_or_alloca(ptr, void*);
+              Newx_or_alloca(ptr, 1, void*);
               {
                 SV *tmp = SvRV(arg);
                 *((void**)ptr) = SvOK(tmp) ? INT2PTR(void *, SvIV(tmp)) : NULL;
@@ -423,7 +423,7 @@
           case FFI_TYPE_LONGDOUBLE:
             {
               long double *ptr;
-              Newx_or_alloca(ptr, long double);
+              Newx_or_alloca(ptr, 1, long double);
               argument_pointers[i] = ptr;
               if(sv_isobject(arg) && sv_derived_from(arg, "Math::LongDouble"))
               {
@@ -436,7 +436,6 @@
             }
             break;
 #endif
-#if 0
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
           case FFI_TYPE_COMPLEX:
             switch(self->argument_types[i]->ffi_type->size)
@@ -445,17 +444,60 @@
               case  8:
                 {
                   float complex *ptr;
-                  Newx_or_alloca(ptr, float complex);
+                  Newx_or_alloca(ptr, 1, float complex);
                   argument_pointers[i] = ptr;
+                  if(sv_isobject(arg) && sv_derived_from(arg, "Math::Complex"))
+                  {
+                    /* FIXME */
+                  }
+                  else if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+                  {
+                    AV *av = (AV*) SvRV(arg);
+                    SV **real_sv, **imag_sv;
+                    float real, imag;
+                    real_sv = av_fetch(av, 0, 0);
+                    imag_sv = av_fetch(av, 1, 0);
+                    real = real_sv != NULL ? SvNV(*real_sv) : 0.0;
+                    imag = imag_sv != NULL ? SvNV(*imag_sv) : 0.0;
+                    *ptr = real + imag*I;
+                  }
+                  else
+                  {
+                    *ptr = SvNV(arg);
+                  }
                 }
                 break;
 #endif
 #if SIZEOF_DOUBLE_COMPLEX
               case 16:
                 {
-                  double complex *ptr;
-                  Newx_or_alloca(ptr, double complex);
+                  double *ptr;
+                  Newx_or_alloca(ptr, 2, double);
                   argument_pointers[i] = ptr;
+                  if(sv_isobject(arg) && sv_derived_from(arg, "Math::Complex"))
+                  {
+                    /* FIXME */
+                  }
+                  else if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+                  {
+                    AV *av = (AV*) SvRV(arg);
+                    SV **real_sv, **imag_sv;
+                    double real, imag;
+                    real_sv = av_fetch(av, 0, 0);
+                    imag_sv = av_fetch(av, 1, 0);
+                    real = real_sv != NULL ? SvNV(*real_sv) : 0.0;
+                    imag = imag_sv != NULL ? SvNV(*imag_sv) : 0.0;
+                    ptr[0] = real;
+                    ptr[1] = imag;
+                  }
+                  else
+                  {
+                    *ptr = SvNV(arg);
+                    ptr[0] = SvNV(arg);
+                    ptr[1] = 0.0;
+                  }
+                  fprintf(stderr, "creal = %g\n", creal(*ptr));
+                  fprintf(stderr, "cimag = %g\n", cimag(*ptr));
                 }
                 break;
 #endif
@@ -464,7 +506,6 @@
                 break;
             }
             break;
-#endif
 #endif
           default:
             warn("argument type not supported (%d)", i);
@@ -492,10 +533,30 @@
         argument_pointers[i],
         &arguments->slot[i]
       );
-      if(self->argument_types[i]->ffi_type->type == FFI_TYPE_LONGDOUBLE
-      && self->argument_types[i]->platypus_type  == FFI_PL_EXOTIC_FLOAT)
+      if(self->argument_types[i]->platypus_type  == FFI_PL_EXOTIC_FLOAT)
       {
-        fprintf(stderr, " %Lg", *((long double*)argument_pointers[i]));
+        switch(self->argument_types[i]->ffi_type->type)
+        {
+          case FFI_TYPE_LONGDOUBLE:
+            fprintf(stderr, " %Lg", *((long double*)argument_pointers[i]));
+            break;
+          case FFI_TYPE_COMPLEX:
+            switch(self->argument_types[i]->ffi_type->size)
+            {
+              case 8:
+                fprintf(stderr, " %g + %g * i",
+                  crealf(*((float complex*)argument_pointers[i])),
+                  cimagf(*((float complex*)argument_pointers[i]))
+                );
+                break;
+              case 16:
+                fprintf(stderr, " %g + %g * i",
+                  creal(*((double complex*)argument_pointers[i])),
+                  cimag(*((double complex*)argument_pointers[i]))
+                );
+                break;
+            }
+        }
       }
       else
       {

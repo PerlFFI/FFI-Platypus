@@ -1,5 +1,4 @@
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN int8_t
 sint8_add(int8_t a, int8_t b)

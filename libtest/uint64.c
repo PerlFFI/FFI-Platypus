@@ -4,7 +4,6 @@
  * all instances of "int8" have been changed to "int64"
  */
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN uint64_t
 uint64_add(uint64_t a, uint64_t b)
