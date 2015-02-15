@@ -257,6 +257,10 @@ L<Math::LongDouble> will be used, if you have that module installed.
 Otherwise the return type will be downgraded to whatever your Perl's 
 number value (NV) is.
 
+For now longdouble is not supported as an array, pointer or custom type, 
+but adding support would not be hard, so if this is something that you 
+need, then please open a support ticket.
+
 =back
 
 The C<long double> type may be supported in a future version.
