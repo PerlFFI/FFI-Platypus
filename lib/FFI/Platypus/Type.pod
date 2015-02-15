@@ -242,6 +242,21 @@ Single precision floating point (I<float>)
 
 Double precision floating point (I<double>)
 
+=item longdouble
+
+Floating point that may be larger than C<double> (I<longdouble>).  This 
+type is only available if supported by the C compiler used to build 
+L<FFI::Platypus>.  There may be a performance penalty for using this 
+type, even if your Perl uses long doubles internally for its number 
+value (NV) type, because of the way L<FFI::Platypus> interacts with 
+C<libffi>.
+
+As an argument type either regular number values (NV) or instances of 
+L<Math::LongDouble> are accepted.  When used as a return type, 
+L<Math::LongDouble> will be used, if you have that module installed.  
+Otherwise the return type will be downgraded to whatever your Perl's 
+number value (NV) is.
+
 =back
 
 The C<long double> type may be supported in a future version.

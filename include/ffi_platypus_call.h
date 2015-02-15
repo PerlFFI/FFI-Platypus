@@ -431,9 +431,7 @@
               }
               else
               {
-                printf("arg  = %g\n", SvNV(arg));
                 *ptr = (long double) SvNV(arg);
-                printf("*ptr = %Lg\n", *ptr);
               }
             }
             break;
