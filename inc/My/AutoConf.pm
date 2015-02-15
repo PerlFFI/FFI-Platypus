@@ -214,6 +214,11 @@ sub configure
     }
   }
   
+  unless($Config{byteorder} =~ /^1234/)
+  {
+    $ac->define_var("FFI_PL_BIG_ENDIAN" => 1);
+  }
+  
   $ac->write_config_h( $config_h );
   $mb->config_data( type_map => \%type_map );
   $mb->config_data( align    => \%align    );

@@ -801,16 +801,32 @@
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
+#ifdef FFI_PL_BIG_ENDIAN
+            XSRETURN_UV(result.uint8_array[3]);
+#else
             XSRETURN_UV(result.uint8);
+#endif
             break;
           case FFI_TYPE_SINT8:
+#ifdef FFI_PL_BIG_ENDIAN
+            XSRETURN_IV(result.sint8_array[3]);
+#else
             XSRETURN_IV(result.sint8);
+#endif
             break;
           case FFI_TYPE_UINT16:
+#ifdef FFI_PL_BIG_ENDIAN
+            XSRETURN_UV(result.uint16_array[1]);
+#else
             XSRETURN_UV(result.uint16);
+#endif
             break;
           case FFI_TYPE_SINT16:
+#ifdef FFI_PL_BIG_ENDIAN
+            XSRETURN_IV(result.sint16_array[1]);
+#else
             XSRETURN_IV(result.sint16);
+#endif
             break;
           case FFI_TYPE_UINT32:
             XSRETURN_UV(result.uint32);
