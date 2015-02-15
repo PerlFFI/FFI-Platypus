@@ -162,16 +162,32 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
       switch(extra->return_type->ffi_type->type)
       {
         case FFI_TYPE_UINT8:
+#ifdef FFI_PL_BIG_ENDIAN
+          ((uint8_t*)result)[3] = SvUV(sv);
+#else
           *((uint8_t*)result) = SvUV(sv);
+#endif
           break;
         case FFI_TYPE_SINT8:
+#ifdef FFI_PL_BIG_ENDIAN
+          ((int8_t*)result)[3] = SvIV(sv);
+#else
           *((int8_t*)result) = SvIV(sv);
+#endif
           break;
         case FFI_TYPE_UINT16:
+#ifdef FFI_PL_BIG_ENDIAN
+          ((uint16_t*)result)[1] = SvUV(sv);
+#else
           *((uint16_t*)result) = SvUV(sv);
+#endif
           break;
         case FFI_TYPE_SINT16:
+#ifdef FFI_PL_BIG_ENDIAN
+          ((int16_t*)result)[1] = SvIV(sv);
+#else
           *((int16_t*)result) = SvIV(sv);
+#endif
           break;
         case FFI_TYPE_UINT32:
           *((uint32_t*)result) = SvUV(sv);
