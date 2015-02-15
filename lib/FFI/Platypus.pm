@@ -965,7 +965,8 @@ sub _have_pm
 {
   my($class) = @_;
   my $ok = eval qq{ use $class; 1 };
-  $ok ? $ok : 0;
+  $ok = $ok ? $ok : 0;
+  $ok;
 }
 
 package FFI::Platypus::Function;
