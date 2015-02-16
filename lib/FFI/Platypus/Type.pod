@@ -262,23 +262,33 @@ number value (NV) is.
 Complex single precision floating point (I<float complex>)
 
 =item complex_double
+  
+Complex double precision floating point (I<double complex>)
 
-Complex double precision floating point (I<double complex)
-
-C<complex_float> and C<complex_double> are only available if supported
-by your C compiler and by libffi.  Complex numbers are only supported
-in very recent versions of libffi, and as of this writing the latest
-production version doesn't work on x86_64, though it does appear to be
-working with the latest version in git.
-
-C<complex_float> and C<complex_double> are not (yet!) supported as return
-types.  It would not be hard to implement, but there are peformance
-ramifications depending on how the interface is implemented so I would
-like to discuss it with someone who might actually use this feature.
-If you need it, please open a support ticket on the 
-L<project's github issue traacker|FFI::Platypus#SUPPORT>.
+C<complex_float> and C<complex_double> are only available if supported 
+by your C compiler and by libffi.  Complex numbers are only supported in 
+very recent versions of libffi, and as of this writing the latest 
+production version doesn't work on x86_64.  It does seem to work with 
+the latest production version of libffi on 32 bit Intel (x86), and with 
+the latest libffi version in git on x86_64.
 
 =back
+
+Support for C<complex_float>, C<complex_double> and C<longdouble> are 
+limited at the moment.  Complex types can only be used as simple 
+arguments (not return types, pointers, arrays or record members) and the 
+C<longdouble> can only be used as simple argument or return values (not 
+pointers, arrays or record members).  Adding support for these is not 
+difficult, but time consuming, so if you are in need of these features 
+please do not hesitate to open a support ticket on the project's github 
+issue tracker:
+
+L<https://github.com/plicease/FFI-Platypus/issues>
+
+In particular I am hesitant to implementing complex return types, as 
+there are performance and interface ramifications, and I would 
+appreciate talking to someone who is actually going to use these 
+features.
 
 =head3 opaque pointers
 
