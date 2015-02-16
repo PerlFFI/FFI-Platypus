@@ -425,14 +425,7 @@
               long double *ptr;
               Newx_or_alloca(ptr, 1, long double);
               argument_pointers[i] = ptr;
-              if(sv_isobject(arg) && sv_derived_from(arg, "Math::LongDouble"))
-              {
-                *ptr = *INT2PTR(long double *, SvIV((SV*) SvRV(arg)));
-              }
-              else
-              {
-                *ptr = (long double) SvNV(arg);
-              }
+              ffi_pl_perl_long_double(arg, ptr);
             }
             break;
 #endif
@@ -445,28 +438,7 @@
                   float *ptr;
                   Newx_or_alloca(ptr, 2, float complex);
                   argument_pointers[i] = ptr;
-                  if(sv_isobject(arg) && sv_derived_from(arg, "Math::Complex"))
-                  {
-                    ptr[0] = ffi_pl_perl_complex(arg, 0);
-                    ptr[1] = ffi_pl_perl_complex(arg, 1);
-                  }
-                  else if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
-                  {
-                    AV *av = (AV*) SvRV(arg);
-                    SV **real_sv, **imag_sv;
-                    float real, imag;
-                    real_sv = av_fetch(av, 0, 0);
-                    imag_sv = av_fetch(av, 1, 0);
-                    real = real_sv != NULL ? SvNV(*real_sv) : 0.0;
-                    imag = imag_sv != NULL ? SvNV(*imag_sv) : 0.0;
-                    ptr[0] = real;
-                    ptr[1] = imag;
-                  }
-                  else
-                  {
-                    ptr[0] = SvNV(arg);
-                    ptr[1] = 0.0;
-                  }
+                  ffi_pl_perl_complex_float(arg, ptr);
                 }
                 break;
               case 16:
@@ -474,30 +446,7 @@
                   double *ptr;
                   Newx_or_alloca(ptr, 2, double);
                   argument_pointers[i] = ptr;
-                  if(sv_isobject(arg) && sv_derived_from(arg, "Math::Complex"))
-                  {
-                    double real;
-                    double imag;
-                    ptr[0] = ffi_pl_perl_complex(arg, 0);
-                    ptr[1] = ffi_pl_perl_complex(arg, 1);
-                  }
-                  else if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
-                  {
-                    AV *av = (AV*) SvRV(arg);
-                    SV **real_sv, **imag_sv;
-                    double real, imag;
-                    real_sv = av_fetch(av, 0, 0);
-                    imag_sv = av_fetch(av, 1, 0);
-                    real = real_sv != NULL ? SvNV(*real_sv) : 0.0;
-                    imag = imag_sv != NULL ? SvNV(*imag_sv) : 0.0;
-                    ptr[0] = real;
-                    ptr[1] = imag;
-                  }
-                  else
-                  {
-                    ptr[0] = SvNV(arg);
-                    ptr[1] = 0.0;
-                  }
+                  ffi_pl_perl_complex_double(arg, ptr);
                 }
                 break;
               default :
