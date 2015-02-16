@@ -32,7 +32,7 @@ main(int argc, char *argv[])
   void *values[1];
 
   args[0] = &ffi_type_complex_float;
-  
+
   if(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, &ffi_type_float, args) == FFI_OK)
   {
     float answer;
@@ -47,6 +47,10 @@ main(int argc, char *argv[])
     /* printf("answer = %g\n", answer); */
     if(answer != 2.0)
       return 2;
+  }
+  else
+  {
+    return 2;
   }
 
   args[0] = &ffi_type_complex_double;
@@ -66,6 +70,10 @@ main(int argc, char *argv[])
     if(answer != 2.0)
       return 2;
   }
-  
+  else
+  {
+    return 2;
+  }
+
   return 0;
 }
