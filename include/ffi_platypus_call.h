@@ -1097,16 +1097,32 @@
       switch(self->return_type->ffi_type->type)
       {
         case FFI_TYPE_UINT8:
+#ifdef FFI_PL_BIG_ENDIAN
+          ret_in = newSVuv(result.uint8_array[3]);
+#else
           ret_in = newSVuv(result.uint8);
+#endif
           break;
         case FFI_TYPE_SINT8:
+#ifdef FFI_PL_BIG_ENDIAN
+          ret_in = newSViv(result.sint8_array[3]);
+#else
           ret_in = newSViv(result.sint8);
+#endif
           break;
         case FFI_TYPE_UINT16:
+#ifdef FFI_PL_BIG_ENDIAN
+          ret_in = newSVuv(result.uint16_array[1]);
+#else
           ret_in = newSVuv(result.uint16);
+#endif
           break;
         case FFI_TYPE_SINT16:
+#ifdef FFI_PL_BIG_ENDIAN
+          ret_in = newSViv(result.sint16_array[1]);
+#else
           ret_in = newSViv(result.sint16);
+#endif
           break;
         case FFI_TYPE_UINT32:
           ret_in = newSVuv(result.uint32);
