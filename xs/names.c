@@ -29,7 +29,7 @@ ffi_pl_name_to_type(const char *name)
   { return &ffi_type_longdouble; }
   else if(!strcmp(name, "opaque") || !strcmp(name, "pointer"))
   { return &ffi_type_pointer; }
-#ifdef SIZEOF_LONG_DOUBLE
+#ifdef FFI_PL_PROBE_LONGDOUBLE
   else if(!strcmp(name, "longdouble"))
   { return &ffi_type_longdouble; }
 #endif

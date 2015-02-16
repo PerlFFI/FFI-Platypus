@@ -1,5 +1,5 @@
 #include "libtest.h"
-#ifdef SIZEOF_LONG_DOUBLE
+#ifdef FFI_PL_PROBE_LONGDOUBLE
 
 EXTERN long double
 longdouble_add(long double a, long double b)

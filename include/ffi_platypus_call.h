@@ -419,7 +419,7 @@
       {
         switch(self->argument_types[i]->ffi_type->type)
         {
-#ifdef SIZEOF_LONG_DOUBLE
+#ifdef FFI_PL_PROBE_LONGDOUBLE
           case FFI_TYPE_LONGDOUBLE:
             {
               long double *ptr;
@@ -1144,7 +1144,7 @@
     {
       switch(self->return_type->ffi_type->type)
       {
-#ifdef SIZEOF_LONG_DOUBLE
+#ifdef FFI_PL_PROBE_LONGDOUBLE
         case FFI_TYPE_LONGDOUBLE:
         {
           if(have_math_longdouble)

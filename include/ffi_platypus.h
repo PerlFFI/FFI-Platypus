@@ -152,7 +152,7 @@ typedef union _ffi_pl_result {
   uint64_t   uint64;
   float      xfloat;
   double     xdouble;
-#ifdef SIZEOF_LONG_DOUBLE
+#ifdef FFI_PL_PROBE_LONGDOUBLE
   long double longdouble;
 #endif
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
