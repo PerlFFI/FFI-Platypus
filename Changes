@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.23      2015-02-16 05:44:39 -0500
   - Support for longdouble (in C "long double") type.
   - Support for complex_float (in C "float complex") type
   - Support for complex_double (in C "double complex") type
