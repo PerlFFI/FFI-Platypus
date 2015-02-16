@@ -13,7 +13,7 @@ ffi_pl_perl_complex(SV *sv, int imag)
   dSP;
   
   int count;
-  double complex result = 0.0;
+  double result = 0.0;
 
   ENTER;
   SAVETMPS;

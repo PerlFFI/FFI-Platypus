@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fixed Windows / Strawberry configuration issues
 
 0.23      2015-02-16 05:44:39 -0500
   - Support for longdouble (in C "long double") type.

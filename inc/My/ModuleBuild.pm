@@ -41,6 +41,11 @@ sub new
     $args{extra_linker_flags} .= " -lpsapi";
   }
 
+  if($^O eq 'MSWin32' && $Config{myuname} =~ /strawberry-perl/ && $] >= 5.020)
+  {
+    $args{build_requires}->{'Win32API::File'} = 0;
+  }
+
   my $self = $class->SUPER::new(%args);
 
   if($ENV{FFI_PLATYPUS_DEBUG})
@@ -133,6 +138,7 @@ sub ACTION_ac_clean
 sub ACTION_probe
 {
   my($self) = @_;
+  $self->depends_on('ac');
   My::Probe->probe($self);
 }
 

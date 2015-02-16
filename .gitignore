@@ -22,3 +22,4 @@
 core
 /inc/probe/bigendian
 /inc/probe/complex
+/inc/probe/*.exe
