@@ -32,17 +32,19 @@ sub probe
     my $name = (File::Spec->splitpath($cfile))[2];
     $name =~ s{\.c$}{};
     
-    my $obj = $b->compile(
+    my $obj = eval { $b->compile(
       source               => $cfile,
       include_dirs         => [ 'include' ],
       extra_compiler_flags => Alien::FFI->cflags,
-    );
+    ) };
+    next if $@;
     $mb->add_to_cleanup($obj) if $mb;
     
-    my($exe,@rest) = $b->link_executable(
+    my($exe,@rest) = eval { $b->link_executable(
       objects            => $obj,
       extra_linker_flags => Alien::FFI->libs,
-    );
+    ) };
+    next if $@;
     $mb->add_to_cleanup($exe,@rest) if $mb;
     my @cmd = ($exe, '--test');
     print "@cmd\n";
