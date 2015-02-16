@@ -10,6 +10,7 @@ SV*  ffi_pl_custom_perl(SV*,SV*,int);
 void ffi_pl_custom_perl_cb(SV *, SV*, int);
 HV *ffi_pl_get_type_meta(ffi_pl_type *);
 size_t ffi_pl_sizeof(ffi_pl_type *);
+double ffi_pl_perl_complex(SV*,int);
 
 #ifdef __cplusplus
 }

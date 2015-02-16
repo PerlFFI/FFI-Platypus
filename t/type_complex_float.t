@@ -10,7 +10,7 @@ BEGIN {
 }
 
 use FFI::Platypus::Declare
-  'complex_float', 'float';
+  'complex_float', 'float', 'string';
 
 plan tests => 1;
 
@@ -18,19 +18,32 @@ lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
 attach ['complex_float_get_real' => 'creal'] => [complex_float] => float;
 attach ['complex_float_get_imag' => 'cimag'] => [complex_float] => float;
+attach ['complex_float_to_string' => 'to_string'] => [complex_float] => string;
 
 subtest 'standard argument' => sub {
-  plan tests => 2;
+  plan tests => 3;
 
   subtest 'with a real number' => sub {
     plan tests => 2;
+    note "to_string(10.5) = ", to_string(10.5);
     is creal(10.5), 10.5, "creal(10.5) = 10.5";
     is cimag(10.5), 0.0,  "cimag(10.5) = 0.0";
   };
   
   subtest 'with an array ref' => sub {
     plan tests => 2;
+    note "to_string([10.5,20.5]) = ", to_string([10.5,20.5]);
     is creal([10.5,20.5]), 10.5, "creal([10.5,20.5]) = 10.5";
     is cimag([10.5,20.5]), 20.5, "cimag([10.5,20.5]) = 20.5";
+  };
+
+  subtest 'with Math::Complex' => sub {
+    plan skip_all => 'test requires Math::Complex'
+      unless eval q{ use Math::Complex (); 1 };
+    plan tests => 2;
+    my $c = Math::Complex->make(10.5, 20.5);
+    note "to_string(\$c) = ", to_string($c);
+    is creal($c), 10.5, "creal(\$c) = 10.5";
+    is cimag($c), 20.5, "cimag(\$c) = 20.5";
   };
 };

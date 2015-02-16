@@ -442,12 +442,13 @@
             {
               case  8:
                 {
-                  float complex *ptr;
-                  Newx_or_alloca(ptr, 1, float complex);
+                  float *ptr;
+                  Newx_or_alloca(ptr, 2, float complex);
                   argument_pointers[i] = ptr;
                   if(sv_isobject(arg) && sv_derived_from(arg, "Math::Complex"))
                   {
-                    /* FIXME */
+                    ptr[0] = ffi_pl_perl_complex(arg, 0);
+                    ptr[1] = ffi_pl_perl_complex(arg, 1);
                   }
                   else if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
                   {
@@ -458,11 +459,13 @@
                     imag_sv = av_fetch(av, 1, 0);
                     real = real_sv != NULL ? SvNV(*real_sv) : 0.0;
                     imag = imag_sv != NULL ? SvNV(*imag_sv) : 0.0;
-                    *ptr = real + imag*I;
+                    ptr[0] = real;
+                    ptr[1] = imag;
                   }
                   else
                   {
-                    *ptr = SvNV(arg);
+                    ptr[0] = SvNV(arg);
+                    ptr[1] = 0.0;
                   }
                 }
                 break;
@@ -473,7 +476,10 @@
                   argument_pointers[i] = ptr;
                   if(sv_isobject(arg) && sv_derived_from(arg, "Math::Complex"))
                   {
-                    /* FIXME */
+                    double real;
+                    double imag;
+                    ptr[0] = ffi_pl_perl_complex(arg, 0);
+                    ptr[1] = ffi_pl_perl_complex(arg, 1);
                   }
                   else if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
                   {
@@ -489,7 +495,6 @@
                   }
                   else
                   {
-                    *ptr = SvNV(arg);
                     ptr[0] = SvNV(arg);
                     ptr[1] = 0.0;
                   }
