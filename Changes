@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Support for longdouble (in C "long double") type.
+  - Support for complex_float (in C "float complex") type
+  - Support for complex_double (in C "double complex") type
   - Fixes for Big Endian architectures (tested on Linux PowerPC)
 
 0.22      2015-02-12 07:47:32 -0500

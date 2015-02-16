@@ -20,3 +20,5 @@
 *.tmp
 *.core
 core
+/inc/probe/bigendian
+/inc/probe/complex
