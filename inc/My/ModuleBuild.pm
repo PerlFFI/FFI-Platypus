@@ -6,6 +6,7 @@ use 5.008001;
 use Alien::FFI;
 use My::LibTest;
 use My::AutoConf;
+use My::Probe;
 use ExtUtils::CBuilder;
 use File::Glob qw( bsd_glob );
 use Config;
@@ -129,6 +130,12 @@ sub ACTION_ac_clean
   My::AutoConf->clean($self);
 }
 
+sub ACTION_probe
+{
+  my($self) = @_;
+  My::Probe->probe($self);
+}
+
 sub ACTION_build
 {
   my $self = shift;
@@ -148,6 +155,7 @@ sub ACTION_build
   }
 
   $self->depends_on('ac');
+  $self->depends_on('probe');
   $self->SUPER::ACTION_build(@_);
 }
 
@@ -155,6 +163,7 @@ sub ACTION_libtest
 {
   my($self) = @_;
   $self->depends_on('ac');
+  $self->depends_on('probe');
   My::LibTest->build(shift);
 }
 

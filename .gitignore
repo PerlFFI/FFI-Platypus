@@ -10,6 +10,7 @@
 /config.log
 /lib/FFI/Platypus.c
 /include/ffi_platypus_config.h
+/include/ffi_platypus_probe.h
 /test*.c
 *.o
 *.obj

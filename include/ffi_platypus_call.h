@@ -436,11 +436,10 @@
             }
             break;
 #endif
-#ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+#ifdef FFI_PL_PROBE_COMPLEX
           case FFI_TYPE_COMPLEX:
             switch(self->argument_types[i]->ffi_type->size)
             {
-#if SIZEOF_FLOAT_COMPLEX
               case  8:
                 {
                   float complex *ptr;
@@ -467,8 +466,6 @@
                   }
                 }
                 break;
-#endif
-#if SIZEOF_DOUBLE_COMPLEX
               case 16:
                 {
                   double *ptr;
@@ -496,11 +493,8 @@
                     ptr[0] = SvNV(arg);
                     ptr[1] = 0.0;
                   }
-                  fprintf(stderr, "creal = %g\n", creal(*ptr));
-                  fprintf(stderr, "cimag = %g\n", cimag(*ptr));
                 }
                 break;
-#endif
               default :
                 warn("argument type not supported (%d)", i);
                 break;
@@ -801,28 +795,28 @@
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
-#ifdef FFI_PL_BIG_ENDIAN
+#ifdef FFI_PL_PROBE_BIGENDIAN
             XSRETURN_UV(result.uint8_array[3]);
 #else
             XSRETURN_UV(result.uint8);
 #endif
             break;
           case FFI_TYPE_SINT8:
-#ifdef FFI_PL_BIG_ENDIAN
+#ifdef FFI_PL_PROBE_BIGENDIAN
             XSRETURN_IV(result.sint8_array[3]);
 #else
             XSRETURN_IV(result.sint8);
 #endif
             break;
           case FFI_TYPE_UINT16:
-#ifdef FFI_PL_BIG_ENDIAN
+#ifdef FFI_PL_PROBE_BIGENDIAN
             XSRETURN_UV(result.uint16_array[1]);
 #else
             XSRETURN_UV(result.uint16);
 #endif
             break;
           case FFI_TYPE_SINT16:
-#ifdef FFI_PL_BIG_ENDIAN
+#ifdef FFI_PL_PROBE_BIGENDIAN
             XSRETURN_IV(result.sint16_array[1]);
 #else
             XSRETURN_IV(result.sint16);
@@ -1097,28 +1091,28 @@
       switch(self->return_type->ffi_type->type)
       {
         case FFI_TYPE_UINT8:
-#ifdef FFI_PL_BIG_ENDIAN
+#ifdef FFI_PL_PROBE_BIGENDIAN
           ret_in = newSVuv(result.uint8_array[3]);
 #else
           ret_in = newSVuv(result.uint8);
 #endif
           break;
         case FFI_TYPE_SINT8:
-#ifdef FFI_PL_BIG_ENDIAN
+#ifdef FFI_PL_PROBE_BIGENDIAN
           ret_in = newSViv(result.sint8_array[3]);
 #else
           ret_in = newSViv(result.sint8);
 #endif
           break;
         case FFI_TYPE_UINT16:
-#ifdef FFI_PL_BIG_ENDIAN
+#ifdef FFI_PL_PROBE_BIGENDIAN
           ret_in = newSVuv(result.uint16_array[1]);
 #else
           ret_in = newSVuv(result.uint16);
 #endif
           break;
         case FFI_TYPE_SINT16:
-#ifdef FFI_PL_BIG_ENDIAN
+#ifdef FFI_PL_PROBE_BIGENDIAN
           ret_in = newSViv(result.sint16_array[1]);
 #else
           ret_in = newSViv(result.sint16);
