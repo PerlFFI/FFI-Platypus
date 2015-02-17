@@ -70,6 +70,13 @@ subtest 'ffi pointer types' => sub {
   {
     subtest $name => sub {
       plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE POINTER' if $name eq 'string *';
+
+      if($name =~ /^(longdouble|complex_(float|double))$/)
+      {
+        plan skip_all => "$name not supported"
+          unless FFI::Platypus::_have_type($name);
+      }
+
       plan tests => 3;
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
@@ -94,6 +101,13 @@ subtest 'ffi array types' => sub {
   
     subtest $name => sub {
       plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE ARRAY' if $name =~ /^string \[[0-9]+\]$/; # TODO: actually this should be doable
+
+      if($name =~ /^(longdouble|complex_(float|double))$/)
+      {
+        plan skip_all => "$name not supported"
+          unless FFI::Platypus::_have_type($name);
+      }
+
       plan tests => 4;
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
