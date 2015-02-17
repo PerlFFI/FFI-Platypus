@@ -158,6 +158,12 @@
                 *((void**)ptr) = SvOK(tmp) ? INT2PTR(void *, SvIV(tmp)) : NULL;
               }
               break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+            case FFI_TYPE_LONGDOUBLE:
+              Newx_or_alloca(ptr, 1, long double);
+              ffi_pl_perl_to_long_double(arg2, (long double*)ptr);
+              break;
+#endif
             default:
               warn("argument type not supported (%d)", i);
               *((void**)ptr) = NULL;
@@ -425,7 +431,7 @@
               long double *ptr;
               Newx_or_alloca(ptr, 1, long double);
               argument_pointers[i] = ptr;
-              ffi_pl_perl_long_double(arg, ptr);
+              ffi_pl_perl_to_long_double(arg, ptr);
             }
             break;
 #endif
@@ -593,6 +599,14 @@
               case FFI_TYPE_DOUBLE:
                 sv_setnv(SvRV(arg), *((double*)ptr));
                 break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+              case FFI_TYPE_LONGDOUBLE:
+                {
+                  SV *arg2 = SvRV(arg);
+                  ffi_pl_long_double_to_perl(arg2,(long double*)ptr);
+                }
+                break;
+#endif
             }
           }
         }
@@ -903,6 +917,12 @@
             else
               sv_setiv(value, PTR2IV(*((void**)result.pointer)));
             break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+          case FFI_TYPE_LONGDOUBLE:
+            value = sv_newmortal();
+            ffi_pl_long_double_to_perl(value, (long double*)result.pointer);
+            break;
+#endif
           default:
             warn("return type not supported");
             XSRETURN_EMPTY;

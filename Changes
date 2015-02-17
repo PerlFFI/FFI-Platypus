@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added support for pointers to longdouble (in C "long double *") type
 
 0.25      2015-02-16 20:18:41 -0500
   - Probe for proper long double support instead of trusting ffi.h

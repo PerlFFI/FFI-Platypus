@@ -6,8 +6,8 @@
 #include "ffi_platypus.h"
 #include "ffi_platypus_guts.h"
 
-double
-ffi_pl_perl_complex(SV *sv, int imag)
+static double
+decompose(SV *sv, int imag)
 {
   /* Re(z) */
   dSP;
@@ -40,8 +40,8 @@ ffi_pl_perl_complex_float(SV *sv, float *ptr)
 {
   if(sv_isobject(sv) && sv_derived_from(sv, "Math::Complex"))
   {
-    ptr[0] = ffi_pl_perl_complex(sv, 0);
-    ptr[1] = ffi_pl_perl_complex(sv, 1);
+    ptr[0] = decompose(sv, 0);
+    ptr[1] = decompose(sv, 1);
   }
   else if(SvROK(sv) && SvTYPE(SvRV(sv)) == SVt_PVAV)
   {
@@ -64,8 +64,8 @@ ffi_pl_perl_complex_double(SV *sv, double *ptr)
 {
   if(sv_isobject(sv) && sv_derived_from(sv, "Math::Complex"))
   {
-    ptr[0] = ffi_pl_perl_complex(sv, 0);
-    ptr[1] = ffi_pl_perl_complex(sv, 1);
+    ptr[0] = decompose(sv, 0);
+    ptr[1] = decompose(sv, 1);
   }
   else if(SvROK(sv) && SvTYPE(SvRV(sv)) == SVt_PVAV)
   {
