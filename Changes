@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.25      2015-02-16 20:18:41 -0500
   - Probe for proper long double support instead of trusting ffi.h
   - This disables long double support on cygwin, which does not seem to
     work, at least in so far as it seems to work on other platforms
