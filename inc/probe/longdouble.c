@@ -12,8 +12,8 @@ int
 main(int argc, char *argv[])
 {
   ffi_cif cif;
-  ffi_type *args[1];
-  void *values[1];
+  ffi_type *args[2];
+  void *values[2];
 
   args[0] = &ffi_type_longdouble;
   args[1] = &ffi_type_longdouble;

@@ -27,6 +27,8 @@ pointer
 foreach my $name (@names)
 {
   subtest $name => sub {
+    plan skip_all => 'test requires longdouble support'
+      unless FFI::Platypus::_have_type($name);
     plan tests => 3;
     my $type = eval { FFI::Platypus::Type->new($name) };
     is $@, '', "type = FFI::Platypus::Type->new($name)";
