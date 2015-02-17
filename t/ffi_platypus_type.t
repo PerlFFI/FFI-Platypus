@@ -34,7 +34,7 @@ subtest 'aliased type' => sub {
   ok scalar(grep { $_ eq 'my_integer_8' } $ffi->types), 'ffi.types returns my_integer_8';
 };
 
-my @list = qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double opaque string longdouble complex_float complex_double );
+my @list = grep { FFI::Platypus::_have_type($_) } qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double opaque string longdouble complex_float complex_double );
 
 subtest 'ffi basic types' => sub {
   plan tests => scalar @list;
@@ -42,15 +42,7 @@ subtest 'ffi basic types' => sub {
   foreach my $name (@list)
   {
     subtest $name => sub {
-      
-      if($name =~ /^(longdouble|complex_(float|double))$/)
-      {
-        plan skip_all => "$name not supported"
-          unless FFI::Platypus::_have_type($name);
-      }
-      
       plan tests => 3;
-
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
       is $@, '', "ffi.type($name)";
@@ -70,13 +62,6 @@ subtest 'ffi pointer types' => sub {
   {
     subtest $name => sub {
       plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE POINTER' if $name eq 'string *';
-
-      if($name =~ /^(longdouble|complex_(float|double))$/)
-      {
-        plan skip_all => "$name not supported"
-          unless FFI::Platypus::_have_type($name);
-      }
-
       plan tests => 3;
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
@@ -101,13 +86,6 @@ subtest 'ffi array types' => sub {
   
     subtest $name => sub {
       plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE ARRAY' if $name =~ /^string \[[0-9]+\]$/; # TODO: actually this should be doable
-
-      if($name =~ /^(longdouble|complex_(float|double))$/)
-      {
-        plan skip_all => "$name not supported"
-          unless FFI::Platypus::_have_type($name);
-      }
-
       plan tests => 4;
       my $ffi = FFI::Platypus->new;
       eval { $ffi->type($name) };
