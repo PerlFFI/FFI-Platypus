@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Added support for pointers to longdouble (in C "long double *") type
+  - Added tied array interface for record array members (see FFI::Platypus::Record::TieArray)
   - Array members of records can now be accessed (set/get) by element
   - Array members of records types are now documented (see FFI::Platypus::Record)
 

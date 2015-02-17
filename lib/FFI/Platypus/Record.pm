@@ -331,6 +331,10 @@ These useful features (and probably more) are missing:
 
 The main platypus documentation.
 
+=item L<FFI::Platypus::Record::TieArray>
+
+Tied array interface for record array members.
+
 =item L<Convert::Binary::C>
 
 Another method for constructing and dissecting structured data records.
