@@ -25,8 +25,6 @@ ffi_pl_name_to_type(const char *name)
   { return &ffi_type_float; }
   else if(!strcmp(name, "double"))
   { return &ffi_type_double; }
-  else if(!strcmp(name, "longdouble"))
-  { return &ffi_type_longdouble; }
   else if(!strcmp(name, "opaque") || !strcmp(name, "pointer"))
   { return &ffi_type_pointer; }
 #ifdef FFI_PL_PROBE_LONGDOUBLE
