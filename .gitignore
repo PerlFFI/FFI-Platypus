@@ -22,4 +22,5 @@
 core
 /inc/probe/bigendian
 /inc/probe/complex
+/inc/probe/longdouble
 /inc/probe/*.exe

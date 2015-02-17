@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Probe for proper long double support instead of trusting ffi.h
+  - This disables long double support on cygwin, which does not seem to
+    work, at least in so far as it seems to work on other platforms
+    patches to prove otherwise are welcome.
 
 0.24      2015-02-16 15:38:58 -0500
   - Fixed Windows / Strawberry configuration issues
