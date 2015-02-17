@@ -130,6 +130,8 @@ use C<:> as a place holder for its name:
    'string(10)' => 'baz',
  );
 
+=head3 strings
+
 So far I've shown fixed length strings.  These are declared with the 
 word C<string> followed by the length of the string in parentheticals.  
 Fixed length strings are included inside the record itself and do not 
@@ -177,6 +179,24 @@ be free'd twice!
  use Clone qw( clone );
  
  my $foo2 = clone $foo;  # BAD  bar will be free'd twice
+
+=head3 arrays
+
+Arrays of integer, floating points and opaque pointers are supported.
+
+ package Foo;
+ 
+ record_layout(
+   'int[10]' => 'bar',
+ );
+ 
+ my $foo = Foo->new;
+ 
+ $foo->bar([1,2,3,4,5,6,7,8,9,10]); # sets the values for the array
+ my $list = $foo->bar;  # returns a list reference
+ 
+ $foo->bar(5, -6); # sets the 5th element in the array to -6
+ my $item = $foo->bar(5); gets the 5th element in the array
 
 =cut
 

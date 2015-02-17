@@ -70,7 +70,13 @@ XS(ffi_pl_record_accessor_uint8_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (uint8_t*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvUV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -91,11 +97,8 @@ XS(ffi_pl_record_accessor_uint8_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_UV(ptr2[i]);
     }
   }
 
@@ -170,7 +173,13 @@ XS(ffi_pl_record_accessor_sint8_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (int8_t*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvIV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -191,11 +200,8 @@ XS(ffi_pl_record_accessor_sint8_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_IV(ptr2[i]);
     }
   }
 
@@ -270,7 +276,13 @@ XS(ffi_pl_record_accessor_uint16_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (uint16_t*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvUV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -291,11 +303,8 @@ XS(ffi_pl_record_accessor_uint16_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_UV(ptr2[i]);
     }
   }
 
@@ -370,7 +379,13 @@ XS(ffi_pl_record_accessor_sint16_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (int16_t*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvIV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -391,11 +406,8 @@ XS(ffi_pl_record_accessor_sint16_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_IV(ptr2[i]);
     }
   }
 
@@ -470,7 +482,13 @@ XS(ffi_pl_record_accessor_uint32_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (uint32_t*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvUV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -491,11 +509,8 @@ XS(ffi_pl_record_accessor_uint32_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_UV(ptr2[i]);
     }
   }
 
@@ -570,7 +585,13 @@ XS(ffi_pl_record_accessor_sint32_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (int32_t*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvIV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -591,11 +612,8 @@ XS(ffi_pl_record_accessor_sint32_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_IV(ptr2[i]);
     }
   }
 
@@ -670,7 +688,13 @@ XS(ffi_pl_record_accessor_uint64_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (uint64_t*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvUV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -691,11 +715,8 @@ XS(ffi_pl_record_accessor_uint64_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_UV(ptr2[i]);
     }
   }
 
@@ -770,7 +791,13 @@ XS(ffi_pl_record_accessor_sint64_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (int64_t*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvIV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -791,11 +818,8 @@ XS(ffi_pl_record_accessor_sint64_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_IV(ptr2[i]);
     }
   }
 
@@ -870,7 +894,13 @@ XS(ffi_pl_record_accessor_float_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (float*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvNV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -891,11 +921,8 @@ XS(ffi_pl_record_accessor_float_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_NV(ptr2[i]);
     }
   }
 
@@ -970,7 +997,13 @@ XS(ffi_pl_record_accessor_double_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (double*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = SvNV(arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -991,11 +1024,8 @@ XS(ffi_pl_record_accessor_double_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_NV(ptr2[i]);
     }
   }
 

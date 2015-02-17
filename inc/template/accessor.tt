@@ -57,7 +57,13 @@ XS(ffi_pl_record_accessor_[% ffi_type %]_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = ([% c_type %]*) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i       = SvIV(ST(1));
+    arg     = ST(2);
+    ptr2[i] = Sv[% perl_type %](arg);
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -78,11 +84,8 @@ XS(ffi_pl_record_accessor_[% ffi_type %]_array)
     }
     else
     {
-      /*
-       * TODO: consider using these values to populate the array.
-       * downside: it wouldn't be round trip.
-       */
-      warn("passing non array reference into ffi/platypus array argument type");
+      i = SvIV(ST(1));
+      XSRETURN_[% perl_type %](ptr2[i]);
     }
   }
 
