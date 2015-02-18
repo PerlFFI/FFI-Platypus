@@ -37,7 +37,14 @@ use Carp qw( croak );
  
 =head1 DESCRIPTION
 
+B<WARNING>: This module is considered EXPERIMENTAL.  It may go away or 
+be changed in incompatible ways, possibly without notice, but not 
+without a good reason.
+
 This class provides a tie interface for record array members.
+
+In the future a short cut for using this with L<FFI::Platypus::Record> 
+directly may be provided.
 
 =cut
 
