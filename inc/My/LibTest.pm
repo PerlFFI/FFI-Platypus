@@ -15,12 +15,12 @@ my $root = $FindBin::Bin;
 
 sub build
 {
-  my $mb = shift;
+  my($class, $mb) = @_;
 
   my($header_time) = reverse sort map { (stat $_)[9] } bsd_glob "include/*.h";
   my $compile_count = 0;
   
-  my $b = ExtUtils::CBuilder->new;
+  my $b = $mb->cbuilder;
   
   my @obj = map {
     my $filename = $_;

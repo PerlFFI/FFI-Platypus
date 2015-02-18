@@ -170,7 +170,7 @@ sub ACTION_libtest
   my($self) = @_;
   $self->depends_on('ac');
   $self->depends_on('probe');
-  My::LibTest->build(shift);
+  My::LibTest->build($self);
 }
 
 sub ACTION_test
