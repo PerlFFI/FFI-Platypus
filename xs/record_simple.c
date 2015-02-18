@@ -73,8 +73,15 @@ XS(ffi_pl_record_accessor_uint8_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvUV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvUV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -98,7 +105,15 @@ XS(ffi_pl_record_accessor_uint8_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_UV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_UV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -176,8 +191,15 @@ XS(ffi_pl_record_accessor_sint8_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvIV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvIV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -201,7 +223,15 @@ XS(ffi_pl_record_accessor_sint8_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_IV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_IV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -279,8 +309,15 @@ XS(ffi_pl_record_accessor_uint16_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvUV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvUV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -304,7 +341,15 @@ XS(ffi_pl_record_accessor_uint16_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_UV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_UV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -382,8 +427,15 @@ XS(ffi_pl_record_accessor_sint16_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvIV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvIV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -407,7 +459,15 @@ XS(ffi_pl_record_accessor_sint16_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_IV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_IV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -485,8 +545,15 @@ XS(ffi_pl_record_accessor_uint32_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvUV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvUV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -510,7 +577,15 @@ XS(ffi_pl_record_accessor_uint32_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_UV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_UV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -588,8 +663,15 @@ XS(ffi_pl_record_accessor_sint32_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvIV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvIV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -613,7 +695,15 @@ XS(ffi_pl_record_accessor_sint32_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_IV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_IV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -691,8 +781,15 @@ XS(ffi_pl_record_accessor_uint64_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvUV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvUV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -716,7 +813,15 @@ XS(ffi_pl_record_accessor_uint64_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_UV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_UV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -794,8 +899,15 @@ XS(ffi_pl_record_accessor_sint64_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvIV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvIV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -819,7 +931,15 @@ XS(ffi_pl_record_accessor_sint64_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_IV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_IV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -897,8 +1017,15 @@ XS(ffi_pl_record_accessor_float_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvNV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvNV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -922,7 +1049,15 @@ XS(ffi_pl_record_accessor_float_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_NV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_NV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
@@ -1000,8 +1135,15 @@ XS(ffi_pl_record_accessor_double_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = SvNV(arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = SvNV(arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -1025,7 +1167,15 @@ XS(ffi_pl_record_accessor_double_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_NV(ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_NV(ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 

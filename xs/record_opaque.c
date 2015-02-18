@@ -77,8 +77,15 @@ XS(ffi_pl_record_accessor_opaque_array)
   if(items > 2)
   {
     i   = SvIV(ST(1));
-    arg = ST(2);
-    ptr2[i] = SvOK(arg) ?  INT2PTR(void*, SvIV(arg)) : NULL;
+    if(i >= 0 && i < member->count)
+    {
+      arg = ST(2);
+      ptr2[i] = SvOK(arg) ?  INT2PTR(void*, SvIV(arg)) : NULL;
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -102,7 +109,12 @@ XS(ffi_pl_record_accessor_opaque_array)
     else
     {
       i   = SvIV(ST(1));
-      if(ptr2[i] == NULL)
+      if(i < 0 && i >= member->count)
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
+      else if(ptr2[i] == NULL)
       {
         XSRETURN_EMPTY;
       }

@@ -60,8 +60,15 @@ XS(ffi_pl_record_accessor_[% ffi_type %]_array)
   if(items > 2)
   {
     i       = SvIV(ST(1));
-    arg     = ST(2);
-    ptr2[i] = Sv[% perl_type %](arg);
+    if(i >= 0 && i < member->count)
+    {
+      arg     = ST(2);
+      ptr2[i] = Sv[% perl_type %](arg);
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
   }
   else if(items > 1)
   {
@@ -85,7 +92,15 @@ XS(ffi_pl_record_accessor_[% ffi_type %]_array)
     else
     {
       i = SvIV(ST(1));
-      XSRETURN_[% perl_type %](ptr2[i]);
+      if(i >= 0 && i < member->count)
+      {
+        XSRETURN_[% perl_type %](ptr2[i]);
+      }
+      else
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
     }
   }
 
