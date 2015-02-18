@@ -8,6 +8,7 @@ Revision history for {{$dist->name}}
   - Array members of records types are now documented (see FFI::Platypus::Record)
   - Bugfix: array wasn't being updated on return for variable length
     array types
+  - Should now build with an Alien::FFI that was build with ALIEN_FORCE=1
 
 0.25      2015-02-16 20:18:41 -0500
   - Probe for proper long double support instead of trusting ffi.h

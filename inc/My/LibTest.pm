@@ -5,7 +5,6 @@ use warnings;
 use File::Spec;
 use ExtUtils::CBuilder;
 use FindBin ();
-use Alien::FFI;
 use File::Copy qw( move );
 use File::Glob qw( bsd_glob );
 use Config;
@@ -34,7 +33,6 @@ sub build
         include_dirs => [
           File::Spec->catdir($root, 'include'),
         ],
-        extra_compiler_flags => Alien::FFI->cflags,
       );
       $compile_count++;
     }
@@ -48,7 +46,6 @@ sub build
     my $dll = $b->link(
       lib_file => $b->lib_file(File::Spec->catfile($root, 'libtest', $b->object_file('libtest.c'))),
       objects  => \@obj,
-      extra_linker_flags => Alien::FFI->libs,
     );
     
     if($^O eq 'cygwin')

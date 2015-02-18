@@ -10,6 +10,7 @@ use My::Probe;
 use ExtUtils::CBuilder;
 use File::Glob qw( bsd_glob );
 use Config;
+use Text::ParseWords qw( shellwords );
 use base qw( Module::Build );
 
 sub new
@@ -41,12 +42,44 @@ sub new
     $args{extra_linker_flags} .= " -lpsapi";
   }
 
+  my $strawberry_lddlflags;
   if($^O eq 'MSWin32' && $Config{myuname} =~ /strawberry-perl/ && $] >= 5.020)
   {
     $args{build_requires}->{'Win32API::File'} = 0;
+    
+    # On Strawberry Perl (let me count the ways...) the c/lib directory gets 
+    # inserted before the Alien::FFI -L directory, meaning if you do an
+    # ALIEN_FORCE=1 install of Alien::FFI you get a header file / lib mismatch
+    # and shit breaks.  To work around this we reorder the flags.
+    
+    if(Alien::FFI->install_type eq 'share')
+    {
+      $strawberry_lddlflags = '';
+      my $lddlflags = $Config{lddlflags};
+      $lddlflags =~ s{\\}{/}g;
+      my @lddlflags = shellwords $lddlflags;
+      foreach my $flag (@lddlflags)
+      {
+        if($flag =~ m!^-L.*/c/lib$!)
+        {
+          $args{extra_linker_flags} .= " $flag";
+        }
+        else
+        {
+          $strawberry_lddlflags .= "$flag ";
+        }
+      }
+      $strawberry_lddlflags =~ s{\s+$}{};
+    }
   }
-
+  
   my $self = $class->SUPER::new(%args);
+
+  print "\n\n";
+  print "CONFIGURE\n";
+  print "  + \$args{extra_compiler_flags} = $args{extra_compiler_flags}\n";
+  print "  + \$args{extra_linker_flags} = $args{extra_linker_flags}\n";
+  print "\n\n";
 
   if($ENV{FFI_PLATYPUS_DEBUG})
   {
@@ -82,6 +115,16 @@ sub new
     print "  + alloca() will not be used, even if your platform supports it.\n";
     print "\n\n";
     $self->config(config_no_alloca => 1);
+  }
+
+  if(defined $strawberry_lddlflags)
+  {
+    $self->config(lddlflags => $strawberry_lddlflags);
+    print "\n\n";
+    print "Strawberry Perl work around:\n";
+    print "  - \$Config{lddlflags} = $Config{lddlflags}\n";
+    print "  + \$Config{lddlflags} = $strawberry_lddlflags\n";
+    print "\n\n";
   }
   
   $self->add_to_cleanup(

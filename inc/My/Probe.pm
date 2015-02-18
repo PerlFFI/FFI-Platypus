@@ -6,7 +6,6 @@ use File::Glob qw( bsd_glob );
 use ExtUtils::CBuilder;
 use File::Spec;
 use Config;
-use Alien::FFI;
 use File::Copy qw( copy );
 
 sub probe
@@ -36,14 +35,14 @@ sub probe
     my $obj = eval { $b->compile(
       source               => $cfile,
       include_dirs         => [ 'include' ],
-      extra_compiler_flags => Alien::FFI->cflags,
+      extra_compiler_flags => $mb->extra_compiler_flags,
     ) };
     next if $@;
     $mb->add_to_cleanup($obj) if $mb;
     
     my($exe,@rest) = eval { $b->link_executable(
       objects            => $obj,
-      extra_linker_flags => Alien::FFI->libs,
+      extra_linker_flags => $mb->extra_linker_flags,
     ) };
     next if $@;
     $mb->add_to_cleanup($exe,@rest) if $mb;
