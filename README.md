@@ -1317,6 +1317,20 @@ The build process also respects these environment variables:
          Created MYMETA.yml and MYMETA.json
          Creating new 'Build' script for 'FFI-Platypus' version '0.10'
 
+## System integrators
+
+If you are including Platypus in a larger system (for example a Linux 
+distribution), and you already have libffi as part of your system, you 
+may be interested in [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System).  This is an 
+alternative to [Alien::FFI](https://metacpan.org/pod/Alien::FFI) that does not require [Alien::Base](https://metacpan.org/pod/Alien::Base).  In 
+fact it has zero non-Core dependencies, and doesn't even need to be 
+installed.  Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System)'s `lib` 
+directory in your `PERL5LIB` path when you build Platypus.  For 
+example:
+
+    % export PERL5LIB=/path/to/Alt-Alien-FFI-System/lib
+    % cpanm FFI::Platypus
+
 # SEE ALSO
 
 - [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)
@@ -1416,6 +1430,14 @@ The build process also respects these environment variables:
 - [C::DynaLib](https://metacpan.org/pod/C::DynaLib)
 
     Another FFI for Perl that doesn't appear to have worked for a long time.
+
+- [Alien::FFI](https://metacpan.org/pod/Alien::FFI)
+
+    Provides libffi for Platypus during its configuration and build stages.
+
+- [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System)
+
+    An alternative for [Alien::FFI](https://metacpan.org/pod/Alien::FFI) intended mainly for system integrators.
 
 # ACKNOWLEDGMENTS
 

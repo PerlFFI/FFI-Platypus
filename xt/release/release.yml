@@ -53,6 +53,7 @@ pod_spelling_system:
     - Scala
     - JVM
     - gcj
+    - integrators
 
 pod_coverage:
   skip: 0
