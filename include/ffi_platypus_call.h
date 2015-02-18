@@ -292,6 +292,16 @@
                 ((void**)ptr)[n] = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
               }
               break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+            case FFI_TYPE_LONGDOUBLE:
+              Newx(ptr, count, long double);
+              for(n=0; n<count; n++)
+              {
+                SV *sv = *av_fetch(av, n, 1);
+                ffi_pl_perl_to_long_double(sv, &((long double*)ptr)[n]);
+              }
+              break;
+#endif
             default:
               Newxz(ptr, count*self->argument_types[i]->ffi_type->size, char);
               warn("argument type not supported (%d)", i);
@@ -622,6 +632,8 @@
         if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
         {
           AV *av = (AV*) SvRV(arg);
+          if(count == 0)
+            count = av_len(av)+1;
           switch(self->argument_types[i]->ffi_type->type)
           {
             case FFI_TYPE_UINT8:
@@ -705,6 +717,16 @@
                 sv_setnv(*av_fetch(av, n, 1), ((double*)ptr)[n]);
               }
               break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+            case FFI_TYPE_LONGDOUBLE:
+              for(n=0; n<count; n++)
+              {
+                SV *sv;
+                sv = *av_fetch(av, n, 1);
+                ffi_pl_long_double_to_perl(sv, &((long double*)ptr)[n]);
+              }
+              break;
+#endif
           }
         }
 #ifndef HAVE_ALLOCA
