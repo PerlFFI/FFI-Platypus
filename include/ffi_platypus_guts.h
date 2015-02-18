@@ -27,6 +27,18 @@ void ffi_pl_perl_complex_double(SV *sv, double *ptr);
     *(ptr) = (long double) SvNV(sv);                                  \
   }
 
+/*
+ * CAVEATS:
+ *  - We are mucking about with the innerds of Math::LongDouble
+ *    so if the innerds change we may break Math::LongDouble,
+ *    FFI::Platypus or both!
+ *  - This makes Math::LongDouble mutable.  Note however, that
+ *    Math::LongDouble overloads ++ and increments the actual
+ *    longdouble pointed to in memory, so we are at least not
+ *    introducing the sin of mutability.  See LongDouble.xs
+ *    C function _overload_inc.
+ */
+
 #define ffi_pl_long_double_to_perl(sv, ptr)                      \
   if(sv_isobject(sv) && sv_derived_from(sv, "Math::LongDouble")) \
   {                                                              \
