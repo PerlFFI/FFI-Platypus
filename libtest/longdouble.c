@@ -52,4 +52,11 @@ longdouble_array_test(long double *a, int n)
   return ret;
 }
 
+EXTERN long double *
+longdouble_array_return_test()
+{
+  static long double keep[3] = { 1.0, 2.0, 3.0 };
+  return keep;
+}
+
 #endif

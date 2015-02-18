@@ -1070,6 +1070,15 @@
               }
             }
             break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+          case FFI_TYPE_LONGDOUBLE:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSV(0);
+              ffi_pl_long_double_to_perl(sv[i], &((long double*)result.pointer)[i]);
+            }
+            break;
+#endif
           default:
             warn("return type not supported");
             XSRETURN_EMPTY;
