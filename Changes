@@ -5,6 +5,9 @@ Revision history for {{$dist->name}}
   - Added abi method
   - Added abis class method
   - Simplify Win32 probe
+  - Added FFI::Platypus::Lang::Win32 which provides data types used by
+    the Windows API.  Takes care of subtle differences between
+    Win32 and Win64.
 
 0.26      2015-02-18 17:47:43 -0500
   - Added support for pointers to longdouble (in C "long double *") type
