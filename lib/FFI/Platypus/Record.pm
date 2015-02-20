@@ -285,27 +285,19 @@ sub record_layout
     
     $self;
   };
+  
+  my $destroy_sub = sub {};
+  
   if(@destroy)
   {
-    eval '# line '. __LINE__ . ' "' . __FILE__ . qq("\n) . qq{
-      package
-        $caller;
-      sub DESTROY
-      {
-        \$_->(\$_[0]) for \@destroy;
-      }
+    $destroy_sub = sub {
+      $_->($_[0]) for @destroy;
     };
-    die $@ if $@;
   }
-  else
-  {
-    eval qq{
-      package
-        $caller;
-      sub DESTROY { }
-    };
-    die $@ if $@;
-  }
+  do {
+    no strict 'refs';
+    *{"${caller}::DESTROY"} = $destroy_sub;
+  };
   ();
 }
 
