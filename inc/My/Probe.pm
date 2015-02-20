@@ -145,8 +145,11 @@ sub probe_abi
     print $fh "#include <ffi.h>\n";
     close $fh;
   };
+
+  my @cpp_flags = grep /^-[DI]/, @{ $mb->extra_compiler_flags };
   
-  my $text = join '', grep !/^#/, `$Config{cpprun} $file_c`;
+  print "$Config{cpprun} @cpp_flags $file_c\n";
+  my $text = join '', grep !/^#/, `$Config{cpprun} @cpp_flags $file_c`;
   if($?)
   {
     print "C pre-processor failed...\n";
@@ -178,7 +181,25 @@ sub probe_abi
   foreach my $abi (sort keys %abi)
   {
     my $file_c = File::Spec->catfile($dir, "$abi.c");
-    copy($template_c, $file_c);
+    
+    do {
+      my $in;
+      my $out;
+      open $in, '<', $template_c;
+      open $out, '>', $file_c;
+
+      my $line;    
+      while(1)
+      {
+        $line = <$in>;
+        last unless defined $line;
+        $line =~ s/##ARG##/"FFI_".uc($abi)/eg;
+        print $out $line;
+      }
+      
+      close $out;
+      close $in;
+    };
     
     my $obj = eval { $b->compile(
       source               => $file_c,
