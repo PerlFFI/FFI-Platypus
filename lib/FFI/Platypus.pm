@@ -957,10 +957,11 @@ sub package
  my $href = FFI::Platypus->abis;
 
 Get the legal ABIs supported by your platform and underlying 
-implementation.  This can vary a lot by CPU and by platform. They keys 
-are the "ABI" names, also known as "calling conventions".  The values 
-are integers used internally by the implementation to represent those 
-ABIs.
+implementation.  What is supported can vary a lot by CPU and by 
+platform, or even between 32 and 64 bit on the same CPU and platform. 
+They keys are the "ABI" names, also known as "calling conventions".  The 
+values are integers used internally by the implementation to represent 
+those ABIs.
 
 =cut
 
@@ -974,9 +975,9 @@ sub abis
 
  $ffi->abi($name);
 
-Set the ABI or calling convention for use in subsequent calls
-to L</function> or L</attach>.  May be either a string name or
-integer value from the L</abis> method above.
+Set the ABI or calling convention for use in subsequent calls to 
+L</function> or L</attach>.  May be either a string name or integer 
+value from the L</abis> method above.
 
 =cut
 

@@ -448,6 +448,26 @@ distribution, you can use this method to tell the [FFI::Platypus](https://metacp
 instance to look for symbols that came with the dynamic library that was 
 built when your distribution was installed.
 
+## abis
+
+    my $href = $ffi->abis;
+    my $href = FFI::Platypus->abis;
+
+Get the legal ABIs supported by your platform and underlying 
+implementation.  What is supported can vary a lot by CPU and by 
+platform, or even between 32 and 64 bit on the same CPU and platform. 
+They keys are the "ABI" names, also known as "calling conventions".  The 
+values are integers used internally by the implementation to represent 
+those ABIs.
+
+## abi
+
+    $ffi->abi($name);
+
+Set the ABI or calling convention for use in subsequent calls to 
+["function"](#function) or ["attach"](#attach).  May be either a string name or integer 
+value from the ["abis"](#abis) method above.
+
 # EXAMPLES
 
 Here are some examples.  Some of them use the [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare) 

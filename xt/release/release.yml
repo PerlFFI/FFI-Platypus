@@ -54,6 +54,10 @@ pod_spelling_system:
     - JVM
     - gcj
     - integrators
+    - ABIs
+    - abis
+    - abi
+    - ABI
 
 pod_coverage:
   skip: 0
