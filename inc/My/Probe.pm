@@ -14,8 +14,6 @@ sub probe
 {
   my($class, $mb) = @_;
 
-  $class->probe_abi($mb);
-  
   my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
 
   return if -e $probe_include && $mb && $mb->config_data('probe');
@@ -68,6 +66,8 @@ sub probe
     print $fh "#endif\n";
     close $fh;
   };
+  
+  $class->probe_abi($mb);
   
   $mb->config_data( probe => \%probe ) if $mb;
   
