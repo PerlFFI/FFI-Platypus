@@ -1423,6 +1423,12 @@ example:
 
     Native to Perl functions that can be used to decode C `struct` types.
 
+- [C::Scan](https://metacpan.org/pod/C::Scan)
+
+    This module can extract constants and other useful objects from C header 
+    files that may be relevant to an FFI application.  One downside is that 
+    its use may require development packages to be installed.
+
 - [FFI::Raw](https://metacpan.org/pod/FFI::Raw)
 
     Alternate interface to libffi with fewer features.  It notably lacks the 
