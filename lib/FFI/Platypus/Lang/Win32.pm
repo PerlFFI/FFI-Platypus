@@ -21,6 +21,19 @@ C<uint32>.
 
 =head1 METHODS
 
+=head2 abi
+
+ my $abi = FFI::Platypus::Lang::Win32->abi;
+
+=cut
+
+sub abi
+{
+  $^O =~ /^(cygwin|MSWin32)$/ && $Config{ptrsize} == 4
+  ? 'stdcall'
+  : 'default_abi';
+}
+
 =head2 native_type_map
 
  my $hashref = FFI::Platypus::Lang::Win32->native_type_map;

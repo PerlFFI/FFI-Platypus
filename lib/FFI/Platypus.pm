@@ -206,22 +206,27 @@ sub new
   }, $class;
 }
 
+sub _lang_class ($)
+{
+  my($lang) = @_;
+  my $class = "FFI::Platypus::Lang::$lang";
+  unless($class->can('native_type_map'))
+  {
+    eval qq{ use $class };
+    croak "unable to load $class: $@" if $@;
+  }
+  croak "$class does not provide native_type_map method"
+    unless $class->can("native_type_map");
+  $class;
+}
+
 sub _type_map
 {
   my($self) = @_;
   
   unless(defined $self->{type_map})
   {
-    my $class = "FFI::Platypus::Lang::".$self->{lang};
-    unless($class->can("native_type_map"))
-    {
-      eval qq{ use $class };
-      croak "erro loding $class: $@" if $@;
-    }
-    unless($class->can("native_type_map"))
-    {
-      croak "$class does not provide a native_type_map method";
-    }
+    my $class = _lang_class($self->{lang});
     my %type_map;
     foreach my $key (keys %{ $class->native_type_map  })
     {
@@ -346,6 +351,8 @@ sub lang
   {
     $self->{lang} = $value;
     delete $self->{type_map};
+    my $class = _lang_class($self->{lang});
+    $self->abi($class->abi) if $class->can('abi');
   }
   
   $self->{lang};
@@ -864,13 +871,8 @@ sub find_symbol
   my($self, $name) = @_;
 
   unless(defined $self->{mangler})
-  {
-    my $class = "FFI::Platypus::Lang::".$self->{lang};
-    unless($class->can('native_type_map'))
-    {
-      eval qq{ use $class };
-      croak "unable to load $class: $@" if $@;
-    }
+  {  
+    my $class = _lang_class($self->{lang});
     if($class->can('mangler'))
     {
       $self->{mangler} = $class->mangler($self->lib);

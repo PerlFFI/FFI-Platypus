@@ -9,6 +9,8 @@ Revision history for {{$dist->name}}
     the Windows API.  Takes care of subtle differences between
     Win32 and Win64.
   - Fixed bugs specific to 5.8.x
+  - Language plugins can now specify an ABI with abi class method
+  - Default ABI for FFI::Platypus::Lang::Win32 is stdcall on 32bit windows
 
 0.26      2015-02-18 17:47:43 -0500
   - Added support for pointers to longdouble (in C "long double *") type
