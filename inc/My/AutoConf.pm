@@ -108,7 +108,7 @@ sub configure
     $ac->define_var( HAVE_RTLD_LAZY => 1 );
   }
   
-  unless($mb->config('config_no_alloca'))
+  unless($mb->config_data('config_no_alloca'))
   {
     if($ac->check_decl('alloca', { prologue => $prologue }))
     {
@@ -116,7 +116,7 @@ sub configure
     }
   }
   
-  if(!$mb->config('config_debug_fake32') && $Config{ivsize} >= 8)
+  if(!$mb->config_data('config_debug_fake32') && $Config{ivsize} >= 8)
   {
     $ac->define_var( HAVE_IV_IS_64 => 1 );
   }

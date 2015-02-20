@@ -106,7 +106,7 @@ sub new
     print "  + making Math::Int64 a prerequsite (not normally done on 64 bit Perls)\n";
     print "  + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)\n";
     print "\n\n";
-    $self->config(config_debug_fake32 => 1);
+    $self->config_data(config_debug_fake32 => 1);
   }
   if($ENV{FFI_PLATYPUS_NO_ALLOCA})
   {
@@ -114,7 +114,7 @@ sub new
     print "NO_ALLOCA:\n";
     print "  + alloca() will not be used, even if your platform supports it.\n";
     print "\n\n";
-    $self->config(config_no_alloca => 1);
+    $self->config_data(config_no_alloca => 1);
   }
 
   if(defined $strawberry_lddlflags)
