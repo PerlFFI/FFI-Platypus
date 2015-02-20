@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Simplify Win32 probe
 
 0.26      2015-02-18 17:47:43 -0500
   - Added support for pointers to longdouble (in C "long double *") type
