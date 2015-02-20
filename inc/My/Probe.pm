@@ -7,15 +7,18 @@ use File::Glob qw( bsd_glob );
 use ExtUtils::CBuilder;
 use File::Spec;
 use Config;
+use File::Temp qw( tempdir );
 use File::Copy qw( copy );
 
 sub probe
 {
   my($class, $mb) = @_;
+
+  $class->probe_abi($mb);
   
   my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
 
-  return if -e $probe_include && $mb && $mb->config_data('probe');
+  #return if -e $probe_include && $mb && $mb->config_data('probe');
   
   $mb->add_to_cleanup($probe_include);
   do {
@@ -120,6 +123,103 @@ sub run
   { print "exit = ", $ret >> 8, "\n" }
   
   $ret;
+}
+
+sub probe_abi
+{
+  my($class, $mb) = @_;
+  
+  print "probing for ABIs...\n";
+  
+  my $dir = tempdir( CLEANUP => 1);
+  my $file_c = File::Spec->catfile($dir, "ffitest.c");
+
+  if($^O eq 'MSWin32' && $file_c =~ /\s/)
+  {
+    $file_c = Win32::GetShortPathName($file_c);
+  }
+  
+  do {
+    my $fh;
+    open $fh, '>', $file_c;
+    print $fh "#include <ffi.h>\n";
+    close $fh;
+  };
+  
+  my $text = join '', grep !/^#/, `$Config{cpprun} $file_c`;
+  if($?)
+  {
+    print "C pre-processor failed...\n";
+    print "only default will be available.\n";
+    return;
+  }
+  
+  my %abi;
+
+  if($text =~ m/typedef\s+enum\s+ffi_abi\s+{(.*?)}/s)
+  {
+    my $enum = $1;
+    
+    #print "[enum]\n";
+    #print "$enum\n";
+    
+    while($enum =~ s/FFI_([A-Z_0-9]+)//)
+    {
+      my $abi = $1;
+      next if $abi =~ /^(FIRST|LAST)_ABI$/;
+      $abi{lc $abi} = -1;
+    }
+  }
+  
+  my $template_c = File::Spec->catfile(qw( inc template abi.c ));
+  
+  my $b = $mb->cbuilder;
+  
+  foreach my $abi (sort keys %abi)
+  {
+    my $file_c = File::Spec->catfile($dir, "$abi.c");
+    copy($template_c, $file_c);
+    
+    my $obj = eval { $b->compile(
+      source               => $file_c,
+      include_dirs         => [ 'include' ],
+      extra_compiler_flags => [ @{ $mb->extra_compiler_flags }, '-DTRY_FFI_ABI=FFI_'.uc $abi ],
+    ) };
+    next if $@;
+    
+    my $exe = eval { $b->link_executable(
+      objects            => $obj,
+      extra_linker_flags => $mb->extra_linker_flags,
+    ) };
+    next if $@;
+    
+    local $Win32::ErrorMode::ErrorMode = 0x3;
+
+    if($^O eq 'MSWin32' && $file_c =~ /\s/)
+    {
+      $exe = Win32::GetShortPathName($exe);
+    }
+
+    my $out = `$exe`;
+    if($? == 0 && $out =~ /\|value=([0-9]+)\|/)
+    {
+      $abi{$abi} = $1;
+    }
+  }
+  
+  foreach my $abi (sort keys %abi)
+  {
+    if($abi{$abi} == -1)
+    {
+      delete $abi{$abi};
+      next;
+    }
+    print "  found abi: $abi = $abi{$abi}\n";
+  }
+
+  $mb->config_data( abi => \%abi );
+
+  return;
 }
 
 1;
