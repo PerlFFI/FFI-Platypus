@@ -2,7 +2,7 @@ package My::Probe;
 
 use strict;
 use warnings;
-use if $^O eq 'MSWin32', 'Win32::ErrorMode' => '$ErrorMode';
+use if $^O eq 'MSWin32', 'Win32::ErrorMode';
 use File::Glob qw( bsd_glob );
 use ExtUtils::CBuilder;
 use File::Spec;
@@ -107,7 +107,7 @@ sub run
   # dialog, but we don't want to stop the build, as this may be
   # normal if the probe is supposed to fail.
   
-  local $ErrorMode = 0x3;
+  local $Win32::ErrorMode::ErrorMode = 0x3;
   
   print "@cmd\n";
   system @cmd;
