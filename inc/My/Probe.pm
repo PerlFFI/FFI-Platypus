@@ -18,7 +18,7 @@ sub probe
   
   my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
 
-  #return if -e $probe_include && $mb && $mb->config_data('probe');
+  return if -e $probe_include && $mb && $mb->config_data('probe');
   
   $mb->add_to_cleanup($probe_include);
   do {
