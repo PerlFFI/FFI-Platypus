@@ -950,6 +950,25 @@ sub package
   $self;
 }
 
+=head2 abis
+
+ my $href = $ffi->abis;
+ my $href = FFI::Platypus->abis;
+
+Get the legal ABIs supported by your platform and underlying 
+implementation.  This can vary a lot by CPU and by platform. They keys 
+are the "ABI" names, also known as "calling conventions".  The values 
+are integers used internally by the implementation to represent those 
+ABIs.
+
+=cut
+
+sub abis
+{
+  require FFI::Platypus::ConfigData;
+  FFI::Platypus::ConfigData->config("abi");
+}
+
 sub DESTROY
 {
   my($self) = @_;

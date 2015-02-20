@@ -31,4 +31,12 @@ foreach my $type (sort keys %r)
 diag '';
 diag '';
 
+my $abi = FFI::Platypus->abis;
+foreach my $key (sort keys %$abi)
+{
+  diag sprintf("%-20s %s", $key, $abi->{$key});
+}
+
+diag '';
+
 pass 'good';
