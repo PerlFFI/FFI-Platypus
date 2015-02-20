@@ -243,7 +243,7 @@ sub record_layout
       && $meta->{access} eq 'rw'
       && $meta->{fixed_size} == 0)
       {
-        push @destroy, eval qq{
+        push @destroy, eval '# line '. __LINE__ . ' "' . __FILE__ . qq("\n) .qq{
           sub {
             shift->$name(undef);
           };
@@ -287,7 +287,7 @@ sub record_layout
   };
   if(@destroy)
   {
-    eval qq{
+    eval '# line '. __LINE__ . ' "' . __FILE__ . qq("\n) . qq{
       package
         $caller;
       sub DESTROY
