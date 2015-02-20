@@ -201,6 +201,7 @@ sub new
     handles          => {},
     types            => {},
     lang             => $args{lang} || 'C',
+    abi              => -1,
     ignore_not_found => defined $args{ignore_not_found} ? $args{ignore_not_found} : 0,
   }, $class;
 }
@@ -609,7 +610,7 @@ sub function
   my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
   croak "unable to find $name" unless defined $address || $self->ignore_not_found;
   return unless defined $address;
-  FFI::Platypus::Function->new($self, $address, $ret, @args);
+  FFI::Platypus::Function->new($self, $address, $self->{abi}, $ret, @args);
 }
 
 =head2 attach
@@ -967,6 +968,38 @@ sub abis
 {
   require FFI::Platypus::ConfigData;
   FFI::Platypus::ConfigData->config("abi");
+}
+
+=head2 abi
+
+ $ffi->abi($name);
+
+Set the ABI or calling convention for use in subsequent calls
+to L</function> or L</attach>.  May be either a string name or
+integer value from the L</abis> method above.
+
+=cut
+
+sub abi
+{
+  my($self, $newabi) = @_;
+  unless($newabi =~ /^[0-9]+$/)
+  {
+    unless(defined $self->abis->{$newabi})
+    {
+      croak "no such ABI: $newabi";
+    }
+    $newabi = $self->abis->{$newabi};
+  }
+  
+  unless(FFI::Platypus::ABI::verify($newabi))
+  {
+    croak "no such ABI: $newabi";
+  }
+  
+  $self->{abi} = $newabi;
+  
+  $self;
 }
 
 sub DESTROY

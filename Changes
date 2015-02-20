@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Interface to alternate ABIs / calling conventions
+  - Added abi method
+  - Added abis class method
   - Simplify Win32 probe
 
 0.26      2015-02-18 17:47:43 -0500
