@@ -157,6 +157,8 @@ sub new
     'test*.o',
     'test*.c',
     '*.core',
+    'Build.bat',
+    'build.bat',
     'core',
   );
 
