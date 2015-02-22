@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.27      2015-02-22 11:17:05 -0500
   - Interface to alternate ABIs / calling conventions
   - Added abi method
   - Added abis class method
