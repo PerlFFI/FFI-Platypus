@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix Win32 probe prereq on non-Strawberry 5.20.x+
 
 0.27      2015-02-22 11:17:05 -0500
   - Interface to alternate ABIs / calling conventions

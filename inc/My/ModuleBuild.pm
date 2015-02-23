@@ -43,10 +43,9 @@ sub new
   }
 
   my $strawberry_lddlflags;
+  
   if($^O eq 'MSWin32' && $Config{myuname} =~ /strawberry-perl/ && $] >= 5.020)
   {
-    $args{build_requires}->{'Win32::ErrorMode'} = 0;
-    
     # On Strawberry Perl (let me count the ways...) the c/lib directory gets 
     # inserted before the Alien::FFI -L directory, meaning if you do an
     # ALIEN_FORCE=1 install of Alien::FFI you get a header file / lib mismatch
@@ -71,6 +70,12 @@ sub new
       }
       $strawberry_lddlflags =~ s{\s+$}{};
     }
+  }
+  
+  if($^O eq 'MSWin32')
+  {
+    # needed by My/Probe.pm on any MSWin32 platform
+    $args{build_requires}->{'Win32::ErrorMode'} = 0;
   }
   
   my $self = $class->SUPER::new(%args);
