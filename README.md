@@ -32,8 +32,8 @@ to write an extension with Platypus instead of XS:
 - FFI / Platypus does not require messing with the guts of Perl
 
     XS is less of an API and more of the guts of perl splayed out to do 
-    whatever you want.  That may at times be very powerful, but it may also 
-    sometimes be very dangerous to your mental health.
+    whatever you want.  That may at times be very powerful, but it can also
+    be a frustrating exercise in hair pulling.
 
 - FFI / Platypus is portable
 
