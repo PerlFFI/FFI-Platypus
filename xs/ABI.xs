@@ -6,7 +6,7 @@ verify(abi)
   PREINIT:
     ffi_abi ffi_abi;
     ffi_cif ffi_cif;
-    ffi_type *args[0];
+    ffi_type *args[1];
   CODE:
     /*
      * I had at least one report from (unknown version of) libffi
