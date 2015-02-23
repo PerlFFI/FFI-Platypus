@@ -8,14 +8,26 @@ verify(abi)
     ffi_cif ffi_cif;
     ffi_type *args[0];
   CODE:
-    ffi_abi = abi;
-    if(ffi_prep_cif(&ffi_cif, ffi_abi, 0, &ffi_type_void, args) == FFI_OK)
+    /*
+     * I had at least one report from (unknown version of) libffi
+     * where 999999 was accepted as a legal ABI, and all the other
+     * tests passed
+     */
+    if(abi < FFI_FIRST_ABI || abi > FFI_LAST_ABI)
     {
-      RETVAL = 1;
+      RETVAL = 0;
     }
     else
     {
-      RETVAL = 0;
+      ffi_abi = abi;
+      if(ffi_prep_cif(&ffi_cif, ffi_abi, 0, &ffi_type_void, args) == FFI_OK)
+      {
+        RETVAL = 1;
+      }
+      else
+      {
+        RETVAL = 0;
+      }
     }
   OUTPUT:
     RETVAL
