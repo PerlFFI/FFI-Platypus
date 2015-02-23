@@ -4,7 +4,7 @@ int
 main(int argc, char *argv[])
 {
   ffi_cif cif;
-  ffi_type *args[0];
+  ffi_type *args[1];
   ffi_abi abi;
 
   abi = FFI_DEFAULT_ABI;
