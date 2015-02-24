@@ -1465,6 +1465,11 @@ example:
 
     An alternative for [Alien::FFI](https://metacpan.org/pod/Alien::FFI) intended mainly for system integrators.
 
+- [P5NCI](https://metacpan.org/pod/P5NCI)
+
+    Yet another FFI like interface that does not appear to be supported or 
+    under development anymore.
+
 # ACKNOWLEDGMENTS
 
 In addition to the contributors mentioned below, I would like to 
