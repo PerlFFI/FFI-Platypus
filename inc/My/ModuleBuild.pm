@@ -6,7 +6,6 @@ use 5.008001;
 use Alien::FFI;
 use My::LibTest;
 use My::AutoConf;
-use My::Probe;
 use ExtUtils::CBuilder;
 use File::Glob qw( bsd_glob );
 use Config;
@@ -187,6 +186,7 @@ sub ACTION_probe
 {
   my($self) = @_;
   $self->depends_on('ac');
+  require My::Probe;
   My::Probe->probe($self);
 }
 
