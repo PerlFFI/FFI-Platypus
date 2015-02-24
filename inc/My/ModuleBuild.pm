@@ -16,6 +16,8 @@ sub new
 {
   my($class, %args) = @_;
 
+  my %diag;
+
   if($^O eq 'openbsd' && !$Config{usethreads} && Alien::FFI->install_type eq 'system')
   {
     print "Configuration not supported.\n";
@@ -77,6 +79,9 @@ sub new
     $args{build_requires}->{'Win32::ErrorMode'} = 0;
   }
   
+  $diag{args}->{extra_compiler_flags} = $args{extra_compiler_flags};
+  $diag{args}->{extra_linker_flags}   = $args{extra_linker_flags};
+  
   my $self = $class->SUPER::new(%args);
 
   print "\n\n";
@@ -99,6 +104,7 @@ sub new
         print "  - \$Config{$key} = ", $config->{$key}, "\n";
         print "  + \$Config{$key} = $value\n";
         $self->config($key, $value);
+        $diag{config}->{$key} = $value;
       }
     }
     print "\n\n";
@@ -111,6 +117,7 @@ sub new
     print "  + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)\n";
     print "\n\n";
     $self->config_data(config_debug_fake32 => 1);
+    $diag{config}->{config_debug_fake32} = 1;
   }
   if($ENV{FFI_PLATYPUS_NO_ALLOCA})
   {
@@ -119,11 +126,13 @@ sub new
     print "  + alloca() will not be used, even if your platform supports it.\n";
     print "\n\n";
     $self->config_data(config_no_alloca => 1);
+    $diag{config}->{config_no_alloca} = 1;
   }
 
   if(defined $strawberry_lddlflags)
   {
     $self->config(lddlflags => $strawberry_lddlflags);
+    $diag{config}->{lddlflags} = $strawberry_lddlflags;
     print "\n\n";
     print "Strawberry Perl work around:\n";
     print "  - \$Config{lddlflags} = $Config{lddlflags}\n";
@@ -165,6 +174,7 @@ sub new
 
   #print "dlext[]=$_\n" for @dlext;
 
+  $self->config_data(diag => \%diag);
   $self->config_data(config_dlext => \@dlext);
 
   $self;
