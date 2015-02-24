@@ -1717,6 +1717,11 @@ Provides libffi for Platypus during its configuration and build stages.
 
 An alternative for L<Alien::FFI> intended mainly for system integrators.
 
+=item L<P5NCI>
+
+Yet another FFI like interface that does not appear to be supported or 
+under development anymore.
+
 =back
 
 =head1 ACKNOWLEDGMENTS
