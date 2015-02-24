@@ -10,6 +10,7 @@ diag '';
 diag '';
 diag '';
 
+diag "Alien::FFI version       = ", $Alien::FFI::VERSION;
 diag "Alien::FFI->install_type = ", Alien::FFI->install_type;
 diag "Alien::FFI->cflags       = ", Alien::FFI->cflags;
 diag "Alien::FFI->libs         = ", Alien::FFI->libs;
