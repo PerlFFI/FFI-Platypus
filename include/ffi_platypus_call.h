@@ -328,39 +328,43 @@
 
           SvREFCNT_inc(arg);
 
-          Newx(closure, 1, ffi_pl_closure);
-          closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
-          if(closure->ffi_closure == NULL)
-          {
-            Safefree(closure);
-            ffi_pl_arguments_set_pointer(arguments, i, NULL);
-            warn("unable to allocate memory for closure");
-          }
-          else
-          {
-            closure->type = self->argument_types[i];
+	  if(closure = ffi_pl_closure_get_data(arg, self->argument_types[i])) {
+	    ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+	  } else {
+	    Newx(closure, 1, ffi_pl_closure);
+	    closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
+	    if(closure->ffi_closure == NULL)
+	    {
+	      Safefree(closure);
+	      ffi_pl_arguments_set_pointer(arguments, i, NULL);
+	      warn("unable to allocate memory for closure");
+	    }
+	    else
+	    {
+	      closure->type = self->argument_types[i];
 
-            ffi_status = ffi_prep_closure_loc(
-              closure->ffi_closure,
-              &self->argument_types[i]->extra[0].closure.ffi_cif,
-              ffi_pl_closure_call,
-              closure,
-              closure->function_pointer
-            );
+	      ffi_status = ffi_prep_closure_loc(
+		closure->ffi_closure,
+		&self->argument_types[i]->extra[0].closure.ffi_cif,
+		ffi_pl_closure_call,
+		closure,
+		closure->function_pointer
+	      );
 
-            if(ffi_status != FFI_OK)
-            {
-              ffi_closure_free(closure->ffi_closure);
-              Safefree(closure);
-              ffi_pl_arguments_set_pointer(arguments, i, NULL);
-              warn("unable to create closure");
-            }
-            else
-            {
-              closure->coderef = arg;
-              ffi_pl_closure_add_data(arg, closure);
-              ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
-            }
+	      if(ffi_status != FFI_OK)
+	      {
+		ffi_closure_free(closure->ffi_closure);
+		Safefree(closure);
+		ffi_pl_arguments_set_pointer(arguments, i, NULL);
+		warn("unable to create closure");
+	      }
+	      else
+              {
+		closure->coderef = arg;
+		ffi_pl_closure_add_data(arg, closure);
+		ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+	      }
+	    }
           }
         }
       }

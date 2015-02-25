@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - You can now pass an opaque in place of a closure type.
+  - FFI closures are now cached and can be reused if the same closure is passed
+    repeatedly.
 
 0.29      2015-02-24 08:50:34 -0500
   - Delayed loading of Win32::ErrorMode to avoid build prereq failure on Windows

@@ -1037,30 +1037,36 @@ package FFI::Platypus::Closure;
 
 use Scalar::Util qw( refaddr);
 use Carp qw( croak );
+use overload '&{}' => sub {
+  my $self = shift;
+  sub { $self->{code}->(@_) };
+};
 
 # VERSION
-
-our %cbdata;
 
 sub new
 {
   my($class, $coderef) = @_;
   croak "not a coderef" unless ref($coderef) eq 'CODE';
-  my $self = bless $coderef, $class;
-  $cbdata{refaddr $self} = [];
+  my $self = bless { code => $coderef, cbdata => {} }, $class;
   $self;
 }
 
 sub add_data
 {
-  my($self, $payload) = @_;
-  push @{ $cbdata{refaddr $self} }, bless \$payload, 'FFI::Platypus::ClosureData';
+  my($self, $payload, $type) = @_;
+  $self->{cbdata}{$type} = bless \$payload, 'FFI::Platypus::ClosureData';
 }
 
-sub DESTROY
+sub get_data
 {
-  my($self) = @_;
-  delete $cbdata{refaddr $self};
+  my($self, $type) = @_;
+
+  if (exists $self->{cbdata}{$type}) {
+      return ${$self->{cbdata}{$type}};
+  }
+
+  return 0;
 }
 
 package FFI::Platypus::ClosureData;

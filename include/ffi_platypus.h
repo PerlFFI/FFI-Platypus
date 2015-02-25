@@ -129,7 +129,7 @@ typedef struct _ffi_pl_function {
 typedef struct _ffi_pl_closure {
   ffi_closure *ffi_closure;
   void *function_pointer; /* C function pointer */
-  void *coderef;          /* Perl CV* pointing to code ref */
+  void *coderef;          /* Perl HV* pointing to FFI::Platypus::Closure object */
   ffi_pl_type *type;
 } ffi_pl_closure;
 

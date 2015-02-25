@@ -19,10 +19,39 @@ ffi_pl_closure_add_data(SV *closure, ffi_pl_closure *closure_data)
   PUSHMARK(SP);
   XPUSHs(closure);
   XPUSHs(sv_2mortal(newSViv(PTR2IV(closure_data))));
+  XPUSHs(sv_2mortal(newSViv(PTR2IV(closure_data->type))));
   PUTBACK;
   call_pv("FFI::Platypus::Closure::add_data", G_DISCARD);
   FREETMPS;
   LEAVE;
+}
+
+ffi_pl_closure *
+ffi_pl_closure_get_data(SV *closure, ffi_pl_type *type)
+{
+  dSP;
+  int count;
+  ffi_pl_closure *ret;
+
+  ENTER;
+  SAVETMPS;
+  PUSHMARK(SP);
+  XPUSHs(closure);
+  XPUSHs(sv_2mortal(newSViv(PTR2IV(type))));
+  PUTBACK;
+  count = call_pv("FFI::Platypus::Closure::get_data", G_SCALAR);
+  SPAGAIN;
+
+  if (count != 1)
+    ret = NULL;
+  else
+    ret = INT2PTR(void*, POPi);
+
+  PUTBACK;
+  FREETMPS;
+  LEAVE;
+
+  return ret;
 }
 
 void
@@ -36,6 +65,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
   int i;
   int count;
   SV *sv;
+  SV **svp;
 
   if(!(flags & G_NOARGS))
   {
@@ -137,7 +167,11 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
     PUTBACK;
   }
 
-  count = call_sv(closure->coderef, flags | G_EVAL);
+  svp = hv_fetch((HV *)SvRV((SV *)closure->coderef), "code", 4, 0);
+  if (svp)
+    count = call_sv(*svp, flags | G_EVAL);
+  else
+    count = 0;
 
   if(SvTRUE(ERRSV))
   {
