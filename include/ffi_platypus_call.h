@@ -319,7 +319,7 @@
       {
         if(!SvROK(arg))
         {
-          ffi_pl_arguments_set_pointer(arguments, i, NULL);
+          ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
         }
         else
         {
