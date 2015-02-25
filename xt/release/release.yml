@@ -58,6 +58,7 @@ pod_spelling_system:
     - abis
     - abi
     - ABI
+    - pipcet
 
 pod_coverage:
   skip: 0

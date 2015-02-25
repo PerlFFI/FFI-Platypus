@@ -10,6 +10,7 @@ on 'build' => sub {
 };
 
 on 'test' => sub {
+  requires "Alien::FFI" => "0.06";
   requires "Test::More" => "0.94";
   requires "perl" => "5.008001";
 };

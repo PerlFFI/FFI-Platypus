@@ -482,6 +482,11 @@ And the Perl code:
 
 # EXAMPLE: examples/closure.pl
 
+If you have a pointer to a function in the form of an C<opaque> type,
+you can pass this in place of a closure type:
+
+# EXAMPLE: examples/closure-opaque.pl
+
 The syntax for specifying a closure type is a list of comma separated 
 types in parentheticals followed by a narrow arrow C<-E<gt>>, followed 
 by the return type for the closure.  For example a closure that takes a 
