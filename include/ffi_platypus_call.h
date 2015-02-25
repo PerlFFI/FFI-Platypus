@@ -328,9 +328,13 @@
 
           SvREFCNT_inc(arg);
 
-          if(closure = ffi_pl_closure_get_data(arg, self->argument_types[i])) {
+          closure = ffi_pl_closure_get_data(arg, self->argument_types[i]);
+          if(closure != NULL)
+          {
             ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
-          } else {
+          }
+          else
+          {
             Newx(closure, 1, ffi_pl_closure);
             closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
             if(closure->ffi_closure == NULL)
