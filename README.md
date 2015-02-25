@@ -993,13 +993,13 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
     
     $ffi->attach(
       [ BZ2_bzBuffToBuffCompress => 'compress' ] => [
-        'opaque',                          # dest
-        'unsigned int *',                  # dest length
-        'opaque',                          # source
-        'unsigned int',                    # source length
-        'int',                             # blockSize100k
-        'int',                             # verbosity
-        'int',                             # workFactor
+        'opaque',                           # dest
+        'unsigned int *',                   # dest length
+        'opaque',                           # source
+        'unsigned int',                     # source length
+        'int',                              # blockSize100k
+        'int',                              # verbosity
+        'int',                              # workFactor
       ] => 'int',
       sub {
         my $sub = shift;
@@ -1016,12 +1016,12 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
     
     $ffi->attach(
       [ BZ2_bzBuffToBuffDecompress => 'decompress' ] => [
-        'opaque',                          # dest
-        'unsigned int *',                  # dest length
-        'opaque',                          # source
-        'unsigned int',                    # source length
-        'int',                             # small
-        'int',                             # verbosity
+        'opaque',                           # dest
+        'unsigned int *',                   # dest length
+        'opaque',                           # source
+        'unsigned int',                     # source length
+        'int',                              # small
+        'int',                              # verbosity
       ] => 'int',
       sub {
         my $sub = shift;
