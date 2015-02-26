@@ -16,12 +16,12 @@
      * ARGUMENT IN
      */
 
-    for(i=0; i < self->ffi_cif.nargs; i++)
+    for(i=0, perl_arg_index=0; i < self->ffi_cif.nargs; i++, perl_arg_index++)
     {
       int platypus_type = self->argument_types[i]->platypus_type;
       argument_pointers[i] = (void*) &arguments->slot[i];
 
-      arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+      arg = perl_arg_index+(EXTRA_ARGS) < items ? ST(perl_arg_index+(EXTRA_ARGS)) : &PL_sv_undef;
       if(platypus_type == FFI_PL_NATIVE)
       {
         switch(self->argument_types[i]->ffi_type->type)
@@ -567,7 +567,7 @@
 
     current_argv = arguments;
 
-    for(i=self->ffi_cif.nargs-1; i >= 0; i--)
+    for(i=self->ffi_cif.nargs-1,perl_arg_index--; i >= 0; i--, perl_arg_index--)
     {
       platypus_type platypus_type;
       platypus_type = self->argument_types[i]->platypus_type;
@@ -577,7 +577,7 @@
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         if(ptr != NULL)
         {
-          arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+          arg = perl_arg_index+(EXTRA_ARGS) < items ? ST(perl_arg_index+(EXTRA_ARGS)) : &PL_sv_undef;
           if(!SvREADONLY(SvRV(arg)))
           {
             switch(self->argument_types[i]->ffi_type->type)
@@ -645,7 +645,7 @@
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         int count = self->argument_types[i]->extra[0].array.element_count;
-        arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+        arg = perl_arg_index+(EXTRA_ARGS) < items ? ST(perl_arg_index+(EXTRA_ARGS)) : &PL_sv_undef;
         if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
         {
           AV *av = (AV*) SvRV(arg);
@@ -752,7 +752,7 @@
       }
       else if(platypus_type == FFI_PL_CLOSURE)
       {
-        arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+        arg = perl_arg_index+(EXTRA_ARGS) < items ? ST(perl_arg_index+(EXTRA_ARGS)) : &PL_sv_undef;
         if(SvROK(arg))
         {
           SvREFCNT_dec(arg);
@@ -766,7 +766,7 @@
           SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_native_post;
           if(coderef != NULL)
           {
-            arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+            arg = perl_arg_index+(EXTRA_ARGS) < items ? ST(perl_arg_index+(EXTRA_ARGS)) : &PL_sv_undef;
             ffi_pl_custom_perl_cb(coderef, arg, i);
           }
         }
