@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.31      2015-02-26 13:41:23 -0500
   - Fix bug involving wide custom arguments 
     "wide" meaning where a single Perl argument is translated
     into multiple machine code arguments.  (pipcet++ gh#43)
