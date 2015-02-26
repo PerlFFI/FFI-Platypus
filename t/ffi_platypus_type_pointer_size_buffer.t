@@ -23,7 +23,7 @@ is $string2, 'luna park';
 SKIP: {
 
   eval { attach snprintf => ['buffer_t', string ] => 'int' };
-  skip "test require working snprintf", 4;
+  skip "test require working snprintf", 4 if $@;
 
   is snprintf($string2, "this is a very long string"), 26;
   is $string2, "this is \000";
