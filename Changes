@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix bug involving wide custom arguments 
+    "wide" meaning where a single Perl argument is translated
+    into multiple machine code arguments.  (pipcet++ gh#43)
 
 0.30      2015-02-25 17:50:54 -0500
   - You can now pass an opaque in place of a closure type (pipcet++ gh#40,gh#41)
