@@ -1,6 +1,7 @@
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More tests => 5;
+use FFI::CheckLib;
 use FFI::Platypus::Memory qw( malloc );
 use FFI::Platypus::Declare
   qw( void opaque string ),
@@ -18,3 +19,17 @@ memcpy($pointer, $string);
 my $string2 = cast opaque => string, $pointer;
 
 is $string2, 'luna park';
+
+attach snprintf => ['buffer_t', string ] => 'int';
+
+is snprintf($string2, "this is a very long string"), 26;
+is $string2, "this is \000";
+
+lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+
+attach memcmp4 => ['buffer_t', 'buffer_t'] => 'int';
+
+my $str1 = "test";
+my $str2 = "test2";
+is !!memcmp4($str1, $str2), 1;
+is memcmp4($str1, $str1), 0;
