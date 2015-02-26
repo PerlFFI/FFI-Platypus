@@ -27,7 +27,7 @@ XS(ffi_pl_sub_call)
   ffi_pl_function *self;
   char *buffer;
   size_t buffer_size;
-  int i,n;
+  int i,n,delta;
   SV *arg;
   ffi_pl_result result;
   ffi_pl_arguments *arguments;
