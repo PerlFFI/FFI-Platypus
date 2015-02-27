@@ -8,5 +8,5 @@ $duration ||= 300;
 
 FFI::Platypus
   ->new(lib=>[undef], lang => 'Win32')
-  ->function( Beep => ['uint','uint']=>'bool')
+  ->function( Beep => ['DWORD','DWORD']=>'BOOL')
   ->call($freq, $duration);
