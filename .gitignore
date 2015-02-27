@@ -11,6 +11,7 @@
 /lib/FFI/Platypus.c
 /include/ffi_platypus_config.h
 /include/ffi_platypus_probe.h
+/include/ppport.h
 /test*.c
 *.o
 *.obj

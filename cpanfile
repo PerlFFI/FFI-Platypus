@@ -25,5 +25,5 @@ on 'configure' => sub {
 };
 
 on 'develop' => sub {
-  requires "Devel::PPPort" => "3.23";
+  requires "Devel::PPPort" => "3.28";
 };

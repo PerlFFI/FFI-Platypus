@@ -6,6 +6,7 @@ use 5.008001;
 use Alien::FFI;
 use My::LibTest;
 use My::AutoConf;
+use My::Dev;
 use ExtUtils::CBuilder;
 use File::Glob qw( bsd_glob );
 use Config;
@@ -207,6 +208,8 @@ sub ACTION_build
   my $self = shift;
   
   my $b = ExtUtils::CBuilder->new;
+  
+  My::Dev->generate;
   
   my($header_time) = reverse sort map { (stat $_)[9] } map { bsd_glob($_) } qw( include/*.h xs/*.xs);
   my $c = File::Spec->catfile(qw(lib FFI Platypus.c));

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use inc::My::CopyList;
+use inc::My::Dev;
 use File::Spec;
 
 if(@ARGV > 0)
@@ -19,13 +19,7 @@ if(@ARGV > 0)
     }
   }
 
-  foreach my $file (map { File::Spec->catfile(@$_) } @inc::My::CopyList::list)
-  {
-    if(-e $file)
-    {
-      unlink $file;
-    }
-  }
+  My::Dev->clean;
 }
 
 foreach my $bits (qw( 16 32 64 ))
