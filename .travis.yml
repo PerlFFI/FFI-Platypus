@@ -16,6 +16,7 @@ install:
   - cpanm -n File::chdir
   - cpanm -n Convert::Binary::C
   - cpanm -n Time::Seconds
+  - cpanm -n Devel::PPPort
 
 perl:
   - "5.8"
