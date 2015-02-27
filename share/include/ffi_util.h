@@ -9,6 +9,13 @@
 #define FFI_UTIL_EXPORT
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
