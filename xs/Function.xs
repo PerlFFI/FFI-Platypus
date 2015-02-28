@@ -130,7 +130,7 @@ attach(self, perl_name, path_name, proto)
     CV* cv;
   CODE:
     if(!(sv_isobject(self) && sv_derived_from(self, "FFI::Platypus::Function")))
-      croak(aTHX_ "self is not of type FFI::Platypus::Function");
+      croak("self is not of type FFI::Platypus::Function");
 
     if(path_name == NULL)
       path_name = "unknown";
