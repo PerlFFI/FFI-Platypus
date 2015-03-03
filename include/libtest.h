@@ -7,6 +7,10 @@
 #include <stdio.h>
 #endif
 
+#ifdef _MSC_VER
+#define EXTERN extern __declspec(dllexport)
+#else
 #define EXTERN extern
+#endif
 
 #endif

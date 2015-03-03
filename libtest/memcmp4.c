@@ -1,6 +1,7 @@
-#include <string.h>
+#include "libtest.h"
 
-int memcmp4(void *buf1, size_t n1, void *buf2, size_t n2)
+EXTERN int
+memcmp4(void *buf1, size_t n1, void *buf2, size_t n2)
 {
   if (n1 != n2)
     return 1;

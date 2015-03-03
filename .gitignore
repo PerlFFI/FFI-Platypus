@@ -26,3 +26,6 @@ core
 /inc/probe/longdouble
 /inc/probe/abi
 /inc/probe/*.exe
+*.exp
+*.lib
+*.pdb
