@@ -1337,16 +1337,36 @@ The build process also respects these environment variables:
          Created MYMETA.yml and MYMETA.json
          Creating new 'Build' script for 'FFI-Platypus' version '0.10'
 
+## Coding Guidelines
+
+- Do not hesitate to make code contribution.  Making useful contributions 
+is more important than following byzantine bureaucratic coding 
+regulations.  We can always tweak things later.
+- Please make an effort to follow existing coding style when making pull 
+requests.
+- Platypus supports all production Perl releases since 5.8.1.  For that 
+reason, please do not introduce any code that requires a newer version 
+of Perl.
+
+## Performance Testing
+
+As Mark Twain was fond of saying there are four types of lies: lies, 
+damn lies, statistics and benchmarks.  That being said, it can sometimes 
+be helpful to compare the runtime performance of Platypus if you are 
+making significant changes to the Platypus Core.  For that I use 
+\`FFI-Performance\`, which can be found in my GitHub repository here:
+
+- [https://github.com/plicease/FFI-Performance](https://github.com/plicease/FFI-Performance)
+
 ## System integrators
 
 If you are including Platypus in a larger system (for example a Linux 
 distribution), and you already have libffi as part of your system, you 
-may be interested in [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System).  This is an 
-alternative to [Alien::FFI](https://metacpan.org/pod/Alien::FFI) that does not require [Alien::Base](https://metacpan.org/pod/Alien::Base).  In 
-fact it has zero non-Core dependencies, and doesn't even need to be 
-installed.  Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System)'s `lib` 
-directory in your `PERL5LIB` path when you build Platypus.  For 
-example:
+may be interested in [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System).  This is an alternative 
+to [Alien::FFI](https://metacpan.org/pod/Alien::FFI) that does not require [Alien::Base](https://metacpan.org/pod/Alien::Base).  In fact it has 
+zero non-Core dependencies, and doesn't even need to be installed.  
+Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System)'s `lib` directory in your 
+`PERL5LIB` path when you build Platypus.  For example:
 
     % export PERL5LIB=/path/to/Alt-Alien-FFI-System/lib
     % cpanm FFI::Platypus
