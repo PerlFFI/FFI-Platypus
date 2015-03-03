@@ -44,34 +44,15 @@ sub new
     $args{extra_linker_flags} .= " -lpsapi";
   }
 
-  my $strawberry_lddlflags;
-  
-  if($^O eq 'MSWin32' && $Config{myuname} =~ /strawberry-perl/ && $] >= 5.020)
+  my $lddlflags = $Config{lddlflags};
+
+  # on some configurations (eg. Solaris 64 bit, Strawberry Perl)
+  # -L flags are included in the lddlflags configuration, but we
+  # need to make sure OUR -L comes first
+  my @libdirflags = grep /^-L/, shellwords(Alien::FFI->libs);
+  if(@libdirflags)
   {
-    # On Strawberry Perl (let me count the ways...) the c/lib directory gets 
-    # inserted before the Alien::FFI -L directory, meaning if you do an
-    # ALIEN_FORCE=1 install of Alien::FFI you get a header file / lib mismatch
-    # and shit breaks.  To work around this we reorder the flags.
-    
-    if(Alien::FFI->install_type eq 'share')
-    {
-      $strawberry_lddlflags = '';
-      my $lddlflags = $Config{lddlflags};
-      $lddlflags =~ s{\\}{/}g;
-      my @lddlflags = shellwords $lddlflags;
-      foreach my $flag (@lddlflags)
-      {
-        if($flag =~ m!^-L.*/c/lib$!)
-        {
-          $args{extra_linker_flags} .= " $flag";
-        }
-        else
-        {
-          $strawberry_lddlflags .= "$flag ";
-        }
-      }
-      $strawberry_lddlflags =~ s{\s+$}{};
-    }
+    $lddlflags = join ' ', @libdirflags, $lddlflags;
   }
   
   if($^O eq 'MSWin32')
@@ -130,14 +111,14 @@ sub new
     $diag{config}->{config_no_alloca} = 1;
   }
 
-  if(defined $strawberry_lddlflags)
+  if($lddlflags ne $Config{lddlflags})
   {
-    $self->config(lddlflags => $strawberry_lddlflags);
-    $diag{config}->{lddlflags} = $strawberry_lddlflags;
+    $self->config(lddlflags => $lddlflags);
+    $diag{config}->{lddlflags} = $lddlflags;
     print "\n\n";
     print "Strawberry Perl work around:\n";
     print "  - \$Config{lddlflags} = $Config{lddlflags}\n";
-    print "  + \$Config{lddlflags} = $strawberry_lddlflags\n";
+    print "  + \$Config{lddlflags} = $lddlflags\n";
     print "\n\n";
   }
   

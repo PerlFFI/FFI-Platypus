@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Make sure -L flags from Alien::FFI come before those in perl Config
+    For more reliable builds
 
 0.31      2015-02-26 13:41:23 -0500
   - Fix bug involving wide custom arguments 
