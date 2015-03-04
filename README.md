@@ -395,11 +395,14 @@ faster and may be useful if you are calling a particular cast a lot.
 Returns the total size of the given type in bytes.  For example to get 
 the size of an integer:
 
-    my $intsize = $ffi->sizeof('int'); # usually 4 or 8 depending on platform
+    my $intsize = $ffi->sizeof('int');   # usually 4
+    my $longsize = $ffi->sizeof('long'); # usually 4 or 8 depending on platform
 
 You can also get the size of arrays
 
-    my $intarraysize = $ffi->sizeof('int[64]'); # usually 4*64 or 8*64
+    my $intarraysize = $ffi->sizeof('int[64]');  # usually 4*64
+    my $intarraysize = $ffi->sizeof('long[64]'); # usually 4*64 or 8*64
+                                                 # depending on platform
 
 Keep in mind that "pointer" types will always be the pointer / word size 
 for the platform that you are using.  This includes strings, opaque and 
