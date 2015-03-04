@@ -2,11 +2,7 @@
     buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs +
                   sizeof(void*) * self->ffi_cif.nargs +
                   sizeof(ffi_pl_arguments);
-#ifdef HAVE_ALLOCA
-    buffer = alloca(buffer_size);
-#else
-    Newx(buffer, buffer_size, char);
-#endif
+    Newx_or_alloca(buffer, buffer_size, char);
     current_argv = arguments = (ffi_pl_arguments*) buffer;
 
     arguments->count = self->ffi_cif.nargs;
@@ -637,9 +633,7 @@
             }
           }
         }
-#ifndef HAVE_ALLOCA
-        Safefree(ptr);
-#endif
+        Safefree_or_alloca(ptr);
       }
       else if(platypus_type == FFI_PL_ARRAY)
       {
@@ -746,9 +740,7 @@
 #endif
           }
         }
-#ifndef HAVE_ALLOCA
-        Safefree(ptr);
-#endif
+        Safefree_or_alloca(ptr);
       }
       else if(platypus_type == FFI_PL_CLOSURE)
       {
@@ -775,14 +767,12 @@
       else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
       {
         void *ptr = argument_pointers[i];
-        Safefree(ptr);
+        Safefree_or_alloca(ptr);
       }
 #endif
     }
-#ifndef HAVE_ALLOCA
     if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
-      Safefree(arguments);
-#endif
+      Safefree_or_alloca(arguments);
 
     current_argv = NULL;
 
@@ -1171,9 +1161,7 @@
             ret_in = newSViv(PTR2IV(result.pointer));
           break;
         default:
-#ifndef HAVE_ALLOCA
-          Safefree(arguments);
-#endif
+          Safefree_or_alloca(arguments);
           warn("return type not supported");
           XSRETURN_EMPTY;
       }
@@ -1188,9 +1176,7 @@
 
       current_argv = NULL;
 
-#ifndef HAVE_ALLOCA
-      Safefree(arguments);
-#endif
+      Safefree_or_alloca(arguments);
 
       if(ret_in != NULL)
       {
