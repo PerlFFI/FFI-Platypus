@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 use Carp qw( croak );
+use Scalar::Util qw( refaddr weaken );
 
 # ABSTRACT: Write Perl bindings to non-Perl libraries with FFI. No XS required.
 # VERSION
@@ -671,6 +672,20 @@ Examples:
 
 my $inner_counter=0;
 
+sub _make_attach_method
+{
+  my($object, $other_methods) = @_;
+  my $key = refaddr $object;
+  my $entry = $other_methods->{$key};
+
+  if(!$entry or !$entry->{weakref})
+  {
+    croak("attached method called for invalid object");
+  }
+
+  return $entry->{function};
+}
+
 sub attach
 {
   my $wrapper;
@@ -708,6 +723,61 @@ sub attach
     }
   }
   
+  $self;
+}
+
+=head2 attach_method
+
+ $ffi->attach_method($object, $name => \@argument_types => $return_type);
+ $ffi->attach_method($object, [$c_name => $perl_name] => \@argument_types => $return_type);
+ $ffi->attach_method($object, [$address => $perl_name] => \@argument_types => $return_type);
+
+Like L<attach|/attach>, but the Perl xsub that is being created
+behaves like an object method of I<$object>.  If the first argument
+passed to the Perl xsub is I<$object>, it is discarded and the C
+function is called; if it isn't, an error is thrown.  There is
+machinery behind the scenes to allow several objects in one class,
+potentially with different I<$ffi> objects, to share the xsub without
+interfering with each other's bindings.  However, it is only when one
+object is used primarily that performance will be almost as good as
+that of L<attach|/attach>.
+
+The current implementation locks the function and the L<FFI::Platypus>
+instance into memory permanently; this is fixable, in theory.
+
+If just one I<$name> is given, then the function will be attached in
+Perl with the same name as it has in C.  The second form allows you to
+give the Perl function a different name.  You can also provide an
+address (the third form), just like with the L<function|/function>
+method.
+
+Unlike L<attach|/attach>, there is no way to specify a I<$wrapper>
+argument. If you need such a wrapper, you might as well handle the
+object detection in the wrapper sub.
+
+=cut
+
+sub attach_method
+{
+  my($self, $object, $name, $args, $ret, $proto) = @_;
+  my($c_name, $perl_name) = ref($name) ? @$name : ($name, $name);
+
+  croak "you tried to provide a perl name that looks like an address"
+    if $perl_name =~ /^-?[0-9]+$/;
+
+  my $function = $self->function($c_name, $args, $ret);
+
+  if(defined $function)
+  {
+    my($caller, $filename, $line) = caller;
+    $perl_name = join '::', $caller, $perl_name
+      unless $perl_name =~ /::/;
+
+    my $attach_name = $perl_name;
+
+    $function->attach_method($self, $object, refaddr $object, $attach_name, "$filename:$line", $proto);
+  }
+
   $self;
 }
 

@@ -121,6 +121,76 @@ call(self, ...)
 #include "ffi_platypus_call.h"
 
 void
+attach_method(self, ffi, object, object_key, perl_name, path_name, proto)
+    SV *self
+    SV *ffi
+    SV *object
+    const char *object_key
+    const char *perl_name
+    ffi_pl_string path_name
+    ffi_pl_string proto
+  PREINIT:
+    CV *cv;
+    ffi_pl_cached_method *method;
+    SV *value;
+  CODE:
+    if(!(sv_isobject(self) && sv_derived_from(self, "FFI::Platypus::Function")))
+      croak("self is not of type FFI::Platypus::Function");
+
+    if(path_name == NULL)
+      path_name = "unknown";
+
+    cv = get_cv(perl_name, 0);
+
+    if(cv == NULL
+    || CvXSUB(cv) != ffi_pl_method_call)
+    {
+      Newx(method, 1, ffi_pl_cached_method);
+      method->function = INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
+      method->other_methods = newHV();
+      method->weakref = NULL; /* create on first call */
+
+      if(proto == NULL)
+	cv = newXS(perl_name, ffi_pl_method_call, path_name);
+      else
+      {
+	/*
+	 * this ifdef is needed for Perl 5.8.8 support.
+	 * once we don't need to support 5.8.8 we can
+	 * remove this workaround (the ndef'd branch)
+	 */
+#ifdef newXS_flags
+	cv = newXSproto(perl_name, ffi_pl_method_call, path_name, proto);
+#else
+	newXSproto(perl_name, ffi_pl_method_call, path_name, proto);
+	cv = get_cv(perl_name,0);
+#endif
+      }
+      CvXSUBANY(cv).any_ptr = (void *) method;
+      /*
+       * No coresponding decrement !!
+       * once attached, you can never free the function object, or the FFI::Platypus
+       * it was created from.
+       */
+      SvREFCNT_inc(self);
+    }
+    else
+    {
+      /*
+       * Ideally, we should check here that the prototype of the
+       * existing CV matches the one we request. However, I don't know
+       * how to do that.
+       */
+      method = CvXSUBANY(cv).any_ptr;
+    }
+
+    value = newRV_noinc((SV*)newHV());
+    hv_store((HV*)SvRV(value), "ffi", strlen("ffi"), SvREFCNT_inc(ffi), 0);
+    hv_store((HV*)SvRV(value), "function", strlen("function"), SvREFCNT_inc(self), 0);
+    hv_store((HV*)SvRV(value), "weakref", strlen("weakref"), sv_rvweaken(newSVsv(object)), 0);
+    hv_store(method->other_methods, object_key, strlen(object_key), value, 0);
+
+void
 attach(self, perl_name, path_name, proto)
     SV *self
     const char *perl_name

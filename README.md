@@ -357,6 +357,33 @@ Examples:
       $return_string;
     });
 
+## attach\_method
+
+    $ffi->attach_method($object, $name => \@argument_types => $return_type);
+    $ffi->attach_method($object, [$c_name => $perl_name] => \@argument_types => $return_type);
+    $ffi->attach_method($object, [$address => $perl_name] => \@argument_types => $return_type);
+
+Like [attach](#attach), but the Perl xsub that is being created
+behaves like an object method of _$object_.  There is machinery
+behind the scenes to allow several objects in one class, potentially
+with different _$ffi_ objects, to share the xsub without interfering
+with each other's bindings.  However, it is only when one object is
+used primarily that performance will be almost as good as that of
+[attach](#attach).
+
+The current implementation locks the function and the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus)
+instance into memory permanently; this is fixable, in theory.
+
+If just one _$name_ is given, then the function will be attached in
+Perl with the same name as it has in C.  The second form allows you to
+give the Perl function a different name.  You can also provide an
+address (the third form), just like with the [function](#function)
+method.
+
+Unlike [attach](#attach), there is no way to specify a _$wrapper_
+argument. If you need such a wrapper, you might as well handle the
+object detection in the wrapper sub.
+
 ## closure
 
     my $closure = $ffi->closure($coderef);
