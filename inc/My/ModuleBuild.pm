@@ -116,7 +116,7 @@ sub new
     $self->config(lddlflags => $lddlflags);
     $diag{config}->{lddlflags} = $lddlflags;
     print "\n\n";
-    print "Strawberry Perl work around:\n";
+    print "Make sure any libffi -L flags come first:\n";
     print "  - \$Config{lddlflags} = $Config{lddlflags}\n";
     print "  + \$Config{lddlflags} = $lddlflags\n";
     print "\n\n";
