@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 8;
 use FFI::Platypus;
 use JSON::PP qw( encode_json );
 BEGIN { eval q{ use YAML () } };
@@ -160,6 +160,45 @@ subtest 'record' => sub {
   is $ffi->type_meta('my_record_44')->{size}, 44, "sizeof my_record_44 = 44";
 };
 
+subtest 'string' => sub {
+
+  my $ffi = FFI::Platypus->new;
+  
+  my $ptr_size = $ffi->sizeof('opaque');
+  
+  foreach my $type ('string', 'string_rw', 'string_ro', 'string rw', 'string ro')
+  {
+    subtest $type => sub {
+      plan tests => 3;
+
+      my $meta = $ffi->type_meta($type);
+      
+      is $meta->{size}, $ptr_size, "sizeof $type = $ptr_size";
+      is $meta->{fixed_size}, 0, 'not fixed size';
+      
+      my $access = $type =~ /rw$/ ? 'rw' : 'ro';
+      
+      is $meta->{access}, $access, "access = $access";
+      
+      note xdump($meta);
+    }
+  }
+  
+  foreach my $type ('string (10)', 'string(10)')
+  {
+    subtest $type => sub {
+    
+      my $meta = $ffi->type_meta($type);
+      
+      is $meta->{size}, 10, "sizeof $type = 10";
+      is $meta->{fixed_size}, 1, "fixed size";
+      is $meta->{access}, 'rw', 'access = rw';
+      
+      note xdump($meta);
+    
+    };
+  }
+};
 
 package
   My::Record22;

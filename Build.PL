@@ -17,25 +17,26 @@ my %module_build_args = (
     "Module::Build" => "0.3601"
   },
   "configure_requires" => {
-    "Alien::FFI" => "0.05",
+    "Alien::FFI" => "0.06",
     "Config::AutoConf" => 0,
     "ExtUtils::CBuilder" => 0,
     "FFI::CheckLib" => "0.05",
     "Module::Build" => "0.3601",
     "perl" => "5.008001"
   },
-  "dist_abstract" => "Write Perl bindings to non-Perl libraries without C or XS",
+  "dist_abstract" => "Write Perl bindings to non-Perl libraries with FFI. No XS required.",
   "dist_author" => [
     "Graham Ollis <plicease\@cpan.org>"
   ],
   "dist_name" => "FFI-Platypus",
-  "dist_version" => "0.18",
+  "dist_version" => "0.21",
   "license" => "perl",
   "module_name" => "FFI::Platypus",
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
     "ExtUtils::CBuilder" => 0,
+    "FFI::CheckLib" => 0,
     "File::ShareDir" => 0,
     "JSON::PP" => 0,
     "Module::Build" => "0.3601",
@@ -46,7 +47,6 @@ my %module_build_args = (
     "dist" => "share"
   },
   "test_requires" => {
-    "FFI::CheckLib" => 0,
     "Test::More" => "0.94",
     "perl" => "5.008001"
   }
@@ -54,7 +54,6 @@ my %module_build_args = (
 
 
 my %fallback_build_requires = (
-  "FFI::CheckLib" => 0,
   "Module::Build" => "0.3601",
   "Test::More" => "0.94",
   "perl" => "5.008001"

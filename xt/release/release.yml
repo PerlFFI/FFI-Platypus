@@ -38,6 +38,15 @@ pod_spelling_system:
     - demangling
     - lang
     - demangled
+    - alignof
+    - ALEXBIO
+    - AWWAIID
+    - Alessandro
+    - Ghedini
+    - MHOWARD
+    - JRuby
+    - Rubinius
+    - reimplemented
 
 pod_coverage:
   skip: 0

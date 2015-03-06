@@ -1,12 +1,13 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type
 
 ffi_pl_type *
-_new(class, type, platypus_type, array_or_record_size, type_classname)
+_new(class, type, platypus_type, array_or_record_or_string_size, type_classname, rw)
     const char *class
     const char *type
     const char *platypus_type
-    size_t array_or_record_size
+    size_t array_or_record_or_string_size
     ffi_pl_string type_classname
+    int rw
   PREINIT:
     ffi_pl_type *self;
     char *buffer;
@@ -14,9 +15,19 @@ _new(class, type, platypus_type, array_or_record_size, type_classname)
     self = NULL;
     if(!strcmp(platypus_type, "string"))
     {
-      Newx(self, 1, ffi_pl_type);
+      Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_string), char);
+      self = (ffi_pl_type*) buffer;
       self->ffi_type = NULL;
       self->platypus_type = FFI_PL_STRING;
+      self->extra[0].string.size = array_or_record_or_string_size;
+      if(array_or_record_or_string_size == 0)
+      {
+        self->extra[0].string.platypus_string_type = rw ? FFI_PL_STRING_RW : FFI_PL_STRING_RO;
+      }
+      else
+      {
+        self->extra[0].string.platypus_string_type = FFI_PL_STRING_FIXED;
+      }
     }
     else if(!strcmp(platypus_type, "ffi"))
     {
@@ -36,7 +47,7 @@ _new(class, type, platypus_type, array_or_record_size, type_classname)
       self = (ffi_pl_type*) buffer;
       self->ffi_type = NULL;
       self->platypus_type = FFI_PL_ARRAY;
-      self->extra[0].array.element_count = array_or_record_size;
+      self->extra[0].array.element_count = array_or_record_or_string_size;
     }
     else if(!strcmp(platypus_type, "record"))
     {
@@ -44,7 +55,7 @@ _new(class, type, platypus_type, array_or_record_size, type_classname)
       self = (ffi_pl_type*) buffer;
       self->ffi_type = NULL;
       self->platypus_type = FFI_PL_RECORD;
-      self->extra[0].record.size = array_or_record_size;
+      self->extra[0].record.size = array_or_record_or_string_size;
       self->extra[0].record.stash = type_classname != NULL ? gv_stashpv(type_classname, GV_ADD) : NULL;
     }
     else

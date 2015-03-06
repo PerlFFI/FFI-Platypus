@@ -5,7 +5,7 @@ use warnings;
 use 5.008001;
 use Carp qw( croak );
 
-# ABSTRACT: Write Perl bindings to non-Perl libraries without C or XS
+# ABSTRACT: Write Perl bindings to non-Perl libraries with FFI. No XS required.
 # VERSION
 
 # Platypus Man,
@@ -37,12 +37,16 @@ use Carp qw( croak );
 
 =head1 DESCRIPTION
 
-Platypus provides a method for creating interfaces to machine code 
-libraries.  This implementation uses C<libffi>, a library that provides 
-Foreign Function Interfaces for a number of other languages, including 
-Ruby and Python.  Platypus can be used in stand alone scripts, or to 
-create Perl extensions for CPAN.  There are a number of reasons why you 
-might want to write extensions with FFI instead of XS:
+Platypus is an library for creating interfaces to machine code libraries 
+written in languages like C, L<C++|FFI::Platypus::Lang::CPP>, 
+L<Fortran|FFI::Platypus::Lang::Fortran>, 
+L<Rust|FFI::Platypus::Lang::Rust>, 
+L<Pascal|FFI::Platypus::Lang::Pascal>. Essentially anything that gets 
+compiled into machine code.  This implementation uses C<libffi> to 
+accomplish this task.  C<libffi> is battle tested by a number of other 
+scripting and virtual machine languages, such as Python and Ruby to 
+serve a similar role.  There are a number of reasons why you might want 
+to write an extension with Platypus instead of XS:
 
 =over 4
 
@@ -65,6 +69,14 @@ be shared between different languages.
 One of those "other" languages could be Perl 6 and Perl 6 already has an 
 FFI interface I am told.
 
+=item FFI / Platypus can be reimplemented
+
+In a bright future with multiple implementations of Perl 5, each 
+interpreter will have its own implementation of Platypus, allowing 
+extensions to be written once and used on multiple platforms, in much 
+the same way that Ruby-FFI extensions can be use in Ruby, JRuby and 
+Rubinius.
+
 =item FFI / Platypus is pure perl (sorta)
 
 One Platypus script or module works on any platform where the libraries 
@@ -76,11 +88,14 @@ platform specific Perl library path.
 =item FFI / Platypus is not C or C++ centric
 
 XS is implemented primarily as a bunch of C macros, which requires at 
-least some understanding of C, (sadly) the C pre-processor, and some C++ 
-caveats (since on some platforms Perl is compiled and linked with a C++ 
+least some understanding of C, the C pre-processor, and some C++ caveats 
+(since on some platforms Perl is compiled and linked with a C++ 
 compiler). Platypus on the other hand could be used to call other 
-compiled languages, like Fortran, Rust, Go or even assembly, allowing 
-you to focus on your strengths.
+compiled languages, like L<Fortran|FFI::Platypus::Lang::Fortran>, 
+L<Rust|FFI::Platypus::Lang::Rust>, 
+L<Pascal|FFI::Platypus::Lang::Pascal>, L<C++|FFI::Platypus::Lang::CPP>, 
+Go or even L<assembly|FFI::Platypus::Lang::ASM>, allowing you to focus 
+on your strengths.
 
 =item FFI / Platypus does not require a parser
 
@@ -246,6 +261,10 @@ mostly useful for finding functions in the standard C library, without
 having to know the name of the standard c library for your platform (as 
 it turns out it is different just about everywhere!).
 
+You may also use the L</find_lib> method as a shortcut:
+
+ $ffi->find_lib( lib => 'archive' );
+
 =cut
 
 sub lib
@@ -354,7 +373,8 @@ sub type
 
   croak "alias conflicts with existing type" if defined $alias && (defined $type_map->{$alias} || defined $self->{types}->{$alias});
 
-  if($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/)
+  if($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/
+  || $name =~ /^string(_rw|_ro|\s+rw|\s+ro|\s*\([0-9]+\))$/)
   {
     # for closure and record types we do not try to convet into the
     # basic type so you can have many many many copies of a given
@@ -485,8 +505,7 @@ sub _type_lookup
 Returns the list of types that FFI knows about.  This will include the 
 native C<libffi> types (example: C<sint32>, C<opaque> and C<double>) and 
 the normal C types (example: C<unsigned int>, C<uint32_t>), any types 
-that you have defined using the L<type|/type> method, and
-custom types.
+that you have defined using the L<type|/type> method, and custom types.
 
 The list of types that Platypus knows about varies somewhat from 
 platform to platform, L<FFI::Platypus::Type> includes a list of the core 
@@ -515,6 +534,9 @@ Returns a hash reference with the meta information for the given type.
 
 It can also be called as a class method, in which case, you won't be 
 able to get meta data on user defined types.
+
+The format of the meta data is implementation dependent and subject to 
+change.  It may be useful for display or debugging.
 
 Examples:
 
@@ -556,13 +578,12 @@ of the symbol yourself:
  my $address = $ffi->find_symbol('my_functon');
  my $function = $ffi->function($address => ...);
 
-Under the covers, L<function|/function> uses 
-L<find_symbol|/find_symbol> when you provide it with a 
-name, but it is useful to keep this in mind as there are alternative 
-ways of obtaining a functions address.  Example: a C function could 
-return the address of another C function that you might want to call, or 
-modules such as L<FFI::TinyCC> produce machine code at runtime that you 
-can call from Platypus.
+Under the covers, L<function|/function> uses L<find_symbol|/find_symbol> 
+when you provide it with a name, but it is useful to keep this in mind 
+as there are alternative ways of obtaining a functions address.  
+Example: a C function could return the address of another C function 
+that you might want to call, or modules such as L<FFI::TinyCC> produce 
+machine code at runtime that you can call from Platypus.
 
 Examples:
 
@@ -588,19 +609,22 @@ sub function
  $ffi->attach($name => \@argument_types => $return_type);
  $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
  $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
+ $ffi->attach($name => \@argument_types => $return_type, sub { ... });
+ $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type, sub { ... });
+ $ffi->attach([$address => $perl_name] => \@argument_types => $return_type, sub { ... });
 
 Find and attach a C function as a real live Perl xsub.  The advantage of 
-attaching a function over using the L<function|/function> 
-method is that it is much much much faster since no object resolution 
-needs to be done.  The disadvantage is that it locks the function and 
-the L<FFI::Platypus> instance into memory permanently, since there is no 
-way to deallocate an xsub.
+attaching a function over using the L<function|/function> method is that 
+it is much much much faster since no object resolution needs to be done.  
+The disadvantage is that it locks the function and the L<FFI::Platypus> 
+instance into memory permanently, since there is no way to deallocate an 
+xsub.
 
 If just one I<$name> is given, then the function will be attached in 
 Perl with the same name as it has in C.  The second form allows you to 
 give the Perl function a different name.  You can also provide an 
-address (the third form), just like with the 
-L<function|/function> method.
+address (the third form), just like with the L<function|/function> 
+method.
 
 Examples:
 
@@ -609,10 +633,33 @@ Examples:
  my $string1 = my_function_name($int);
  my $string2 = my_perl_function_name($int);
 
+[version 0.20]
+
+If the last argument is a code reference, then it will be used as a 
+wrapper around the attached xsub.  The first argument to the wrapper 
+will be the inner xsub.  This can be used if you need to verify/modify 
+input/output data.
+
+Examples:
+
+ $ffi->attach('my_function', ['int', 'string'] => 'string', sub {
+   my($my_function_xsub, $integer, $string) = @_;
+   $integer++;
+   $string .= " and another thing";
+   my $return_string = $my_function->($integer, $string);
+   $return_string =~ /Belgium//; # HHGG remove profanity
+   $return_string;
+ });
+
 =cut
+
+my $inner_counter=0;
 
 sub attach
 {
+  my $wrapper;
+  $wrapper = pop if ref $_[-1] eq 'CODE';
+
   my($self, $name, $args, $ret, $proto) = @_;
   my($c_name, $perl_name) = ref($name) ? @$name : ($name, $name);
 
@@ -627,7 +674,22 @@ sub attach
     $perl_name = join '::', $caller, $perl_name
       unless $perl_name =~ /::/;
     
-    $function->attach($perl_name, "$filename:$line", $proto);
+    my $attach_name = $perl_name;
+    if($wrapper)
+    {
+      $attach_name = "FFI::Platypus::Inner::xsub$inner_counter";
+      $inner_counter++;
+    }
+    
+    $function->attach($attach_name, "$filename:$line", $proto);
+    
+    if($wrapper)
+    {
+      my $inner_coderef = \&{$attach_name};
+      no strict 'refs';
+      # TODO: Sub::Name ?
+      *{$perl_name} = sub { $wrapper->($inner_coderef, @_) };
+    }
   }
   
   $self;
@@ -720,6 +782,66 @@ sub sizeof
   FFI::Platypus::Type::sizeof($type);
 }
 
+=head2 alignof
+
+[version 0.21]
+
+ my $align = $ffi->alignof($type);
+
+Returns the alignment of the given type in bytes.
+
+=cut
+
+sub alignof
+{
+  my($self, $name) = @_;
+  my $meta = $self->type_meta($name);
+  
+  croak "cannot determine alignment of record"
+    if $meta->{type} eq 'record';
+  
+  require FFI::Platypus::ConfigData;
+
+  my $ffi_type;
+  if($meta->{type} eq 'pointer')
+  {
+    $ffi_type = 'pointer';
+  }
+  elsif($meta->{type} eq 'string' && $meta->{fixed_size})
+  {
+    $ffi_type = 'uint8';
+  }
+  else
+  {
+    $ffi_type = $meta->{ffi_type};
+  }
+  
+  FFI::Platypus::ConfigData->config('align')->{$ffi_type};
+}
+
+=head2 find_lib
+
+[version 0.20]
+
+ $ffi->find_lib( lib => $libname );
+
+This is just a shortcut for calling L<FFI::CheckLib#find_lib> and 
+updating the L</lib> attribute appropriately.  Care should be taken 
+though, as this method simply passes its arguments to 
+L<FFI::CheckLib#find_lib>, so if your module or script is depending on a 
+specific feature in L<FFI::CheckLib> then make sure that you update your 
+prerequisites appropriately.
+
+=cut
+
+sub find_lib
+{
+  my $self = shift;
+  require FFI::CheckLib;
+  $self->lib(FFI::CheckLib::find_lib(@_));
+  $self;
+}
+
 =head2 find_symbol
 
  my $address = $ffi->find_symbol($name);
@@ -775,13 +897,15 @@ sub find_symbol
 
 =head2 package
 
+[version 0.15]
+
  $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
  $ffi->package;                  # autodetect
 
-If you have used L<Module::Build::FFI> to bundle C code with your
-distribution, you can use this method to tell the L<FFI::Platypus> instance
-to look for symbols that came with the dynamic library that was built
-when your distribution was installed.
+If you have used L<Module::Build::FFI> to bundle C code with your 
+distribution, you can use this method to tell the L<FFI::Platypus> 
+instance to look for symbols that came with the dynamic library that was 
+built when your distribution was installed.
 
 =cut
 
@@ -790,7 +914,7 @@ sub package
   my($self, $module, $modlibname) = @_;
   
   require FFI::Platypus::ConfigData;
-  my $dlext = FFI::Platypus::ConfigData->config("config_dlext");
+  my @dlext = @{ FFI::Platypus::ConfigData->config("config_dlext") };
 
   ($module, $modlibname) = caller() unless defined $modlibname;  
   my @modparts = split /::/, $module;
@@ -798,14 +922,22 @@ sub package
   my $modpname = join('/',@modparts);
   my $c = @modparts;
   $modlibname =~ s,[\\/][^\\/]+$,, while $c--;    # Q&D basename
-  my $file = "$modlibname/auto/$modpname/$modfname.$dlext";
-  unless(-e $file)
-  {
-    $modlibname =~ s,[\\/][^\\/]+$,,;
-    $file = "$modlibname/arch/auto/$modpname/$modfname.$dlext";
-  }
   
-  $self->lib($file) if -e $file;
+  foreach my $dlext (@dlext)
+  {
+    my $file = "$modlibname/auto/$modpname/$modfname.$dlext";
+    unless(-e $file)
+    {
+      $modlibname =~ s,[\\/][^\\/]+$,,;
+      $file = "$modlibname/arch/auto/$modpname/$modfname.$dlext";
+    }
+  
+    if(-e $file)
+    {
+      $self->lib($file);
+      return $self;
+    }
+  }
   
   $self;
 }
@@ -847,6 +979,23 @@ friendly diagnostic letting the user know that the required library is
 missing, and reduce the number of bogus CPAN testers results that you 
 will get.
 
+Also in this example, we rename some of the functions when they are 
+placed into Perl space to save typing:
+
+ attach [notify_notification_new => 'notify_new']
+   => [string,string,string]
+   => opaque;
+
+When you specify a list reference as the "name" of the function the 
+first element is the symbol name as understood by the dynamic library. 
+The second element is the name as it will be placed in Perl space.
+
+Later, when we call C<notify_new>:
+
+ my $n = notify_new('','','');
+
+We are really calling the C function C<notify_notification_new>.
+
 =head2 Allocating and freeing memory
 
 # EXAMPLE: examples/malloc.pl
@@ -855,6 +1004,20 @@ B<Discussion>: C<malloc> and C<free> are standard memory allocation
 functions available from the standard c library and.  Interfaces to 
 these and other memory related functions are provided by the 
 L<FFI::Platypus::Memory> module.
+
+=head2 structured data records
+
+# EXAMPLE: examples/time_record.pl
+
+B<Discussion>: C and other machine code languages frequently provide 
+interfaces that include structured data records (known as "structs" in 
+C).  They sometimes provide an API in which you are expected to 
+manipulate these records before and/or after passing them along to C 
+functions.  There are a few ways of dealing with such interfaces, but 
+the easiest way is demonstrated here defines a record class using a 
+specific layout.  For more details see L<FFI::Platypus::Record>. 
+(L<FFI::Platypus::Type> includes some other ways of manipulating 
+structured data records).
 
 =head2 libuuid
 
@@ -865,9 +1028,9 @@ B<Discussion>: libuuid is a library used to generate unique identifiers
 library is or was part of the Linux e2fsprogs package.
 
 Knowing the size of objects is sometimes important.  In this example, we 
-use the L<sizeof|/sizeof> function to get the size of 16 
-characters (in this case it is simply 16 bytes).  We also know that the 
-strings "deparsed" by C<uuid_unparse> are exactly 37 bytes.
+use the L<sizeof|/sizeof> function to get the size of 16 characters (in 
+this case it is simply 16 bytes).  We also know that the strings 
+"deparsed" by C<uuid_unparse> are exactly 37 bytes.
 
 =head2 puts and getpid
 
@@ -901,10 +1064,10 @@ handled seamlessly by Platypus.
 B<Discussion>: Sometimes you will have a pointer to a function from a 
 source other than Platypus that you want to call.  You can use that 
 address instead of a function name for either of the 
-L<function|/function> or L<attach|/attach> 
-methods.  In this example we use L<FFI::TinyCC> to compile a short piece 
-of C code and to give us the address of one of its functions, which we 
-then use to create a perl xsub to call it.
+L<function|/function> or L<attach|/attach> methods.  In this example we 
+use L<FFI::TinyCC> to compile a short piece of C code and to give us the 
+address of one of its functions, which we then use to create a perl xsub 
+to call it.
 
 L<FFI::TinyCC> embeds the Tiny C Compiler (tcc) to provide a 
 just-in-time (JIT) compilation service for FFI.
@@ -956,20 +1119,50 @@ inherited from and extended just like any Perl classes because of the
 way the custom types are implemented.  For more details on custom types 
 see L<FFI::Platypus::Type> and L<FFI::Platypus::API>.
 
+Another advanced feature of this example is that we extend the 
+L<FFI::Platypus> class to define our own find_symbol method that 
+prefixes the symbol names depending on the class in which they are 
+defined. This means we can do this when we define a method for Archive:
+
+ $ffi->attach( support_filter_all => ['archive'] => 'int' );
+
+Rather than this:
+
+ $ffi->attach(
+   [ archive_read_support_filter_all => 'support_read_filter_all' ] => 
+   ['archive'] => 'int' );
+ );
+
+If you didn't want to create an entire new class just for this little 
+trick you could also use something like L<Object::Method> to extend 
+C<find_symbol>.
+
 =head2 bzip2
 
 # EXAMPLE: examples/bzip2.pl
 
-B<Discussion>: bzip2 is a compression library.  For simple one shot
-attempts at compression/decompression when you expect the original
-and the result to fit within memory it provides two convenience functions
+B<Discussion>: bzip2 is a compression library.  For simple one shot 
+attempts at compression/decompression when you expect the original and 
+the result to fit within memory it provides two convenience functions 
 C<BZ2_bzBuffToBuffCompress> and C<BZ2_bzBuffToBuffDecompress>.
 
-The first four arguments of both of these functions are identical, and 
-represent two buffers.  For the destination buffer, the length is passed 
-in as an pointer to an integer.  The value of this integer going in is 
-the maximum size of the buffer (the amount of memory preallocated).  On 
-output, the bzip2 library updates it with the actual number of bytes used.
+The first four arguments of both of these C functions are identical, and 
+represent two buffers.  One buffer is the source, the second is the 
+destination.  For the destination, the length is passed in as a pointer 
+to an integer.  On input this integer is the size of the destination 
+buffer, and thus the maximum size of the compressed or decompressed 
+data.  When the function returns the actual size of compressed or 
+compressed data is stored in this integer.
+
+This is normal stuff for C, but in Perl our buffers are scalars and they 
+already know how large they are.  In this sort of situation, wrapping 
+the C function in some Perl code can make your interface a little more 
+Perl like.  In order to do this, just provide a code reference as the 
+last argument to the L</attach> method.  The first argument to this 
+wrapper will be a code reference to the C function.  The Perl arguments 
+will come in after that.  This allows you to modify / convert the 
+arguments to conform to the C API.  What ever value you return from the 
+wrapper function will be returned back to the original caller.
 
 =cut
 
@@ -1050,13 +1243,17 @@ sub new
   
   my $ffi_type;
   my $platypus_type;
-  my $array_or_record_size = 0;
+  my $size = 0;
   my $classname;
-  
-  if($type eq 'string')
+  my $rw = 0;
+
+  if($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
   {
+    my $extra = $1;
     $ffi_type = 'pointer';
     $platypus_type = 'string';
+    $rw = 1 if $extra =~ /rw$/;
+    $size = $1 if $extra =~ /\(([0-9]+)\)$/;
   }
   elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
   {
@@ -1064,7 +1261,7 @@ sub new
     $platypus_type = 'record';
     if($1 =~ /^([0-9]+)$/)
     {
-      $array_or_record_size = $1;
+      $size = $1;
     }
     else
     {
@@ -1076,11 +1273,11 @@ sub new
       }
       if($classname->can('ffi_record_size'))
       {
-        $array_or_record_size = $classname->ffi_record_size;
+        $size = $classname->ffi_record_size;
       }
       elsif($classname->can('_ffi_record_size'))
       {
-        $array_or_record_size = $classname->_ffi_record_size;
+        $size = $classname->_ffi_record_size;
       }
       else
       {
@@ -1096,7 +1293,7 @@ sub new
   {
     $ffi_type = $type;
     $platypus_type = 'array';
-    $array_or_record_size = $1;
+    $size = $1;
   }
   else
   {
@@ -1104,7 +1301,7 @@ sub new
     $platypus_type = 'ffi';
   }
   
-  $class->_new($ffi_type, $platypus_type, $array_or_record_size, $classname);
+  $class->_new($ffi_type, $platypus_type, $size, $classname, $rw);
 }
 
 1;
@@ -1216,7 +1413,7 @@ structures like arrays or buffers.  If you prefer not to use C<alloca>
 despite these precautions, then you can turn its use off by setting this 
 environment variable when you run C<Build.PL>:
 
- % env FFI_PLATYPUS_NO_ALLOCA=1 perl Build.PL 
+ % env FFI_PLATYPUS_NO_ALLOCA=1 perl Build.PL
  
  
  NO_ALLOCA:
@@ -1239,6 +1436,11 @@ Declarative interface to Platypus.
 =item L<FFI::Platypus::Type>
 
 Type definitions for Platypus.
+
+=item L<FFI::Platypus::Record>
+
+Define structured data records (C "structs") for use with
+Platypus.
 
 =item L<FFI::Platypus::API>
 
@@ -1269,6 +1471,14 @@ language
 
 Documentation and tools for using Platypus with the C++ programming 
 language
+
+=item L<FFI::Platypus::Lang::Fortran>
+
+Documentation and tools for using Platypus with Fortran
+
+=item L<FFI::Platypus::Lang::Pascal>
+
+Documentation and tools for using Platypus with Free Pascal
 
 =item L<FFI::Platypus::Lang::Rust>
 
@@ -1318,6 +1528,19 @@ longer supported or distributed.
 Another FFI for Perl that doesn't appear to have worked for a long time.
 
 =back
+
+=head1 ACKNOWLEDGMENTS
+
+In addition to the contributors mentioned below, I would like to 
+acknowledge Brock Wilcox (AWWAIID) and Meredith Howard (MHOWARD) whose 
+work on L<FFI::Sweet|https://github.com/merrilymeredith/p5-FFI-Sweet> 
+not only helped me get started with FFI but significantly influenced the 
+design of Platypus.
+
+In addition I'd like to thank Alessandro Ghedini (ALEXBIO) who was 
+always responsive to bug reports and pull requests for L<FFI::Raw>, 
+which was important in the development of the ideas on which Platypus is 
+based.
 
 =cut
 

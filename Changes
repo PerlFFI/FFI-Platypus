@@ -2,6 +2,25 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.21      2015-02-09 06:23:03 -0500
+  - Added FFI::Platypus#alignof method
+  - Added FFI::Platypus::Record module
+  - Added fixed length strings example: string(10)
+  - Added ro and rw trait for strings
+
+0.20      2015-02-05 14:06:11 -0500
+  - Added optional wrapper argument to FFI::Platypus#attach
+    and FFI::Platypus::Declare#attach
+  - Added FFI::Platypus#find_lib method
+  - FFI::CheckLib is now a runtime requirement for Platypus
+  - Bumped Alien::FFI requirement to 0.06
+
+0.19      2015-02-03 13:34:53 -0500
+  - Accept additional extensions, in addition to dlext
+    Example: on OS X both .bundle and .dylib can be used
+    Example: although arguably wrong, on cygwin sometimes .so is used
+  - Added Module::Build::FFI->ffi_dlext class method
+
 0.18      2015-01-30 15:22:07 -0500
   - Improved support for C++ in Module::Build::FFI
   - Module::Build::FFI can now be subclassed to support foreign 

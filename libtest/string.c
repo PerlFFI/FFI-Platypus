@@ -41,8 +41,6 @@ string_pointer_pointer_set(const char **ptr, const char *value)
   *ptr = value;
 }
 
-#include <stdio.h>
-
 EXTERN char **
 string_pointer_pointer_return(char *value)
 {
@@ -59,3 +57,11 @@ string_pointer_pointer_return(char *value)
   }
   return &tmp;
 }
+
+EXTERN const char *
+string_fixed_test(int i)
+{
+  static char buffer[] = "zero one  two  threefour ";
+  return &buffer[i*5];
+}
+

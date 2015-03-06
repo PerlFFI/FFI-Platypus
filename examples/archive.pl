@@ -9,7 +9,7 @@ use FFI::CheckLib      ();
 # the ArchiveWrite class that could be used for writing archive formats
 # supported by libarchive
 
-my $ffi = FFI::Platypus->new;
+my $ffi = My::Platypus->new;
 $ffi->lib(FFI::CheckLib::find_lib_or_exit lib => 'archive');
 
 $ffi->custom_type(archive => {
@@ -33,38 +33,50 @@ $ffi->custom_type(archive_entry => {
   },
 });
 
+package My::Platypus;
+
+use base qw( FFI::Platypus );
+
+sub find_symbol
+{
+  my($self, $name) = @_;
+  my $prefix = lcfirst caller(2);
+  $prefix =~ s{([A-Z])}{"_" . lc $1}eg;
+  $self->SUPER::find_symbol(join '_', $prefix, $name);
+}
+
 package Archive;
 
 # base class is "abstract" having no constructor or destructor
 
-$ffi->attach( [ archive_error_string => 'error_string' ] => ['archive'] => 'string' );
+$ffi->attach( error_string => ['archive'] => 'string' );
 
 package ArchiveRead;
 
 our @ISA = qw( Archive );
 
-$ffi->attach( [ archive_read_new => 'new' ] => ['string'] => 'archive' );
-$ffi->attach( [ archive_read_free => 'DESTROY' ] => ['archive'] => 'void' );
-$ffi->attach( [ archive_read_support_filter_all => 'support_filter_all' ] => ['archive'] => 'int' );
-$ffi->attach( [ archive_read_support_format_all => 'support_format_all' ] => ['archive'] => 'int' );
-$ffi->attach( [ archive_read_open_filename => 'open_filename' ] => ['archive','string','size_t'] => 'int' );
-$ffi->attach( [ archive_read_next_header2 => 'next_header2' ] => ['archive', 'archive_entry' ] => 'int' );
-$ffi->attach( [ archive_read_data_skip => 'data_skip' ] => ['archive'] => 'int' );
+$ffi->attach( new                   => ['string']                    => 'archive' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive']                   => 'void' );
+$ffi->attach( support_filter_all    => ['archive']                   => 'int' );
+$ffi->attach( support_format_all    => ['archive']                   => 'int' );
+$ffi->attach( open_filename         => ['archive','string','size_t'] => 'int' );
+$ffi->attach( next_header2          => ['archive', 'archive_entry' ] => 'int' );
+$ffi->attach( data_skip             => ['archive']                   => 'int' );
 # ... define additional read methods
 
 package ArchiveWrite;
 
 our @ISA = qw( Archive );
 
-$ffi->attach( [ archive_write_new => 'new' ] => ['string'] => 'archive' );
-$ffi->attach( [ archive_write_free => 'DESTROY' ] => ['archive'] => 'void' );
+$ffi->attach( new                   => ['string'] => 'archive' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive'] => 'void' );
 # ... define additional write methods
 
 package ArchiveEntry;
 
-$ffi->attach( [ archive_entry_new => 'new' ] => ['string'] => 'archive_entry' );
-$ffi->attach( [ archive_entry_free => 'DESTROY' ] => ['archive_entry'] => 'void' );
-$ffi->attach( [ archive_entry_pathname => 'pathname' ] => ['archive_entry'] => 'string' );
+$ffi->attach( new => ['string']     => 'archive_entry' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_entry'] => 'void' );
+$ffi->attach( pathname              => ['archive_entry'] => 'string' );
 # ... define additional entry methods
 
 package main;

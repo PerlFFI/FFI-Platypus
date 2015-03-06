@@ -16,6 +16,9 @@ my $prologue = <<EOF;
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
 #define signed(type)  (((type)-1) < 0) ? 1 : 0
 EOF
 
@@ -164,9 +167,42 @@ sub configure
   # for _Bool or something.
   $type_map{bool} ||= delete $type_map{_Bool};
   delete $type_map{_Bool};
+
+  $ac->check_default_headers;
+
+  my %align = (
+    pointer => _alignment($ac, 'void*'),
+    float   => _alignment($ac, 'float'),
+    double  => _alignment($ac, 'double'),
+  );
+
+  foreach my $bits (qw( 8 16 32 64 ))
+  {
+    $align{'sint'.$bits} = $align{'uint'.$bits} = _alignment($ac, "int${bits}_t");
+  }
   
   $ac->write_config_h( $config_h );
-  $mb->config_data( type_map => \%type_map);
+  $mb->config_data( type_map => \%type_map );
+  $mb->config_data( align    => \%align    );
+}
+
+sub _alignment
+{
+  my($ac, $type) = @_;
+  my $align = $ac->check_alignof_type($type);
+  return $align if $align;
+  
+  # This no longer seems necessary now that we do a
+  # check_default_headers above.  See:
+  # # https://github.com/ambs/Config-AutoConf/issues/7
+  my $btype = $type eq 'void*' ? 'vpointer' : "b$type";
+  my $prologue2 = $prologue . <<EOF;
+struct align {
+  char a;
+    $type $btype;
+  };
+EOF
+  return $ac->compute_int("__builtin_offsetof(struct align, $btype)", { prologue => $prologue2 });
 }
 
 sub clean

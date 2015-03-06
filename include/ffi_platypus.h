@@ -63,6 +63,12 @@ typedef enum _platypus_type {
   FFI_PL_RECORD
 } platypus_type;
 
+typedef enum _platypus_string_type {
+  FFI_PL_STRING_RO = 0,
+  FFI_PL_STRING_RW,
+  FFI_PL_STRING_FIXED
+} platypus_string_type;
+
 typedef struct _ffi_pl_type_extra_record {
   size_t size;
   void *stash; /* really a HV* pointing to the package stash, or NULL */
@@ -88,11 +94,17 @@ typedef struct _ffi_pl_type_extra_closure {
   struct _ffi_pl_type *argument_types[0];
 } ffi_pl_type_extra_closure;
 
+typedef struct _ffi_pl_type_extra_string {
+  platypus_string_type platypus_string_type;
+  size_t size;
+} ffi_pl_type_extra_string;
+
 typedef union _ffi_pl_type_extra {
   ffi_pl_type_extra_custom_perl  custom_perl;
   ffi_pl_type_extra_array        array;
   ffi_pl_type_extra_closure      closure;
   ffi_pl_type_extra_record       record;
+  ffi_pl_type_extra_string       string;
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {
@@ -137,6 +149,11 @@ typedef struct _ffi_pl_arguments {
   int count;
   ffi_pl_argument slot[0];
 } ffi_pl_arguments;
+
+typedef struct _ffi_pl_record_member {
+  int offset;
+  int count;
+} ffi_pl_record_member;
 
 #define ffi_pl_arguments_count(arguments)                 (arguments->count)
 #define ffi_pl_arguments_set_pointer(arguments, i, value) (arguments->slot[i].pointer = value)
