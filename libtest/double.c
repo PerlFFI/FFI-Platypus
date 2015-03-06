@@ -4,7 +4,6 @@
  * all instances of "float" have been changed to "double"
  */
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN double
 double_add(double a, double b)
@@ -26,6 +25,18 @@ double_sum(double list[10])
   int i;
   double total;
   for(i=0,total=0; i<10; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
+EXTERN double
+double_sum2(double *list, size_t size)
+{
+  int i;
+  double total;
+  for(i=0,total=0; i<size; i++)
   {
     total += list[i];
   }

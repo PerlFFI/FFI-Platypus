@@ -1,5 +1,4 @@
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 typedef struct _color {
   uint8_t red, green, blue;

@@ -3,6 +3,7 @@
 
 #include <ffi.h>
 #include "ffi_platypus_config.h"
+#include "ffi_platypus_probe.h"
 
 #ifdef HAVE_DLFCN_H
 #ifndef PERL_OS_WINDOWS
@@ -29,6 +30,9 @@
 #endif
 #ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_COMPLEX_H
+#include <complex.h>
 #endif
 
 #ifdef __cplusplus
@@ -60,7 +64,8 @@ typedef enum _platypus_type {
   FFI_PL_ARRAY,
   FFI_PL_CLOSURE,
   FFI_PL_CUSTOM_PERL,
-  FFI_PL_RECORD
+  FFI_PL_RECORD,
+  FFI_PL_EXOTIC_FLOAT
 } platypus_type;
 
 typedef enum _platypus_string_type {
@@ -124,11 +129,41 @@ typedef struct _ffi_pl_function {
 typedef struct _ffi_pl_closure {
   ffi_closure *ffi_closure;
   void *function_pointer; /* C function pointer */
-  void *coderef;          /* Perl CV* pointing to code ref */
+  void *coderef;          /* Perl HV* pointing to FFI::Platypus::Closure object */
   ffi_pl_type *type;
 } ffi_pl_closure;
 
 typedef const char *ffi_pl_string;
+
+typedef union _ffi_pl_result {
+  void       *pointer;
+  const char *string;
+  int8_t     sint8;
+  uint8_t    uint8;
+  int8_t     sint8_array[4];
+  uint8_t    uint8_array[4];
+  int16_t    sint16;
+  uint16_t   uint16;
+  int16_t    sint16_array[2];
+  uint16_t   uint16_array[2];
+  int32_t    sint32;
+  uint32_t   uint32;
+  int64_t    sint64;
+  uint64_t   uint64;
+  float      xfloat;
+  double     xdouble;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+  long double longdouble;
+#endif
+#ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+#ifdef SIZEOF_FLOAT_COMPLEX
+  float complex complex_float;
+#endif
+#ifdef SIZEOF_DOUBLE_COMPLEX
+  double complex complex_double;
+#endif
+#endif
+} ffi_pl_result;
 
 typedef union _ffi_pl_argument {
   void       *pointer;
@@ -147,6 +182,7 @@ typedef union _ffi_pl_argument {
 
 typedef struct _ffi_pl_arguments {
   int count;
+  int reserved;
   ffi_pl_argument slot[0];
 } ffi_pl_arguments;
 
@@ -185,10 +221,16 @@ typedef struct _ffi_pl_record_member {
 
 #define ffi_pl_arguments_pointers(arguments) ((void**)&arguments->slot[arguments->count])
 
-#ifdef HAVE_ALLOCA
-#define Newx_or_alloca(ptr, type) ptr = alloca(sizeof(type))
+#if defined(_MSC_VER)
+#define Newx_or_alloca(ptr, count, type) ptr = _alloca(sizeof(type)*count)
+#define Safefree_or_alloca(ptr) 
+#define HAVE_ALLOCA 1
+#elif defined(HAVE_ALLOCA)
+#define Newx_or_alloca(ptr, count, type) ptr = alloca(sizeof(type)*count)
+#define Safefree_or_alloca(ptr) 
 #else
-#define Newx_or_alloca(ptr, type) Newx(ptr, 1, type)
+#define Newx_or_alloca(ptr, count, type) Newx(ptr, count, type)
+#define Safefree_or_alloca(ptr) Safefree(ptr)
 #endif
 
 ffi_type *ffi_pl_name_to_type(const char *);
@@ -196,5 +238,10 @@ ffi_type *ffi_pl_name_to_type(const char *);
 #ifdef __cplusplus
 }
 #endif
+
+extern int have_pm(const char *pm_name);
+
+extern int have_math_longdouble;  /* Math::LongDouble */
+extern int have_math_complex;  /* Math::Complex    */
 
 #endif

@@ -1,24 +1,23 @@
     /* buffer contains the memory required for the arguments structure */
-    buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs * 2 + sizeof(ffi_pl_arguments);
-#ifdef HAVE_ALLOCA
-    buffer = alloca(buffer_size);
-#else
-    Newx(buffer, buffer_size, char);
-#endif
+    buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs +
+                  sizeof(void*) * self->ffi_cif.nargs +
+                  sizeof(ffi_pl_arguments);
+    Newx_or_alloca(buffer, buffer_size, char);
     current_argv = arguments = (ffi_pl_arguments*) buffer;
 
     arguments->count = self->ffi_cif.nargs;
+    argument_pointers = (void**) &arguments->slot[arguments->count];
 
     /*
      * ARGUMENT IN
      */
 
-    for(i=0; i < self->ffi_cif.nargs; i++)
+    for(i=0, perl_arg_index=(EXTRA_ARGS); i < self->ffi_cif.nargs; i++, perl_arg_index++)
     {
       int platypus_type = self->argument_types[i]->platypus_type;
-      ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
+      argument_pointers[i] = (void*) &arguments->slot[i];
 
-      arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+      arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
       if(platypus_type == FFI_PL_NATIVE)
       {
         switch(self->argument_types[i]->ffi_type->type)
@@ -95,70 +94,85 @@
       else if(platypus_type == FFI_PL_POINTER)
       {
         void *ptr;
+        
         if(SvROK(arg)) /* TODO: and a scalar ref */
         {
           SV *arg2 = SvRV(arg);
-          switch(self->argument_types[i]->ffi_type->type)
+          if(SvTYPE(arg2) < SVt_PVAV)
           {
-            case FFI_TYPE_UINT8:
-              Newx_or_alloca(ptr, uint8_t);
-              *((uint8_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
-              break;
-            case FFI_TYPE_SINT8:
-              Newx_or_alloca(ptr, int8_t);
-              *((int8_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
-              break;
-            case FFI_TYPE_UINT16:
-              Newx_or_alloca(ptr, uint16_t);
-              *((uint16_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
-              break;
-            case FFI_TYPE_SINT16:
-              Newx_or_alloca(ptr, int16_t);
-              *((int16_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
-              break;
-            case FFI_TYPE_UINT32:
-              Newx_or_alloca(ptr, uint32_t);
-              *((uint32_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
-              break;
-            case FFI_TYPE_SINT32:
-              Newx_or_alloca(ptr, int32_t);
-              *((int32_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
-              break;
-            case FFI_TYPE_UINT64:
-              Newx_or_alloca(ptr, uint64_t);
+            switch(self->argument_types[i]->ffi_type->type)
+            {
+              case FFI_TYPE_UINT8:
+                Newx_or_alloca(ptr, 1, uint8_t);
+                *((uint8_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
+                break;
+              case FFI_TYPE_SINT8:
+                Newx_or_alloca(ptr, 1, int8_t);
+                *((int8_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
+                break;
+              case FFI_TYPE_UINT16:
+                Newx_or_alloca(ptr, 1, uint16_t);
+                *((uint16_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
+                break;
+              case FFI_TYPE_SINT16:
+                Newx_or_alloca(ptr, 1, int16_t);
+                *((int16_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
+                break;
+              case FFI_TYPE_UINT32:
+                Newx_or_alloca(ptr, 1, uint32_t);
+                *((uint32_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
+                break;
+              case FFI_TYPE_SINT32:
+                Newx_or_alloca(ptr, 1, int32_t);
+                *((int32_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
+                break;
+              case FFI_TYPE_UINT64:
+                Newx_or_alloca(ptr, 1, uint64_t);
 #ifdef HAVE_IV_IS_64
-              *((uint64_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
+                *((uint64_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
 #else
-              *((uint64_t*)ptr) = SvOK(arg2) ? SvU64(arg2) : 0;
+                *((uint64_t*)ptr) = SvOK(arg2) ? SvU64(arg2) : 0;
 #endif
-              break;
-            case FFI_TYPE_SINT64:
-              Newx_or_alloca(ptr, int64_t);
+                break;
+              case FFI_TYPE_SINT64:
+                Newx_or_alloca(ptr, 1, int64_t);
 #ifdef HAVE_IV_IS_64
-              *((int64_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
+                *((int64_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
 #else
-              *((int64_t*)ptr) = SvOK(arg2) ? SvI64(arg2) : 0;
+                *((int64_t*)ptr) = SvOK(arg2) ? SvI64(arg2) : 0;
 #endif
-              break;
-            case FFI_TYPE_FLOAT:
-              Newx_or_alloca(ptr, float);
-              *((float*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
-              break;
-            case FFI_TYPE_DOUBLE:
-              Newx_or_alloca(ptr, double);
-              *((double*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
-              break;
-            case FFI_TYPE_POINTER:
-              Newx_or_alloca(ptr, void*);
-              {
-                SV *tmp = SvRV(arg);
-                *((void**)ptr) = SvOK(tmp) ? INT2PTR(void *, SvIV(tmp)) : NULL;
-              }
-              break;
-            default:
-              warn("argument type not supported (%d)", i);
-              *((void**)ptr) = NULL;
-              break;
+                break;
+              case FFI_TYPE_FLOAT:
+                Newx_or_alloca(ptr, 1, float);
+                *((float*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
+                break;
+              case FFI_TYPE_DOUBLE:
+                Newx_or_alloca(ptr, 1, double);
+                *((double*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
+                break; 
+              case FFI_TYPE_POINTER:
+                Newx_or_alloca(ptr, 1, void*);
+                {
+                  SV *tmp = SvRV(arg);
+                  *((void**)ptr) = SvOK(tmp) ? INT2PTR(void *, SvIV(tmp)) : NULL;
+                }
+                break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+              case FFI_TYPE_LONGDOUBLE:
+                Newx_or_alloca(ptr, 1, long double);
+                ffi_pl_perl_to_long_double(arg2, (long double*)ptr);
+                break;
+#endif
+              default:
+                warn("argument type not supported (%d)", i);
+                *((void**)ptr) = NULL;
+                break;
+            }
+          }
+          else
+          {
+            warn("argument type not a reference to scalar (%d)", i);
+            ptr = NULL;
           }
         }
         else
@@ -193,6 +207,8 @@
         if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
         {
           AV *av = (AV*) SvRV(arg);
+          if(count == 0)
+            count = av_len(av)+1;
           switch(self->argument_types[i]->ffi_type->type)
           {
             case FFI_TYPE_UINT8:
@@ -281,6 +297,16 @@
                 ((void**)ptr)[n] = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
               }
               break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+            case FFI_TYPE_LONGDOUBLE:
+              Newx(ptr, count, long double);
+              for(n=0; n<count; n++)
+              {
+                SV *sv = *av_fetch(av, n, 1);
+                ffi_pl_perl_to_long_double(sv, &((long double*)ptr)[n]);
+              }
+              break;
+#endif
             default:
               Newxz(ptr, count*self->argument_types[i]->ffi_type->size, char);
               warn("argument type not supported (%d)", i);
@@ -298,7 +324,7 @@
       {
         if(!SvROK(arg))
         {
-          ffi_pl_arguments_set_pointer(arguments, i, NULL);
+          ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
         }
         else
         {
@@ -307,38 +333,46 @@
 
           SvREFCNT_inc(arg);
 
-          Newx(closure, 1, ffi_pl_closure);
-          closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
-          if(closure->ffi_closure == NULL)
+          closure = ffi_pl_closure_get_data(arg, self->argument_types[i]);
+          if(closure != NULL)
           {
-            Safefree(closure);
-            ffi_pl_arguments_set_pointer(arguments, i, NULL);
-            warn("unable to allocate memory for closure");
+            ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
           }
           else
           {
-            closure->type = self->argument_types[i];
-
-            ffi_status = ffi_prep_closure_loc(
-              closure->ffi_closure,
-              &self->argument_types[i]->extra[0].closure.ffi_cif,
-              ffi_pl_closure_call,
-              closure,
-              closure->function_pointer
-            );
-
-            if(ffi_status != FFI_OK)
+            Newx(closure, 1, ffi_pl_closure);
+            closure->ffi_closure = ffi_closure_alloc(sizeof(ffi_closure), &closure->function_pointer);
+            if(closure->ffi_closure == NULL)
             {
-              ffi_closure_free(closure->ffi_closure);
               Safefree(closure);
               ffi_pl_arguments_set_pointer(arguments, i, NULL);
-              warn("unable to create closure");
+              warn("unable to allocate memory for closure");
             }
             else
             {
-              closure->coderef = arg;
-              ffi_pl_closure_add_data(arg, closure);
-              ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+              closure->type = self->argument_types[i];
+
+              ffi_status = ffi_prep_closure_loc(
+                closure->ffi_closure,
+                &self->argument_types[i]->extra[0].closure.ffi_cif,
+                ffi_pl_closure_call,
+                closure,
+                closure->function_pointer
+              );
+
+              if(ffi_status != FFI_OK)
+              {
+                ffi_closure_free(closure->ffi_closure);
+                Safefree(closure);
+                ffi_pl_arguments_set_pointer(arguments, i, NULL);
+                warn("unable to create closure");
+              }
+              else
+              {
+                closure->coderef = arg;
+                ffi_pl_closure_add_data(arg, closure);
+                ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+              }
             }
           }
         }
@@ -407,7 +441,52 @@
         for(n=0; n < self->argument_types[i]->extra[0].custom_perl.argument_count; n++)
         {
           i++;
-          ((void**)&arguments->slot[arguments->count])[i] = &arguments->slot[i];
+          argument_pointers[i] = &arguments->slot[i];
+        }
+      }
+      else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
+      {
+        switch(self->argument_types[i]->ffi_type->type)
+        {
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+          case FFI_TYPE_LONGDOUBLE:
+            {
+              long double *ptr;
+              Newx_or_alloca(ptr, 1, long double);
+              argument_pointers[i] = ptr;
+              ffi_pl_perl_to_long_double(arg, ptr);
+            }
+            break;
+#endif
+#ifdef FFI_PL_PROBE_COMPLEX
+          case FFI_TYPE_COMPLEX:
+            switch(self->argument_types[i]->ffi_type->size)
+            {
+              case  8:
+                {
+                  float *ptr;
+                  Newx_or_alloca(ptr, 2, float complex);
+                  argument_pointers[i] = ptr;
+                  ffi_pl_perl_complex_float(arg, ptr);
+                }
+                break;
+              case 16:
+                {
+                  double *ptr;
+                  Newx_or_alloca(ptr, 2, double);
+                  argument_pointers[i] = ptr;
+                  ffi_pl_perl_complex_double(arg, ptr);
+                }
+                break;
+              default :
+                warn("argument type not supported (%d)", i);
+                break;
+            }
+            break;
+#endif
+          default:
+            warn("argument type not supported (%d)", i);
+            break;
         }
       }
       else
@@ -424,16 +503,43 @@
     fprintf(stderr, "# ===[%p]===\n", self->address);
     for(i=0; i < self->ffi_cif.nargs; i++)
     {
-      fprintf(stderr, "# [%d] <%d:%d> %p %p %016llx \n",
+      fprintf(stderr, "# [%d] <%d:%d> %p %p",
         i,
         self->argument_types[i]->ffi_type->type,
         self->argument_types[i]->platypus_type,
-        ((void**)&arguments->slot[arguments->count])[i],
-        &arguments->slot[i],
-        ffi_pl_arguments_get_uint64(arguments, i)
-        /* ffi_pl_arguments_get_float(arguments, i), *
-         * ffi_pl_arguments_get_double(arguments, i) */
+        argument_pointers[i],
+        &arguments->slot[i]
       );
+      if(self->argument_types[i]->platypus_type  == FFI_PL_EXOTIC_FLOAT)
+      {
+        switch(self->argument_types[i]->ffi_type->type)
+        {
+          case FFI_TYPE_LONGDOUBLE:
+            fprintf(stderr, " %Lg", *((long double*)argument_pointers[i]));
+            break;
+          case FFI_TYPE_COMPLEX:
+            switch(self->argument_types[i]->ffi_type->size)
+            {
+              case 8:
+                fprintf(stderr, " %g + %g * i",
+                  crealf(*((float complex*)argument_pointers[i])),
+                  cimagf(*((float complex*)argument_pointers[i]))
+                );
+                break;
+              case 16:
+                fprintf(stderr, " %g + %g * i",
+                  creal(*((double complex*)argument_pointers[i])),
+                  cimag(*((double complex*)argument_pointers[i]))
+                );
+                break;
+            }
+        }
+      }
+      else
+      {
+        fprintf(stderr, "%016llx", ffi_pl_arguments_get_uint64(arguments, i));
+      }
+      fprintf(stderr, "\n");
     }
     fprintf(stderr, "# === ===\n");
     fflush(stderr);
@@ -457,14 +563,17 @@
 
     current_argv = arguments;
 
-    for(i=self->ffi_cif.nargs-1; i >= 0; i--)
+    for(i=self->ffi_cif.nargs-1,perl_arg_index--; i >= 0; i--, perl_arg_index--)
     {
-      if(self->argument_types[i]->platypus_type == FFI_PL_POINTER)
+      platypus_type platypus_type;
+      platypus_type = self->argument_types[i]->platypus_type;
+    
+      if(platypus_type == FFI_PL_POINTER)
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         if(ptr != NULL)
         {
-          arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+          arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
           if(!SvREADONLY(SvRV(arg)))
           {
             switch(self->argument_types[i]->ffi_type->type)
@@ -513,22 +622,29 @@
               case FFI_TYPE_DOUBLE:
                 sv_setnv(SvRV(arg), *((double*)ptr));
                 break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+              case FFI_TYPE_LONGDOUBLE:
+                {
+                  SV *arg2 = SvRV(arg);
+                  ffi_pl_long_double_to_perl(arg2,(long double*)ptr);
+                }
+                break;
+#endif
             }
           }
         }
-#ifndef HAVE_ALLOCA
-        Safefree(ptr);
-#endif
+        Safefree_or_alloca(ptr);
       }
-
-      if(self->argument_types[i]->platypus_type == FFI_PL_ARRAY)
+      else if(platypus_type == FFI_PL_ARRAY)
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
         int count = self->argument_types[i]->extra[0].array.element_count;
-        arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+        arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
         if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
         {
           AV *av = (AV*) SvRV(arg);
+          if(count == 0)
+            count = av_len(av)+1;
           switch(self->argument_types[i]->ffi_type->type)
           {
             case FFI_TYPE_UINT8:
@@ -612,21 +728,29 @@
                 sv_setnv(*av_fetch(av, n, 1), ((double*)ptr)[n]);
               }
               break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+            case FFI_TYPE_LONGDOUBLE:
+              for(n=0; n<count; n++)
+              {
+                SV *sv;
+                sv = *av_fetch(av, n, 1);
+                ffi_pl_long_double_to_perl(sv, &((long double*)ptr)[n]);
+              }
+              break;
+#endif
           }
         }
-#ifndef HAVE_ALLOCA
-        Safefree(ptr);
-#endif
+        Safefree_or_alloca(ptr);
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_CLOSURE)
+      else if(platypus_type == FFI_PL_CLOSURE)
       {
-        arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+        arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
         if(SvROK(arg))
         {
           SvREFCNT_dec(arg);
         }
       }
-      else if(self->argument_types[i]->platypus_type == FFI_PL_CUSTOM_PERL)
+      else if(platypus_type == FFI_PL_CUSTOM_PERL)
       {
         /* FIXME: need to fill out argument_types for skipping */
         i -= self->argument_types[i]->extra[0].custom_perl.argument_count;
@@ -634,16 +758,21 @@
           SV *coderef = self->argument_types[i]->extra[0].custom_perl.perl_to_native_post;
           if(coderef != NULL)
           {
-            arg = i+(EXTRA_ARGS) < items ? ST(i+(EXTRA_ARGS)) : &PL_sv_undef;
+            arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
             ffi_pl_custom_perl_cb(coderef, arg, i);
           }
         }
       }
-    }
 #ifndef HAVE_ALLOCA
-    if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
-      Safefree(arguments);
+      else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
+      {
+        void *ptr = argument_pointers[i];
+        Safefree_or_alloca(ptr);
+      }
 #endif
+    }
+    if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
+      Safefree_or_alloca(arguments);
 
     current_argv = NULL;
 
@@ -663,16 +792,32 @@
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
+#ifdef FFI_PL_PROBE_BIGENDIAN
+            XSRETURN_UV(result.uint8_array[3]);
+#else
             XSRETURN_UV(result.uint8);
+#endif
             break;
           case FFI_TYPE_SINT8:
+#ifdef FFI_PL_PROBE_BIGENDIAN
+            XSRETURN_IV(result.sint8_array[3]);
+#else
             XSRETURN_IV(result.sint8);
+#endif
             break;
           case FFI_TYPE_UINT16:
+#ifdef FFI_PL_PROBE_BIGENDIAN
+            XSRETURN_UV(result.uint16_array[1]);
+#else
             XSRETURN_UV(result.uint16);
+#endif
             break;
           case FFI_TYPE_SINT16:
+#ifdef FFI_PL_PROBE_BIGENDIAN
+            XSRETURN_IV(result.sint16_array[1]);
+#else
             XSRETURN_IV(result.sint16);
+#endif
             break;
           case FFI_TYPE_UINT32:
             XSRETURN_UV(result.uint32);
@@ -801,6 +946,12 @@
             else
               sv_setiv(value, PTR2IV(*((void**)result.pointer)));
             break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+          case FFI_TYPE_LONGDOUBLE:
+            value = sv_newmortal();
+            ffi_pl_long_double_to_perl(value, (long double*)result.pointer);
+            break;
+#endif
           default:
             warn("return type not supported");
             XSRETURN_EMPTY;
@@ -926,6 +1077,15 @@
               }
             }
             break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+          case FFI_TYPE_LONGDOUBLE:
+            for(i=0; i<count; i++)
+            {
+              sv[i] = newSV(0);
+              ffi_pl_long_double_to_perl(sv[i], &((long double*)result.pointer)[i]);
+            }
+            break;
+#endif
           default:
             warn("return type not supported");
             XSRETURN_EMPTY;
@@ -943,16 +1103,32 @@
       switch(self->return_type->ffi_type->type)
       {
         case FFI_TYPE_UINT8:
+#ifdef FFI_PL_PROBE_BIGENDIAN
+          ret_in = newSVuv(result.uint8_array[3]);
+#else
           ret_in = newSVuv(result.uint8);
+#endif
           break;
         case FFI_TYPE_SINT8:
+#ifdef FFI_PL_PROBE_BIGENDIAN
+          ret_in = newSViv(result.sint8_array[3]);
+#else
           ret_in = newSViv(result.sint8);
+#endif
           break;
         case FFI_TYPE_UINT16:
+#ifdef FFI_PL_PROBE_BIGENDIAN
+          ret_in = newSVuv(result.uint16_array[1]);
+#else
           ret_in = newSVuv(result.uint16);
+#endif
           break;
         case FFI_TYPE_SINT16:
+#ifdef FFI_PL_PROBE_BIGENDIAN
+          ret_in = newSViv(result.sint16_array[1]);
+#else
           ret_in = newSViv(result.sint16);
+#endif
           break;
         case FFI_TYPE_UINT32:
           ret_in = newSVuv(result.uint32);
@@ -985,9 +1161,7 @@
             ret_in = newSViv(PTR2IV(result.pointer));
           break;
         default:
-#ifndef HAVE_ALLOCA
-          Safefree(arguments);
-#endif
+          Safefree_or_alloca(arguments);
           warn("return type not supported");
           XSRETURN_EMPTY;
       }
@@ -1002,9 +1176,7 @@
 
       current_argv = NULL;
 
-#ifndef HAVE_ALLOCA
-      Safefree(arguments);
-#endif
+      Safefree_or_alloca(arguments);
 
       if(ret_in != NULL)
       {
@@ -1021,6 +1193,32 @@
         XSRETURN(1);
       }
 
+    }
+    else if(self->return_type->platypus_type == FFI_PL_EXOTIC_FLOAT)
+    {
+      switch(self->return_type->ffi_type->type)
+      {
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+        case FFI_TYPE_LONGDOUBLE:
+        {
+          if(have_math_longdouble)
+          {
+            SV *sv;
+            long double *ptr;
+            Newx(ptr, 1, long double);
+            *ptr = result.longdouble;
+            sv = sv_newmortal();
+            sv_setref_pv(sv, "Math::LongDouble", (void*)ptr);
+            ST(0) = sv;
+            XSRETURN(1);
+          }
+          else
+          {
+            XSRETURN_NV((double) result.longdouble);
+          }
+        }
+#endif
+      }
     }
 
     warn("return type not supported");

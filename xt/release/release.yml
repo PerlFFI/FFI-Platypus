@@ -47,6 +47,31 @@ pod_spelling_system:
     - JRuby
     - Rubinius
     - reimplemented
+    - Mughal
+    - Zaki
+    - zmughal
+    - Scala
+    - JVM
+    - gcj
+    - integrators
+    - ABIs
+    - abis
+    - abi
+    - ABI
+    - pipcet
+    - FSF
+    - bzip2
+    - e2fsprogs
+    - g3
+    - sint8
+    - sint16
+    - sint32
+    - sint64
+    - uint8
+    - uint16
+    - uint32
+    - uint64
+    - x86
 
 pod_coverage:
   skip: 0

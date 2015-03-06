@@ -1,5 +1,4 @@
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN float
 float_add(float a, float b)
@@ -21,6 +20,18 @@ float_sum(float list[10])
   int i;
   float total;
   for(i=0,total=0; i<10; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
+EXTERN float
+float_sum2(float *list, size_t size)
+{
+  int i;
+  float total;
+  for(i=0,total=0; i<size; i++)
   {
     total += list[i];
   }

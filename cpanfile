@@ -10,13 +10,14 @@ on 'build' => sub {
 };
 
 on 'test' => sub {
+  requires "Alien::FFI" => "0.06";
   requires "Test::More" => "0.94";
   requires "perl" => "5.008001";
 };
 
 on 'configure' => sub {
   requires "Alien::FFI" => "0.06";
-  requires "Config::AutoConf" => "0";
+  requires "Config::AutoConf" => "0.309";
   requires "ExtUtils::CBuilder" => "0";
   requires "FFI::CheckLib" => "0.05";
   requires "Module::Build" => "0.3601";
@@ -24,5 +25,5 @@ on 'configure' => sub {
 };
 
 on 'develop' => sub {
-  requires "Devel::PPPort" => "3.23";
+  requires "Devel::PPPort" => "3.28";
 };

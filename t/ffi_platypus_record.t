@@ -231,55 +231,77 @@ do {
 };
 
 subtest 'array alignment' => sub {
-  plan tests => 21;
+  plan tests => 14;
 
   my $foo = Foo4->new;
   isa_ok $foo, 'Foo4';
-  
-  $foo->uint64([1,2,3]);
-  is_deeply $foo->uint64,     [1,2,3],   "uint64     = 1,2,3";
-  is_deeply $foo->get_uint64, [1,2,3],   "get_uint64 = 1,2,3";  
-  $foo->sint64([-1,2,-3]);
-  is_deeply $foo->sint64,     [-1,2,-3], "sint64     = -1,2,-3";
-  is_deeply $foo->get_sint64, [-1,2,-3], "get_sint64 = -1,2,-3";  
 
-  $foo->uint32([1,2,3]);
-  is_deeply $foo->uint32,     [1,2,3],   "uint32     = 1,2,3";
-  is_deeply $foo->get_uint32, [1,2,3],   "get_uint32 = 1,2,3";  
-  $foo->sint32([-1,2,-3]);
-  is_deeply $foo->sint32,     [-1,2,-3], "sint32     = -1,2,-3";
-  is_deeply $foo->get_sint32, [-1,2,-3], "get_sint32 = -1,2,-3";  
+  foreach my $bits (qw( 8 16 32 64 ))
+  {
+    subtest "unsigned $bits integer" => sub {
+      plan tests => 4;
+      my $acc1 = "uint$bits";
+      my $acc2 = "get_uint$bits";
+      $foo->$acc1([1,2,3]);
+      is_deeply $foo->$acc1, [1,2,3], "$acc1 = 1,2,3";
+      is_deeply $foo->$acc2, [1,2,3], "$acc2 = 1,2,3";
+      is $foo->$acc1(1), 2, "$acc1(1) = 2";
+      $foo->$acc1(1,20);
+      is_deeply $foo->$acc1, [1,20,3], "$acc1 = 1,20,3";
+    };
+    
+    subtest "signed $bits integer" => sub {
+      plan tests => 4;
+      my $acc1 = "sint$bits";
+      my $acc2 = "get_sint$bits";
+      $foo->$acc1([-1,2,-3]);
+      is_deeply $foo->$acc1, [-1,2,-3], "$acc1 = -1,2,-3";
+      is_deeply $foo->$acc2, [-1,2,-3], "$acc2 = -1,2,-3";
+      is $foo->$acc1(2), -3, "$acc1(2) = -3";
+      $foo->$acc1(1,-20);
+      is_deeply $foo->$acc1, [-1,-20,-3], "$acc1 = -1,-20,-3";
+    };
+  }
 
-  $foo->uint16([1,2,3]);
-  is_deeply $foo->uint16,     [1,2,3],   "uint16     = 1,2,3";
-  is_deeply $foo->get_uint16, [1,2,3],   "get_uint16 = 1,2,3";  
-  $foo->sint16([-1,2,-3]);
-  is_deeply $foo->sint16,     [-1,2,-3], "sint16     = -1,2,-3";
-  is_deeply $foo->get_sint16, [-1,2,-3], "get_sint16 = -1,2,-3";  
+  foreach my $type (qw( float double ))
+  {
+    subtest $type => sub {
+      plan tests => 5;
+      $foo->$type([1.5,undef,-1.5]);
+      is_deeply $foo->$type, [1.5,0.0,-1.5], "$type = 1.5,0,-1.5";
+      is $foo->$type(0), 1.5;
+      is $foo->$type(1), 0.0;
+      is $foo->$type(2), -1.5;
+      $foo->$type(1,20.0);
+      is_deeply $foo->$type, [1.5,20.0,-1.5], "$type = 1.5,20,-1.5";
+    };
+  }
 
-  $foo->uint8([1,2,3]);
-  is_deeply $foo->uint8,      [1,2,3],   "uint8      = 1,2,3";
-  is_deeply $foo->get_uint8,  [1,2,3],   "get_uint8  = 1,2,3";  
-  $foo->sint8([-1,2,-3]);
-  is_deeply $foo->sint8,      [-1,2,-3], "sint8      = -1,2,-3";
-  is_deeply $foo->get_sint8,  [-1,2,-3], "get_sint8  = -1,2,-3";  
-  
-  $foo->float([1.5,undef,-1.5]);
-  is_deeply $foo->float, [1.5,0.0,-1.5], "float      = 1.5,0,-1.5";
-  $foo->double([1.5,undef,-1.5]);
-  is_deeply $foo->double, [1.5,0.0,-1.5], "double     = 1.5,0,-1.5";
-  
-  my $ptr1 = malloc 32;
-  my $ptr2 = malloc 64;
+  subtest 'opaque' => sub {
+    plan tests => 6;
+    my $ptr1 = malloc 32;
+    my $ptr2 = malloc 64;
 
-  $foo->opaque([$ptr1,undef,$ptr2]);
-  is_deeply $foo->opaque, [$ptr1,undef,$ptr2], "opaque     = $ptr1,undef,$ptr2";
+    $foo->opaque([$ptr1,undef,$ptr2]);
+    is_deeply $foo->opaque, [$ptr1,undef,$ptr2], "opaque     = $ptr1,undef,$ptr2";
+    
+    $foo->opaque(1,$ptr1);
+    is_deeply $foo->opaque, [$ptr1,$ptr1,$ptr2], "opaque     = $ptr1,$ptr1,$ptr2";
+
+    $foo->opaque(0,undef);
+    is_deeply $foo->opaque, [undef,$ptr1,$ptr2], "opaque     = undef,$ptr1,$ptr2";
+
+    is $foo->opaque(0), undef;
+    is $foo->opaque(1), $ptr1;
+    is $foo->opaque(2), $ptr2;
   
-  free $ptr1;
-  free $ptr2;
+    free $ptr1;
+    free $ptr2;
+  };
 
   my $align = $foo->_ffi_record_align;
   like $align, qr{^[0-9]+$}, "align = $align";
+  ok $align > 0, "align is positive";
 };
 
 do {

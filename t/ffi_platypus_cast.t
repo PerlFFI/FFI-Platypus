@@ -38,7 +38,7 @@ subtest 'cast from pointer to string' => sub {
 };
 
 subtest 'cast closure to opaque' => sub {
-  plan tests => 2;
+  plan tests => 4;
 
   my $testname = 'dynamic';
 
@@ -48,10 +48,16 @@ subtest 'cast closure to opaque' => sub {
   $ffi->function(string_set_closure => ['opaque'] => 'void')->call($pointer);
   $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
 
+  $ffi->function(string_set_closure => ['(string)->void'] => 'void')->call($pointer);
+  $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
+
   $ffi->attach_cast('cast3', '(string)->void' => 'opaque');
   my $pointer2 = cast3($closure);
 
   $testname = 'static';
   $ffi->function(string_set_closure => ['opaque'] => 'void')->call($pointer2);
+  $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
+
+  $ffi->function(string_set_closure => ['(string)->void'] => 'void')->call($pointer2);
   $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
 };

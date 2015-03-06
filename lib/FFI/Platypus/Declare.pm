@@ -318,6 +318,21 @@ sub lang ($)
   _ffi_object->lang($_[0]);
 }
 
+=head2 abi
+
+ abi $abi;
+
+Set the ABI or calling convention for use in subsequent calls
+to L</attach>.  May be either a string name or integer value
+from L<FFI::Platypus#abis>.
+
+=cut
+
+sub abi ($)
+{
+  _ffi_object->abi($_[0]);
+}
+
 sub import
 {
   my $caller = caller;
@@ -361,6 +376,7 @@ sub import
   *{join '::', $caller, 'attach_cast'} = \&attach_cast;
   *{join '::', $caller, 'sizeof'} = \&sizeof;
   *{join '::', $caller, 'lang'} = \&lang;
+  *{join '::', $caller, 'abi'} = \&abi;
 }
 
 1;

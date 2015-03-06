@@ -37,7 +37,7 @@ use Carp qw( croak );
 
 =head1 DESCRIPTION
 
-Platypus is an library for creating interfaces to machine code libraries 
+Platypus is a library for creating interfaces to machine code libraries 
 written in languages like C, L<C++|FFI::Platypus::Lang::CPP>, 
 L<Fortran|FFI::Platypus::Lang::Fortran>, 
 L<Rust|FFI::Platypus::Lang::Rust>, 
@@ -53,8 +53,8 @@ to write an extension with Platypus instead of XS:
 =item FFI / Platypus does not require messing with the guts of Perl
 
 XS is less of an API and more of the guts of perl splayed out to do 
-whatever you want.  That may at times be very powerful, but it may also 
-sometimes be very dangerous to your mental health.
+whatever you want.  That may at times be very powerful, but it can also
+be a frustrating exercise in hair pulling.
 
 =item FFI / Platypus is portable
 
@@ -94,7 +94,7 @@ compiler). Platypus on the other hand could be used to call other
 compiled languages, like L<Fortran|FFI::Platypus::Lang::Fortran>, 
 L<Rust|FFI::Platypus::Lang::Rust>, 
 L<Pascal|FFI::Platypus::Lang::Pascal>, L<C++|FFI::Platypus::Lang::CPP>, 
-Go or even L<assembly|FFI::Platypus::Lang::ASM>, allowing you to focus 
+or even L<assembly|FFI::Platypus::Lang::ASM>, allowing you to focus 
 on your strengths.
 
 =item FFI / Platypus does not require a parser
@@ -201,8 +201,23 @@ sub new
     handles          => {},
     types            => {},
     lang             => $args{lang} || 'C',
+    abi              => -1,
     ignore_not_found => defined $args{ignore_not_found} ? $args{ignore_not_found} : 0,
   }, $class;
+}
+
+sub _lang_class ($)
+{
+  my($lang) = @_;
+  my $class = "FFI::Platypus::Lang::$lang";
+  unless($class->can('native_type_map'))
+  {
+    eval qq{ use $class };
+    croak "unable to load $class: $@" if $@;
+  }
+  croak "$class does not provide native_type_map method"
+    unless $class->can("native_type_map");
+  $class;
 }
 
 sub _type_map
@@ -211,19 +226,18 @@ sub _type_map
   
   unless(defined $self->{type_map})
   {
-    my $class = "FFI::Platypus::Lang::".$self->{lang};
-    unless($class->can("native_type_map"))
+    my $class = _lang_class($self->{lang});
+    my %type_map;
+    foreach my $key (keys %{ $class->native_type_map  })
     {
-      eval qq{ use $class };
-      croak "erro loding $class: $@" if $@;
+      my $value = $class->native_type_map->{$key};
+      next unless _have_type($value);
+      $type_map{$key} = $value;
     }
-    unless($class->can("native_type_map"))
-    {
-      croak "$class does not provide a native_type_map method";
-    }
-    my %type_map = %{ $class->native_type_map };
     # include the standard libffi types
-    $type_map{$_} = $_ for qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque );
+    $type_map{$_} = $_ for grep { _have_type($_) } 
+      qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque
+          longdouble complex_float complex_double );
     $type_map{pointer} = 'opaque';
     $self->{type_map} = \%type_map;
   }
@@ -337,6 +351,8 @@ sub lang
   {
     $self->{lang} = $value;
     delete $self->{type_map};
+    my $class = _lang_class($self->{lang});
+    $self->abi($class->abi) if $class->can('abi');
   }
   
   $self->{lang};
@@ -601,7 +617,7 @@ sub function
   my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
   croak "unable to find $name" unless defined $address || $self->ignore_not_found;
   return unless defined $address;
-  FFI::Platypus::Function->new($self, $address, $ret, @args);
+  FFI::Platypus::Function->new($self, $address, $self->{abi}, $ret, @args);
 }
 
 =head2 attach
@@ -759,11 +775,14 @@ sub attach_cast
 Returns the total size of the given type in bytes.  For example to get 
 the size of an integer:
 
- my $intsize = $ffi->sizeof('int'); # usually 4 or 8 depending on platform
+ my $intsize = $ffi->sizeof('int');   # usually 4
+ my $longsize = $ffi->sizeof('long'); # usually 4 or 8 depending on platform
 
 You can also get the size of arrays
 
- my $intarraysize = $ffi->sizeof('int[64]'); # usually 4*64 or 8*64
+ my $intarraysize = $ffi->sizeof('int[64]');  # usually 4*64
+ my $intarraysize = $ffi->sizeof('long[64]'); # usually 4*64 or 8*64
+                                              # depending on platform
 
 Keep in mind that "pointer" types will always be the pointer / word size 
 for the platform that you are using.  This includes strings, opaque and 
@@ -855,13 +874,8 @@ sub find_symbol
   my($self, $name) = @_;
 
   unless(defined $self->{mangler})
-  {
-    my $class = "FFI::Platypus::Lang::".$self->{lang};
-    unless($class->can('native_type_map'))
-    {
-      eval qq{ use $class };
-      croak "unable to load $class: $@" if $@;
-    }
+  {  
+    my $class = _lang_class($self->{lang});
     if($class->can('mangler'))
     {
       $self->{mangler} = $class->mangler($self->lib);
@@ -941,6 +955,214 @@ sub package
   
   $self;
 }
+
+=head2 abis
+
+ my $href = $ffi->abis;
+ my $href = FFI::Platypus->abis;
+
+Get the legal ABIs supported by your platform and underlying 
+implementation.  What is supported can vary a lot by CPU and by 
+platform, or even between 32 and 64 bit on the same CPU and platform. 
+They keys are the "ABI" names, also known as "calling conventions".  The 
+values are integers used internally by the implementation to represent 
+those ABIs.
+
+=cut
+
+sub abis
+{
+  require FFI::Platypus::ConfigData;
+  FFI::Platypus::ConfigData->config("abi");
+}
+
+=head2 abi
+
+ $ffi->abi($name);
+
+Set the ABI or calling convention for use in subsequent calls to 
+L</function> or L</attach>.  May be either a string name or integer 
+value from the L</abis> method above.
+
+=cut
+
+sub abi
+{
+  my($self, $newabi) = @_;
+  unless($newabi =~ /^[0-9]+$/)
+  {
+    unless(defined $self->abis->{$newabi})
+    {
+      croak "no such ABI: $newabi";
+    }
+    $newabi = $self->abis->{$newabi};
+  }
+  
+  unless(FFI::Platypus::ABI::verify($newabi))
+  {
+    croak "no such ABI: $newabi";
+  }
+  
+  $self->{abi} = $newabi;
+  
+  $self;
+}
+
+sub DESTROY
+{
+  my($self) = @_;
+  foreach my $handle (values %{ $self->{handles} })
+  {
+    next unless $handle;
+    FFI::Platypus::dl::dlclose($handle);
+  }
+  delete $self->{handles};
+}
+
+sub _have_pm
+{
+  my($class) = @_;
+  my $ok = eval qq{ use $class; 1 };
+  $ok = $ok ? $ok : 0;
+  $ok;
+}
+
+package FFI::Platypus::Function;
+
+# VERSION
+
+use overload '&{}' => sub {
+  my $ffi = shift;
+  sub { $ffi->call(@_) };
+};
+
+package FFI::Platypus::Closure;
+
+use Scalar::Util qw( refaddr);
+use Carp qw( croak );
+use overload '&{}' => sub {
+  my $self = shift;
+  sub { $self->{code}->(@_) };
+};
+
+# VERSION
+
+sub new
+{
+  my($class, $coderef) = @_;
+  croak "not a coderef" unless ref($coderef) eq 'CODE';
+  my $self = bless { code => $coderef, cbdata => {} }, $class;
+  $self;
+}
+
+sub add_data
+{
+  my($self, $payload, $type) = @_;
+  $self->{cbdata}{$type} = bless \$payload, 'FFI::Platypus::ClosureData';
+}
+
+sub get_data
+{
+  my($self, $type) = @_;
+
+  if (exists $self->{cbdata}{$type}) {
+      return ${$self->{cbdata}{$type}};
+  }
+
+  return 0;
+}
+
+package FFI::Platypus::ClosureData;
+
+# VERSION
+
+package FFI::Platypus::Type;
+
+use Carp qw( croak );
+
+# VERSION
+
+sub new
+{
+  my($class, $type, $platypus) = @_;
+
+  # the platypus object is only needed for closures, so
+  # that it can lookup existing types.
+
+  if($type =~ m/^\((.*)\)-\>\s*(.*)\s*$/)
+  {
+    croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
+    my @argument_types = map { $platypus->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
+    my $return_type = $platypus->_type_lookup($2);
+    return $class->_new_closure($return_type, @argument_types);
+  }
+  
+  my $ffi_type;
+  my $platypus_type;
+  my $size = 0;
+  my $classname;
+  my $rw = 0;
+
+  if($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
+  {
+    my $extra = $1;
+    $ffi_type = 'pointer';
+    $platypus_type = 'string';
+    $rw = 1 if $extra =~ /rw$/;
+    $size = $1 if $extra =~ /\(([0-9]+)\)$/;
+  }
+  elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
+  {
+    $ffi_type = 'pointer';
+    $platypus_type = 'record';
+    if($1 =~ /^([0-9]+)$/)
+    {
+      $size = $1;
+    }
+    else
+    {
+      $classname = $1;
+      unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
+      {
+        eval qq{ use $classname };
+        warn "error requiring $classname: $@";
+      }
+      if($classname->can('ffi_record_size'))
+      {
+        $size = $classname->ffi_record_size;
+      }
+      elsif($classname->can('_ffi_record_size'))
+      {
+        $size = $classname->_ffi_record_size;
+      }
+      else
+      {
+        croak "$classname has not ffi_record_size or _ffi_record_size method";
+      }
+    }
+  }
+  elsif($type =~ s/\s+\*$//) {
+    $ffi_type = $type;
+    $platypus_type = 'pointer';
+  }
+  elsif($type =~ s/\s+\[([0-9]*)\]$//)
+  {
+    $ffi_type = $type;
+    $platypus_type = 'array';
+    $size = $1 ? $1 : 0;
+  }
+  else
+  {
+    $ffi_type = $type;
+    $platypus_type = 'ffi';
+  }
+  
+  $class->_new($ffi_type, $platypus_type, $size, $classname, $rw);
+}
+
+1;
+
+__END__
 
 =head1 EXAMPLES
 
@@ -1164,147 +1386,96 @@ will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the 
 wrapper function will be returned back to the original caller.
 
-=cut
+=head2 Java
 
-sub DESTROY
-{
-  my($self) = @_;
-  foreach my $handle (values %{ $self->{handles} })
-  {
-    next unless $handle;
-    FFI::Platypus::dl::dlclose($handle);
-  }
-  delete $self->{handles};
-}
+Java:
 
-package FFI::Platypus::Function;
+# EXAMPLE: examples/java/Example.java
 
-# VERSION
+C++:
 
-use overload '&{}' => sub {
-  my $ffi = shift;
-  sub { $ffi->call(@_) };
-};
+# EXAMPLE: examples/java/between.cpp
 
-package FFI::Platypus::Closure;
+Perl:
 
-use Scalar::Util qw( refaddr);
-use Carp qw( croak );
+# EXAMPLE: examples/java/example.pl
 
-# VERSION
+Makefile:
 
-our %cbdata;
+# EXAMPLE: examples/java/Makefile
 
-sub new
-{
-  my($class, $coderef) = @_;
-  croak "not a coderef" unless ref($coderef) eq 'CODE';
-  my $self = bless $coderef, $class;
-  $cbdata{refaddr $self} = [];
-  $self;
-}
+Output:
 
-sub add_data
-{
-  my($self, $payload) = @_;
-  push @{ $cbdata{refaddr $self} }, bless \$payload, 'FFI::Platypus::ClosureData';
-}
+ % make
+ g++ -fPIC -c -o between.o between.cpp
+ gcj -fPIC -c -o Example.o Example.java
+ gcj -shared -o libexample.so between.o Example.o
+ % perl example.pl 
+ hello world
+ 3
 
-sub DESTROY
-{
-  my($self) = @_;
-  delete $cbdata{refaddr $self};
-}
+B<Discussion>: You can't call Java .class files directly from FFI / 
+Platypus, but you can compile Java source and .class files into a shared 
+library using the GNU Java Compiler C<gcj>.  Because we are calling Java 
+functions from a program (Perl!) that was not started from a Java 
+C<main()> we have to initialize the Java runtime ourselves
+(L<details|https://gcc.gnu.org/onlinedocs/gcj/Invocation.html>).
+This can most easily be accomplished from C++.
 
-package FFI::Platypus::ClosureData;
+The GNU Java Compiler uses the same format to mangle method names as GNU 
+C++.  The L<C++ plugin|FFI::Platypus::Lang::CPP> for handles this more 
+transparently by extracting the symbols from the shared library and 
+using either L<FFI::Platypus::Lang::CPP::Demangle::XS> or C<c++filt> to 
+determined the unmangled names.
 
-# VERSION
+Although the Java source is compiled ahead of time with optimizations, 
+it will not necessarily perform better than a real JVM just because it 
+is compiled.  In fact the gcj developers warn than gcj will optimize 
+Java source better than Java .class files.  The GNU Java Compiler also 
+lags behind modern Java.
 
-package FFI::Platypus::Type;
+Even so this enables you to call Java from Perl and potentially other 
+Java based languages such as Scala, Groovy or JRuby.
 
-use Carp qw( croak );
+=head1 CAVEATS
 
-# VERSION
+Platypus and Native Interfaces like libffi rely on the availability of 
+dynamic libraries.  Things not supported include:
 
-sub new
-{
-  my($class, $type, $platypus) = @_;
+=over 4
 
-  # the platypus object is only needed for closures, so
-  # that it can lookup existing types.
+=item Systems that lack dynamic library support
 
-  if($type =~ m/^\((.*)\)-\>\s*(.*)\s*$/)
-  {
-    croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
-    my @argument_types = map { $platypus->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
-    my $return_type = $platypus->_type_lookup($2);
-    return $class->_new_closure($return_type, @argument_types);
-  }
-  
-  my $ffi_type;
-  my $platypus_type;
-  my $size = 0;
-  my $classname;
-  my $rw = 0;
+Like MS-DOS
 
-  if($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
-  {
-    my $extra = $1;
-    $ffi_type = 'pointer';
-    $platypus_type = 'string';
-    $rw = 1 if $extra =~ /rw$/;
-    $size = $1 if $extra =~ /\(([0-9]+)\)$/;
-  }
-  elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
-  {
-    $ffi_type = 'pointer';
-    $platypus_type = 'record';
-    if($1 =~ /^([0-9]+)$/)
-    {
-      $size = $1;
-    }
-    else
-    {
-      $classname = $1;
-      unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
-      {
-        eval qq{ use $classname };
-        warn "error requiring $classname: $@";
-      }
-      if($classname->can('ffi_record_size'))
-      {
-        $size = $classname->ffi_record_size;
-      }
-      elsif($classname->can('_ffi_record_size'))
-      {
-        $size = $classname->_ffi_record_size;
-      }
-      else
-      {
-        croak "$classname has not ffi_record_size or _ffi_record_size method";
-      }
-    }
-  }
-  elsif($type =~ s/\s+\*$//) {
-    $ffi_type = $type;
-    $platypus_type = 'pointer';
-  }
-  elsif($type =~ s/\s+\[([0-9]+)\]$//)
-  {
-    $ffi_type = $type;
-    $platypus_type = 'array';
-    $size = $1;
-  }
-  else
-  {
-    $ffi_type = $type;
-    $platypus_type = 'ffi';
-  }
-  
-  $class->_new($ffi_type, $platypus_type, $size, $classname, $rw);
-}
+=item Systems that are not supported by libffi
 
-1;
+Like OpenVMS
+
+=item Languages that do not support using dynamic libraries from other languages
+
+Like Google's Go.  Although I believe that XS won't help in this 
+regard.
+
+=item Languages that do not compile to machine code
+
+Like .NET based languages and Java that can't be understood by gcj.
+
+=back
+
+The documentation has a bias toward using FFI / Platypus with C.  This 
+is my fault, as my background in mainly in C/C++ programmer (when I am 
+not writing Perl).  In many places I use "C" as a short form for "any 
+language that can generate machine code and is callable from C".  I 
+welcome pull requests to the Platypus core to address this issue.  In an 
+attempt to ease usage of Platypus by non C programmers, I have written a 
+number of foreign language plugins for various popular languages (see 
+the SEE ALSO below).  These plugins come with examples specific to those 
+languages, and documentation on common issues related to using those 
+languages with FFI.  In most cases these are available for easy adoption 
+for those with the know-how or the willingness to learn.  If your 
+language doesn't have a plugin YET, that is just because you haven't 
+written it yet.
 
 =head1 SUPPORT
 
@@ -1425,6 +1596,56 @@ environment variable when you run C<Build.PL>:
 
 =back
 
+=head2 Coding Guidelines
+
+=over 4
+
+=item
+
+Do not hesitate to make code contribution.  Making useful contributions 
+is more important than following byzantine bureaucratic coding 
+regulations.  We can always tweak things later.
+
+=item
+
+Please make an effort to follow existing coding style when making pull 
+requests.
+
+=item
+
+Platypus supports all production Perl releases since 5.8.1.  For that 
+reason, please do not introduce any code that requires a newer version 
+of Perl.
+
+=back
+
+=head2 Performance Testing
+
+As Mark Twain was fond of saying there are four types of lies: lies, 
+damn lies, statistics and benchmarks.  That being said, it can sometimes 
+be helpful to compare the runtime performance of Platypus if you are 
+making significant changes to the Platypus Core.  For that I use 
+`FFI-Performance`, which can be found in my GitHub repository here:
+
+=over 4
+
+=item L<https://github.com/plicease/FFI-Performance>
+
+=back
+
+=head2 System integrators
+
+If you are including Platypus in a larger system (for example a Linux 
+distribution), and you already have libffi as part of your system, you 
+may be interested in L<Alt::Alien::FFI::System>.  This is an alternative 
+to L<Alien::FFI> that does not require L<Alien::Base>.  In fact it has 
+zero non-Core dependencies, and doesn't even need to be installed.  
+Simply include L<Alt::Alien::FFI::System>'s C<lib> directory in your 
+C<PERL5LIB> path when you build Platypus.  For example:
+
+ % export PERL5LIB=/path/to/Alt-Alien-FFI-System/lib
+ % cpanm FFI::Platypus
+
 =head1 SEE ALSO
 
 =over 4
@@ -1499,6 +1720,12 @@ recommend it for use by CPAN modules.
 
 Native to Perl functions that can be used to decode C C<struct> types.
 
+=item L<C::Scan>
+
+This module can extract constants and other useful objects from C header 
+files that may be relevant to an FFI application.  One downside is that 
+its use may require development packages to be installed.
+
 =item L<FFI::Raw>
 
 Alternate interface to libffi with fewer features.  It notably lacks the 
@@ -1526,6 +1753,19 @@ longer supported or distributed.
 =item L<C::DynaLib>
 
 Another FFI for Perl that doesn't appear to have worked for a long time.
+
+=item L<Alien::FFI>
+
+Provides libffi for Platypus during its configuration and build stages.
+
+=item L<Alt::Alien::FFI::System>
+
+An alternative for L<Alien::FFI> intended mainly for system integrators.
+
+=item L<P5NCI>
+
+Yet another FFI like interface that does not appear to be supported or 
+under development anymore.
 
 =back
 

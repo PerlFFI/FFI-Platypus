@@ -10,6 +10,8 @@
 /config.log
 /lib/FFI/Platypus.c
 /include/ffi_platypus_config.h
+/include/ffi_platypus_probe.h
+/include/ppport.h
 /test*.c
 *.o
 *.obj
@@ -19,3 +21,11 @@
 *.tmp
 *.core
 core
+/inc/probe/bigendian
+/inc/probe/complex
+/inc/probe/longdouble
+/inc/probe/abi
+/inc/probe/*.exe
+*.exp
+*.lib
+*.pdb

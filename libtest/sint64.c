@@ -4,7 +4,6 @@
  * all instances of "int8" have been changed to "int64"
  */
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN int64_t
 sint64_add(int64_t a, int64_t b)
@@ -26,6 +25,18 @@ sint64_sum(int64_t list[10])
   int i;
   int64_t total;
   for(i=0,total=0; i<10; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
+EXTERN int64_t
+sint64_sum2(int64_t *list, size_t size)
+{
+  int i;
+  int64_t total;
+  for(i=0,total=0; i<size; i++)
   {
     total += list[i];
   }

@@ -1,5 +1,4 @@
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN uint8_t
 uint8_add(uint8_t a, uint8_t b)
@@ -21,6 +20,18 @@ uint8_sum(uint8_t list[10])
   int i;
   uint8_t total;
   for(i=0,total=0; i<10; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
+EXTERN uint8_t
+uint8_sum2(uint8_t *list, size_t size)
+{
+  int i;
+  uint8_t total;
+  for(i=0,total=0; i<size; i++)
   {
     total += list[i];
   }

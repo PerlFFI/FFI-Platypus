@@ -19,6 +19,9 @@ my $prologue = <<EOF;
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif
+#ifdef HAVE_COMPLEX_H
+#include <complex.h>
+#endif
 #define signed(type)  (((type)-1) < 0) ? 1 : 0
 EOF
 
@@ -95,7 +98,7 @@ sub configure
   
   $ac->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin)$/;
   
-  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool ))
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool complex ))
   {
     $ac->check_header("$header.h");
   }
@@ -105,7 +108,7 @@ sub configure
     $ac->define_var( HAVE_RTLD_LAZY => 1 );
   }
   
-  unless($mb->config('config_no_alloca'))
+  unless($mb->config_data('config_no_alloca'))
   {
     if($ac->check_decl('alloca', { prologue => $prologue }))
     {
@@ -113,7 +116,7 @@ sub configure
     }
   }
   
-  if(!$mb->config('config_debug_fake32') && $Config{ivsize} >= 8)
+  if(!$mb->config_data('config_debug_fake32') && $Config{ivsize} >= 8)
   {
     $ac->define_var( HAVE_IV_IS_64 => 1 );
   }
@@ -171,9 +174,12 @@ sub configure
   $ac->check_default_headers;
 
   my %align = (
-    pointer => _alignment($ac, 'void*'),
-    float   => _alignment($ac, 'float'),
-    double  => _alignment($ac, 'double'),
+    pointer          => _alignment($ac, 'void*'),
+    float            => _alignment($ac, 'float'),
+    double           => _alignment($ac, 'double'),
+    'long double'    => _alignment($ac, 'long double'),
+    'float complex'  => _alignment($ac, 'float complex'),
+    'double complex' => _alignment($ac, 'double complex'),
   );
 
   foreach my $bits (qw( 8 16 32 64 ))
@@ -181,6 +187,34 @@ sub configure
     $align{'sint'.$bits} = $align{'uint'.$bits} = _alignment($ac, "int${bits}_t");
   }
   
+  if($ac->check_sizeof_type('long double',    { prologue => $prologue }))
+  {
+    $type_map{'long double'} = 'longdouble';
+  }
+  
+  if($ac->check_sizeof_type('float complex',  { prologue => $prologue }))
+  {
+    $type_map{'float complex'} = 'complex_float';
+  }
+
+  if($ac->check_sizeof_type('double complex', { prologue => $prologue }))
+  {
+    $type_map{'double complex'} = 'complex_double';
+  }
+
+  if(my $size = $ac->check_sizeof_type('complex', { prologue => $prologue }))
+  {
+    if($size == 8)
+    {
+      $type_map{'complex'} = 'complex_float';
+    }
+    elsif($size == 16)
+    {
+      $type_map{'complex'} = 'complex_double';
+    }
+  }
+  
+  $mb->add_to_cleanup( $config_h );
   $ac->write_config_h( $config_h );
   $mb->config_data( type_map => \%type_map );
   $mb->config_data( align    => \%align    );
@@ -196,7 +230,11 @@ sub _alignment
   # check_default_headers above.  See:
   # # https://github.com/ambs/Config-AutoConf/issues/7
   my $btype = $type eq 'void*' ? 'vpointer' : "b$type";
+  $btype =~ s/\s+/_/g;
   my $prologue2 = $prologue . <<EOF;
+#ifdef HAVE_COMPLEX_H
+#include <complex.h>
+#endif
 struct align {
   char a;
     $type $btype;

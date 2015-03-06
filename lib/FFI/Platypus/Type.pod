@@ -242,9 +242,53 @@ Single precision floating point (I<float>)
 
 Double precision floating point (I<double>)
 
+=item longdouble
+
+Floating point that may be larger than C<double> (I<longdouble>).  This 
+type is only available if supported by the C compiler used to build 
+L<FFI::Platypus>.  There may be a performance penalty for using this 
+type, even if your Perl uses long doubles internally for its number 
+value (NV) type, because of the way L<FFI::Platypus> interacts with 
+C<libffi>.
+
+As an argument type either regular number values (NV) or instances of 
+L<Math::LongDouble> are accepted.  When used as a return type, 
+L<Math::LongDouble> will be used, if you have that module installed.  
+Otherwise the return type will be downgraded to whatever your Perl's 
+number value (NV) is.
+
+=item complex_float
+
+Complex single precision floating point (I<float complex>)
+
+=item complex_double
+  
+Complex double precision floating point (I<double complex>)
+
+C<complex_float> and C<complex_double> are only available if supported 
+by your C compiler and by libffi.  Complex numbers are only supported in 
+very recent versions of libffi, and as of this writing the latest 
+production version doesn't work on x86_64.  It does seem to work with 
+the latest production version of libffi on 32 bit Intel (x86), and with 
+the latest libffi version in git on x86_64.
+
 =back
 
-The C<long double> type may be supported in a future version.
+Support for C<complex_float>, C<complex_double> and C<longdouble> are 
+limited at the moment.  Complex types can only be used as simple 
+arguments (not return types, pointers, arrays or record members) and the 
+C<longdouble> can only be used as simple argument or return values (not 
+pointers, arrays or record members).  Adding support for these is not 
+difficult, but time consuming, so if you are in need of these features 
+please do not hesitate to open a support ticket on the project's github 
+issue tracker:
+
+L<https://github.com/plicease/FFI-Platypus/issues>
+
+In particular I am hesitant to implementing complex return types, as 
+there are performance and interface ramifications, and I would 
+appreciate talking to someone who is actually going to use these 
+features.
 
 =head3 opaque pointers
 
@@ -398,6 +442,30 @@ list of two file descriptors as an array.
 
 # EXAMPLE: examples/pipe.pl
 
+=head2 Variable length arrays
+
+[version 0.22]
+
+Variable length arrays are supported for argument types can also be 
+specified by using the C<[]> notation but by leaving the size empty:
+
+ $ffi->type('int[]' => 'var_int_array');
+
+When used as an argument type it will probe the array reference that you 
+pass in to determine the correct size.  Usually you will need to 
+communicate the size of the array to the C code.  One way to do this is 
+to pass the length of the array in as an additional argument.  For 
+example the C code:
+
+# EXAMPLE: examples/var_array.c
+
+Can be called from Perl like this:
+
+# EXAMPLE: examples/var_array.pl
+
+Another method might be to have a special value, such as 0 or NULL 
+indicate the termination of the array.
+
 =head2 Closures
 
 A closure (called a "callback" by L<FFI::Raw>, we use the C<libffi> 
@@ -413,6 +481,11 @@ as closure return types.  Here is an example, with C code:
 And the Perl code:
 
 # EXAMPLE: examples/closure.pl
+
+If you have a pointer to a function in the form of an C<opaque> type,
+you can pass this in place of a closure type:
+
+# EXAMPLE: examples/closure-opaque.pl
 
 The syntax for specifying a closure type is a list of comma separated 
 types in parentheticals followed by a narrow arrow C<-E<gt>>, followed 

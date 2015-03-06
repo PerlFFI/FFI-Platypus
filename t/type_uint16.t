@@ -5,12 +5,13 @@
 #
 use strict;
 use warnings;
-use Test::More tests => 19;
+use Test::More tests => 20;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
-  'uint16', 'void', 'int',
+  'uint16', 'void', 'int', 'size_t',
   ['uint16 *' => 'uint16_p'],
   ['uint16 [10]' => 'uint16_a'],
+  ['uint16 []' => 'uint16_a2'],
   ['(uint16)->uint16' => 'uint16_c'];
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
@@ -18,6 +19,7 @@ lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 attach [uint16_add => 'add'] => [uint16, uint16] => uint16;
 attach [uint16_inc => 'inc'] => [uint16_p, uint16] => uint16_p;
 attach [uint16_sum => 'sum'] => [uint16_a] => uint16;
+attach [uint16_sum2 => 'sum2'] => [uint16_a2,size_t] => uint16;
 attach [uint16_array_inc => 'array_inc'] => [uint16_a] => void;
 attach [pointer_null => 'null'] => [] => uint16_p;
 attach [pointer_is_null => 'is_null'] => [uint16_p] => int;
@@ -37,6 +39,7 @@ is ${inc(\3,4)}, 7, 'inc(\3,4) = \7';
 my @list = (1,2,3,4,5,6,7,8,9,10);
 
 is sum(\@list), 55, 'sum([1..10]) = 55';
+is sum2(\@list, scalar @list), 55, 'sum2([1..10],10) = 55';
 
 array_inc(\@list);
 do { local $SIG{__WARN__} = sub {}; array_inc() };

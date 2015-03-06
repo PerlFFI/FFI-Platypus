@@ -54,13 +54,13 @@ GetLocalTime($packed);
 
 if (defined ($packed))
 {
-	#Unpack the structure 
-	my $sysDate = $c->unpack('SYSTEMTIME', $packed);
-	print "\n WINDOWS SYSTEM TIME: ",$$sysDate{'wHour'},':',$$sysDate{'wMinute'},':',$$sysDate{'wSecond'},'.',$$sysDate{'wMilliseconds'},' ',$$sysDate{'wDay'},'/',$$sysDate{'wMonth'},'/',$$sysDate{'wYear'}, "\n";
+  #Unpack the structure 
+  my $sysDate = $c->unpack('SYSTEMTIME', $packed);
+  print "\n WINDOWS SYSTEM TIME: ",$$sysDate{'wHour'},':',$$sysDate{'wMinute'},':',$$sysDate{'wSecond'},'.',$$sysDate{'wMilliseconds'},' ',$$sysDate{'wDay'},'/',$$sysDate{'wMonth'},'/',$$sysDate{'wYear'}, "\n";
 }
 else
 {
-	print "\n Something is wrong\n";
+  print "\n Something is wrong\n";
 }
 
 exit 0;

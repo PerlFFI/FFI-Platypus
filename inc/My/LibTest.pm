@@ -5,7 +5,6 @@ use warnings;
 use File::Spec;
 use ExtUtils::CBuilder;
 use FindBin ();
-use Alien::FFI;
 use File::Copy qw( move );
 use File::Glob qw( bsd_glob );
 use Config;
@@ -15,12 +14,12 @@ my $root = $FindBin::Bin;
 
 sub build
 {
-  my $mb = shift;
+  my($class, $mb) = @_;
 
   my($header_time) = reverse sort map { (stat $_)[9] } bsd_glob "include/*.h";
   my $compile_count = 0;
   
-  my $b = ExtUtils::CBuilder->new;
+  my $b = $mb->cbuilder;
   
   my @obj = map {
     my $filename = $_;
@@ -34,7 +33,7 @@ sub build
         include_dirs => [
           File::Spec->catdir($root, 'include'),
         ],
-        extra_compiler_flags => Alien::FFI->cflags,
+        extra_compiler_flags => $mb->extra_compiler_flags,
       );
       $compile_count++;
     }
@@ -46,9 +45,9 @@ sub build
   if($^O ne 'MSWin32')
   {
     my $dll = $b->link(
-      lib_file => $b->lib_file(File::Spec->catfile($root, 'libtest', $b->object_file('libtest.c'))),
-      objects  => \@obj,
-      extra_linker_flags => Alien::FFI->libs,
+      lib_file           => $b->lib_file(File::Spec->catfile($root, 'libtest', $b->object_file('libtest.c'))),
+      objects            => \@obj,
+      extra_linker_flags => $mb->extra_linker_flags,
     );
     
     if($^O eq 'cygwin')

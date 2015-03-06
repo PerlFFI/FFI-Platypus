@@ -25,10 +25,18 @@ ffi_pl_name_to_type(const char *name)
   { return &ffi_type_float; }
   else if(!strcmp(name, "double"))
   { return &ffi_type_double; }
-  else if(!strcmp(name, "longdouble"))
-  { return &ffi_type_longdouble; }
   else if(!strcmp(name, "opaque") || !strcmp(name, "pointer"))
   { return &ffi_type_pointer; }
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+  else if(!strcmp(name, "longdouble"))
+  { return &ffi_type_longdouble; }
+#endif
+#if FFI_PL_PROBE_COMPLEX
+  else if(!strcmp(name, "complex_float"))
+  { return &ffi_type_complex_float; }
+  else if(!strcmp(name, "complex_double"))
+  { return &ffi_type_complex_double; }
+#endif
   else
   { return NULL; }
 }

@@ -4,7 +4,6 @@
  * all instances of "int8" have been changed to "int16"
  */
 #include "libtest.h"
-#include "ffi_platypus.h"
 
 EXTERN int16_t
 sint16_add(int16_t a, int16_t b)
@@ -26,6 +25,18 @@ sint16_sum(int16_t list[10])
   int i;
   int16_t total;
   for(i=0,total=0; i<10; i++)
+  {
+    total += list[i];
+  }
+  return total;
+}
+
+EXTERN int16_t
+sint16_sum2(int16_t *list, size_t size)
+{
+  int i;
+  int16_t total;
+  for(i=0,total=0; i<size; i++)
   {
     total += list[i];
   }

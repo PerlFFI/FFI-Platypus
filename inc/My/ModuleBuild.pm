@@ -6,14 +6,18 @@ use 5.008001;
 use Alien::FFI;
 use My::LibTest;
 use My::AutoConf;
+use My::Dev;
 use ExtUtils::CBuilder;
 use File::Glob qw( bsd_glob );
 use Config;
+use Text::ParseWords qw( shellwords );
 use base qw( Module::Build );
 
 sub new
 {
   my($class, %args) = @_;
+
+  my %diag;
 
   if($^O eq 'openbsd' && !$Config{usethreads} && Alien::FFI->install_type eq 'system')
   {
@@ -40,7 +44,33 @@ sub new
     $args{extra_linker_flags} .= " -lpsapi";
   }
 
+  my $lddlflags = $Config{lddlflags};
+
+  # on some configurations (eg. Solaris 64 bit, Strawberry Perl)
+  # -L flags are included in the lddlflags configuration, but we
+  # need to make sure OUR -L comes first
+  my @libdirflags = grep /^-L/, shellwords(Alien::FFI->libs);
+  if(@libdirflags)
+  {
+    $lddlflags = join ' ', @libdirflags, $lddlflags;
+  }
+  
+  if($^O eq 'MSWin32')
+  {
+    # needed by My/Probe.pm on any MSWin32 platform
+    $args{build_requires}->{'Win32::ErrorMode'} = 0;
+  }
+  
+  $diag{args}->{extra_compiler_flags} = $args{extra_compiler_flags};
+  $diag{args}->{extra_linker_flags}   = $args{extra_linker_flags};
+  
   my $self = $class->SUPER::new(%args);
+
+  print "\n\n";
+  print "CONFIGURE\n";
+  print "  + \$args{extra_compiler_flags} = $args{extra_compiler_flags}\n";
+  print "  + \$args{extra_linker_flags} = $args{extra_linker_flags}\n";
+  print "\n\n";
 
   if($ENV{FFI_PLATYPUS_DEBUG})
   {
@@ -56,6 +86,7 @@ sub new
         print "  - \$Config{$key} = ", $config->{$key}, "\n";
         print "  + \$Config{$key} = $value\n";
         $self->config($key, $value);
+        $diag{config}->{$key} = $value;
       }
     }
     print "\n\n";
@@ -67,7 +98,8 @@ sub new
     print "  + making Math::Int64 a prerequsite (not normally done on 64 bit Perls)\n";
     print "  + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)\n";
     print "\n\n";
-    $self->config(config_debug_fake32 => 1);
+    $self->config_data(config_debug_fake32 => 1);
+    $diag{config}->{config_debug_fake32} = 1;
   }
   if($ENV{FFI_PLATYPUS_NO_ALLOCA})
   {
@@ -75,7 +107,19 @@ sub new
     print "NO_ALLOCA:\n";
     print "  + alloca() will not be used, even if your platform supports it.\n";
     print "\n\n";
-    $self->config(config_no_alloca => 1);
+    $self->config_data(config_no_alloca => 1);
+    $diag{config}->{config_no_alloca} = 1;
+  }
+
+  if($lddlflags ne $Config{lddlflags})
+  {
+    $self->config(lddlflags => $lddlflags);
+    $diag{config}->{lddlflags} = $lddlflags;
+    print "\n\n";
+    print "Strawberry Perl work around:\n";
+    print "  - \$Config{lddlflags} = $Config{lddlflags}\n";
+    print "  + \$Config{lddlflags} = $lddlflags\n";
+    print "\n\n";
   }
   
   $self->add_to_cleanup(
@@ -88,12 +132,15 @@ sub new
     'examples/*.so',
     'examples/*.dll',
     'examples/*.bundle',
-    'examples/rust/*.so',
+    'examples/java/*.so',
+    'examples/java/*.o',
     'xs/ffi_platypus_config.h',
     'config.log',
     'test*.o',
     'test*.c',
     '*.core',
+    'Build.bat',
+    'build.bat',
     'core',
   );
 
@@ -111,6 +158,7 @@ sub new
 
   #print "dlext[]=$_\n" for @dlext;
 
+  $self->config_data(diag => \%diag);
   $self->config_data(config_dlext => \@dlext);
 
   $self;
@@ -128,11 +176,21 @@ sub ACTION_ac_clean
   My::AutoConf->clean($self);
 }
 
+sub ACTION_probe
+{
+  my($self) = @_;
+  $self->depends_on('ac');
+  require My::Probe;
+  My::Probe->probe($self);
+}
+
 sub ACTION_build
 {
   my $self = shift;
   
   my $b = ExtUtils::CBuilder->new;
+  
+  My::Dev->generate;
   
   my($header_time) = reverse sort map { (stat $_)[9] } map { bsd_glob($_) } qw( include/*.h xs/*.xs);
   my $c = File::Spec->catfile(qw(lib FFI Platypus.c));
@@ -147,6 +205,7 @@ sub ACTION_build
   }
 
   $self->depends_on('ac');
+  $self->depends_on('probe');
   $self->SUPER::ACTION_build(@_);
 }
 
@@ -154,7 +213,8 @@ sub ACTION_libtest
 {
   my($self) = @_;
   $self->depends_on('ac');
-  My::LibTest->build(shift);
+  $self->depends_on('probe');
+  My::LibTest->build($self);
 }
 
 sub ACTION_test

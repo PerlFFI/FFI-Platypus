@@ -56,9 +56,9 @@ XS(ffi_pl_record_accessor_opaque_array)
   char *ptr1;
   void **ptr2;
   int i;
-  
+
   dVAR; dXSARGS;
-  
+
   if(items == 0)
     croak("This is a method, you must provide at least the object");
 
@@ -74,7 +74,20 @@ XS(ffi_pl_record_accessor_opaque_array)
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (void**) &ptr1[member->offset];
 
-  if(items > 1)
+  if(items > 2)
+  {
+    i   = SvIV(ST(1));
+    if(i >= 0 && i < member->count)
+    {
+      arg = ST(2);
+      ptr2[i] = SvOK(arg) ?  INT2PTR(void*, SvIV(arg)) : NULL;
+    }
+    else
+    {
+      warn("illegal index %d", i);
+    }
+  }
+  else if(items > 1)
   {
     arg = ST(1);
     if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
@@ -95,13 +108,27 @@ XS(ffi_pl_record_accessor_opaque_array)
     }
     else
     {
+      i   = SvIV(ST(1));
+      if(i < 0 && i >= member->count)
+      {
+        warn("illegal index %d", i);
+        XSRETURN_EMPTY;
+      }
+      else if(ptr2[i] == NULL)
+      {
+        XSRETURN_EMPTY;
+      }
+      else
+      {
+        XSRETURN_IV(PTR2IV(ptr2[i]));
+      }
       warn("passing non array reference into ffi/platypus array argument type");
     }
   }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
-    
+
   av = newAV();
   av_fill(av, member->count-1);
   for(i=0; i < member->count; i++)

@@ -33,7 +33,6 @@ static const char *error = NULL;
 void *
 windlopen(const char *filename, int flags)
 {
-  ssize_t size;
   char *win_path_filename;
   library_handle *handle;
   
@@ -42,6 +41,7 @@ windlopen(const char *filename, int flags)
 #ifdef PERL_OS_CYGWIN
   if(filename != NULL)
   {
+    ssize_t size;
     size = cygwin_conv_path(CCP_POSIX_TO_WIN_A | CCP_RELATIVE, filename, NULL, 0);
     if(size < 0)
     {

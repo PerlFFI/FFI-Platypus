@@ -1,6 +1,72 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Make sure -L flags from Alien::FFI come before those in perl Config
+    For more reliable builds
+
+0.31      2015-02-26 13:41:23 -0500
+  - Fix bug involving wide custom arguments 
+    "wide" meaning where a single Perl argument is translated
+    into multiple machine code arguments.  (pipcet++ gh#43)
+
+0.30      2015-02-25 17:50:54 -0500
+  - You can now pass an opaque in place of a closure type (pipcet++ gh#40,gh#41)
+  - FFI closures are now cached and can be reused if the same closure is passed
+    repeatedly (pipcet++ gh#40,gh#42)
+  - Passing non-reference to scalar as a pointer argument will now issue a warning
+    (gh#5)
+
+0.29      2015-02-24 08:50:34 -0500
+  - Delayed loading of Win32::ErrorMode to avoid build prereq failure on Windows
+
+0.28      2015-02-23 14:01:54 -0500
+  - Fix Win32 probe prereq on non-Strawberry 5.20.x+
+  - Fix for Solaris cc
+
+0.27      2015-02-22 11:17:05 -0500
+  - Interface to alternate ABIs / calling conventions
+  - Added abi method
+  - Added abis class method
+  - Simplify Win32 probe
+  - Added FFI::Platypus::Lang::Win32 which provides data types used by
+    the Windows API.  Takes care of subtle differences between
+    Win32 and Win64.
+  - Fixed bugs specific to 5.8.x
+  - Language plugins can now specify an ABI with abi class method
+  - Default ABI for FFI::Platypus::Lang::Win32 is stdcall on 32bit windows
+
+0.26      2015-02-18 17:47:43 -0500
+  - Added support for pointers to longdouble (in C "long double *") type
+  - Added support for array of longdouble (in C "long double []") type
+  - Added tied array interface for record array members (see FFI::Platypus::Record::TieArray)
+    Marked as EXPERIMENTAL
+  - Array members of records can now be accessed (set/get) by element
+  - Array members of records types are now documented (see FFI::Platypus::Record)
+  - Bugfix: array wasn't being updated on return for variable length
+    array types
+  - Should now build with an Alien::FFI that was built with ALIEN_FORCE=1
+
+0.25      2015-02-16 20:18:41 -0500
+  - Probe for proper long double support instead of trusting ffi.h
+  - This disables long double support on cygwin, which does not seem to
+    work, at least in so far as it seems to work on other platforms
+    patches to prove otherwise are welcome.
+
+0.24      2015-02-16 15:38:58 -0500
+  - Fixed Windows / Strawberry configuration issues
+
+0.23      2015-02-16 05:44:39 -0500
+  - Support for longdouble (in C "long double") type.
+  - Support for complex_float (in C "float complex") type
+  - Support for complex_double (in C "double complex") type
+  - Fixes for Big Endian architectures (tested on Linux PowerPC)
+
+0.22      2015-02-12 07:47:32 -0500
+  - Variable length arrays
+  - More recent version of Config::AutoConf required in the configure step
+    (gh#33 zmughal)
+  - Documentation improvements and additional examples, including a 
+    crazy Java one
 
 0.21      2015-02-09 06:23:03 -0500
   - Added FFI::Platypus#alignof method

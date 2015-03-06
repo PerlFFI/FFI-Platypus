@@ -3,6 +3,7 @@ package FFI::Platypus::Type::StringPointer;
 use strict;
 use warnings;
 use FFI::Platypus;
+use Scalar::Util qw( readonly );
 use Config ();
 
 # ABSTRACT: Convert a pointer to a string and back
@@ -76,11 +77,10 @@ sub perl_to_native_post
 {
   my($packed) = @{ pop @stack };
   return unless defined $packed;
-  # TODO: doing an eval here to ignore ro value
-  # modification.  Can we instead check for
-  # ro on the scalar and if so would that be
-  # faster than the eval
-  eval { ${$_[0]} = unpack 'p', $$packed };
+  unless(readonly(${$_[0]}))
+  {
+    ${$_[0]} = unpack 'p', $$packed;
+  }
 }
 
 sub native_to_perl

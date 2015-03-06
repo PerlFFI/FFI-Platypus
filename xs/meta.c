@@ -12,6 +12,7 @@ ffi_pl_sizeof(ffi_pl_type *self)
   {
     case FFI_PL_NATIVE:
     case FFI_PL_CUSTOM_PERL:
+    case FFI_PL_EXOTIC_FLOAT:
       return self->ffi_type->size;
     case FFI_PL_STRING:
       if(self->extra[0].string.platypus_string_type == FFI_PL_STRING_FIXED)
@@ -40,10 +41,12 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
   hv_store(meta, "size", 4, newSViv(ffi_pl_sizeof(self)), 0);
 
-  if(self->platypus_type == FFI_PL_NATIVE)
+  if(self->platypus_type == FFI_PL_NATIVE || self->platypus_type == FFI_PL_EXOTIC_FLOAT)
   {
     hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "type",          4, newSVpv("scalar",0),0);
+    if(self->platypus_type == FFI_PL_EXOTIC_FLOAT)
+      hv_store(meta, "exotic", 6, newSViv(1), 0);
   }
   else if(self->platypus_type == FFI_PL_STRING)
   {
@@ -131,6 +134,9 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     case FFI_TYPE_FLOAT:
     case FFI_TYPE_DOUBLE:
     case FFI_TYPE_LONGDOUBLE:
+#ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+    case FFI_TYPE_COMPLEX:
+#endif
       hv_store(meta, "element_type", 12, newSVpv("float",0),0);
       break;
     case FFI_TYPE_UINT8:
@@ -192,6 +198,11 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     case FFI_TYPE_POINTER:
       string = "pointer";
       break;
+#ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+    case FFI_TYPE_COMPLEX:
+      string = self->ffi_type->size == 16 ? "complex_double" : "complex_float";
+      break;
+#endif
     default:
       string = NULL;
       break;

@@ -18,7 +18,7 @@ Write Perl bindings to non-Perl libraries with FFI. No XS required.
 
 # DESCRIPTION
 
-Platypus is an library for creating interfaces to machine code libraries 
+Platypus is a library for creating interfaces to machine code libraries 
 written in languages like C, [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP), 
 [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran), 
 [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), 
@@ -32,8 +32,8 @@ to write an extension with Platypus instead of XS:
 - FFI / Platypus does not require messing with the guts of Perl
 
     XS is less of an API and more of the guts of perl splayed out to do 
-    whatever you want.  That may at times be very powerful, but it may also 
-    sometimes be very dangerous to your mental health.
+    whatever you want.  That may at times be very powerful, but it can also
+    be a frustrating exercise in hair pulling.
 
 - FFI / Platypus is portable
 
@@ -73,7 +73,7 @@ to write an extension with Platypus instead of XS:
     compiled languages, like [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran), 
     [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), 
     [Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal), [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP), 
-    Go or even [assembly](https://metacpan.org/pod/FFI::Platypus::Lang::ASM), allowing you to focus 
+    or even [assembly](https://metacpan.org/pod/FFI::Platypus::Lang::ASM), allowing you to focus 
     on your strengths.
 
 - FFI / Platypus does not require a parser
@@ -395,11 +395,14 @@ faster and may be useful if you are calling a particular cast a lot.
 Returns the total size of the given type in bytes.  For example to get 
 the size of an integer:
 
-    my $intsize = $ffi->sizeof('int'); # usually 4 or 8 depending on platform
+    my $intsize = $ffi->sizeof('int');   # usually 4
+    my $longsize = $ffi->sizeof('long'); # usually 4 or 8 depending on platform
 
 You can also get the size of arrays
 
-    my $intarraysize = $ffi->sizeof('int[64]'); # usually 4*64 or 8*64
+    my $intarraysize = $ffi->sizeof('int[64]');  # usually 4*64
+    my $intarraysize = $ffi->sizeof('long[64]'); # usually 4*64 or 8*64
+                                                 # depending on platform
 
 Keep in mind that "pointer" types will always be the pointer / word size 
 for the platform that you are using.  This includes strings, opaque and 
@@ -447,6 +450,26 @@ If you have used [Module::Build::FFI](https://metacpan.org/pod/Module::Build::FF
 distribution, you can use this method to tell the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) 
 instance to look for symbols that came with the dynamic library that was 
 built when your distribution was installed.
+
+## abis
+
+    my $href = $ffi->abis;
+    my $href = FFI::Platypus->abis;
+
+Get the legal ABIs supported by your platform and underlying 
+implementation.  What is supported can vary a lot by CPU and by 
+platform, or even between 32 and 64 bit on the same CPU and platform. 
+They keys are the "ABI" names, also known as "calling conventions".  The 
+values are integers used internally by the implementation to represent 
+those ABIs.
+
+## abi
+
+    $ffi->abi($name);
+
+Set the ABI or calling convention for use in subsequent calls to 
+["function"](#function) or ["attach"](#attach).  May be either a string name or integer 
+value from the ["abis"](#abis) method above.
 
 # EXAMPLES
 
@@ -910,7 +933,11 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
     # https://github.com/libarchive/libarchive/wiki/Examples#List_contents_of_Archive_stored_in_File
     
     my $archive_filename = shift @ARGV;
-    die "usage: $0 archive.tar" unless defined $archive_filename;
+    unless(defined $archive_filename)
+    {
+      print "usage: $0 archive.tar\n";
+      exit;
+    }
     
     my $archive = ArchiveRead->new;
     $archive->support_filter_all;
@@ -969,13 +996,13 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
     
     $ffi->attach(
       [ BZ2_bzBuffToBuffCompress => 'compress' ] => [
-        'opaque',                          # dest
-        'unsigned int *',                  # dest length
-        'opaque',                          # source
-        'unsigned int',                    # source length
-        'int',                             # blockSize100k
-        'int',                             # verbosity
-        'int',                             # workFactor
+        'opaque',                           # dest
+        'unsigned int *',                   # dest length
+        'opaque',                           # source
+        'unsigned int',                     # source length
+        'int',                              # blockSize100k
+        'int',                              # verbosity
+        'int',                              # workFactor
       ] => 'int',
       sub {
         my $sub = shift;
@@ -992,12 +1019,12 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
     
     $ffi->attach(
       [ BZ2_bzBuffToBuffDecompress => 'decompress' ] => [
-        'opaque',                          # dest
-        'unsigned int *',                  # dest length
-        'opaque',                          # source
-        'unsigned int',                    # source length
-        'int',                             # small
-        'int',                             # verbosity
+        'opaque',                           # dest
+        'unsigned int *',                   # dest length
+        'opaque',                           # source
+        'unsigned int',                     # source length
+        'int',                              # small
+        'int',                              # verbosity
       ] => 'int',
       sub {
         my $sub = shift;
@@ -1038,6 +1065,165 @@ wrapper will be a code reference to the C function.  The Perl arguments
 will come in after that.  This allows you to modify / convert the 
 arguments to conform to the C API.  What ever value you return from the 
 wrapper function will be returned back to the original caller.
+
+## Java
+
+Java:
+
+    // On Linux build .so with
+    // % gcj -fPIC -shared -o libexample.so Example.java
+    
+    public class Example
+    {
+      public static void print_hello()
+      {
+        System.out.println("hello world");
+      }
+    
+      public static int add(int a, int b)
+      {
+        return a + b;
+      }
+    }
+
+C++:
+
+    #include <gcj/cni.h>
+    #include <java/lang/System.h>
+    #include <java/io/PrintStream.h>
+    #include <java/lang/Throwable.h>
+    
+    extern "C" void
+    gcj_start()
+    {
+      using namespace java::lang;
+    
+      JvCreateJavaVM(NULL);
+      JvInitClass(&System::class$);
+    }
+    
+    extern "C" void
+    gcj_end()
+    {
+      JvDetachCurrentThread();
+    }
+
+Perl:
+
+    use FFI::Platypus;
+    
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib('./libexample.so');
+    
+    # Java methods are mangled by gcj using the same format as g++
+    
+    $ffi->attach(
+      [ _ZN7Example11print_helloEJvv => 'print_hello' ] => [] => 'void'
+    );
+    
+    $ffi->attach(
+      [ _ZN7Example3addEJiii => 'add' ] => ['int', 'int'] => 'int'
+    );
+    
+    # Initialize the Java runtime
+    
+    $ffi->function( gcj_start => [] => 'void' )->call;
+    
+    print_hello();
+    print add(1,2), "\n";
+    
+    # Wind the java runtime down
+    
+    $ffi->function( gcj_end => [] => 'void' )->call;
+
+Makefile:
+
+    GCJ=gcj
+    CXX=g++
+    CFLAGS=-fPIC
+    LDFLAGS=-shared
+    RM=rm -f
+    
+    libexample.so: between.o Example.o
+           $(GCJ) $(LDFLAGS) -o libexample.so between.o Example.o
+    
+    between.o: between.cpp
+           $(CXX) $(CFLAGS) -c -o between.o between.cpp
+    
+    Example.o: Example.java
+           $(GCJ) $(CFLAGS) -c -o Example.o Example.java
+    
+    clean:
+           $(RM) *.o *.so
+
+Output:
+
+    % make
+    g++ -fPIC -c -o between.o between.cpp
+    gcj -fPIC -c -o Example.o Example.java
+    gcj -shared -o libexample.so between.o Example.o
+    % perl example.pl 
+    hello world
+    3
+
+**Discussion**: You can't call Java .class files directly from FFI / 
+Platypus, but you can compile Java source and .class files into a shared 
+library using the GNU Java Compiler `gcj`.  Because we are calling Java 
+functions from a program (Perl!) that was not started from a Java 
+`main()` we have to initialize the Java runtime ourselves
+([details](https://gcc.gnu.org/onlinedocs/gcj/Invocation.html)).
+This can most easily be accomplished from C++.
+
+The GNU Java Compiler uses the same format to mangle method names as GNU 
+C++.  The [C++ plugin](https://metacpan.org/pod/FFI::Platypus::Lang::CPP) for handles this more 
+transparently by extracting the symbols from the shared library and 
+using either [FFI::Platypus::Lang::CPP::Demangle::XS](https://metacpan.org/pod/FFI::Platypus::Lang::CPP::Demangle::XS) or `c++filt` to 
+determined the unmangled names.
+
+Although the Java source is compiled ahead of time with optimizations, 
+it will not necessarily perform better than a real JVM just because it 
+is compiled.  In fact the gcj developers warn than gcj will optimize 
+Java source better than Java .class files.  The GNU Java Compiler also 
+lags behind modern Java.
+
+Even so this enables you to call Java from Perl and potentially other 
+Java based languages such as Scala, Groovy or JRuby.
+
+# CAVEATS
+
+Platypus and Native Interfaces like libffi rely on the availability of 
+dynamic libraries.  Things not supported include:
+
+- Systems that lack dynamic library support
+
+    Like MS-DOS
+
+- Systems that are not supported by libffi
+
+    Like OpenVMS
+
+- Languages that do not support using dynamic libraries from other languages
+
+    Like Google's Go.  Although I believe that XS won't help in this 
+    regard.
+
+- Languages that do not compile to machine code
+
+    Like .NET based languages and Java that can't be understood by gcj.
+
+The documentation has a bias toward using FFI / Platypus with C.  This 
+is my fault, as my background in mainly in C/C++ programmer (when I am 
+not writing Perl).  In many places I use "C" as a short form for "any 
+language that can generate machine code and is callable from C".  I 
+welcome pull requests to the Platypus core to address this issue.  In an 
+attempt to ease usage of Platypus by non C programmers, I have written a 
+number of foreign language plugins for various popular languages (see 
+the SEE ALSO below).  These plugins come with examples specific to those 
+languages, and documentation on common issues related to using those 
+languages with FFI.  In most cases these are available for easy adoption 
+for those with the know-how or the willingness to learn.  If your 
+language doesn't have a plugin YET, that is just because you haven't 
+written it yet.
 
 # SUPPORT
 
@@ -1154,6 +1340,40 @@ The build process also respects these environment variables:
          Created MYMETA.yml and MYMETA.json
          Creating new 'Build' script for 'FFI-Platypus' version '0.10'
 
+## Coding Guidelines
+
+- Do not hesitate to make code contribution.  Making useful contributions 
+is more important than following byzantine bureaucratic coding 
+regulations.  We can always tweak things later.
+- Please make an effort to follow existing coding style when making pull 
+requests.
+- Platypus supports all production Perl releases since 5.8.1.  For that 
+reason, please do not introduce any code that requires a newer version 
+of Perl.
+
+## Performance Testing
+
+As Mark Twain was fond of saying there are four types of lies: lies, 
+damn lies, statistics and benchmarks.  That being said, it can sometimes 
+be helpful to compare the runtime performance of Platypus if you are 
+making significant changes to the Platypus Core.  For that I use 
+\`FFI-Performance\`, which can be found in my GitHub repository here:
+
+- [https://github.com/plicease/FFI-Performance](https://github.com/plicease/FFI-Performance)
+
+## System integrators
+
+If you are including Platypus in a larger system (for example a Linux 
+distribution), and you already have libffi as part of your system, you 
+may be interested in [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System).  This is an alternative 
+to [Alien::FFI](https://metacpan.org/pod/Alien::FFI) that does not require [Alien::Base](https://metacpan.org/pod/Alien::Base).  In fact it has 
+zero non-Core dependencies, and doesn't even need to be installed.  
+Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System)'s `lib` directory in your 
+`PERL5LIB` path when you build Platypus.  For example:
+
+    % export PERL5LIB=/path/to/Alt-Alien-FFI-System/lib
+    % cpanm FFI::Platypus
+
 # SEE ALSO
 
 - [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)
@@ -1226,6 +1446,12 @@ The build process also respects these environment variables:
 
     Native to Perl functions that can be used to decode C `struct` types.
 
+- [C::Scan](https://metacpan.org/pod/C::Scan)
+
+    This module can extract constants and other useful objects from C header 
+    files that may be relevant to an FFI application.  One downside is that 
+    its use may require development packages to be installed.
+
 - [FFI::Raw](https://metacpan.org/pod/FFI::Raw)
 
     Alternate interface to libffi with fewer features.  It notably lacks the 
@@ -1254,6 +1480,19 @@ The build process also respects these environment variables:
 
     Another FFI for Perl that doesn't appear to have worked for a long time.
 
+- [Alien::FFI](https://metacpan.org/pod/Alien::FFI)
+
+    Provides libffi for Platypus during its configuration and build stages.
+
+- [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System)
+
+    An alternative for [Alien::FFI](https://metacpan.org/pod/Alien::FFI) intended mainly for system integrators.
+
+- [P5NCI](https://metacpan.org/pod/P5NCI)
+
+    Yet another FFI like interface that does not appear to be supported or 
+    under development anymore.
+
 # ACKNOWLEDGMENTS
 
 In addition to the contributors mentioned below, I would like to 
@@ -1274,6 +1513,10 @@ Author: Graham Ollis <plicease@cpan.org>
 Contributors:
 
 Bakkiaraj Murugesan (bakkiaraj)
+
+pipcet
+
+Zaki Mughal (zmughal)
 
 # COPYRIGHT AND LICENSE
 

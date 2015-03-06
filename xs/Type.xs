@@ -33,7 +33,23 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     {
       Newx(self, 1, ffi_pl_type);
       self->ffi_type = NULL;
-      self->platypus_type = FFI_PL_NATIVE;
+      if(!strcmp(type, "longdouble"))
+      {
+        self->platypus_type = FFI_PL_EXOTIC_FLOAT;
+        if(have_math_longdouble == -1)
+          have_math_longdouble = have_pm("Math::LongDouble");
+      }
+      else if(!strcmp(type, "complex_float")
+      ||    !strcmp(type, "complex_double"))
+      {
+        self->platypus_type = FFI_PL_EXOTIC_FLOAT;
+        if(have_math_complex == -1)
+          have_math_complex = have_pm("Math::Complex");
+      }
+      else
+      {
+        self->platypus_type = FFI_PL_NATIVE;
+      }
     }
     else if(!strcmp(platypus_type, "pointer"))
     {
