@@ -1036,6 +1036,11 @@ use overload '&{}' => sub {
   sub { $ffi->call(@_) };
 };
 
+use overload 'bool' => sub {
+  my $ffi = shift;
+  return $ffi;
+};
+
 package FFI::Platypus::Closure;
 
 use Scalar::Util qw( refaddr);
