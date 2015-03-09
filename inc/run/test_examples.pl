@@ -2,6 +2,14 @@ use strict;
 use warnings;
 use File::chdir;
 use File::Glob qw( bsd_glob );
+use File::Temp qw( tempdir );
+
+my $lib = tempdir( CLEANUP => 1 );
+
+my @cmd = ( 'cpanm', '-n', '-l' => $lib, 'FFI::TinyCC', 'FFI::Platypus::Type::StringArray', );
+print "+ @cmd\n";
+system @cmd;
+exit 2 if $?;
 
 do {
 
@@ -21,7 +29,7 @@ do {
   foreach my $plfile (bsd_glob '*.pl')
   {
     next if $plfile =~ /^win32_/;
-    my @cmd = ( $^X, $plfile );
+    my @cmd = ( $^X, "-Mlocal::lib=$lib", $plfile );
     print "+ @cmd\n";
     system @cmd;
     exit 2 if $?;
@@ -43,7 +51,7 @@ do {
   foreach my $plfile (bsd_glob '*.pl')
   {
     next if $plfile =~ /^win32_/;
-    my @cmd = ( $^X, $plfile );
+    my @cmd = ( $^X, "-Mlocal::lib=$lib", $plfile );
     print "+ @cmd\n";
     system @cmd;
     exit 2 if $?;
