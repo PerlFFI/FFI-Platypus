@@ -15,6 +15,9 @@ main(int argc, char *argv[])
   ffi_type *args[2];
   void *values[2];
 
+  if(&ffi_type_longdouble == &ffi_type_double)
+    return 2;
+
   args[0] = &ffi_type_longdouble;
   args[1] = &ffi_type_longdouble;
 
