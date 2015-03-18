@@ -133,7 +133,9 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
       break;
     case FFI_TYPE_FLOAT:
     case FFI_TYPE_DOUBLE:
+#ifdef FFI_PL_PROBE_LONGDOUBLE
     case FFI_TYPE_LONGDOUBLE:
+#endif
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
     case FFI_TYPE_COMPLEX:
 #endif
@@ -168,9 +170,11 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     case FFI_TYPE_DOUBLE:
       string = "double";
       break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
     case FFI_TYPE_LONGDOUBLE:
       string = "longdouble";
       break;
+#endif
     case FFI_TYPE_UINT8:
       string = "uint8";
       break;
