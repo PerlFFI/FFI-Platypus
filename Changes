@@ -1,8 +1,12 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.32      2015-03-18 13:02:53 -0400
   - Make sure -L flags from Alien::FFI come before those in perl Config
     For more reliable builds
+  - Support for Microsoft Visual C++ (you will probably also need
+    Alien::FFI 0.09 or beter)
 
 0.31      2015-02-26 13:41:23 -0500
   - Fix bug involving wide custom arguments 
