@@ -45,6 +45,60 @@ sub new
   }
 
   my $lddlflags = $Config{lddlflags};
+  my $ldflags   = $Config{ldflags};
+  my $ccflags   = $Config{ccflags};
+  
+  if($^O eq 'darwin')
+  {
+    # strip the -arch flags on darwin / os x.
+    my @lddlflags_in = shellwords $lddlflags;
+    my @lddlflags;
+    while(@lddlflags_in)
+    {
+      my $arg = shift @lddlflags_in;
+      if($arg eq '-arch')
+      {
+        shift @lddlflags_in;
+      }
+      else
+      {
+        push @lddlflags, $arg;
+      }
+    }
+    $lddlflags = "@lddlflags";
+
+    my @ldflags_in = shellwords $ldflags;
+    my @ldflags;
+    while(@ldflags_in)
+    {
+      my $arg = shift @ldflags_in;
+      if($arg eq '-arch')
+      {
+        shift @ldflags_in;
+      }
+      else
+      {
+        push @ldflags, $arg;
+      }
+    }
+    $ldflags = "@ldflags";
+
+    my @ccflags_in = shellwords $ccflags;
+    my @ccflags;
+    while(@ccflags_in)
+    {
+      my $arg = shift @ccflags_in;
+      if($arg eq '-arch')
+      {
+        shift @ccflags_in;
+      }
+      else
+      {
+        push @ccflags, $arg;
+      }
+    }
+    $ccflags = "@ccflags";
+  }
 
   # on some configurations (eg. Solaris 64 bit, Strawberry Perl)
   # -L flags are included in the lddlflags configuration, but we
@@ -116,12 +170,34 @@ sub new
     $self->config(lddlflags => $lddlflags);
     $diag{config}->{lddlflags} = $lddlflags;
     print "\n\n";
-    print "Make sure any libffi -L flags come first:\n";
+    print "Adjusted lddlflags:\n";
     print "  - \$Config{lddlflags} = $Config{lddlflags}\n";
     print "  + \$Config{lddlflags} = $lddlflags\n";
     print "\n\n";
   }
-  
+
+  if($ldflags ne $Config{ldflags})
+  {
+    $self->config(ldflags => $ldflags);
+    $diag{config}->{ldflags} = $ldflags;
+    print "\n\n";
+    print "Adjusted ldflags:\n";
+    print "  - \$Config{ldflags} = $Config{ldflags}\n";
+    print "  + \$Config{ldflags} = $ldflags\n";
+    print "\n\n";
+  }
+
+  if($ccflags ne $Config{ccflags})
+  {
+    $self->config(ccflags => $ccflags);
+    $diag{config}->{ccflags} = $ccflags;
+    print "\n\n";
+    print "Adjusted ccflags:\n";
+    print "  - \$Config{ccflags} = $Config{ccflags}\n";
+    print "  + \$Config{ccflags} = $ccflags\n";
+    print "\n\n";
+  }
+
   $self->add_to_cleanup(
     'libtest/*.o',
     'libtest/*.obj',

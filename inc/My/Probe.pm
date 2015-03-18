@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use if $^O eq 'MSWin32', 'Win32::ErrorMode';
 use File::Glob qw( bsd_glob );
-use ExtUtils::CBuilder;
 use File::Spec;
 use Config;
 use File::Temp qw( tempdir );
@@ -25,7 +24,7 @@ sub probe
     close $fh;
   };
   
-  my $b = ExtUtils::CBuilder->new;
+  my $b = $mb->cbuilder;
 
   my %probe;
   
