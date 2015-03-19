@@ -25,16 +25,8 @@ dlclose(handle);
   PROTOTYPE: $
   CODE:
     if(!PL_dirty)
-    {
-      printf("closing handle\n");
-      fflush(stdout);
       RETVAL = dlclose(handle);
-    }
     else
-    {
-      printf("skipping close of handle\n");
-      fflush(stdout);
       RETVAL = 0;
-    }
   OUTPUT:
     RETVAL
