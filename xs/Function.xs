@@ -89,8 +89,11 @@ new(class, platypus, address, abi, return_type, ...)
     
     if(ffi_status != FFI_OK)
     {
-      Safefree(self);
-      Safefree(ffi_argument_types);
+      if(!PL_dirty)
+      {
+        Safefree(self);
+        Safefree(ffi_argument_types);
+      }
       if(ffi_status == FFI_BAD_TYPEDEF)
         croak("bad typedef");
       else if(ffi_status == FFI_BAD_ABI)
@@ -164,6 +167,9 @@ DESTROY(self)
     ffi_pl_function *self
   CODE:
     SvREFCNT_dec(self->platypus_sv);
-    Safefree(self->ffi_cif.arg_types);
-    Safefree(self);
+    if(!PL_dirty)
+    {
+      Safefree(self->ffi_cif.arg_types);
+      Safefree(self);
+    }
 

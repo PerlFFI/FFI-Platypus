@@ -254,7 +254,8 @@ DESTROY(self)
   CODE:
     if(self->platypus_type == FFI_PL_CLOSURE)
     {
-      Safefree(self->extra[0].closure.ffi_cif.arg_types);
+      if(!PL_dirty)
+        Safefree(self->extra[0].closure.ffi_cif.arg_types);
     }
     else if(self->platypus_type == FFI_PL_CUSTOM_PERL)
     {
@@ -269,7 +270,8 @@ DESTROY(self)
       if(custom->native_to_perl != NULL)
         SvREFCNT_dec(custom->native_to_perl);
     }
-    Safefree(self);
+    if(!PL_dirty)
+      Safefree(self);
 
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type::StringPointer
 
