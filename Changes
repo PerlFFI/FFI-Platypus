@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Additional fix for Microsoft Visual C++ that didn't get folded into
+    the previous release.
+  - Fixed segfault during global destruction (gh#53)
 
 0.32      2015-03-18 13:02:53 -0400
   - Make sure -L flags from Alien::FFI come before those in perl Config
