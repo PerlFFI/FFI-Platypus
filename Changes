@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.33      2015-03-23 21:55:02 -0400
   - Additional fix for Microsoft Visual C++ that didn't get folded into
     the previous release.
   - Fixed segfault during global destruction (gh#53)
