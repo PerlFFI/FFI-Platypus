@@ -374,7 +374,7 @@ code.
 =head2 Records
 
 Records are structured data of a fixed length.  In C they are called 
-C<strict>s To declare a record type, use C<record>:
+C<struct>s To declare a record type, use C<record>:
 
  $ffi->type( 'record (42)' => 'my_record_of_size_42_bytes' );
 
