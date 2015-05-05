@@ -1520,6 +1520,8 @@ pipcet
 
 Zaki Mughal (zmughal)
 
+Fitz Elliott (felliott)
+
 # COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2015 by Graham Ollis.
