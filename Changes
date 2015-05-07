@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.34      2015-05-07 09:27:04 -0400
+  - Require Alien::FFI which is more reliable at configure time on some platforms
+
 0.33      2015-03-23 21:55:02 -0400
   - Additional fix for Microsoft Visual C++ that didn't get folded into
     the previous release.
