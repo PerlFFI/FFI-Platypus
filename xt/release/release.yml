@@ -73,6 +73,8 @@ pod_spelling_system:
     - uint64
     - x86
     - calid
+    - Fitz
+    - felliott
 
 pod_coverage:
   skip: 0
@@ -88,6 +90,3 @@ unused_vars:
   global:
     ignore_vars: []
   module: {}
-
-version:
-  dir: lib

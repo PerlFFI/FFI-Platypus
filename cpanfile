@@ -16,7 +16,7 @@ on 'test' => sub {
 };
 
 on 'configure' => sub {
-  requires "Alien::FFI" => "0.06";
+  requires "Alien::FFI" => "0.11";
   requires "Config::AutoConf" => "0.309";
   requires "ExtUtils::CBuilder" => "0";
   requires "FFI::CheckLib" => "0.05";
