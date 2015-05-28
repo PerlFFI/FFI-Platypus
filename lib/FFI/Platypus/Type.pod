@@ -550,9 +550,9 @@ constants in your Perl module, like this:
  
  our @EXPORT_OK = qw( FOO_STATIC FOO_DYNAMIC FOO_OTHER foo get_foo );
  
- ues constant FOO_STATIC  => 1;
- ues constant FOO_DYNAMIC => 2;
- ues constant FOO_OTHER   => 3;
+ use constant FOO_STATIC  => 1;
+ use constant FOO_DYNAMIC => 2;
+ use constant FOO_OTHER   => 3;
  
  attach foo => [int] => void;
  attach get_foo => [] => int;
