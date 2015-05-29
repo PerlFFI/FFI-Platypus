@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.36      2015-05-29 13:40:32 -0400
+  - Explicitly require constant pragma version 1.32
+
 0.35      2015-05-29 12:06:39 -0400
   - FFI::Platypus::Record uses constant to create size of alignment constants
     instead of creating them with a sub reference (this usage was deprecated
