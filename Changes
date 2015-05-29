@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - FFI::Platypus::Record uses constant to create size of alignment constants
+    instead of creating them with a sub reference (this usage was deprecated
+    in Perl 5.22)
 
 0.34      2015-05-07 09:27:04 -0400
   - Require Alien::FFI which is more reliable at configure time on some platforms
