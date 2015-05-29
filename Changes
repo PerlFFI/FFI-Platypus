@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added compatability back in for older version of constant
+    (newer one is not available on CPAN yet)
 
 0.36      2015-05-29 13:40:32 -0400
   - Explicitly require constant pragma version 1.32

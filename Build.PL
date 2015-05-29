@@ -40,7 +40,7 @@ my %module_build_args = (
     "File::ShareDir" => 0,
     "JSON::PP" => 0,
     "Module::Build" => "0.3601",
-    "constant" => "1.32",
+    "constant" => 0,
     "perl" => "5.008001"
   },
   "script_files" => [],
