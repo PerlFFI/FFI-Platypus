@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.37      2015-05-29 14:28:21 -0400
   - Added compatability back in for older version of constant
     (newer one is not available on CPAN yet)
 
