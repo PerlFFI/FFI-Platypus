@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.35      2015-05-29 12:06:39 -0400
   - FFI::Platypus::Record uses constant to create size of alignment constants
     instead of creating them with a sub reference (this usage was deprecated
     in Perl 5.22)
