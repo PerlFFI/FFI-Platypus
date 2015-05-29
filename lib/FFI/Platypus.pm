@@ -662,8 +662,8 @@ Examples:
    my($my_function_xsub, $integer, $string) = @_;
    $integer++;
    $string .= " and another thing";
-   my $return_string = $my_function->($integer, $string);
-   $return_string =~ /Belgium//; # HHGG remove profanity
+   my $return_string = $my_function_xsub->($integer, $string);
+   $return_string =~ s/Belgium//; # HHGG remove profanity
    $return_string;
  });
 
