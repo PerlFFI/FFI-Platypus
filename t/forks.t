@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-BEGIN { plan skip_all => 'Test requires a threading Perl' unless eval q{ use threads; 1 } }
+BEGIN { plan skip_all => 'Test requires forks' unless eval q{ use forks; 1 } }
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( uint8 );
 
