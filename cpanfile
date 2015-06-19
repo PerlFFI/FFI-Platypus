@@ -3,7 +3,6 @@ requires "FFI::CheckLib" => "0";
 requires "File::ShareDir" => "0";
 requires "JSON::PP" => "0";
 requires "Module::Build" => "0.3601";
-requires "constant" => "0";
 requires "perl" => "5.008001";
 
 on 'build' => sub {

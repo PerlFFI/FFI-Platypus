@@ -8,4 +8,3 @@ JSON::PP
 Module::Build
 PkgConfig
 Test::More
-constant
