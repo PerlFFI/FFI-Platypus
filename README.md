@@ -1227,6 +1227,10 @@ written it yet.
 
 # SUPPORT
 
+IRC: #native on irc.perl.org
+
+    L<(click for instant chatroom login)|http://chat.mibbit.com/#native@irc.perl.org>
+
 If something does not work the way you think it should, or if you have a 
 feature request, please open an issue on this project's GitHub Issue 
 tracker:
