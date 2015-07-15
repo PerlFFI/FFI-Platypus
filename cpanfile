@@ -10,13 +10,13 @@ on 'build' => sub {
 };
 
 on 'test' => sub {
-  requires "Alien::FFI" => "0.06";
+  requires "Alien::FFI" => "0.012";
   requires "Test::More" => "0.94";
   requires "perl" => "5.008001";
 };
 
 on 'configure' => sub {
-  requires "Alien::FFI" => "0.11";
+  requires "Alien::FFI" => "0.12";
   requires "Config::AutoConf" => "0.309";
   requires "ExtUtils::CBuilder" => "0";
   requires "FFI::CheckLib" => "0.05";

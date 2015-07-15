@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.37_02   2015-07-15 16:33:40 -0400
+  - for cpan testers only
+
 0.37_01   2015-07-15 09:24:53 -0400
   - for cpan testers only
 
