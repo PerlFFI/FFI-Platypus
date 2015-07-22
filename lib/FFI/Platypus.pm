@@ -1721,9 +1721,8 @@ Documentation and tools for using Platypus with the Assembly
 
 =item L<Convert::Binary::C>
 
-An interface for interacting with C C<struct> types.  Unfortunately it 
-appears to be unmaintained, and has a failing pod test, so I cannot 
-recommend it for use by CPAN modules.
+A great interface for decoding C data structures, including C<struct>s,
+C<enum>s, C<#define>s and more.
 
 =item L<pack and unpack|perlpacktut>
 

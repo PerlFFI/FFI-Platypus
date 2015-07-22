@@ -1442,9 +1442,8 @@ Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FF
 
 - [Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C)
 
-    An interface for interacting with C `struct` types.  Unfortunately it 
-    appears to be unmaintained, and has a failing pod test, so I cannot 
-    recommend it for use by CPAN modules.
+    A great interface for decoding C data structures, including `struct`s,
+    `enum`s, `#define`s and more.
 
 - [pack and unpack](https://metacpan.org/pod/perlpacktut)
 
