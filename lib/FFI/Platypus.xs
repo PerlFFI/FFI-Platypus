@@ -10,9 +10,8 @@
 #include "perl_math_int64.h"
 #endif
 
-ffi_pl_arguments *current_argv = NULL;
-
 typedef struct {
+  ffi_pl_arguments *current_argv;
   /*
    * -1 until we have checked
    *  0 tried, not there
@@ -60,6 +59,7 @@ MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 BOOT:
 {
   MY_CXT_INIT;
+  MY_CXT.current_argv         = NULL;
   MY_CXT.have_math_longdouble = -1;
   MY_CXT.have_math_complex    = -1;
 #ifndef HAVE_IV_IS_64

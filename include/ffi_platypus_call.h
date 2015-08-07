@@ -3,7 +3,7 @@
                   sizeof(void*) * self->ffi_cif.nargs +
                   sizeof(ffi_pl_arguments);
     Newx_or_alloca(buffer, buffer_size, char);
-    current_argv = arguments = (ffi_pl_arguments*) buffer;
+    MY_CXT.current_argv = arguments = (ffi_pl_arguments*) buffer;
 
     arguments->count = self->ffi_cif.nargs;
     argument_pointers = (void**) &arguments->slot[arguments->count];
@@ -545,7 +545,7 @@
     fflush(stderr);
 #endif
 
-    current_argv = NULL;
+    MY_CXT.current_argv = NULL;
 
     if(self->address != NULL)
     {
@@ -561,7 +561,7 @@
      * ARGUMENT OUT
      */
 
-    current_argv = arguments;
+    MY_CXT.current_argv = arguments;
 
     for(i=self->ffi_cif.nargs-1,perl_arg_index--; i >= 0; i--, perl_arg_index--)
     {
@@ -774,7 +774,7 @@
     if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
       Safefree_or_alloca(arguments);
 
-    current_argv = NULL;
+    MY_CXT.current_argv = NULL;
 
     /*
      * RETURN VALUE
@@ -1166,7 +1166,7 @@
           XSRETURN_EMPTY;
       }
 
-      current_argv = arguments;
+      MY_CXT.current_argv = arguments;
 
       ret_out = ffi_pl_custom_perl(
         self->return_type->extra[0].custom_perl.native_to_perl,
@@ -1174,7 +1174,7 @@
         -1
       );
 
-      current_argv = NULL;
+      MY_CXT.current_argv = NULL;
 
       Safefree_or_alloca(arguments);
 
