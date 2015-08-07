@@ -5,7 +5,7 @@ use warnings;
 use Carp qw( croak );
 use FFI::Platypus;
 use base qw( Exporter );
-use constant ();
+use constant 1.32 ();
 
 our @EXPORT = qw( record_layout );
 
@@ -267,18 +267,8 @@ sub record_layout
   my $size = $offset;
   
   no strict 'refs';
-  # Required version of constant is not on 
-  # CPAN yet.  Nice.
-  if($constant::VERSION > 1.32)
-  {
-    constant->import(join('::', $caller, '_ffi_record_size'), $size);
-    constant->import(join('::', $caller, '_ffi_record_align'), $record_align);
-  }
-  else
-  {
-    *{join '::', $caller, '_ffi_record_size'}  = sub () { $size         };
-    *{join '::', $caller, '_ffi_record_align'} = sub () { $record_align };
-  }
+  constant->import("${caller}::_ffi_record_size", $size);
+  constant->import("${caller}::_ffi_record_align", $record_align);
   *{join '::', $caller, 'new'} = sub {
     my $class = shift;
     my $args = ref($_[0]) ? [%{$_[0]}] : \@_;
