@@ -11,6 +11,7 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
   PREINIT:
     ffi_pl_type *self;
     char *buffer;
+    dMY_CXT;
   CODE:
     self = NULL;
     if(!strcmp(platypus_type, "string"))
@@ -36,15 +37,15 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
       if(!strcmp(type, "longdouble"))
       {
         self->platypus_type = FFI_PL_EXOTIC_FLOAT;
-        if(have_math_longdouble == -1)
-          have_math_longdouble = have_pm("Math::LongDouble");
+        if(MY_CXT.have_math_longdouble == -1)
+          MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
       }
       else if(!strcmp(type, "complex_float")
       ||    !strcmp(type, "complex_double"))
       {
         self->platypus_type = FFI_PL_EXOTIC_FLOAT;
-        if(have_math_complex == -1)
-          have_math_complex = have_pm("Math::Complex");
+        if(MY_CXT.have_math_complex == -1)
+          MY_CXT.have_math_complex = have_pm("Math::Complex");
       }
       else
       {

@@ -241,7 +241,4 @@ ffi_type *ffi_pl_name_to_type(const char *);
 
 extern int have_pm(const char *pm_name);
 
-extern int have_math_longdouble;  /* Math::LongDouble */
-extern int have_math_complex;  /* Math::Complex    */
-
 #endif

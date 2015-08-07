@@ -12,6 +12,19 @@
 
 ffi_pl_arguments *current_argv = NULL;
 
+typedef struct {
+  /*
+   * -1 until we have checked
+   *  0 tried, not there
+   *  1 tried, is there
+   */
+  int have_math_longdouble;  /* Math::LongDouble */
+  int have_math_complex;  /* Math::Complex    */
+
+} my_cxt_t;
+
+START_MY_CXT
+
 void *cast0(void)
 {
   return NULL;
@@ -33,6 +46,7 @@ XS(ffi_pl_sub_call)
   ffi_pl_arguments *arguments;
   void **argument_pointers;
   
+  dMY_CXT;
   dVAR; dXSARGS;
   
   self = (ffi_pl_function*) CvXSUBANY(cv).any_ptr;
@@ -41,38 +55,39 @@ XS(ffi_pl_sub_call)
 #include "ffi_platypus_call.h"
 }
 
-/*
- * -1 until we have checked
- *  0 tried, not there
- *  1 tried, is there
- */
-int have_math_longdouble = -1;  /* Math::LongDouble */
-int have_math_complex    = -1;  /* Math::Complex    */
-
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 
 BOOT:
+{
+  MY_CXT_INIT;
+  MY_CXT.have_math_longdouble = -1;
+  MY_CXT.have_math_complex    = -1;
 #ifndef HAVE_IV_IS_64
     PERL_MATH_INT64_LOAD_OR_CROAK;
 #endif
+}
 
 int
 _have_math_longdouble(value = -2)
     int value
+  PREINIT:
+    dMY_CXT;
   CODE:
     if(value != -2)
-      have_math_longdouble = value;
-    RETVAL = have_math_longdouble;
+      MY_CXT.have_math_longdouble = value;
+    RETVAL = MY_CXT.have_math_longdouble;
   OUTPUT:
     RETVAL
 
 int
 _have_math_complex(value = -2)
     int value
+  PREINIT:
+    dMY_CXT;
   CODE:
     if(value != -2)
-      have_math_complex = value;
-    RETVAL = have_math_complex;
+      MY_CXT.have_math_complex = value;
+    RETVAL = MY_CXT.have_math_complex;
   OUTPUT:
     RETVAL
 
