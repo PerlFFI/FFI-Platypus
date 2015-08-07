@@ -99,6 +99,10 @@ _have_type(name)
   OUTPUT:
     RETVAL
 
+void
+CLONE(...)
+  CODE:
+    MY_CXT_CLONE;
 
 INCLUDE: ../../xs/dl.xs
 INCLUDE: ../../xs/Type.xs
