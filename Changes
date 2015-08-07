@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.37_03   2015-08-07 11:29:57 -0400
+  - Improved thread safety by using MY_CXT for some very infrequently used
+    global variables.
+
 0.37_02   2015-07-15 16:33:40 -0400
   - for cpan testers only
 
