@@ -10,6 +10,8 @@
 #include "perl_math_int64.h"
 #endif
 
+#define MY_CXT_KEY "FFI::Platypus::_guts" XS_VERSION
+
 typedef struct {
   ffi_pl_arguments *current_argv;
   /*
