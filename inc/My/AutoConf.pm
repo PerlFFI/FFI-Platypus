@@ -102,7 +102,9 @@ sub configure
   {
     $ac->check_header("$header.h");
   }
-  
+
+  $ac->check_stdc_headers;
+
   if($ac->check_decl('RTLD_LAZY', { prologue => $prologue }))
   {
     $ac->define_var( HAVE_RTLD_LAZY => 1 );
