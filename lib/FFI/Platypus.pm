@@ -724,6 +724,7 @@ closures, see L<FFI::Platypus::Type#Closures>.
 sub closure
 {
   my($self, $coderef) = @_;
+  croak "not a coderef" unless ref $coderef eq 'CODE';
   FFI::Platypus::Closure->new($coderef);
 }
 
