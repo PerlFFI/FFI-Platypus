@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.38      2015-08-13 17:13:07 -0400
   - closure method now comes with a more useful diagnostic thinks to
     Carp::croak
   - Added a check for standard C headers.  This seems to help the configure
