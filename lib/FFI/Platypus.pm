@@ -15,6 +15,9 @@ use Carp qw( croak );
 # Watch Out!
 # Here Comes The Platypus Man
 
+# From the original FFI::Platypus prototype:
+#  Kinda like gluing a duckbill to an adorable mammal
+
 =begin stopwords
 
 ØMQ
