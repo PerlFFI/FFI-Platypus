@@ -1483,6 +1483,10 @@ Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FF
 
     Another FFI for Perl that doesn't appear to have worked for a long time.
 
+- [C::Blocks](https://metacpan.org/pod/C::Blocks)
+
+    Embed a tiny C compiler into your Perl scripts.
+
 - [Alien::FFI](https://metacpan.org/pod/Alien::FFI)
 
     Provides libffi for Platypus during its configuration and build stages.

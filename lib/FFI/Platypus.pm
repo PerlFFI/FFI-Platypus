@@ -1766,6 +1766,10 @@ longer supported or distributed.
 
 Another FFI for Perl that doesn't appear to have worked for a long time.
 
+=item L<C::Blocks>
+
+Embed a tiny C compiler into your Perl scripts.
+
 =item L<Alien::FFI>
 
 Provides libffi for Platypus during its configuration and build stages.
