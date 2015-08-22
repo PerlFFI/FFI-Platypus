@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fixed spurious warning: auto loading of record class (via FFI::Platypus::Record)
+    was ALWAYS warning, when it should have only been warning on load failure.
 
 0.38      2015-08-13 17:13:07 -0400
   - closure method now comes with a more useful diagnostic thinks to

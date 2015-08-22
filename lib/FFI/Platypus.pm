@@ -1134,7 +1134,7 @@ sub new
       unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
       {
         eval qq{ use $classname };
-        warn "error requiring $classname: $@";
+        warn "error requiring $classname: $@" if $@;
       }
       if($classname->can('ffi_record_size'))
       {
