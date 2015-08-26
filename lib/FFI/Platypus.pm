@@ -1098,7 +1098,7 @@ sub new
   # the platypus object is only needed for closures, so
   # that it can lookup existing types.
 
-  if($type =~ m/^\((.*)\)-\>\s*(.*)\s*$/)
+  if($type =~ m/^\((.*)\)\s*-\>\s*(.*)\s*$/)
   {
     croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
     my @argument_types = map { $platypus->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;

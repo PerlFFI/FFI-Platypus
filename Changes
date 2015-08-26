@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Closure declerations ignore white space between () and ->
 
 0.39      2015-08-24 03:23:10 -0400
   - Fixed spurious warning: auto loading of record class (via FFI::Platypus::Record)
