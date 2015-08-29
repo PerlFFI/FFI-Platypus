@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.40      2015-08-29 08:45:19 -0400
   - Closure declerations ignore white space between () and ->
 
 0.39      2015-08-24 03:23:10 -0400
