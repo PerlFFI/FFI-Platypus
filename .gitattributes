@@ -1,2 +1,2 @@
-*.t linguist-language=Perl5
+*.pm linguist-language=Perl
 *.h linguist-language=C
