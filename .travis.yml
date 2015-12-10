@@ -32,6 +32,7 @@ perl:
   - "5.18-shrplib"
   - "5.20"
   - "5.20-shrplib"
+  - "5.22"
 
 script:
   - perl Build.PL
