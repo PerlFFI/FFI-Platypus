@@ -16,3 +16,9 @@ EXTERN void
 f1(void)
 {
 }
+
+EXTERN void
+f2(int *i)
+{
+  *i = *i+1;
+}
