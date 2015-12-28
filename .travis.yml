@@ -3,7 +3,7 @@ language: perl
 sudo: true
 
 before_install:
-  - sudo apt-get install gfortran
+  - sudo apt-get install gfortran-4.6
   - sudo apt-get install fp-compiler-2.4.4
   - sudo apt-get install g++
   - sudo apt-get install gcj-jdk
