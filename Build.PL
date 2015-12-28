@@ -1,3 +1,4 @@
+use strict; use warnings;
 BEGIN {
   unless(eval q{ use 5.008001; 1}) {
     print "Perl 5.008001 or better required\n";
@@ -32,7 +33,6 @@ my %module_build_args = (
   "dist_version" => "0.40",
   "license" => "perl",
   "module_name" => "FFI::Platypus",
-  "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
     "ExtUtils::CBuilder" => 0,
@@ -43,7 +43,6 @@ my %module_build_args = (
     "constant" => "1.32",
     "perl" => "5.008001"
   },
-  "script_files" => [],
   "share_dir" => {
     "dist" => "share"
   },
@@ -69,5 +68,6 @@ unless ( eval { Module::Build->VERSION(0.4004) } ) {
 }
 
 my $build = My::ModuleBuild->new(%module_build_args);
+
 
 $build->create_build_script;

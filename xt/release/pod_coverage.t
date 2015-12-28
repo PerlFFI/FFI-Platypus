@@ -2,6 +2,8 @@ use strict;
 use warnings;
 use Test::More;
 BEGIN { 
+  plan skip_all => 'test requires 5.010 or better'
+    unless $] >= 5.010;
   plan skip_all => 'test requires Test::Pod::Coverage' 
     unless eval q{ use Test::Pod::Coverage; 1 };
   plan skip_all => 'test requires YAML'
