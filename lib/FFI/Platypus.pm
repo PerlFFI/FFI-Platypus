@@ -680,6 +680,8 @@ sub attach
   $wrapper = pop if ref $_[-1] eq 'CODE';
 
   my($self, $name, $args, $ret, $proto) = @_;
+  $ret = 'void' unless defined $ret;
+
   my($c_name, $perl_name) = ref($name) ? @$name : ($name, $name);
 
   croak "you tried to provide a perl name that looks like an address"
