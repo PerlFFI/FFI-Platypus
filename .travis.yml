@@ -1,15 +1,17 @@
 language: perl
-
-sudo: true
+sudo: required
+dist: trusty
 
 before_install:
-  - sudo apt-get install gfortran-4.6
-  - sudo apt-get install fp-compiler-2.4.4
-  - sudo apt-get install g++
-  - sudo apt-get install gcj-jdk
-  - sudo apt-get install libgtop2-7
+  - sudo apt-get update
+  - sudo apt-get -y install gfortran-4.8
+  - sudo apt-get -y install fp-compiler-2.6.2
+  - sudo apt-get -y install g++
+  - sudo apt-get -y install gcj-jdk
+  - sudo apt-get -y install libgtop2-7
 
 install:
+  - perlbrew list
   - cpanm -n constant
   - cpanm -n Alien::FFI
   - cpanm -n ExtUtils::CBuilder
@@ -29,7 +31,6 @@ perl:
   - "5.14"
   - "5.16"
   - "5.18"
-  - "5.18-shrplib"
   - "5.20"
   - "5.20-shrplib"
   - "5.22"
@@ -51,7 +52,6 @@ script:
   - perl inc/run/travis_cpan.pl File::LibMagic::FFI
   #- perl inc/run/travis_cpan.pl Archive::Libarchive::FFI
   - cpanm -n Math::BigInt
-  - perl inc/run/travis_cpan.pl ZMQ::FFI
 
   - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::CPP
   - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Fortran

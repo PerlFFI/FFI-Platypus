@@ -29,4 +29,9 @@ exit 2 if $?;
 @cmd = ( 'cpanm', '-l' => $lib, '-v', '--reinstall', $module );
 print "+@cmd\n";
 system @cmd;
-exit 2 if $?;
+
+if($?)
+{
+  system 'tail', -f => '/home/travis/.cpanm/build.log';
+  exit 2
+}
