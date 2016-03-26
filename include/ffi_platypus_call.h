@@ -1214,7 +1214,7 @@
           }
           else
           {
-            XSRETURN_NV((double) result.longdouble);
+            XSRETURN_NV((NV) result.longdouble);
           }
         }
 #endif
