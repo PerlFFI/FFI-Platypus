@@ -1515,7 +1515,7 @@ based.
 
 # AUTHOR
 
-Author: Graham Ollis &lt;plicease@cpan.org>
+Author: Graham Ollis <plicease@cpan.org>
 
 Contributors:
 
@@ -1528,6 +1528,8 @@ pipcet
 Zaki Mughal (zmughal)
 
 Fitz Elliott (felliott)
+
+Vickenty Fesunov (vyf)
 
 # COPYRIGHT AND LICENSE
 
