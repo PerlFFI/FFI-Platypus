@@ -48,6 +48,10 @@ $post_diag = sub {
     }
     spacer();
     my %r;
+    while(my($k,$v) = each %type_map)
+    {
+      push @{ $r{$v} }, $k;
+    }
     foreach my $type (sort keys %r)
     {
       diag sprintf("%-8s : %s", $type, join(', ', sort @{ $r{$type} }));
