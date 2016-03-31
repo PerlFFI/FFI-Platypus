@@ -34,6 +34,7 @@ $post_diag = sub {
     diag "Alien::FFI->cflags       = ", Alien::FFI->cflags;
     diag "Alien::FFI->libs         = ", Alien::FFI->libs;
     diag "Alien::FFI->dist_dir     = ", eval { Alien::FFI->dist_dir } || 'undef';
+    diag "Alien::FFI->version      = ", eval { Alien::FFI->config('version') } || 'unknown';
     spacer();
     diag "dlext[]=$_" for Module::Build::FFI->ffi_dlext;
     my %type_map = %{ FFI::Platypus::ConfigData->config('type_map') };
