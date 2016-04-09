@@ -53,15 +53,17 @@ $post_diag = sub {
     {
       push @{ $r{$v} }, $k;
     }
+    diag "Types:";
     foreach my $type (sort keys %r)
     {
-      diag sprintf("%-8s : %s", $type, join(', ', sort @{ $r{$type} }));
+      diag sprintf("  %-8s : %s", $type, join(', ', sort @{ $r{$type} }));
     }
     spacer();
     my $abi = FFI::Platypus->abis;
+    diag "ABIs:";
     foreach my $key (sort keys %$abi)
     {
-      diag sprintf("%-20s %s", $key, $abi->{$key});
+      diag sprintf("  %-20s %s", $key, $abi->{$key});
     }
   };
   diag "extended diagnostic failed: $@" if $@;
