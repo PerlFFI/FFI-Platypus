@@ -221,7 +221,11 @@ sub probe_abi
     }
 
     my $out = `$exe`;
-    if($? == 0 && $out =~ /\|value=([0-9]+)\|/)
+    if($? == -1)
+    {
+      die "unable to execute: $exe";
+    }
+    elsif($? == 0 && $out =~ /\|value=([0-9]+)\|/)
     {
       $abi{$abi} = $1;
     }
