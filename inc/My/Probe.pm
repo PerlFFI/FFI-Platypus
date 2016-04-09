@@ -8,6 +8,7 @@ use File::Spec;
 use Config;
 use File::Temp qw( tempdir );
 use File::Copy qw( copy );
+use File::Path qw( rmtree );
 
 sub probe
 {
@@ -129,8 +130,9 @@ sub probe_abi
   my($class, $mb) = @_;
   
   print "probing for ABIs...\n";
-  
-  my $dir = tempdir( CLEANUP => 1);
+
+  mkdir '.abi-probe-test';
+  my $dir = tempdir( CLEANUP => 1, DIR => '.abi-probe-test' );
   my $file_c = File::Spec->catfile($dir, "ffitest.c");
 
   if($^O eq 'MSWin32' && $file_c =~ /\s/)
@@ -243,6 +245,7 @@ sub probe_abi
 
   $mb->config_data( abi => \%abi );
 
+  rmtree('.abi-probe-test', { verbose => 0 });
   return;
 }
 
