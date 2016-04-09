@@ -75,6 +75,9 @@ pod_spelling_system:
     - calid
     - Fitz
     - felliott
+    - Fesunov
+    - Vickenty
+    - vyf
 
 pod_coverage:
   skip: 0
