@@ -1,7 +1,12 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.41      2016-04-09 16:03:07 -0400
   - For the return value undef can be passed in to mean 'void'.
+  - Fixed installer bug where ABI probe would silently fail if /tmp
+    was mounted noexec
+  - Avoid unnecessary downgrade on when Perl is compiled to use longdouble
 
 0.40      2015-08-29 08:45:19 -0400
   - Closure declerations ignore white space between () and ->

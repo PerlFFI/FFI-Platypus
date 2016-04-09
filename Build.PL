@@ -30,7 +30,7 @@ my %module_build_args = (
     "Graham Ollis <plicease\@cpan.org>"
   ],
   "dist_name" => "FFI-Platypus",
-  "dist_version" => "0.40",
+  "dist_version" => "0.41",
   "license" => "perl",
   "module_name" => "FFI::Platypus",
   "recursive_test_files" => 1,
