@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.42      2016-05-06 16:31:01 -0400
   - Support for MSYS2
 
 0.41      2016-04-09 16:03:07 -0400

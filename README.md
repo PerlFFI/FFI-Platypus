@@ -816,7 +816,7 @@ just-in-time (JIT) compilation service for FFI.
       print "recv_message = $recv_message\n";
     };
 
-**Discussion**: ØMQ is a high-performance asynchronous messaging library.  
+**Discussion**: ÃÂMQ is a high-performance asynchronous messaging library.  
 There are a few things to note here.
 
 Firstly, sometimes there may be multiple versions of a library in the 
@@ -841,7 +841,7 @@ the same, it is useful form of documentation that helps describe the
 functionality of the interface.
 
 Finally we attach the necessary functions, send and receive a message. 
-If you are interested, there is a fully fleshed out ØMQ Perl interface 
+If you are interested, there is a fully fleshed out ÃÂMQ Perl interface 
 implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
 
 ## libarchive
