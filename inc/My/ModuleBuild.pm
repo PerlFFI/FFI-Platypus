@@ -37,10 +37,10 @@ sub new
   {
     $args{extra_linker_flags} .= ' psapi.lib';
   }
-  elsif($^O =~ /^(MSWin32|cygwin)$/)
+  elsif($^O =~ /^(MSWin32|cygwin|msys)$/)
   {
     # TODO: ac this bad boy ?
-    $args{extra_linker_flags} .= " -L/usr/lib/w32api" if $^O eq 'cygwin';
+    $args{extra_linker_flags} .= " -L/usr/lib/w32api" if $^O =~ /^(cygwin|msys)$/;
     $args{extra_linker_flags} .= " -lpsapi";
   }
 
@@ -224,7 +224,7 @@ sub new
   my @dlext = ($Config{dlext});
   
   # extra dlext as understood by the OS
-  push @dlext, 'dll'             if $^O =~ /^(cygwin|MSWin32)$/;
+  push @dlext, 'dll'             if $^O =~ /^(cygwin|MSWin32|msys)$/;
   push @dlext, 'xs.dll'          if $^O =~ /^(MSWin32)$/;
   push @dlext, 'so'              if $^O =~ /^(cygwin|darwin)$/;
   push @dlext, 'bundle', 'dylib' if $^O =~ /^(darwin)$/;

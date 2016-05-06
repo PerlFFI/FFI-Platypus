@@ -50,11 +50,22 @@ sub build
       extra_linker_flags => $mb->extra_linker_flags,
     );
     
-    if($^O eq 'cygwin')
+    if($^O =~ /^(cygwin|msys)$/)
     {
       my $old = $dll;
       my $new = $dll;
-      $new =~ s{libtest.dll$}{cygtest-1.dll};
+      if($^O eq 'cygwin')
+      {
+        $new =~ s{libtest.dll$}{cygtest-1.dll};
+      }
+      elsif($^O eq 'msys')
+      {
+        $new =~ s{libtest.dll$}{msys-test-1.dll};
+      }
+      else
+      {
+        die "how?";
+      }
       move($old => $new) || die "unable to copy $old => $new $!";
     }
   }

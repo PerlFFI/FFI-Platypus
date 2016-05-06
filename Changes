@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Support for MSYS2
 
 0.41      2016-04-09 16:03:07 -0400
   - For the return value undef can be passed in to mean 'void'.

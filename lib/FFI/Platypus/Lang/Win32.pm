@@ -29,7 +29,7 @@ C<uint32>.
 
 sub abi
 {
-  $^O =~ /^(cygwin|MSWin32)$/ && $Config{ptrsize} == 4
+  $^O =~ /^(cygwin|MSWin32|msys)$/ && $Config{ptrsize} == 4
   ? 'stdcall'
   : 'default_abi';
 }

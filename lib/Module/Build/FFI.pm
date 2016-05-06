@@ -411,7 +411,7 @@ sub ffi_dlext
 
 sub _ffi_libtest_name ()
 {
-  $^O eq 'cygwin' ? 'cygtest-1' : 'libtest';
+  $^O eq 'cygwin' ? 'cygtest-1' : $^O eq 'msys' ? 'msys-test-1' : 'libtest';
 }
 
 sub ACTION_libtest
