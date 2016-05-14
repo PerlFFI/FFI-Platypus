@@ -40,7 +40,3 @@ on 'develop' => sub {
   requires "Test::Strict" => "0";
   requires "YAML" => "0";
 };
-
-on 'develop' => sub {
-  recommends "YAML::XS" => "0";
-};
