@@ -26,11 +26,12 @@ In your C code:
 
 In your Platypus::FFI code:
 
- use FFI::Platypus::Declare
-   'void',
-   [ '::PointerSizeBuffer' => 'buffer' ];
+ use FFI::Platypus;
  
- attach function_with_buffer => [buffer] => void;
+ my $ffi = FFI::Platypus->new;
+ $ffi->load_custom_type('::PointerSizeBuffer' => 'buffer');
+ 
+ $ffi->attach(function_with_buffer => ['buffer'] => 'void');
  my $string = "content of buffer";
  function_with_buffer($string);
 

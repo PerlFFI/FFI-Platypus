@@ -16,12 +16,6 @@ OO Interface:
  my $ffi = FFI::Platypus->new;
  $ffi->type('int' => 'my_int');
 
-Declarative interface:
-
- use FFI::Platypus::Declare
-   qw( int void ),
-   ['int' => 'my_int'];
-
 =head1 DESCRIPTION
 
 This document describes how to define types using L<FFI::Platypus>.  

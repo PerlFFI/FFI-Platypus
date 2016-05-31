@@ -26,12 +26,13 @@ In your C code:
 
 In your Platypus::FFI code:
 
- use FFI::Platypus::Declare
-   'void',
-   [ '::StringPointer' => 'string_pointer' ];
+ use FFI::Platypus;
  
- attach string_pointer_argument => [string_pointer] => void;
- attach string_pointer_return   => [] => string_pointer;
+ my $ffi = FFI::Platypus->new;
+ $ffi->load_custom_type('::StringPointer' => 'string_pointer');
+ 
+ $ffi->attach(string_pointer_argument => ['string_pointer'] => 'void');
+ $ffi->attach(string_pointer_return   => [] => 'string_pointer');
  
  my $string = "foo";
  
