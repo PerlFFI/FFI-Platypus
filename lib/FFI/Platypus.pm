@@ -1665,6 +1665,10 @@ C<PERL5LIB> path when you build Platypus.  For example:
 
 =over 4
 
+=item L<NativeCall>
+
+Promising interface to Platypus inspired by Perl 6.
+
 =item L<FFI::Platypus::Declare>
 
 Declarative interface to Platypus.

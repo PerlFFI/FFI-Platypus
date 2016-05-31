@@ -1380,6 +1380,10 @@ Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FF
 
 # SEE ALSO
 
+- [NativeCall](https://metacpan.org/pod/NativeCall)
+
+    Promising interface to Platypus inspired by Perl 6.
+
 - [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)
 
     Declarative interface to Platypus.
