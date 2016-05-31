@@ -43,16 +43,7 @@ Put your .c and .h files in C<ffi> (C<ffi/example.c>):
    printf("hello world\n");
  }
 
-Attach it to Perl in your main module (C<lib/Foo/Bar.pm>) using
-the declarative interface:
-
- package Foo::Bar;
- 
- use FFI::Platypus::Declare qw( void );
- 
- attach hello_world => [] => void;
-
-or use the OO interface:
+Attach it to Perl in your main module (C<lib/Foo/Bar.pm>):
 
  package Foo::Bar;
  
@@ -97,10 +88,10 @@ can use to test your FFI module with.  You can use FFI::CheckLib to
 find the library from your test:
 
  use Test::More;
- use FFI::Platypus::Declare;
+ use FFI::Platypus;
  use FFI::CheckLib;
  
- lib find_lib lib => 'test', libpath => 'libtest';
+ FFI::Platypus->new->lib(find_lib lib => 'test', libpath => 'libtest');
 
 [version 0.18]
 

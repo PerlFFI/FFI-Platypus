@@ -127,10 +127,6 @@ if($@)
 
 Main Platypus documentation.
 
-=item L<FFI::Platypus::Declare>
-
-Declarative interface for Platypus.
-
 =back
 
 =cut

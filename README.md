@@ -88,10 +88,6 @@ support and development (for contributors) information.  If you are new
 to Platypus or FFI, you may want to skip down to the 
 [EXAMPLES](#examples) to get a taste of what you can do with Platypus.
 
-Platypus also provides an declarative interface you may want to use 
-instead of the object oriented interface called 
-[FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare).
-
 Platypus has extensive documentation of types at [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) 
 and its custom types API at [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
 
@@ -473,19 +469,20 @@ value from the ["abis"](#abis) method above.
 
 # EXAMPLES
 
-Here are some examples.  Some of them use the [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare) 
-interface, but the principles apply to the OO interface.  These examples 
+Here are some examples.  These examples 
 are provided in full with the Platypus distribution in the "examples" 
 directory.  There are also some more examples in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) 
 that are related to types.
 
 ## Integer conversions
 
-    use FFI::Platypus::Declare qw( int string );
+    use FFI::Platypus;
     
-    lib undef;
-    attach puts => [string] => int;
-    attach atoi => [string] => int;
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(undef);
+    
+    $ffi->attach(puts => ['string'] => 'int');
+    $ffi->attach(atoi => ['string'] => 'int');
     
     puts(atoi('56'));
 
@@ -498,20 +495,21 @@ includes the standard c library.
 ## libnotify
 
     use FFI::CheckLib;
-    use FFI::Platypus::Declare qw( void string opaque );
+    use FFI::Platypus;
     
     # NOTE: I ported this from the like named eg/notify.pl that came with FFI::Raw
     # and it seems to work most of the time, but also seems to SIGSEGV sometimes.
     # I saw the same behavior in the FFI::Raw version, and am not really familiar
     # with the libnotify API to say what is the cause.  Patches welcome to fix it.
     
-    lib find_lib_or_exit lib => 'notify';
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(find_lib_or_exit lib => 'notify');
     
-    attach notify_init   => [string] => void;
-    attach notify_uninit => []       => void;
-    attach [notify_notification_new    => 'notify_new']    => [string,string,string]           => opaque;
-    attach [notify_notification_update => 'notify_update'] => [opaque, string, string, string] => void;
-    attach [notify_notification_show   => 'notify_show']   => [opaque, opaque]                 => void;
+    $ffi->attach(notify_init   => ['string'] => 'void');
+    $ffi->attach(notify_uninit => []       => 'void');
+    $ffi->attach([notify_notification_new    => 'notify_new']    => ['string', 'string', 'string']           => 'opaque');
+    $ffi->attach([notify_notification_update => 'notify_update'] => ['opaque', 'string', 'string', 'string'] => 'void');
+    $ffi->attach([notify_notification_show   => 'notify_show']   => ['opaque', 'opaque']                     => 'void');
     
     notify_init('FFI::Platypus');
     my $n = notify_new('','','');
@@ -553,14 +551,15 @@ We are really calling the C function `notify_notification_new`.
 
 ## Allocating and freeing memory
 
-    use FFI::Platypus::Declare;
+    use FFI::Platypus;
     use FFI::Platypus::Memory qw( malloc free memcpy );
     
+    my $ffi = FFI::Platypus->new;
     my $buffer = malloc 12;
     
-    memcpy $buffer, cast('string' => 'opaque', "hello there"), length "hello there\0";
+    memcpy $buffer, $ffi->cast('string' => 'opaque', "hello there"), length "hello there\0";
     
-    print cast('opaque' => 'string', $buffer), "\n";
+    print $ffi->cast('opaque' => 'string', $buffer), "\n";
     
     free $buffer;
 
@@ -624,16 +623,16 @@ structured data records).
 ## libuuid
 
     use FFI::CheckLib;
-    use FFI::Platypus::Declare
-      'void',
-      [ 'string(37)' => 'uuid_string' ],
-      [ 'record(16)' => 'uuid_t' ];
+    use FFI::Platypus;
     use FFI::Platypus::Memory qw( malloc free );
     
-    lib find_lib_or_exit lib => 'uuid';
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(find_lib_or_exit lib => 'uuid');
+    $ffi->type('string(37)' => 'uuid_string');
+    $ffi->type('record(16)' => 'uuid_t');
     
-    attach uuid_generate => [uuid_t] => void;
-    attach uuid_unparse  => [uuid_t,uuid_string] => void;
+    $ffi->attach(uuid_generate => ['uuid_t'] => 'void');
+    $ffi->attach(uuid_unparse  => ['uuid_t','uuid_string'] => 'void');
     
     my $uuid = "\0" x 16;  # uuid_t
     uuid_generate($uuid);
@@ -655,11 +654,13 @@ this case it is simply 16 bytes).  We also know that the strings
 
 ## puts and getpid
 
-    use FFI::Platypus::Declare qw( string int );
+    use FFI::Platypus;
     
-    lib undef;
-    attach puts => [string] => int;
-    attach getpid => [] => int;
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(undef);
+    
+    $ffi->attach(puts => ['string'] => 'int');
+    $ffi->attach(getpid => [] => 'int');
     
     puts(getpid());
 
@@ -668,20 +669,21 @@ this case it is simply 16 bytes).  We also know that the strings
 
 ## Math library
 
-    use FFI::Platypus::Declare qw( string int double );
+    use FFI::Platypus;
     use FFI::CheckLib;
     
-    lib undef;
-    attach puts => [string] => int;
-    attach fdim => [double,double] => double;
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(undef);
+    $ffi->attach(puts => ['string'] => 'int');
+    $ffi->attach(fdim => ['double','double'] => 'double');
     
     puts(fdim(7.0, 2.0));
     
-    attach cos => [double] => double;
+    $ffi->attach(cos => ['double'] => 'double');
     
     puts(cos(2.0));
     
-    attach fmax => [double, double] => double;
+    $ffi->attach(fmax => ['double', 'double'] => 'double');
     
     puts(fmax(2.0,3.0));
 
@@ -694,15 +696,16 @@ use `undef` as the library to find them.
 
 ## Strings
 
-    use FFI::Platypus::Declare qw( int string );
+    use FFI::Platypus;
     
-    lib undef;
-    attach puts => [string] => int;
-    attach strlen => [string] => int;
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib(undef);
+    $ffi->attach(puts => ['string'] => 'int');
+    $ffi->attach(strlen => ['string'] => 'int');
     
     puts(strlen('somestring'));
     
-    attach strstr => [string,string] => string;
+    $ffi->attach(strstr => ['string','string'] => 'string');
     
     puts(strstr('somestring', 'string'));
     
@@ -710,7 +713,7 @@ use `undef` as the library to find them.
     
     puts(puts("lol"));
     
-    attach strerror => [int] => string;
+    $ffi->attach(strerror => ['int'] => 'string');
     
     puts(strerror(2));
 
@@ -1383,10 +1386,6 @@ Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FF
 - [NativeCall](https://metacpan.org/pod/NativeCall)
 
     Promising interface to Platypus inspired by Perl 6.
-
-- [FFI::Platypus::Declare](https://metacpan.org/pod/FFI::Platypus::Declare)
-
-    Declarative interface to Platypus.
 
 - [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type)
 

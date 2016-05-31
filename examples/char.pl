@@ -1,17 +1,17 @@
 use strict;
 use warnings;
-use FFI::Platypus::Declare
-  'int',
-  [int => 'character'];
+use FFI::Platypus;
 
-lib undef;
+my $ffi = FFI::Platypus->new;
+$ffi->lib(undef);
+$ffi->type('int' => 'character');
 
 my @list = qw( 
   alnum alpha ascii blank cntrl digit lower print punct 
   space upper xdigit
 );
 
-attach "is$_" => [character] => int for @list;
+$ffi->attach("is$_" => ['character'] => 'int') for @list;
 
 my $char = shift(@ARGV) || 'a';
 

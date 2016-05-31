@@ -1,9 +1,10 @@
 use strict;
 use warnings;
-use FFI::Platypus::Declare qw( int );
+use FFI::Platypus;
 
-lib undef;
-attach [pipe=>'mypipe'] => ['int[2]'] => int;
+my $ffi = FFI::Platypus->new;
+$ffi->lib(undef);
+$ffi->attach([pipe=>'mypipe'] => ['int[2]'] => 'int');
 
 my @fd = (0,0);
 mypipe(\@fd);

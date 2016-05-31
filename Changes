@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Officially discourage the use of FFI::Platypus::Declare
 
 0.42      2016-05-06 16:31:01 -0400
   - Support for MSYS2

@@ -1,9 +1,11 @@
 use strict;
 use warnings;
-use FFI::Platypus::Declare qw( string int );
+use FFI::Platypus;
 
-lib undef;
-attach puts => [string] => int;
-attach getpid => [] => int;
+my $ffi = FFI::Platypus->new;
+$ffi->lib(undef);
+
+$ffi->attach(puts => ['string'] => 'int');
+$ffi->attach(getpid => [] => 'int');
 
 puts(getpid());

@@ -82,10 +82,6 @@ sub buffer_to_scalar ($$)
 
 Main Platypus documentation.
 
-=item L<FFI::Platypus::Declare>
-
-Declarative interface to Platypus.
-
 =back
 
 =cut

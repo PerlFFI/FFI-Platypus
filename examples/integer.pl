@@ -1,9 +1,11 @@
 use strict;
 use warnings;
-use FFI::Platypus::Declare qw( int string );
+use FFI::Platypus;
 
-lib undef;
-attach puts => [string] => int;
-attach atoi => [string] => int;
+my $ffi = FFI::Platypus->new;
+$ffi->lib(undef);
+
+$ffi->attach(puts => ['string'] => 'int');
+$ffi->attach(atoi => ['string'] => 'int');
 
 puts(atoi('56'));

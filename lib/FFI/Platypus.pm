@@ -114,10 +114,6 @@ support and development (for contributors) information.  If you are new
 to Platypus or FFI, you may want to skip down to the 
 L<EXAMPLES|/EXAMPLES> to get a taste of what you can do with Platypus.
 
-Platypus also provides an declarative interface you may want to use 
-instead of the object oriented interface called 
-L<FFI::Platypus::Declare>.
-
 Platypus has extensive documentation of types at L<FFI::Platypus::Type> 
 and its custom types API at L<FFI::Platypus::API>.
 
@@ -1177,8 +1173,7 @@ __END__
 
 =head1 EXAMPLES
 
-Here are some examples.  Some of them use the L<FFI::Platypus::Declare> 
-interface, but the principles apply to the OO interface.  These examples 
+Here are some examples.  These examples 
 are provided in full with the Platypus distribution in the "examples" 
 directory.  There are also some more examples in L<FFI::Platypus::Type> 
 that are related to types.
@@ -1668,10 +1663,6 @@ C<PERL5LIB> path when you build Platypus.  For example:
 =item L<NativeCall>
 
 Promising interface to Platypus inspired by Perl 6.
-
-=item L<FFI::Platypus::Declare>
-
-Declarative interface to Platypus.
 
 =item L<FFI::Platypus::Type>
 

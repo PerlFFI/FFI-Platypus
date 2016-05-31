@@ -110,10 +110,6 @@ sub ffi_custom_type_api_1
 
 Main Platypus documentation.
 
-=item L<FFI::Platypus::Declare>
-
-Declarative interface for Platypus.
-
 =item L<FFI::Platypus::Type>
 
 Platypus types documentation.

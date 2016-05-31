@@ -18,6 +18,18 @@ use FFI::Platypus;
 
 =head1 DESCRIPTION
 
+This module is offficially B<discouraged>.  The idea was to provide a
+simpler declarative interface without the need of (directly) creating
+an L<FFI::Platypus> instance.  In practice it is almost as complicated
+and makes it difficult to upgrade to the proper OO interface if the
+need arises.  I have stopped using it mainly for this reason.  It will
+remain as part of the Platypus core distribution to keep old code working,
+but you are encouraged to write new code using the OO interface.
+Alternatively, you can try the Perl 6 inspired L<NativeCall>, which
+provides most of the goals this module was intended for (that is
+a simple interface at the cost of some power), without much of the
+complexity.  The remainder of this document describes the interface.
+
 This module provides a declarative interface to L<FFI::Platypus>. It 
 provides a more concise interface at the cost of a little less power, 
 and a little more namespace pollution.

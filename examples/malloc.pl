@@ -1,12 +1,13 @@
 use strict;
 use warnings;
-use FFI::Platypus::Declare;
+use FFI::Platypus;
 use FFI::Platypus::Memory qw( malloc free memcpy );
 
+my $ffi = FFI::Platypus->new;
 my $buffer = malloc 12;
 
-memcpy $buffer, cast('string' => 'opaque', "hello there"), length "hello there\0";
+memcpy $buffer, $ffi->cast('string' => 'opaque', "hello there"), length "hello there\0";
 
-print cast('opaque' => 'string', $buffer), "\n";
+print $ffi->cast('opaque' => 'string', $buffer), "\n";
 
 free $buffer;

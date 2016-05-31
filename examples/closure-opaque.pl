@@ -1,17 +1,15 @@
 use strict;
 use warnings;
-use FFI::Platypus::Declare
-  'int', 'void', 'string',
-  ['(int)->int' => 'closure_t'];
+use FFI::Platypus;
 
-lib './closure.so';
-lib undef; # for puts
+my $ffi = FFI::Platypus->new;
+$ffi->lib('./closure.so');
+$ffi->type('(int)->int' => 'closure_t');
 
-attach set_closure => [closure_t] => void;
-attach call_closure => [int] => int;
-attach puts => [string] => int;
+$ffi->attach(set_closure => ['closure_t'] => 'void');
+$ffi->attach(call_closure => ['int'] => 'int');
 
-my $closure = closure { $_[0] * 6 };
-my $opaque = cast closure_t => 'opaque', $closure;
+my $closure = $ffi->closure(sub { $_[0] * 6 });
+my $opaque = $ffi->cast(closure_t => 'opaque', $closure);
 set_closure($opaque);
-puts(call_closure(2)); # prints "12"
+print call_closure(2), "\n"; # prints "12"
