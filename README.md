@@ -1321,7 +1321,7 @@ The build process also respects these environment variables:
         
         
         DEBUG_FAKE32:
-          + making Math::Int64 a prerequsite (not normally done on 64 bit Perls)
+          + making Math::Int64 a prerequisite (not normally done on 64 bit Perls)
           + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)
         
         Created MYMETA.yml and MYMETA.json
