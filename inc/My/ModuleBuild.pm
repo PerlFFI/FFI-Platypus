@@ -149,7 +149,7 @@ sub new
   {
     print "\n\n";
     print "DEBUG_FAKE32:\n";
-    print "  + making Math::Int64 a prerequsite (not normally done on 64 bit Perls)\n";
+    print "  + making Math::Int64 a prerequisite (not normally done on 64 bit Perls)\n";
     print "  + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)\n";
     print "\n\n";
     $self->config_data(config_debug_fake32 => 1);
