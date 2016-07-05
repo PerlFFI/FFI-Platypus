@@ -196,29 +196,37 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
       switch(extra->return_type->ffi_type->type)
       {
         case FFI_TYPE_UINT8:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
           ((uint8_t*)result)[3] = SvUV(sv);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+          ((uint8_t*)result)[7] = SvUV(sv);
 #else
           *((uint8_t*)result) = SvUV(sv);
 #endif
           break;
         case FFI_TYPE_SINT8:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
           ((int8_t*)result)[3] = SvIV(sv);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+          ((int8_t*)result)[7] = SvIV(sv);
 #else
           *((int8_t*)result) = SvIV(sv);
 #endif
           break;
         case FFI_TYPE_UINT16:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
           ((uint16_t*)result)[1] = SvUV(sv);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+          ((uint16_t*)result)[3] = SvUV(sv);
 #else
           *((uint16_t*)result) = SvUV(sv);
 #endif
           break;
         case FFI_TYPE_SINT16:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
           ((int16_t*)result)[1] = SvIV(sv);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+          ((int16_t*)result)[3] = SvIV(sv);
 #else
           *((int16_t*)result) = SvIV(sv);
 #endif

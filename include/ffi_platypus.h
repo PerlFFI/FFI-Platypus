@@ -140,12 +140,12 @@ typedef union _ffi_pl_result {
   const char *string;
   int8_t     sint8;
   uint8_t    uint8;
-  int8_t     sint8_array[4];
-  uint8_t    uint8_array[4];
+  int8_t     sint8_array[8];
+  uint8_t    uint8_array[8];
   int16_t    sint16;
   uint16_t   uint16;
-  int16_t    sint16_array[2];
-  uint16_t   uint16_array[2];
+  int16_t    sint16_array[4];
+  uint16_t   uint16_array[4];
   int32_t    sint32;
   uint32_t   uint32;
   int64_t    sint64;

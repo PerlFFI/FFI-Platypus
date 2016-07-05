@@ -792,29 +792,37 @@
         switch(self->return_type->ffi_type->type)
         {
           case FFI_TYPE_UINT8:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
             XSRETURN_UV(result.uint8_array[3]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+            XSRETURN_UV(result.uint8_array[7]);
 #else
             XSRETURN_UV(result.uint8);
 #endif
             break;
           case FFI_TYPE_SINT8:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
             XSRETURN_IV(result.sint8_array[3]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+            XSRETURN_IV(result.sint8_array[7]);
 #else
             XSRETURN_IV(result.sint8);
 #endif
             break;
           case FFI_TYPE_UINT16:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
             XSRETURN_UV(result.uint16_array[1]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+            XSRETURN_UV(result.uint16_array[3]);
 #else
             XSRETURN_UV(result.uint16);
 #endif
             break;
           case FFI_TYPE_SINT16:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
             XSRETURN_IV(result.sint16_array[1]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+            XSRETURN_IV(result.sint16_array[3]);
 #else
             XSRETURN_IV(result.sint16);
 #endif
@@ -1103,29 +1111,37 @@
       switch(self->return_type->ffi_type->type)
       {
         case FFI_TYPE_UINT8:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
           ret_in = newSVuv(result.uint8_array[3]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+          ret_in = newSVuv(result.uint8_array[7]);
 #else
           ret_in = newSVuv(result.uint8);
 #endif
           break;
         case FFI_TYPE_SINT8:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
           ret_in = newSViv(result.sint8_array[3]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+          ret_in = newSViv(result.sint8_array[7]);
 #else
           ret_in = newSViv(result.sint8);
 #endif
           break;
         case FFI_TYPE_UINT16:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
           ret_in = newSVuv(result.uint16_array[1]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+          ret_in = newSVuv(result.uint16_array[3]);
 #else
           ret_in = newSVuv(result.uint16);
 #endif
           break;
         case FFI_TYPE_SINT16:
-#ifdef FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN
           ret_in = newSViv(result.sint16_array[1]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+          ret_in = newSViv(result.sint16_array[3]);
 #else
           ret_in = newSViv(result.sint16);
 #endif

@@ -22,6 +22,7 @@
 *.core
 core
 /inc/probe/bigendian
+/inc/probe/bigendian64
 /inc/probe/complex
 /inc/probe/longdouble
 /inc/probe/abi
