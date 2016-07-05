@@ -38,10 +38,25 @@ unsigned int
 long
 signed long
 unsigned long
+uint8_t
+int8_t
+uint16_t
+int16_t
+uint32_t
+int32_t
+uint64_t
+int64_t
+size_t
+float
+double
+bool
+_Bool
+EOF
+
+my @extra_probe_types = split /\n/, <<EOF;
 long long
 signed long long
 unsigned long long
-size_t
 dev_t
 ino_t
 mode_t
@@ -52,14 +67,6 @@ off_t
 blksize_t
 blkcnt_t
 time_t
-uint8_t
-int8_t
-uint16_t
-int16_t
-uint32_t
-int32_t
-uint64_t
-int64_t
 int_least8_t
 int_least16_t
 int_least32_t
@@ -71,11 +78,9 @@ uint_least64_t
 ptrdiff_t
 wchar_t
 wint_t
-float
-double
-bool
-_Bool
 EOF
+
+push @probe_types, @extra_probe_types unless $ENV{FFI_PLATYPUS_NO_EXTRA_TYPES};
 
 my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypus_config.h' ) );
 
@@ -140,7 +145,15 @@ sub configure
 
   foreach my $type (@probe_types)
   {
-    my $size = $ac->check_sizeof_type($type);
+    my $size;
+    if($type =~ /^u?int(8|16|32|64)_t$/)
+    {
+      $size = $1 / 8;
+    }
+    else
+    {
+      $size = $ac->check_sizeof_type($type);
+    }
     if($size)
     {
       if($type !~ /^(float|double|long double)$/)
