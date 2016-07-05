@@ -65,6 +65,10 @@ $post_diag = sub {
     {
       diag sprintf("  %-20s %s", $key, $abi->{$key});
     }
+    spacer();
+    diag "Probes:";
+    my $probe = FFI::Platypus::ConfigData->config("probe");
+    diag sprintf("  %-20s %s", $_, $probe->{$_}) for keys %$probe;
   };
   diag "extended diagnostic failed: $@" if $@;
 };
