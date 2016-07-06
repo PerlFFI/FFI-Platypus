@@ -828,10 +828,18 @@
 #endif
             break;
           case FFI_TYPE_UINT32:
+#if defined FFI_PL_PROBE_BIGENDIAN64
+            XSRETURN_UV(result.uint32_array[1]);
+#else
             XSRETURN_UV(result.uint32);
+#endif
             break;
           case FFI_TYPE_SINT32:
+#if defined FFI_PL_PROBE_BIGENDIAN64
+            XSRETURN_IV(result.sint32_array[1]);
+#else
             XSRETURN_IV(result.sint32);
+#endif
             break;
           case FFI_TYPE_UINT64:
 #ifdef HAVE_IV_IS_64
@@ -1147,10 +1155,18 @@
 #endif
           break;
         case FFI_TYPE_UINT32:
+#if defined FFI_PL_PROBE_BIGENDIAN
+          ret_in = newSVuv(result.uint32_array[1]);
+#else
           ret_in = newSVuv(result.uint32);
+#endif
           break;
         case FFI_TYPE_SINT32:
+#if defined FFI_PL_PROBE_BIGENDIAN
+          ret_in = newSViv(result.sint32_array[1]);
+#else
           ret_in = newSViv(result.sint32);
+#endif
           break;
         case FFI_TYPE_UINT64:
 #ifdef HAVE_IV_IS_64

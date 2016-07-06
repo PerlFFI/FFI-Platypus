@@ -232,10 +232,18 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
 #endif
           break;
         case FFI_TYPE_UINT32:
+#if defined FFI_PL_PROBE_BIGENDIAN64
+          ((uint32_t*)result)[1] = SvUV(sv);
+#else
           *((uint32_t*)result) = SvUV(sv);
+#endif
           break;
         case FFI_TYPE_SINT32:
+#if defined FFI_PL_PROBE_BIGENDIAN64
+          ((int32_t*)result)[1] = SvIV(sv);
+#else
           *((int32_t*)result) = SvIV(sv);
+#endif
           break;
         case FFI_TYPE_UINT64:
 #ifdef HAVE_IV_IS_64

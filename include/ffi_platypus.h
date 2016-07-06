@@ -140,14 +140,28 @@ typedef union _ffi_pl_result {
   const char *string;
   int8_t     sint8;
   uint8_t    uint8;
+#if defined FFI_PL_PROBE_BIGENDIAN
+  int8_t     sint8_array[4];
+  uint8_t    uint8_array[4];
+#elif defined FFI_PL_PROBE_BIGENDIAN64
   int8_t     sint8_array[8];
   uint8_t    uint8_array[8];
+#endif
   int16_t    sint16;
   uint16_t   uint16;
+#if defined FFI_PL_PROBE_BIGENDIAN
+  int16_t    sint16_array[2];
+  uint16_t   uint16_array[2];
+#elif defined FFI_PL_PROBE_BIGENDIAN64
   int16_t    sint16_array[4];
   uint16_t   uint16_array[4];
+#endif
   int32_t    sint32;
   uint32_t   uint32;
+#if defined FFI_PL_PROBE_BIGENDIAN64
+  uint32_t   uint32_array[2];
+  int32_t    sint32_array[2];
+#endif
   int64_t    sint64;
   uint64_t   uint64;
   float      xfloat;
