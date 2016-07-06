@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.42_01   2016-07-06 15:06:41 -0400
+  - Numerous fixes for systems with 64bit big-endian arch
+    (previously only 32bit big-endian had been tested)
   - Officially discourage the use of FFI::Platypus::Declare
 
 0.42      2016-05-06 16:31:01 -0400
