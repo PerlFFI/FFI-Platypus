@@ -223,11 +223,11 @@ typedef struct _ffi_pl_record_member {
 
 #if defined(_MSC_VER)
 #define Newx_or_alloca(ptr, count, type) ptr = _alloca(sizeof(type)*count)
-#define Safefree_or_alloca(ptr) 
+#define Safefree_or_alloca(ptr)
 #define HAVE_ALLOCA 1
 #elif defined(HAVE_ALLOCA)
 #define Newx_or_alloca(ptr, count, type) ptr = alloca(sizeof(type)*count)
-#define Safefree_or_alloca(ptr) 
+#define Safefree_or_alloca(ptr)
 #else
 #define Newx_or_alloca(ptr, count, type) Newx(ptr, count, type)
 #define Safefree_or_alloca(ptr) Safefree(ptr)
