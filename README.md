@@ -1534,6 +1534,8 @@ Fitz Elliott (felliott)
 
 Vickenty Fesunov (vyf)
 
+Gregor Herrmann (gregoa)
+
 # COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2015 by Graham Ollis.
