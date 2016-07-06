@@ -94,7 +94,7 @@
       else if(platypus_type == FFI_PL_POINTER)
       {
         void *ptr;
-        
+
         if(SvROK(arg)) /* TODO: and a scalar ref */
         {
           SV *arg2 = SvRV(arg);
@@ -567,7 +567,7 @@
     {
       platypus_type platypus_type;
       platypus_type = self->argument_types[i]->platypus_type;
-    
+
       if(platypus_type == FFI_PL_POINTER)
       {
         void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
@@ -1155,14 +1155,14 @@
 #endif
           break;
         case FFI_TYPE_UINT32:
-#if defined FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN64
           ret_in = newSVuv(result.uint32_array[1]);
 #else
           ret_in = newSVuv(result.uint32);
 #endif
           break;
         case FFI_TYPE_SINT32:
-#if defined FFI_PL_PROBE_BIGENDIAN
+#if defined FFI_PL_PROBE_BIGENDIAN64
           ret_in = newSViv(result.sint32_array[1]);
 #else
           ret_in = newSViv(result.sint32);
