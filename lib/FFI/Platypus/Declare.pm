@@ -18,7 +18,7 @@ use FFI::Platypus;
 
 =head1 DESCRIPTION
 
-This module is offficially B<discouraged>.  The idea was to provide a
+This module is officially B<discouraged>.  The idea was to provide a
 simpler declarative interface without the need of (directly) creating
 an L<FFI::Platypus> instance.  In practice it is almost as complicated
 and makes it difficult to upgrade to the proper OO interface if the
