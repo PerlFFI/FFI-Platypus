@@ -14,7 +14,8 @@ install:
   - cpanm -n FFI::CheckLib
   - cpanm -n Math::Int64
   - cpanm -n Config::AutoConf
-  
+  - cpanm -n Win32::ErrorMode
+  - cpanm -n Devel::PPPort  
 
 build: off
 
