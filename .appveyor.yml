@@ -13,6 +13,7 @@ install:
   - cpanm -n ExtUtils::CBuilder
   - cpanm -n FFI::CheckLib
   - cpanm -n Math::Int64
+  - cpanm -n Config::AutoConf
   
 
 build: off
