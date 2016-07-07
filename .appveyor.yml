@@ -16,6 +16,7 @@ install:
   - cpanm -n Config::AutoConf
   - cpanm -n Win32::ErrorMode
   - cpanm -n Devel::PPPort  
+  - cpanm -n constant
 
 build: off
 
