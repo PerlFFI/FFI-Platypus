@@ -78,6 +78,9 @@ pod_spelling_system:
     - Fesunov
     - Vickenty
     - vyf
+    - Gregor
+    - Herrmann
+    - gregoa
 
 pod_coverage:
   skip: 0
