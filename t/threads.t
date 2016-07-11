@@ -4,15 +4,19 @@ use Test::More;
 BEGIN { plan skip_all => 'Test requires a threading Perl' unless eval q{ use threads; 1 } }
 use FFI::CheckLib;
 use FFI::Platypus;
+use Config;
 
 plan tests => 2;
 
-if("$^V" eq "v5.10.0")
+# if the perl was built under a chroot with a x64_64 kernel,
+# then the archcname may not be sufficient to verify that this
+# is a 32bit Perl.  Use $Config{longsize} to probe for 64bit Perls.
+if("$^V" eq "v5.10.0" && $Config{longsize} == 4)
 {
   diag '';
   diag '';
   diag '';
-  diag "Note that there are known but unresolved issues with Platypus on threaded 5.10.0 Perls.";
+  diag "Note that there are known but unresolved issues with Platypus on threaded 5.10.0 32bit Perls.";
   diag "If you know that you will not be using threads you can safely ignore any failures with";
   diag "this test.  If you need threads you can either upgrade to 5.10.1+ or downgrade to 5.8.9-";
   diag '';
