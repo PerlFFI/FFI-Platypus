@@ -19,14 +19,6 @@ sub new
 
   my %diag;
 
-  if($^O eq 'openbsd' && !$Config{usethreads} && Alien::FFI->install_type eq 'system')
-  {
-    print "Configuration not supported.\n";
-    print "Please reinstall Alien::FFI with ALIEN_FORCE=1\n";
-    print "See https://github.com/plicease/FFI-Platypus/issues/19\n";
-    exit 0;
-  }
-
   $args{c_source}             = 'xs';  
   $args{include_dirs}         = 'include';
   $args{extra_compiler_flags} = Alien::FFI->cflags;
