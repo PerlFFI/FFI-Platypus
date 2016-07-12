@@ -1,5 +1,6 @@
 use strict; use warnings;
 BEGIN {
+  use Config;
   if($^O eq 'openbsd' && !$Config{usethreads} && Alien::FFI->install_type eq 'system')
   {
     print "Configuration not supported.\n";
