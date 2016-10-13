@@ -1,9 +1,9 @@
 use strict;
 use warnings;
-use Test::More tests => 23;
+use Test::More;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( opaque int void string );
-use FFI::Platypus::Memory qw( malloc free strdup );
+use FFI::Platypus::Memory qw( malloc free );
 
 lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
 
@@ -46,7 +46,7 @@ attach [pointer_arg_array_out => 'aa_out'] => ['opaque[3]'] => void;
 attach [pointer_arg_array_null_out => 'aa_null_out'] => ['opaque[3]'] => void;
 
 do {
-  my @stuff = map { strdup $_ } qw( one two three );
+  my @stuff = map { perl_to_c_string_copy($_) } qw( one two three );
   is aa_in([@stuff]), 1, "aa_in([one two three])";
   free $_ for @stuff;
 };
@@ -114,15 +114,14 @@ do {
 };
 
 subtest 'custom type input' => sub {
-  plan tests => 2;
   custom_type type1 => { perl_to_native => sub { 
     is cast(opaque=>string,$_[0]), "abc";
     free $_[0];
-    strdup "def";
+    perl_to_c_string_copy("def");
   } };
   attach [pointer_set_my_pointer => 'custom1_setp'] => ['type1'] => void;
   
-  custom1_setp(strdup("abc"));
+  custom1_setp(perl_to_c_string_copy("abc"));
   
   my $ptr = getp();
   is cast(opaque=>string,$ptr), "def";
@@ -130,9 +129,8 @@ subtest 'custom type input' => sub {
 };
 
 subtest 'custom type output' => sub {
-  plan tests => 2;
 
-  setp(strdup("ABC"));
+  setp(perl_to_c_string_copy("ABC"));
   
   custom_type type2 => { native_to_perl => sub {
     is cast(opaque=>string,$_[0]), "ABC";
@@ -146,3 +144,20 @@ subtest 'custom type output' => sub {
   
   setp(undef);
 };
+
+done_testing;
+
+package
+  MyPerlStrDup;
+
+use FFI::Platypus::Declare;
+use FFI::Platypus::Memory qw( malloc memcpy );
+
+sub main::perl_to_c_string_copy
+{
+  my($string) = @_;
+  my $ptr = malloc(length($string)+1);
+  memcpy($ptr, cast('string' => 'opaque', $string), length($string)+1);
+  $ptr;
+};
+

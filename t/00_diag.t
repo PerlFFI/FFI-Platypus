@@ -28,6 +28,7 @@ $post_diag = sub {
     use Alien::FFI;
     use FFI::Platypus;
     use FFI::Platypus::ConfigData;
+    use FFI::Platypus::Memory;
     use Module::Build::FFI;
     diag "Alien::FFI version       = ", $Alien::FFI::VERSION;
     diag "Alien::FFI->install_type = ", Alien::FFI->install_type;
@@ -47,6 +48,7 @@ $post_diag = sub {
     {
       diag "config.$key=", $diag->{config}->{$key};
     }
+    diag "ffi.platypus.memory.strdup_impl=$FFI::Platypus::Memory::_strdup_impl";
     spacer();
     my %r;
     while(my($k,$v) = each %type_map)

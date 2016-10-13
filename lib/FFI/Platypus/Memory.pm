@@ -107,14 +107,24 @@ $ffi->attach(realloc => ['opaque', 'size_t']           => 'opaque' => '$$');
 $ffi->attach(memcpy  => ['opaque', 'opaque', 'size_t'] => 'opaque' => '$$$');
 $ffi->attach(memset  => ['opaque', 'int', 'size_t']    => 'opaque' => '$$$');
 
+# This global may be removed at any time, do not use it
+# externally.  It is used by t/ffi_platypus_memory__strdup.t
+# for a diagnostic.
+our $_strdup_impl = 'not-loaded';
+
 eval { $ffi->attach(strdup  => ['string'] => 'opaque' => '$') };
 if($@)
 {
+  $_strdup_impl = 'perl';
   *strdup = sub ($) {
     my($string) = @_;
     my $ptr = malloc(length($string)+1);
     memcpy($ptr, $ffi->cast('string' => 'opaque', $string), length($string)+1);
   };
+}
+else
+{
+  $_strdup_impl = 'c';
 }
 
 1;
