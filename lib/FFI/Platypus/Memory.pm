@@ -113,7 +113,7 @@ $ffi->attach(memset  => ['opaque', 'int', 'size_t']    => 'opaque' => '$$$');
 our $_strdup_impl = 'not-loaded';
 
 eval {
-  die "do not use c impl" if ($ENV{FFI_PLATYPUS_MEMORY_STRDUP_IMPL}//'c') eq 'perl';
+  die "do not use c impl" if ($ENV{FFI_PLATYPUS_MEMORY_STRDUP_IMPL}||'c') eq 'perl';
   $ffi->attach(strdup  => ['string'] => 'opaque' => '$');
 };
 if($@)
