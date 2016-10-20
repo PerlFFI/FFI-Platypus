@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - You can now control which implementation of strdup FFI::Platypus::Memory uses
+    via the FFI_PLATYPUS_MEMORY_STRDUP_IMPL environment variable.
 
 0.43      2016-07-08 03:28:57 -0400
   - Numerous fixes for systems with 64bit big-endian arch

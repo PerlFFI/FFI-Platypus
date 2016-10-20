@@ -132,6 +132,28 @@ else
 
 1;
 
+=head1 ENVIRONMENT
+
+=head2 FFI_PLATYPUS_MEMORY_STRDUP_IMPL
+
+C<strdup> isn't always supported by all platforms.  On platforms that do not support
+it, it is emulated using calls to C<malloc> and C<memcpy> which are part of the
+standard C library.  Because this requires two function calls it is probably not
+as fast on most platforms.
+
+If you experience problems with the C<strdup> provided by your platform, you can
+force the emulated implementation using the FFI_PLATYPUS_MEMORY_STRDUP_IMPL
+environment variable.
+
+ # bash:
+ $ export FFI_PLATYPUS_MEMORY_STRDUP_IMPL=perl
+
+ # tcsh:
+ % setenv FFI_PLATYPUS_MEMORY_STRDUP_IMPL perl
+
+ # Windows:
+ > SET FFI_PLATYPUS_MEMORY_STRDUP_IMPL=perl
+
 =head1 SEE ALSO
 
 =over 4
