@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.44      2016-10-20 14:31:23 -0400
   - You can now control which implementation of strdup FFI::Platypus::Memory uses
     via the FFI_PLATYPUS_MEMORY_STRDUP_IMPL environment variable.
 
