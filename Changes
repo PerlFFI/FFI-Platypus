@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.45      2016-10-24 07:59:57 -0400
   - Remove check for Threaded Perl / OpenBSD, as the issue there has been reported fixed
 
 0.44      2016-10-20 14:31:23 -0400
