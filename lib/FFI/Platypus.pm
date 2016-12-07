@@ -208,7 +208,7 @@ sub new
 sub _lang_class ($)
 {
   my($lang) = @_;
-  my $class = "FFI::Platypus::Lang::$lang";
+  my $class = $lang =~ m/^=(.*)$/ ? $1 : "FFI::Platypus::Lang::$lang";
   unless($class->can('native_type_map'))
   {
     eval qq{ use $class };

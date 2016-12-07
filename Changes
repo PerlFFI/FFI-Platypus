@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Prefix the lang attribute with an equal '=' sign to indicate a fully qualified
+    class name instead of one under FFI::Platypus::Lang
 
 0.45      2016-10-24 07:59:57 -0400
   - Remove check for Threaded Perl / OpenBSD, as the issue there has been reported fixed

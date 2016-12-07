@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 4;
+use Test::More tests => 5;
 use FFI::CheckLib;
 use FFI::Platypus;
 
@@ -84,6 +84,29 @@ subtest 'Foo attribute' => sub {
   
   is $ffi->function('UnMangled::Name(int i)' => ['myint'] => 'myint')->call(22), 22;
 };
+
+subtest 'MyLang::Roger' => sub {
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lang('=MyLang::Roger');
+  
+  eval { $ffi->type('int') };
+  isnt $@, '', 'int is not an okay type';
+  note $@;
+  
+  is $ffi->sizeof('foo_t'), 4, 'sizeof foo_t = 4';
+
+};
+
+package
+  MyLang::Roger;
+
+sub native_type_map
+{
+  {
+    foo_t => 'sint32',
+  }
+}
 
 package
   FFI::Platypus::Lang::Foo;
