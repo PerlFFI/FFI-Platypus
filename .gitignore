@@ -30,3 +30,5 @@ core
 *.exp
 *.lib
 *.pdb
+*.swp
+/share/config.json

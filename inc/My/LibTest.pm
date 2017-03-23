@@ -14,12 +14,11 @@ my $root = $FindBin::Bin;
 
 sub build
 {
-  my($class, $mb) = @_;
+  # $b isa ExtUtils::CBuilder
+  my(undef, $b, $extra_compiler_flags, $extra_linker_flags) = @_;
 
   my($header_time) = reverse sort map { (stat $_)[9] } bsd_glob "include/*.h";
   my $compile_count = 0;
-  
-  my $b = $mb->cbuilder;
   
   my @obj = map {
     my $filename = $_;
@@ -33,7 +32,7 @@ sub build
         include_dirs => [
           File::Spec->catdir($root, 'include'),
         ],
-        extra_compiler_flags => $mb->extra_compiler_flags,
+        extra_compiler_flags => $extra_compiler_flags,
       );
       $compile_count++;
     }
@@ -47,7 +46,7 @@ sub build
     my $dll = $b->link(
       lib_file           => $b->lib_file(File::Spec->catfile($root, 'libtest', $b->object_file('libtest.c'))),
       objects            => \@obj,
-      extra_linker_flags => $mb->extra_linker_flags,
+      extra_linker_flags => $extra_linker_flags,
     );
     
     if($^O =~ /^(cygwin|msys)$/)

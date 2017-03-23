@@ -253,7 +253,12 @@ sub ACTION_probe
   my($self) = @_;
   $self->depends_on('ac');
   require My::Probe;
-  My::Probe->probe($self);
+  My::Probe->probe(
+    $self->cbuilder,
+    $self->extra_compiler_flags,
+    $self->extra_linker_flags,
+  );
+  $self->add_to_cleanup(My::Probe->cleanup);
 }
 
 sub ACTION_build
@@ -286,7 +291,11 @@ sub ACTION_libtest
   my($self) = @_;
   $self->depends_on('ac');
   $self->depends_on('probe');
-  My::LibTest->build($self);
+  My::LibTest->build(
+    $self->cbuilder,
+    $self->extra_compiler_flags,
+    $self->extra_linker_flags,
+  );
 }
 
 sub ACTION_test

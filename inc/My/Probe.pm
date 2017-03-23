@@ -13,21 +13,20 @@ use My::ShareConfig;
 
 sub probe
 {
-  my($class, $mb) = @_;
+  # $b isa ExtUtils::CBuilder
+  my(undef, $b, $extra_compiler_flags, $extra_linker_flags) = @_;
 
   my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
 
   return if -e $probe_include && My::ShareConfig->new->get('probe');
   
-  $mb->add_to_cleanup($probe_include);
+  __PACKAGE__->cleanup($probe_include);
   do {
     my $fh;
     open $fh, '>', $probe_include;
     close $fh;
   };
   
-  my $b = $mb->cbuilder;
-
   my %probe;
   
   foreach my $cfile (bsd_glob 'inc/probe/*.c')
@@ -38,17 +37,17 @@ sub probe
     my $obj = eval { $b->compile(
       source               => $cfile,
       include_dirs         => [ 'include' ],
-      extra_compiler_flags => $mb->extra_compiler_flags,
+      extra_compiler_flags => $extra_compiler_flags,
     ) };
     next if $@;
-    $mb->add_to_cleanup($obj) if $mb;
+    __PACKAGE__->cleanup($obj);
     
     my($exe,@rest) = eval { $b->link_executable(
       objects            => $obj,
-      extra_linker_flags => $mb->extra_linker_flags,
+      extra_linker_flags => $extra_linker_flags,
     ) };
     next if $@;
-    $mb->add_to_cleanup($exe,@rest) if $mb;
+    __PACKAGE__->cleanup($exe,@rest);
     my $ret = run($exe, '--test');
     $probe{$name} = 1 if $ret == 0;
   }
@@ -68,7 +67,7 @@ sub probe
     close $fh;
   };
   
-  $class->probe_abi($mb);
+  __PACKAGE__->probe_abi($b, $extra_compiler_flags, $extra_linker_flags);
   
   My::ShareConfig->new->set( probe => \%probe );
   
@@ -128,7 +127,8 @@ sub run
 
 sub probe_abi
 {
-  my($class, $mb) = @_;
+  # $b isa ExtUtils::CBuilder
+  my(undef, $b, $extra_compiler_flags, $extra_linker_flags) = @_;
   
   print "probing for ABIs...\n";
 
@@ -148,7 +148,7 @@ sub probe_abi
     close $fh;
   };
 
-  my @cpp_flags = grep /^-[DI]/, @{ $mb->extra_compiler_flags };
+  my @cpp_flags = grep /^-[DI]/, @{ $extra_compiler_flags };
   
   print "$Config{cpprun} @cpp_flags $file_c\n";
   my $text = join '', grep !/^#/, `$Config{cpprun} @cpp_flags $file_c`;
@@ -178,8 +178,6 @@ sub probe_abi
   
   my $template_c = File::Spec->catfile(qw( inc template abi.c ));
   
-  my $b = $mb->cbuilder;
-  
   foreach my $abi (sort keys %abi)
   {
     my $file_c = File::Spec->catfile($dir, "$abi.c");
@@ -206,13 +204,13 @@ sub probe_abi
     my $obj = eval { $b->compile(
       source               => $file_c,
       include_dirs         => [ 'include' ],
-      extra_compiler_flags => [ @{ $mb->extra_compiler_flags }, '-DTRY_FFI_ABI=FFI_'.uc $abi ],
+      extra_compiler_flags => [ @{ $extra_compiler_flags }, '-DTRY_FFI_ABI=FFI_'.uc $abi ],
     ) };
     next if $@;
     
     my $exe = eval { $b->link_executable(
       objects            => $obj,
-      extra_linker_flags => $mb->extra_linker_flags,
+      extra_linker_flags => $extra_linker_flags,
     ) };
     next if $@;
     
@@ -248,6 +246,18 @@ sub probe_abi
 
   rmtree('.abi-probe-test', { verbose => 0 });
   return;
+}
+
+
+{
+  my %cleanup;
+
+  sub cleanup
+  {
+    my(undef, @add) = @_;
+    $cleanup{$_} = 1 for @add;
+    sort keys %cleanup;
+  }
 }
 
 1;
