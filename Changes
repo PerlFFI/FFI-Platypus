@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.46      2017-03-23 15:47:29 -0400
   - Remove some internal use of Module::Build with the intent of one day
     migrating to EUMM or some other installer
   - Remove Module::Build::FFI.  It now has its own distribution.
