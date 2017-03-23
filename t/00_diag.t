@@ -18,11 +18,9 @@ $modules{$_} = $_ for qw(
   File::ShareDir
   JSON::PP
   Module::Build
-  My::ShareConfig
   PkgConfig
   Test::More
   constant
-  lib
 );
 
 $post_diag = sub {
@@ -37,8 +35,8 @@ $post_diag = sub {
     diag "Alien::FFI->dist_dir     = ", eval { Alien::FFI->dist_dir } || 'undef';
     diag "Alien::FFI->version      = ", eval { Alien::FFI->config('version') } || 'unknown';
     spacer();
-    use lib 'inc';  require My::ShareConfig;
-    my $share_config = My::ShareConfig->new;
+    require FFI::Platypus::ShareConfig;
+    my $share_config = 'FFI::Platypus::ShareConfig';
     my %type_map = %{ $share_config->get('type_map') };
     my $diag = $share_config->get('diag');
     foreach my $key (sort keys %{ $diag->{args} })

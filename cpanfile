@@ -10,9 +10,7 @@ on 'build' => sub {
 
 on 'test' => sub {
   requires "Alien::FFI" => "0.012";
-  requires "My::ShareConfig" => "0";
   requires "Test::More" => "0.94";
-  requires "lib" => "0";
   requires "perl" => "5.008001";
 };
 

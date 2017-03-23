@@ -55,9 +55,7 @@ my %module_build_args = (
   },
   "test_requires" => {
     "Alien::FFI" => "0.012",
-    "My::ShareConfig" => 0,
     "Test::More" => "0.94",
-    "lib" => 0,
     "perl" => "5.008001"
   }
 );
@@ -66,9 +64,7 @@ my %module_build_args = (
 my %fallback_build_requires = (
   "Alien::FFI" => "0.012",
   "Module::Build" => "0.3601",
-  "My::ShareConfig" => 0,
   "Test::More" => "0.94",
-  "lib" => 0,
   "perl" => "5.008001"
 );
 
