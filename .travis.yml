@@ -23,6 +23,7 @@ install:
   - cpanm -n Time::Seconds
   - cpanm -n Devel::PPPort
   - cpanm -n local::lib
+  - cpanm -n http://dist.wdlabs.com/Module-Build-FFI-0.45.tar.gz
 
 perl:
   - "5.24"
