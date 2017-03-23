@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove Module::Build::FFI.  It now has its own distribution.
   - Prefix the lang attribute with an equal '=' sign to indicate a fully qualified
     class name instead of one under FFI::Platypus::Lang
 

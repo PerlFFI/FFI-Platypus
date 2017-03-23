@@ -88,8 +88,6 @@ pod_coverage:
   # for either Class or method.
   private:
     - FFI::Platypus::Type::.*
-    - Module::Build::FFI#ACTION_.*
-    - Module::Build::FFI#new
 
 unused_vars:
   skip: 0

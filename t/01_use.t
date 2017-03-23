@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 14;
+use Test::More;
 
 use_ok 'FFI::Platypus';
 use_ok 'FFI::Platypus::Declare';
@@ -14,6 +14,5 @@ use_ok 'FFI::Platypus::Lang::C';
 use_ok 'FFI::Platypus::Lang::Win32';
 use_ok 'FFI::Platypus::Record';
 use_ok 'FFI::Platypus::Record::TieArray';
-use_ok 'Module::Build::FFI';
 
-pass '14th test';
+done_testing;
