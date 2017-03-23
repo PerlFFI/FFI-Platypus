@@ -821,8 +821,6 @@ sub alignof
   croak "cannot determine alignment of record"
     if $meta->{type} eq 'record';
   
-  require FFI::Platypus::ConfigData;
-
   my $ffi_type;
   if($meta->{type} eq 'pointer')
   {
@@ -837,7 +835,8 @@ sub alignof
     $ffi_type = $meta->{ffi_type};
   }
   
-  FFI::Platypus::ConfigData->config('align')->{$ffi_type};
+  require FFI::Platypus::ShareConfig;
+  FFI::Platypus::ShareConfig->get('align')->{$ffi_type};
 }
 
 =head2 find_lib
@@ -928,9 +927,9 @@ built when your distribution was installed.
 sub package
 {
   my($self, $module, $modlibname) = @_;
-  
-  require FFI::Platypus::ConfigData;
-  my @dlext = @{ FFI::Platypus::ConfigData->config("config_dlext") };
+
+  require FFI::Platypus::ShareConfig;  
+  my @dlext = @{ FFI::Platypus::ShareConfig->get("config_dlext") };
 
   ($module, $modlibname) = caller() unless defined $modlibname;  
   my @modparts = split /::/, $module;
@@ -974,8 +973,8 @@ those ABIs.
 
 sub abis
 {
-  require FFI::Platypus::ConfigData;
-  FFI::Platypus::ConfigData->config("abi");
+  require FFI::Platypus::ShareConfig;
+  FFI::Platypus::ShareConfig->get("abi");
 }
 
 =head2 abi

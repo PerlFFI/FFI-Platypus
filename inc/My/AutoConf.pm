@@ -6,6 +6,7 @@ use Config::AutoConf;
 use Config;
 use File::Spec;
 use FindBin;
+use My::ShareConfig;
 
 my $root = $FindBin::Bin;
 
@@ -86,9 +87,11 @@ my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypu
 
 sub configure
 {
-  my($self, $mb) = @_;
+  my($self) = @_;
   
-  return if -r $config_h && ref($mb->config_data( 'type_map' )) eq 'HASH';
+  my $share_config = My::ShareConfig->new;
+  
+  return if -r $config_h && ref($share_config->get( 'type_map' )) eq 'HASH';
 
   my $ac = Config::AutoConf->new;
   
@@ -115,7 +118,7 @@ sub configure
     $ac->define_var( HAVE_RTLD_LAZY => 1 );
   }
   
-  unless($mb->config_data('config_no_alloca'))
+  unless($share_config->get('config_no_alloca'))
   {
     if($ac->check_decl('alloca', { prologue => $prologue }))
     {
@@ -123,7 +126,7 @@ sub configure
     }
   }
   
-  if(!$mb->config_data('config_debug_fake32') && $Config{ivsize} >= 8)
+  if(!$share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
   {
     $ac->define_var( HAVE_IV_IS_64 => 1 );
   }
@@ -229,10 +232,9 @@ sub configure
     }
   }
   
-  $mb->add_to_cleanup( $config_h );
   $ac->write_config_h( $config_h );
-  $mb->config_data( type_map => \%type_map );
-  $mb->config_data( align    => \%align    );
+  $share_config->set( type_map => \%type_map );
+  $share_config->set( align    => \%align    );
 }
 
 sub _alignment

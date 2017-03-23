@@ -18,19 +18,20 @@ BEGIN {
 use strict;
 use warnings;
 
-use Module::Build 0.28;
+use Module::Build 0.3601;
 use lib qw{inc}; use My::ModuleBuild;
 
 my %module_build_args = (
   "build_requires" => {
-    "Module::Build" => "0.28"
+    "Module::Build" => "0.3601"
   },
   "configure_requires" => {
     "Alien::FFI" => "0.12",
     "Config::AutoConf" => "0.309",
     "ExtUtils::CBuilder" => 0,
     "FFI::CheckLib" => "0.05",
-    "Module::Build" => "0.28",
+    "JSON::PP" => 0,
+    "Module::Build" => "0.3601",
     "perl" => "5.008001"
   },
   "dist_abstract" => "Write Perl bindings to non-Perl libraries with FFI. No XS required.",
@@ -44,13 +45,19 @@ my %module_build_args = (
   "recursive_test_files" => 1,
   "requires" => {
     "FFI::CheckLib" => 0,
+    "File::ShareDir" => 0,
     "JSON::PP" => 0,
     "constant" => "1.32",
     "perl" => "5.008001"
   },
+  "share_dir" => {
+    "dist" => "share"
+  },
   "test_requires" => {
     "Alien::FFI" => "0.012",
+    "My::ShareConfig" => 0,
     "Test::More" => "0.94",
+    "lib" => 0,
     "perl" => "5.008001"
   }
 );
@@ -58,8 +65,10 @@ my %module_build_args = (
 
 my %fallback_build_requires = (
   "Alien::FFI" => "0.012",
-  "Module::Build" => "0.28",
+  "Module::Build" => "0.3601",
+  "My::ShareConfig" => 0,
   "Test::More" => "0.94",
+  "lib" => 0,
   "perl" => "5.008001"
 );
 

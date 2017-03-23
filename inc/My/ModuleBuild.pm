@@ -12,12 +12,14 @@ use File::Glob qw( bsd_glob );
 use Config;
 use Text::ParseWords qw( shellwords );
 use base qw( Module::Build );
+use My::ShareConfig;
 
 sub new
 {
   my($class, %args) = @_;
 
   my %diag;
+  my $share_config = My::ShareConfig->new;
 
   $args{c_source}             = 'xs';  
   $args{include_dirs}         = 'include';
@@ -144,7 +146,7 @@ sub new
     print "  + making Math::Int64 a prerequisite (not normally done on 64 bit Perls)\n";
     print "  + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)\n";
     print "\n\n";
-    $self->config_data(config_debug_fake32 => 1);
+    $share_config->set(config_debug_fake32 => 1);
     $diag{config}->{config_debug_fake32} = 1;
   }
   if($ENV{FFI_PLATYPUS_NO_ALLOCA})
@@ -153,7 +155,7 @@ sub new
     print "NO_ALLOCA:\n";
     print "  + alloca() will not be used, even if your platform supports it.\n";
     print "\n\n";
-    $self->config_data(config_no_alloca => 1);
+    $share_config->set(config_no_alloca => 1);
     $diag{config}->{config_no_alloca} = 1;
   }
 
@@ -210,6 +212,8 @@ sub new
     'Build.bat',
     'build.bat',
     'core',
+    'share/config.json',
+    'include/ffi_platypus_config.h',
   );
 
   # dlext as understood by MB and MM
@@ -226,8 +230,8 @@ sub new
 
   #print "dlext[]=$_\n" for @dlext;
 
-  $self->config_data(diag => \%diag);
-  $self->config_data(config_dlext => \@dlext);
+  $share_config->set(diag => \%diag);
+  $share_config->set(config_dlext => \@dlext);
 
   $self;
 }
@@ -235,13 +239,13 @@ sub new
 sub ACTION_ac
 {
   my($self) = @_;
-  My::AutoConf->configure($self);
+  My::AutoConf->configure;
 }
 
 sub ACTION_ac_clean
 {
   my($self) = @_;
-  My::AutoConf->clean($self);
+  My::AutoConf->clean;
 }
 
 sub ACTION_probe

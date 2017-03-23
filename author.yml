@@ -88,9 +88,5 @@ pod_coverage:
   # for either Class or method.
   private:
     - FFI::Platypus::Type::.*
+    - FFI::Platypus::ShareConfig
 
-unused_vars:
-  skip: 0
-  global:
-    ignore_vars: []
-  module: {}

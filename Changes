@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove some internal use of Module::Build with the intent of one day
+    migrating to EUMM or some other installer
   - Remove Module::Build::FFI.  It now has its own distribution.
   - Prefix the lang attribute with an equal '=' sign to indicate a fully qualified
     class name instead of one under FFI::Platypus::Lang

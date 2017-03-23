@@ -1,15 +1,18 @@
 requires "FFI::CheckLib" => "0";
+requires "File::ShareDir" => "0";
 requires "JSON::PP" => "0";
 requires "constant" => "1.32";
 requires "perl" => "5.008001";
 
 on 'build' => sub {
-  requires "Module::Build" => "0.28";
+  requires "Module::Build" => "0.3601";
 };
 
 on 'test' => sub {
   requires "Alien::FFI" => "0.012";
+  requires "My::ShareConfig" => "0";
   requires "Test::More" => "0.94";
+  requires "lib" => "0";
   requires "perl" => "5.008001";
 };
 
@@ -18,7 +21,8 @@ on 'configure' => sub {
   requires "Config::AutoConf" => "0.309";
   requires "ExtUtils::CBuilder" => "0";
   requires "FFI::CheckLib" => "0.05";
-  requires "Module::Build" => "0.28";
+  requires "JSON::PP" => "0";
+  requires "Module::Build" => "0.3601";
   requires "perl" => "5.008001";
 };
 

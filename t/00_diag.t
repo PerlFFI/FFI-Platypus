@@ -15,18 +15,20 @@ $modules{$_} = $_ for qw(
   Config::AutoConf
   ExtUtils::CBuilder
   FFI::CheckLib
+  File::ShareDir
   JSON::PP
   Module::Build
+  My::ShareConfig
   PkgConfig
   Test::More
   constant
+  lib
 );
 
 $post_diag = sub {
   eval {
     use Alien::FFI;
     use FFI::Platypus;
-    use FFI::Platypus::ConfigData;
     use FFI::Platypus::Memory;
     diag "Alien::FFI version       = ", $Alien::FFI::VERSION;
     diag "Alien::FFI->install_type = ", Alien::FFI->install_type;
@@ -35,8 +37,10 @@ $post_diag = sub {
     diag "Alien::FFI->dist_dir     = ", eval { Alien::FFI->dist_dir } || 'undef';
     diag "Alien::FFI->version      = ", eval { Alien::FFI->config('version') } || 'unknown';
     spacer();
-    my %type_map = %{ FFI::Platypus::ConfigData->config('type_map') };
-    my $diag = FFI::Platypus::ConfigData->config('diag');
+    use lib 'inc';  require My::ShareConfig;
+    my $share_config = My::ShareConfig->new;
+    my %type_map = %{ $share_config->get('type_map') };
+    my $diag = $share_config->get('diag');
     foreach my $key (sort keys %{ $diag->{args} })
     {
       diag "mb.args.$key=", $diag->{args}->{$key};
@@ -66,7 +70,7 @@ $post_diag = sub {
     }
     spacer();
     diag "Probes:";
-    my $probe = FFI::Platypus::ConfigData->config("probe");
+    my $probe = $share_config->get("probe");
     diag sprintf("  %-20s %s", $_, $probe->{$_}) for keys %$probe;
   };
   diag "extended diagnostic failed: $@" if $@;

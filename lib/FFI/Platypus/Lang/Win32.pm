@@ -50,8 +50,8 @@ sub native_type_map
 {
   unless(%map)
   {
-    require FFI::Platypus::ConfigData;
-    %map = %{ FFI::Platypus::ConfigData->config('type_map') };
+    require FFI::Platypus::ShareConfig;
+    %map = %{ FFI::Platypus::ShareConfig->get('type_map') };
     
     my %win32_map = qw(
       BOOL                      int

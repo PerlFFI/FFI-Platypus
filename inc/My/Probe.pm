@@ -9,6 +9,7 @@ use Config;
 use File::Temp qw( tempdir );
 use File::Copy qw( copy );
 use File::Path qw( rmtree );
+use My::ShareConfig;
 
 sub probe
 {
@@ -16,7 +17,7 @@ sub probe
 
   my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
 
-  return if -e $probe_include && $mb && $mb->config_data('probe');
+  return if -e $probe_include && My::ShareConfig->new->get('probe');
   
   $mb->add_to_cleanup($probe_include);
   do {
@@ -69,7 +70,7 @@ sub probe
   
   $class->probe_abi($mb);
   
-  $mb->config_data( probe => \%probe ) if $mb;
+  My::ShareConfig->new->set( probe => \%probe );
   
   return;
 }
@@ -243,7 +244,7 @@ sub probe_abi
     print "  found abi: $abi = $abi{$abi}\n";
   }
 
-  $mb->config_data( abi => \%abi );
+  My::ShareConfig->new->set( abi => \%abi );
 
   rmtree('.abi-probe-test', { verbose => 0 });
   return;

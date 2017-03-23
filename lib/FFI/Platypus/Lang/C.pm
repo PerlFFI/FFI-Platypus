@@ -33,8 +33,8 @@ values are libffi native types.
 
 sub native_type_map
 {
-  require FFI::Platypus::ConfigData;
-  FFI::Platypus::ConfigData->config('type_map');
+  require FFI::Platypus::ShareConfig;
+  FFI::Platypus::ShareConfig->get('type_map');
 }
 
 1;

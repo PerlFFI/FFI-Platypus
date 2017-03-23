@@ -14,5 +14,6 @@ use_ok 'FFI::Platypus::Lang::C';
 use_ok 'FFI::Platypus::Lang::Win32';
 use_ok 'FFI::Platypus::Record';
 use_ok 'FFI::Platypus::Record::TieArray';
+use_ok 'FFI::Platypus::ShareConfig';
 
 done_testing;
