@@ -23,9 +23,7 @@ install:
   - cpanm -n Time::Seconds
   - cpanm -n Devel::PPPort
   - cpanm -n local::lib
-  - wget --no-check-certificate https://dist.wdlabs.com/Module-Build-FFI-0.45.tar.gz
-  - cpanm -n Module-Build-FFI-0.45.tar.gz
-  - rm -f Module-Build-FFI-0.45.tar.gz
+  - cpanm -n Module::Build::FFI
 
 perl:
   - "5.24"
