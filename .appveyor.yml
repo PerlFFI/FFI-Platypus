@@ -1,7 +1,6 @@
 ---
 
 install:
-  - false
   - choco install strawberryperl
   - SET PATH=C:\Perl5\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
   - perl -v
