@@ -34,7 +34,7 @@ sub set
   my($self, $name, $value) = @_;
   $self->{$name} = $value;
   my %data = %$self;
-  my $data = JSON::PP->new->pretty->encode(\%data);
+  my $data = JSON::PP->new->canonical->pretty->encode(\%data);
   my $fh;
   open($fh, '>', 'share/config.json');
   print $fh $data;
