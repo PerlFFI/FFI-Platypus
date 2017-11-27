@@ -1538,6 +1538,8 @@ Gregor Herrmann (gregoa)
 
 Shlomi Fish (shlomif)
 
+Damyan Ivanov
+
 # COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2015 by Graham Ollis.

@@ -81,6 +81,12 @@ pod_spelling_system:
     - Gregor
     - Herrmann
     - gregoa
+    - Damyan
+    - Ivanov
+    - Shlomi
+    - shlomif
+
+
 
 pod_coverage:
   skip: 0
