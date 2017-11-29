@@ -5,7 +5,7 @@ use FFI::Platypus;
 use FFI::CheckLib;
 
 BEGIN {
-  plan skip_all => 'test requires support for float complex'
+  plan skip_all => 'Test requires support for float complex'
     unless FFI::Platypus::_have_type('complex_float');
 }
 
