@@ -48,6 +48,7 @@ my %WriteMakefileArgs = (
     "lib/FFI/Platypus/Lang.pm"                   => "\$(INST_LIB)/FFI/Platypus/Lang.pm",
     "lib/FFI/Platypus/Lang/ASM.pm"               => "\$(INST_LIB)/FFI/Platypus/Lang/ASM.pm",
     "lib/FFI/Platypus/Lang/C.pm"                 => "\$(INST_LIB)/FFI/Platypus/Lang/C.pm",
+    "lib/FFI/Platypus/Lang/Rust.pm"              => "\$(INST_LIB)/FFI/Platypus/Lang/Rust.pm",
     "lib/FFI/Platypus/Lang/Win32.pm"             => "\$(INST_LIB)/FFI/Platypus/Lang/Win32.pm",
     "lib/FFI/Platypus/Memory.pm"                 => "\$(INST_LIB)/FFI/Platypus/Memory.pm",
     "lib/FFI/Platypus/Record.pm"                 => "\$(INST_LIB)/FFI/Platypus/Record.pm",

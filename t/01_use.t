@@ -21,6 +21,7 @@ require_ok 'FFI::Platypus::Internal';
 require_ok 'FFI::Platypus::Lang';
 require_ok 'FFI::Platypus::Lang::ASM';
 require_ok 'FFI::Platypus::Lang::C';
+require_ok 'FFI::Platypus::Lang::Rust';
 require_ok 'FFI::Platypus::Lang::Win32';
 require_ok 'FFI::Platypus::Memory';
 require_ok 'FFI::Platypus::Record';
@@ -52,6 +53,7 @@ ok -f 't/ffi_platypus_internal.t',                            'test for FFI::Pla
 ok -f 't/ffi_platypus_lang.t',                                'test for FFI::Platypus::Lang';
 ok -f 't/ffi_platypus_lang_asm.t',                            'test for FFI::Platypus::Lang::ASM';
 ok -f 't/ffi_platypus_lang_c.t',                              'test for FFI::Platypus::Lang::C';
+ok -f 't/ffi_platypus_lang_rust.t',                           'test for FFI::Platypus::Lang::Rust';
 ok -f 't/ffi_platypus_lang_win32.t',                          'test for FFI::Platypus::Lang::Win32';
 ok -f 't/ffi_platypus_memory.t',                              'test for FFI::Platypus::Memory';
 ok -f 't/ffi_platypus_record.t',                              'test for FFI::Platypus::Record';
