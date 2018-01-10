@@ -4,7 +4,7 @@ use Test::More;
 use FFI::CheckLib qw( find_lib );
 use FFI::Platypus;
 
-my $libtest = find_lib lib => 'test', libpath => 'libtest';
+my $libtest = find_lib lib => 'rusty', libpath => 'libtest/rusty/target/debug';
 plan skip_all => 'test requires a rust compiler'
   unless $libtest;
 

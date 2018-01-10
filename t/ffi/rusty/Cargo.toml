@@ -3,4 +3,7 @@ name = "rusty"
 version = "0.1.0"
 authors = ["Graham Ollis <plicease@cpan.org>"]
 
+[lib]
+crate-type = ["dylib"]
+
 [dependencies]
