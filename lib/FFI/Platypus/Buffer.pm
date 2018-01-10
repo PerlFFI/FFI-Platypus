@@ -13,7 +13,7 @@ our @EXPORT = qw( scalar_to_buffer buffer_to_scalar );
 
  use FFI::Platypus::Buffer;
  my($pointer, $size) = scalar_to_buffer $scalar;
- my $scalar2 = buffer_to_scallar $pointer, $size;
+ my $scalar2 = buffer_to_scalar $pointer, $size;
 
 =head1 DESCRIPTION
 
