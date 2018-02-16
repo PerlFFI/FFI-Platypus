@@ -111,7 +111,13 @@ the [lib](#lib) attribute.
 - lib
 
     Either a pathname (string) or a list of pathnames (array ref of strings) 
-    to pre-populate the [lib](#lib) attribute.
+    to pre-populate the [lib](#lib) attribute.  Use `[undef]` to search the
+    current process for symbols.
+
+    0.48
+
+    `undef` (without the array reference) can be used to search the current
+    process for symbols.
 
 - ignore\_not\_found
 

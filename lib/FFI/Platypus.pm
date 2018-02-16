@@ -158,7 +158,13 @@ the L<lib|/lib> attribute.
 =item lib
 
 Either a pathname (string) or a list of pathnames (array ref of strings) 
-to pre-populate the L<lib|/lib> attribute.
+to pre-populate the L<lib|/lib> attribute.  Use C<[undef]> to search the
+current process for symbols.
+
+0.48
+
+C<undef> (without the array reference) can be used to search the current
+process for symbols.
 
 =item ignore_not_found
 
@@ -180,7 +186,7 @@ sub new
 {
   my($class, %args) = @_;
   my @lib;
-  if(defined $args{lib})
+  if(exists $args{lib})
   {
     if(!ref($args{lib}))
     {

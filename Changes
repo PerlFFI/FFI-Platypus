@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - setting lib => undef is now the same as setting it to [undef] in the constructor
+    (previously lib => undef was ignored)
 
 0.47      2017-03-23 18:26:01 -0400
   - Fix installer bug where My::ShareConfig was accidentally declared as a
