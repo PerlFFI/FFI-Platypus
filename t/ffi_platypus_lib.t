@@ -5,15 +5,19 @@ use File::Spec;
 use FFI::Platypus;
 use FFI::CheckLib;
 
-my $ffi = FFI::Platypus->new;
+subtest 'basic' => sub {
 
-my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
-ok -e $lib, "exists $lib";
+  my $ffi = FFI::Platypus->new;
 
-eval { $ffi->lib($lib) };
-is $@, '', 'ffi.lib (set)';
+  my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+  ok -e $lib, "exists $lib";
 
-is_deeply [eval { $ffi->lib }], [$lib], 'ffi.lib (get)';
+  eval { $ffi->lib($lib) };
+  is $@, '', 'ffi.lib (set)';
+
+  is_deeply [eval { $ffi->lib }], [$lib], 'ffi.lib (get)';
+
+};
 
 subtest 'undef' => sub {
 
