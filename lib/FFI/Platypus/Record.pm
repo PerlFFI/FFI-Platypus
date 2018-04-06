@@ -37,7 +37,7 @@ Perl:
    int       age
    string(3) title
    string_rw name
- );
+ ));
  
  package main;
  
