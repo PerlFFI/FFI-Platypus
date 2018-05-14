@@ -127,10 +127,10 @@ XSLoader::load(
     # this is for testing without dzil
     # it expects MYMETA.json for FFI::Platypus
     # to be in the current working directory.
-    require JSON::PP;
+    require JSON;
     my $fh;
     open($fh, '<', 'MYMETA.json') || die "unable to read MYMETA.json";
-    my $config = JSON::PP::decode_json(do { local $/; <$fh> });
+    my $config = JSON::decode_json(do { local $/; <$fh> });
     close $fh;
     $config->{version};
   }

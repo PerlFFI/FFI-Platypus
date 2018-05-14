@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use File::ShareDir qw( dist_dir );
 use File::Spec;
-use JSON::PP qw( decode_json );
+use JSON qw(decode_json);
 
 # VERSION
 
