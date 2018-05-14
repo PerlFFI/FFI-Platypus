@@ -1,6 +1,6 @@
 requires "FFI::CheckLib" => "0";
 requires "File::ShareDir" => "0";
-requires "JSON::PP" => "0";
+requires "JSON" => "0";
 requires "constant" => "1.32";
 requires "perl" => "5.008001";
 
@@ -19,7 +19,7 @@ on 'configure' => sub {
   requires "Config::AutoConf" => "0.309";
   requires "ExtUtils::CBuilder" => "0";
   requires "FFI::CheckLib" => "0.05";
-  requires "JSON::PP" => "0";
+  requires "JSON" => "0";
   requires "Module::Build" => "0.3601";
   requires "perl" => "5.008001";
 };

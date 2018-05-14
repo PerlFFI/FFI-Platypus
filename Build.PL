@@ -30,7 +30,7 @@ my %module_build_args = (
     "Config::AutoConf" => "0.309",
     "ExtUtils::CBuilder" => 0,
     "FFI::CheckLib" => "0.05",
-    "JSON::PP" => 0,
+    "JSON" => 0,
     "Module::Build" => "0.3601",
     "perl" => "5.008001"
   },
@@ -46,7 +46,7 @@ my %module_build_args = (
   "requires" => {
     "FFI::CheckLib" => 0,
     "File::ShareDir" => 0,
-    "JSON::PP" => 0,
+    "JSON" => 0,
     "constant" => "1.32",
     "perl" => "5.008001"
   },
