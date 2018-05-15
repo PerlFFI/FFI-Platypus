@@ -8,20 +8,22 @@ use Data::Dumper ();
 sub new
 {
   my %data;
-  if(-e 'share/config.json')
+  if(-e 'share/config.pl')
   {
-    %data = %{
-      JSON::PP->new->decode(do {
-        local $/;
-        my $fh;
-        open $fh, '<', 'share/config.json';
-        my $data = <$fh>;
-        close $fh;
-        $data;
-      })
-    };
+    $data = do "./share/config.pl";
   }
-  bless { data => \%data }, __PACKAGE__;
+  elsif(-e 'share/config.json')
+  {
+    $data = JSON::PP->new->decode(do {
+      local $/;
+      my $fh;
+      open $fh, '<', 'share/config.json';
+      my $data = <$fh>;
+      close $fh;
+      $data;
+    })
+  }
+  bless { data => $data }, __PACKAGE__;
 }
 
 sub get
