@@ -3,6 +3,7 @@ package My::ShareConfig;
 use strict;
 use warnings;
 use JSON::PP;
+use Data::Dumper ();
 
 sub new
 {
@@ -36,8 +37,19 @@ sub set
 
   my $json = JSON::PP->new->canonical->pretty->encode($self->{data});
   my $fh;
-  open($fh, '>', 'share/config.json');
+  open($fh, '>', 'share/config.json') || die "error writing share/config.json";
   print $fh $json;
+  close $fh;
+
+  my $dd = Data::Dumper->new([$self->{data}])
+    ->Indent(1)
+    ->Trailingcomma(1)
+    ->Terse(1)
+    ->Sortkeys(1)
+    ->Dump;
+
+  open($fh, '>', 'share/config.pl') || die "error writing share/config.pl";
+  print $fh $dd;
   close $fh;
 }
 

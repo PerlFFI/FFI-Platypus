@@ -131,6 +131,7 @@ sub action_clean
     'build.bat',
     'core',
     'share/config.json',
+    'share/config.pl',
     'include/ffi_platypus_config.h',
   );
 }
