@@ -2,13 +2,12 @@ use strict;
 use warnings;
 use Test::More;
 use FFI::Platypus;
-use JSON::PP;
-BEGIN { eval q{ use YAML () } };
+use Data::Dumper;
 
 sub xdump ($)
 {
   my($object) = @_;
-  note(YAML->can('Dump') ? YAML::Dump($object) : JSON::PP->new->allow_unknown->encode($object));
+  note(Data::Dumper->new([$object])->Indent(0)->Terse(1)->Sortkeys(1)->Dump);
 }
 
 my $ffi = FFI::Platypus->new;

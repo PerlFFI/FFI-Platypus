@@ -2,13 +2,12 @@ use strict;
 use warnings;
 use Test::More tests => 8;
 use FFI::Platypus;
-use JSON::PP qw( encode_json );
-BEGIN { eval q{ use YAML () } };
+use Data::Dumper;
 
 sub xdump ($)
 {
   my($object) = @_;
-  YAML->can('Dump') ? YAML::Dump($object) : encode_json($object);
+  note(Data::Dumper->new([$object])->Indent(0)->Terse(1)->Sortkeys(1)->Dump);
 }
 
 subtest 'simple type' => sub {
