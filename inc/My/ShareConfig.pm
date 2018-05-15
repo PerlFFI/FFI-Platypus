@@ -27,7 +27,6 @@ sub set
 
   my $dd = Data::Dumper->new([$self->{data}])
     ->Indent(1)
-    ->Trailingcomma(1)
     ->Terse(1)
     ->Sortkeys(1)
     ->Dump;

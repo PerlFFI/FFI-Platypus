@@ -13,6 +13,7 @@ $modules{$_} = $_ for qw(
   Alien::Base
   Alien::FFI
   Config::AutoConf
+  Data::Dumper
   ExtUtils::CBuilder
   FFI::CheckLib
   File::ShareDir
