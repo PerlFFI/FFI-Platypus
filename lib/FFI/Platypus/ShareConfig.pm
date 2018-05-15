@@ -13,7 +13,7 @@ sub get
   my(undef, $name) = @_;
   my $config;
 
-  unless($comfig)
+  unless($config)
   {
     my $fn = File::Spec->catfile(dist_dir('FFI-Platypus'), 'config.pl');
     $fn = File::Spec->rel2abs($fn) unless File::Spec->file_name_is_absolute($fn);
