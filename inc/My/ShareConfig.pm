@@ -2,7 +2,6 @@ package My::ShareConfig;
 
 use strict;
 use warnings;
-use JSON::PP;
 use Data::Dumper ();
 
 sub new
@@ -11,17 +10,6 @@ sub new
   if(-e 'share/config.pl')
   {
     $data = do "./share/config.pl";
-  }
-  elsif(-e 'share/config.json')
-  {
-    $data = JSON::PP->new->decode(do {
-      local $/;
-      my $fh;
-      open $fh, '<', 'share/config.json';
-      my $data = <$fh>;
-      close $fh;
-      $data;
-    })
   }
   bless { data => $data }, __PACKAGE__;
 }
@@ -37,12 +25,6 @@ sub set
   my($self, $name, $value) = @_;
   $self->{data}->{$name} = $value;
 
-  my $json = JSON::PP->new->canonical->pretty->encode($self->{data});
-  my $fh;
-  open($fh, '>', 'share/config.json') || die "error writing share/config.json";
-  print $fh $json;
-  close $fh;
-
   my $dd = Data::Dumper->new([$self->{data}])
     ->Indent(1)
     ->Trailingcomma(1)
@@ -50,6 +32,7 @@ sub set
     ->Sortkeys(1)
     ->Dump;
 
+  my $fh;
   open($fh, '>', 'share/config.pl') || die "error writing share/config.pl";
   print $fh $dd;
   close $fh;

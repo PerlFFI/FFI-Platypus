@@ -20,16 +20,6 @@ sub get
     $config = do $fn;
   }
   
-  unless($config)
-  {
-    my $fn = File::Spec->catfile(dist_dir('FFI-Platypus'), 'config.json');
-    my $fh;
-    open $fh, '<', $fn;
-    my $raw = do { local $/; <$fh> };
-    close $fh;
-    $config = decode_json $raw;
-  }
-  
   $config->{$name};
 }
 
