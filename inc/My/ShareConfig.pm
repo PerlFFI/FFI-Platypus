@@ -20,24 +20,24 @@ sub new
       })
     };
   }
-  bless \%data, __PACKAGE__;
+  bless { data => \%data }, __PACKAGE__;
 }
 
 sub get
 {
   my($self, $name) = @_;
-  $self->{$name};
+  $self->{data}->{$name};
 }
 
 sub set
 {
   my($self, $name, $value) = @_;
-  $self->{$name} = $value;
-  my %data = %$self;
-  my $data = JSON::PP->new->canonical->pretty->encode(\%data);
+  $self->{data}->{$name} = $value;
+
+  my $json = JSON::PP->new->canonical->pretty->encode($self->{data});
   my $fh;
   open($fh, '>', 'share/config.json');
-  print $fh $data;
+  print $fh $json;
   close $fh;
 }
 
