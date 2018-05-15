@@ -7,7 +7,7 @@ use Data::Dumper ();
 
 sub new
 {
-  my %data;
+  my $data;
   if(-e 'share/config.pl')
   {
     $data = do "./share/config.pl";
