@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove dependency on JSON::PP, use Data::Dumper for build configuration.
+    This may improve startup performance.
 
 0.48      2018-02-20 09:37:32 -0500
   - setting lib => undef is now the same as setting it to [undef] in the constructor

@@ -16,7 +16,6 @@ $modules{$_} = $_ for qw(
   ExtUtils::CBuilder
   FFI::CheckLib
   File::ShareDir
-  JSON::PP
   Module::Build
   PkgConfig
   Test::More

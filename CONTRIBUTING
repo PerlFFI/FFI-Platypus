@@ -6,7 +6,7 @@ CONTRIBUTING
     https://github.com/plicease/FFI-Platypus/pulls
 
     This project is developed using Dist::Zilla. The project's git
-    repository also comes with Build.PL and cpanfile files necessary for
+    repository also comes with the Build.PL file necessary for
     building, testing (and even installing if necessary) without
     Dist::Zilla. Please keep in mind though that these files are generated
     so if changes need to be made to those files they should be done
