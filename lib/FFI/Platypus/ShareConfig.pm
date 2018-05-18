@@ -16,7 +16,13 @@ sub get
   {
     my $fn = File::Spec->catfile(dist_dir('FFI-Platypus'), 'config.pl');
     $fn = File::Spec->rel2abs($fn) unless File::Spec->file_name_is_absolute($fn);
-    $config = do $fn;
+    local $@;
+    unless($config = do $fn)
+    {
+      die "couldn't parse configuration $fn $@" if $@;
+      die "couldn't do $fn $!"                  if $!;
+      die "bad or missing config file $fn";
+    };
   }
   
   $config->{$name};
