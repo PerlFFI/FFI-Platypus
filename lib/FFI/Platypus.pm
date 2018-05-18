@@ -123,7 +123,7 @@ our @CARP_NOT = qw( FFI::Platypus::Declare );
 
 require XSLoader;
 XSLoader::load(
-  'FFI::Platypus', eval q{ our $VERSION } || do {
+  'FFI::Platypus', $FFI::Platypus::VERSION ||= do {
     # this is for testing without dzil
     # it expects MYMETA.yml for FFI::Platypus
     # to be in the current working directory.
@@ -131,7 +131,8 @@ XSLoader::load(
     open($fh, '<', 'MYMETA.yml') || die "unable to read MYMETA.yml";
     my($str) = grep /^version:/, <$fh>;
     close $fh;
-    our($VERSION) = $str =~ /^version: '(.*?)'/;
+    my($version) = $str =~ /^version: '?([0-9._]+)/;
+    eval $version;
   }
 );
 
