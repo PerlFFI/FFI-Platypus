@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.49_01   2018-05-18 16:16:13 -0400
+  - Move the source repository for this project into the GitHub org Perl5-FFI
+    The new URL is https://github.org/Perl5-FFI/FFI-Platypus
   - Remove dependency on JSON::PP, use Data::Dumper for build configuration.
     This may improve startup performance.
 
