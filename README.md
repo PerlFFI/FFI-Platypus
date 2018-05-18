@@ -1254,7 +1254,7 @@ pull request on this project's GitHub repository:
 [https://github.com/plicease/FFI-Platypus/pulls](https://github.com/plicease/FFI-Platypus/pulls)
 
 This project is developed using [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  The project's git 
-repository also comes with `Build.PL` and `cpanfile` files necessary 
+repository also comes with the `Build.PL` file necessary 
 for building, testing (and even installing if necessary) without 
 [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  Please keep in mind though that these files are 
 generated so if changes need to be made to those files they should be 

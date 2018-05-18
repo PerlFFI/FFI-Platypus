@@ -123,16 +123,15 @@ our @CARP_NOT = qw( FFI::Platypus::Declare );
 
 require XSLoader;
 XSLoader::load(
-  'FFI::Platypus', eval q{ $VERSION } || do {
+  'FFI::Platypus', eval q{ our $VERSION } || do {
     # this is for testing without dzil
-    # it expects MYMETA.json for FFI::Platypus
+    # it expects MYMETA.yml for FFI::Platypus
     # to be in the current working directory.
-    require JSON::PP;
     my $fh;
-    open($fh, '<', 'MYMETA.json') || die "unable to read MYMETA.json";
-    my $config = JSON::PP::decode_json(do { local $/; <$fh> });
+    open($fh, '<', 'MYMETA.yml') || die "unable to read MYMETA.yml";
+    my($str) = grep /^version:/, <$fh>;
     close $fh;
-    $config->{version};
+    our($VERSION) = $str =~ /^version: '(.*?)'/;
   }
 );
 
@@ -1508,7 +1507,7 @@ pull request on this project's GitHub repository:
 L<https://github.com/plicease/FFI-Platypus/pulls>
 
 This project is developed using L<Dist::Zilla>.  The project's git 
-repository also comes with C<Build.PL> and C<cpanfile> files necessary 
+repository also comes with the C<Build.PL> file necessary 
 for building, testing (and even installing if necessary) without 
 L<Dist::Zilla>.  Please keep in mind though that these files are 
 generated so if changes need to be made to those files they should be 
