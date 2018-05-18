@@ -25,15 +25,18 @@ sub set
   my($self, $name, $value) = @_;
   $self->{data}->{$name} = $value;
 
-  my $dd = Data::Dumper->new([$self->{data}])
+  my $dd = Data::Dumper->new([$self->{data}],['x'])
     ->Indent(1)
-    ->Terse(1)
+    ->Terse(0)
+    ->Purity(1)
     ->Sortkeys(1)
     ->Dump;
 
   my $fh;
   open($fh, '>', 'share/config.pl') || die "error writing share/config.pl";
+  print $fh 'do { my ';
   print $fh $dd;
+  print $fh '$x;}';
   close $fh;
 }
 
