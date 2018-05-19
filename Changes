@@ -2,6 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.49_03   2018-05-19 10:09:15 -0400
+  - The previous version contained build files that would break the install
+    unless you were building on my machine.  This is what the previous
+    version should have been.
+
 0.49_02   2018-05-18 22:08:43 -0400
   - Fix version mismatch error with XS
 
