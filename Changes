@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.49_02   2018-05-18 22:08:43 -0400
+  - Fix version mismatch error with XS
+
 0.49_01   2018-05-18 16:16:13 -0400
   - Move the source repository for this project into the GitHub org Perl5-FFI
     The new URL is https://github.org/Perl5-FFI/FFI-Platypus
