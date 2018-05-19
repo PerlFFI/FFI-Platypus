@@ -1459,6 +1459,21 @@ to mind one way or the other).  Some platforms are not happy about this, and abo
 the only thing that you can do about it is to build Perl such that it links with
 C<libpthreads> even if it isn't a threaded Perl.
 
+This is not really an FFI issue, but a Perl issue, as you will have the same
+problem writing XS code for the such libraries.
+
+=head2 Doesn't work on Perl 5.10.0.
+
+I try as best as possible to support the same range of Perls as the Perl toolchain.
+That means all the way back to 5.8.1.  Unfortunately, 5.10.0 seems to have a problem
+that is difficult to diagnose.  Patches to fix are welcome, if you want to help
+out on this, please see:
+
+L<https://github.com/Perl5-FFI/FFI-Platypus/issues/68>
+
+Since this is an older buggy version of Perl it is recommended that you instead
+upgrade to 5.10.1 or later.
+
 =head1 CAVEATS
 
 Platypus and Native Interfaces like libffi rely on the availability of 
