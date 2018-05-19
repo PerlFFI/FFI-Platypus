@@ -132,7 +132,7 @@ XSLoader::load(
     my($str) = grep /^version:/, <$fh>;
     close $fh;
     my($version) = $str =~ /^version: '?([0-9._]+)/;
-    eval $version;
+    $version;
   }
 );
 
