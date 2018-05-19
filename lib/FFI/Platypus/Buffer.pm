@@ -35,7 +35,7 @@ taken from the now obsolete L<FFI::Util> module, as they may be useful
 in some cases.
 
 B<Caution>: This module provides great power in the way that you
-interact with C code, but with that power comes great responsability.
+interact with C code, but with that power comes great responsibility.
 Since you are dealing with blocks of memory you need to take care to
 understand the underlying ownership model of these pointers.
 

@@ -85,7 +85,8 @@ pod_spelling_system:
     - Ivanov
     - Shlomi
     - shlomif
-
+    - seg
+    - pthreads
 
 
 pod_coverage:
