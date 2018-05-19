@@ -277,7 +277,7 @@ difficult, but time consuming, so if you are in need of these features
 please do not hesitate to open a support ticket on the project's github 
 issue tracker:
 
-L<https://github.com/plicease/FFI-Platypus/issues>
+L<https://github.com/Perl5-FFI/FFI-Platypus/issues>
 
 In particular I am hesitant to implementing complex return types, as 
 there are performance and interface ramifications, and I would 

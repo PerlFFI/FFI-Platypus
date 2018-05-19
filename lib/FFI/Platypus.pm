@@ -1498,14 +1498,14 @@ If something does not work the way you think it should, or if you have a
 feature request, please open an issue on this project's GitHub Issue 
 tracker:
 
-L<https://github.com/plicease/FFI-Platypus/issues>
+L<https://github.com/perl5-FFI/FFI-Platypus/issues>
 
 =head1 CONTRIBUTING
 
 If you have implemented a new feature or fixed a bug then you may make a 
 pull request on this project's GitHub repository:
 
-L<https://github.com/plicease/FFI-Platypus/pulls>
+L<https://github.com/Perl5-FFI/FFI-Platypus/pulls>
 
 This project is developed using L<Dist::Zilla>.  The project's git 
 repository also comes with the C<Build.PL> file necessary 
@@ -1644,7 +1644,7 @@ making significant changes to the Platypus Core.  For that I use
 
 =over 4
 
-=item L<https://github.com/plicease/FFI-Performance>
+=item L<https://github.com/Perl5-FFI/FFI-Performance>
 
 =back
 

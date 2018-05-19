@@ -3,7 +3,7 @@ CONTRIBUTING
     If you have implemented a new feature or fixed a bug then you may make
     a pull request on this project's GitHub repository:
 
-    https://github.com/plicease/FFI-Platypus/pulls
+    https://github.com/Perl5-FFI/FFI-Platypus/pulls
 
     This project is developed using Dist::Zilla. The project's git
     repository also comes with the Build.PL file necessary for

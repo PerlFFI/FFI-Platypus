@@ -1244,14 +1244,14 @@ If something does not work the way you think it should, or if you have a
 feature request, please open an issue on this project's GitHub Issue 
 tracker:
 
-[https://github.com/plicease/FFI-Platypus/issues](https://github.com/plicease/FFI-Platypus/issues)
+[https://github.com/perl5-FFI/FFI-Platypus/issues](https://github.com/perl5-FFI/FFI-Platypus/issues)
 
 # CONTRIBUTING
 
 If you have implemented a new feature or fixed a bug then you may make a 
 pull request on this project's GitHub repository:
 
-[https://github.com/plicease/FFI-Platypus/pulls](https://github.com/plicease/FFI-Platypus/pulls)
+[https://github.com/Perl5-FFI/FFI-Platypus/pulls](https://github.com/Perl5-FFI/FFI-Platypus/pulls)
 
 This project is developed using [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  The project's git 
 repository also comes with the `Build.PL` file necessary 
@@ -1372,7 +1372,7 @@ be helpful to compare the runtime performance of Platypus if you are
 making significant changes to the Platypus Core.  For that I use 
 \`FFI-Performance\`, which can be found in my GitHub repository here:
 
-- [https://github.com/plicease/FFI-Performance](https://github.com/plicease/FFI-Performance)
+- [https://github.com/Perl5-FFI/FFI-Performance](https://github.com/Perl5-FFI/FFI-Performance)
 
 ## System integrators
 

@@ -5,7 +5,7 @@ BEGIN {
   #{
   #  print "Configuration not supported.\n";
   #  print "Please reinstall Alien::FFI with ALIEN_FORCE=1\n";
-  #  print "See https://github.com/plicease/FFI-Platypus/issues/19\n";
+  #  print "See https://github.com/Perl5-FFI/FFI-Platypus/issues/19\n";
   #  exit 0;
   #}
   unless(eval q{ use 5.008001; 1}) {
