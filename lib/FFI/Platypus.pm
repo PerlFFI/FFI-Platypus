@@ -1448,6 +1448,17 @@ lags behind modern Java.
 Even so this enables you to call Java from Perl and potentially other 
 Java based languages such as Scala, Groovy or JRuby.
 
+=head1 FAQ
+
+=head2 I get seg faults on some platforms but not others with a library using pthreads.
+
+On some platforms, Perl isn't linked with C<libpthreads> if Perl threads are not
+enabled.  On some platforms this doesn't seem to matter, C<libpthreads> can be
+loaded at runtime without much ill-effect.  (Linux from my experience doesn't seem
+to mind one way or the other).  Some platforms are not happy about this, and about
+the only thing that you can do about it is to build Perl such that it links with
+C<libpthreads> even if it isn't a threaded Perl.
+
 =head1 CAVEATS
 
 Platypus and Native Interfaces like libffi rely on the availability of 
