@@ -85,7 +85,6 @@ $post_diag = sub {
     diag "  $flags" if $flags;;
     diag "  $address_sizes" if $address_sizes;
   }
-|
 };
 
 my @modules = sort keys %modules;
