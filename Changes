@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Additional diagnostics
   - Added a FAQ section.  Some other minor documentation enhancements.
 
 0.49_03   2018-05-19 10:09:15 -0400

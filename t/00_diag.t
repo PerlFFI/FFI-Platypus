@@ -71,6 +71,21 @@ $post_diag = sub {
     diag sprintf("  %-20s %s", $_, $probe->{$_}) for keys %$probe;
   };
   diag "extended diagnostic failed: $@" if $@;
+  if(-f "/proc/cpuinfo")
+  {
+    open my $fh, '<', '/proc/cpuinfo';
+    my @lines = <$fh>;
+    close $fh;
+    my($model_name)    = grep /^model name/, @lines;
+    my($flags)         = grep /^flags/, @lines;
+    my($address_sizes) = grep /^address sizes/, @lines;
+    spacer();
+    diag "CPU Info:";
+    diag "  $model_name";
+    diag "  $flags" if $flags;;
+    diag "  $address_sizes" if $address_sizes;
+  }
+|
 };
 
 my @modules = sort keys %modules;
