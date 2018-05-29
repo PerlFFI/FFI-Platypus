@@ -33,6 +33,7 @@ $post_diag = sub {
     diag "Alien::FFI->libs         = ", Alien::FFI->libs;
     diag "Alien::FFI->dist_dir     = ", eval { Alien::FFI->dist_dir } || 'undef';
     diag "Alien::FFI->version      = ", eval { Alien::FFI->config('version') } || 'unknown';
+    diag "my_configure             = ", Alien::FFI->runtime_prop->{my_configure} if defined Alien::FFI->runtime_prop->{my_configure};
     spacer();
     require FFI::Platypus::ShareConfig;
     my $share_config = 'FFI::Platypus::ShareConfig';

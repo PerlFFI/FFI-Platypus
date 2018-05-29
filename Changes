@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Additional diagnostics
 
 0.49_05   2018-05-29 12:44:45 -0400
   - Require Alien::FFI 0.20 for bugfixes
