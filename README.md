@@ -503,10 +503,10 @@ includes the standard c library.
     use FFI::CheckLib;
     use FFI::Platypus;
     
-    # NOTE: I ported this from the like named eg/notify.pl that came with FFI::Raw
-    # and it seems to work most of the time, but also seems to SIGSEGV sometimes.
-    # I saw the same behavior in the FFI::Raw version, and am not really familiar
-    # with the libnotify API to say what is the cause.  Patches welcome to fix it.
+    # NOTE: I ported this from anoter Perl FFI library and it seems to work most
+    # of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior
+    # in the old version, and am not really familiar with the libnotify API to
+    # say what is the cause.  Patches welcome to fix it.
     
     my $ffi = FFI::Platypus->new;
     $ffi->lib(find_lib_or_exit lib => 'notify');
@@ -1490,14 +1490,6 @@ Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FF
     files that may be relevant to an FFI application.  One downside is that 
     its use may require development packages to be installed.
 
-- [FFI::Raw](https://metacpan.org/pod/FFI::Raw)
-
-    Alternate interface to libffi with fewer features.  It notably lacks the 
-    ability to create real xsubs, which may make [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) much 
-    faster.  Also lacking are pointers to native types, arrays and custom 
-    types.  In its favor, it has been around for longer that Platypus, and 
-    has been battle tested to some success.
-
 - [Win32::API](https://metacpan.org/pod/Win32::API)
 
     Microsoft Windows specific FFI style interface.
@@ -1543,10 +1535,9 @@ work on [FFI::Sweet](https://github.com/merrilymeredith/p5-FFI-Sweet)
 not only helped me get started with FFI but significantly influenced the 
 design of Platypus.
 
-In addition I'd like to thank Alessandro Ghedini (ALEXBIO) who was 
-always responsive to bug reports and pull requests for [FFI::Raw](https://metacpan.org/pod/FFI::Raw), 
-which was important in the development of the ideas on which Platypus is 
-based.
+In addition I'd like to thank Alessandro Ghedini (ALEXBIO) whose work
+on another Perl FFI library helped drive some of the development ideas
+for [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
 
 # AUTHOR
 

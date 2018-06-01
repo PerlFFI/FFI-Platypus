@@ -1766,14 +1766,6 @@ This module can extract constants and other useful objects from C header
 files that may be relevant to an FFI application.  One downside is that 
 its use may require development packages to be installed.
 
-=item L<FFI::Raw>
-
-Alternate interface to libffi with fewer features.  It notably lacks the 
-ability to create real xsubs, which may make L<FFI::Platypus> much 
-faster.  Also lacking are pointers to native types, arrays and custom 
-types.  In its favor, it has been around for longer that Platypus, and 
-has been battle tested to some success.
-
 =item L<Win32::API>
 
 Microsoft Windows specific FFI style interface.
@@ -1821,10 +1813,9 @@ work on L<FFI::Sweet|https://github.com/merrilymeredith/p5-FFI-Sweet>
 not only helped me get started with FFI but significantly influenced the 
 design of Platypus.
 
-In addition I'd like to thank Alessandro Ghedini (ALEXBIO) who was 
-always responsive to bug reports and pull requests for L<FFI::Raw>, 
-which was important in the development of the ideas on which Platypus is 
-based.
+In addition I'd like to thank Alessandro Ghedini (ALEXBIO) whose work
+on another Perl FFI library helped drive some of the development ideas
+for L<FFI::Platypus>.
 
 =cut
 

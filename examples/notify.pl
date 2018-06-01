@@ -3,10 +3,10 @@ use warnings;
 use FFI::CheckLib;
 use FFI::Platypus;
 
-# NOTE: I ported this from the like named eg/notify.pl that came with FFI::Raw
-# and it seems to work most of the time, but also seems to SIGSEGV sometimes.
-# I saw the same behavior in the FFI::Raw version, and am not really familiar
-# with the libnotify API to say what is the cause.  Patches welcome to fix it.
+# NOTE: I ported this from anoter Perl FFI library and it seems to work most
+# of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior
+# in the old version, and am not really familiar with the libnotify API to
+# say what is the cause.  Patches welcome to fix it.
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(find_lib_or_exit lib => 'notify');

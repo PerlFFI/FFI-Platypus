@@ -421,12 +421,6 @@ Find dynamic libraries in a portable way.
 
 JIT compiler for FFI.
 
-=item L<FFI::Raw>
-
-Alternate interface to libffi with fewer features.  It notably lacks the 
-ability to create real xsubs, which may make L<FFI::Platypus> much 
-faster.
-
 =back
 
 =cut

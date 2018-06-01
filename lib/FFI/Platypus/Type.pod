@@ -462,7 +462,7 @@ indicate the termination of the array.
 
 =head2 Closures
 
-A closure (called a "callback" by L<FFI::Raw>, we use the C<libffi> 
+A closure (sometimes called a "callback", we use the C<libffi> 
 terminology) is a Perl subroutine that can be called from C.  In order 
 to be called from C it needs to be passed to a C function.  To define 
 the closure type you need to provide a list of argument types and a 
