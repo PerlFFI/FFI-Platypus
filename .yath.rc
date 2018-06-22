@@ -1,0 +1,5 @@
+[test]
+-j 5
+--no-unsafe-inc
+--qvf
+
