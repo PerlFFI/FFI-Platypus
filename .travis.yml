@@ -46,6 +46,7 @@ script:
 
   - perl inc/run/travis_cpan.pl FFI::Util
   - perl inc/run/travis_cpan.pl FFI::TinyCC
+  - perl inc/run/travis_cpan.pl FFI::TinyCC::Inline
   - perl inc/run/travis_cpan.pl FFI::ExtractSymbols
   
   - perl inc/run/travis_cpan.pl UUID::FFI
