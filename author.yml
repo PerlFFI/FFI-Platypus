@@ -1,0 +1,14 @@
+---
+pod_spelling_system:
+  skip: 0
+  # list of words that are spelled correctly
+  # (regardless of what spell check thinks)
+  # or stuff that I like to spell incorrectly
+  # intentionally
+  stopwords: []
+
+pod_coverage:
+  skip: 0
+  # format is "Class#method" or "Class",regex allowed
+  # for either Class or method.
+  private: []
