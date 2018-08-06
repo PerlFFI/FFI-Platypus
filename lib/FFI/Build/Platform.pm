@@ -126,9 +126,9 @@ sub diag
   my $self = _self(shift);
   my @diag;
   
-  push @diag, "osname            : ". $self->osname;
-  push @diag, "object suffix     : ". $self->object_suffix;
-  push @diag, "library suffix    : ". $self->library_suffix;
+  push @diag, "osname            : ". join(", ", $self->osname);
+  push @diag, "object suffix     : ". join(", ", $self->object_suffix);
+  push @diag, "library suffix    : ". join(", ", $self->library_suffix);
 
   join "\n", @diag;
 }
