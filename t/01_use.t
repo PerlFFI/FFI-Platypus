@@ -8,5 +8,6 @@ require_ok 'FFI::Build::File::Base';
 require_ok 'FFI::Build::File::C';
 require_ok 'FFI::Build::File::Object';
 require_ok 'FFI::Build::File::Library';
+require_ok 'FFI::Build::Library';
 
 done_testing;

@@ -27,6 +27,7 @@ subtest 'basic' => sub {
     my $file = FFI::Build::File::Foo->new(['corpus', 'basic.foo']);
     isa_ok $file, 'FFI::Build::File::Base';
     isa_ok $file, 'FFI::Build::File::Foo';
+    is("$file", $file->path, "stringifies to path");
     is($file->slurp, "This is a basic foo.\n");
     ok(!$file->is_temp, "is_temp");
     is($file->basename, 'basic.foo', 'basename');
@@ -43,7 +44,6 @@ subtest 'basic' => sub {
       is($file->native, $file->path, "native name");
     }
     note "native = @{[ $file->native ]}";
-
   };
 
   subtest 'string filename' => sub {

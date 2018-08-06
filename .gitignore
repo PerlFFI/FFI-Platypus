@@ -1,2 +1,8 @@
 /FFI-Build-*
 /.build
+*.o
+*.obj
+*.swp
+*.so
+*.dll
+*.dylib

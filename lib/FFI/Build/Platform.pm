@@ -112,7 +112,28 @@ sub library_suffix
   }
   else
   {
-    return _context '.' . $self->{config}->{dlext}
+    return _context '.' . $self->{config}->{dlext};
+  }
+}
+
+=head2 library_prefix
+
+The library prefix for the platform.  On Unix this is usually C<lib>, as in C<libfoo>.
+
+=cut
+
+sub library_prefix
+{
+  my $self = _self(shift);
+  
+  # this almost certainly requires refinement.
+  if($self->osname =~ /^(MSWin32|msys|cygwin)$/)
+  {
+    return '';
+  }
+  else
+  {
+    return 'lib';
   }
 }
 
@@ -183,7 +204,10 @@ sub cflags
 
 sub ldflags
 {
-  _context_args();
+  my $self = _self(shift);
+  my @ldflags;
+  push @ldflags, _uniq grep /^-shared$/i, _shellwords($self->{config}->{lddlflags});
+  _context_args @ldflags;
 }
 
 =head2 extra_system_inc
@@ -224,6 +248,7 @@ sub diag
   
   push @diag, "osname            : ". join(", ", $self->osname);
   push @diag, "object suffix     : ". join(", ", $self->object_suffix);
+  push @diag, "library prefix    : ". join(", ", $self->library_prefix);
   push @diag, "library suffix    : ". join(", ", $self->library_suffix);
   push @diag, "cc                : ". $self->cc;
   push @diag, "ld                : ". $self->ld;

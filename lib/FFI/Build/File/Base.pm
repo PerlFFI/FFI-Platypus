@@ -7,6 +7,7 @@ use Carp ();
 use File::Temp     ();
 use File::Basename ();
 use FFI::Build::Platform;
+use overload '""' => sub { $_[0]->path };
 
 # ABSTRACT: Base class for File::Build files
 # VERSION
@@ -25,13 +26,14 @@ sub new
 {
   my($class, $content, %config) = @_;
 
-  my $base = $config{base} || 'ffi_build_';
-  my $dir  = $config{dir};
-
+  my $base     = $config{base} || 'ffi_build_';
+  my $dir      = $config{dir};
+  my $library  = $config{library};
   my $platform = $config{platform} || FFI::Build::Platform->new;
 
   my $self = bless {
     platform => $platform,
+    library  => $library,
   }, $class;
   
   if(!defined $content)
@@ -86,10 +88,17 @@ B<MUST> be overridden in the subclass.  This is the standard extension for the f
 
 B<MUST> be overridden in the subclass.  This is the passed to C<binmode> when the file is opened for reading or writing.
 
+=head2 accept_suffix
+
+ my @suffix_list = $file->accept_suffix;
+
+Returns a list of regexes that recognize the file type.
+
 =cut
 
 sub default_suffix    { die "must define a default extension in subclass" }
 sub default_encoding  { die "must define an encoding" }
+sub accept_suffix     { () }
 
 =head2 path
 
@@ -122,6 +131,12 @@ You can call C<keep>, to keep the file.
 
 The L<FFI::Build::Platform> instance used for this file object.
 
+=head2 library
+
+ my $library = $file->library;
+
+The L<FFI::Build::Library> instance used for this file object, if any.
+
 =cut
 
 sub path      { shift->{path}                          }
@@ -129,6 +144,7 @@ sub basename  { File::Basename::basename shift->{path} }
 sub dirname   { File::Basename::dirname  shift->{path} }
 sub is_temp   { shift->{temp}                          }
 sub platform  { shift->{platform}                      }
+sub library   { shift->{library}                       }
 
 =head2 native
 
@@ -177,6 +193,20 @@ file object is deallocated or falls out of scope.
 sub keep
 {
   delete shift->{temp};
+}
+
+=head2 build
+
+ $file->build;
+
+Builds the file into its natural output type, usually an object file.  It returns a new file instance,
+or if the file is an object file then it returns empty list.
+
+=cut
+
+sub build
+{
+  Carp::croak("Not implemented!");
 }
 
 sub DESTROY

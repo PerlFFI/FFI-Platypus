@@ -21,3 +21,4 @@ pod_coverage:
   private:
     - FFI::Build::File::Object#default_suffix
     - FFI::Build::File::Library#default_suffix
+    - FFI::Build::File::C#accept_suffix

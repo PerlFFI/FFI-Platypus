@@ -11,8 +11,10 @@ my $post_diag;
 
 $modules{$_} = $_ for qw(
   ExtUtils::MakeMaker
+  File::Glob
   List::Util
   Test::More
+  overload
 );
 
 $post_diag = sub {
