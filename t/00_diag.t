@@ -10,11 +10,11 @@ my %modules;
 my $post_diag;
 
 $modules{$_} = $_ for qw(
+  Capture::Tiny
   ExtUtils::MakeMaker
-  File::Glob
+  FFI::Platypus
   List::Util
   Test::More
-  overload
 );
 
 $post_diag = sub {

@@ -57,6 +57,8 @@ sub new
 
 =head2 platform
 
+=head2 verbose
+
 =cut
 
 sub buildname { shift->{buildname} }
@@ -105,6 +107,10 @@ sub _file_classes
   @file_classes;
 }
 
+=head2 source
+
+=cut
+
 sub source
 {
   my($self, @file_spec) = @_;
@@ -132,6 +138,10 @@ path:
   
   @{ $self->{source} };
 }
+
+=head2 build
+
+=cut
 
 sub build
 {

@@ -206,7 +206,7 @@ sub ldflags
 {
   my $self = _self(shift);
   my @ldflags;
-  push @ldflags, _uniq grep /^-shared$/i, _shellwords($self->{config}->{lddlflags});
+  push @ldflags, _uniq grep /^-shared$/i, $self->_shellwords($self->{config}->{lddlflags});
   _context_args @ldflags;
 }
 

@@ -13,6 +13,7 @@ pod_spelling_system:
     - fPIC
     - ld
     - ldflags
+    - buildname
 
 pod_coverage:
   skip: 0
@@ -22,3 +23,5 @@ pod_coverage:
     - FFI::Build::File::Object#default_suffix
     - FFI::Build::File::Library#default_suffix
     - FFI::Build::File::C#accept_suffix
+    - FFI::Build::File::C#build
+    - FFI::Build::File::Object#build
