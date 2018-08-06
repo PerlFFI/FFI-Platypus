@@ -116,6 +116,28 @@ sub library_suffix
   }
 }
 
+=head2 cc
+
+The C compiler
+
+=cut
+
+sub cc
+{
+  shift->{config}->{cc};
+}
+
+=head2 ld
+
+The C linker
+
+=cut
+
+sub ld
+{
+  shift->{config}->{ld};
+}
+
 =head2 cflags
 
 The compiler flags needed to compile object files that can be linked into a dynamic library.
@@ -144,6 +166,15 @@ sub cflags
   my @cflags;
   push @cflags, _uniq grep /^-fPIC$/i, _shellwords($self->{config}->{cccdlflags});
   _context_args @cflags;
+}
+
+=head2 ldflags
+
+=cut
+
+sub ldflags
+{
+  _context_args();
 }
 
 =head2 extra_system_inc
@@ -185,7 +216,10 @@ sub diag
   push @diag, "osname            : ". join(", ", $self->osname);
   push @diag, "object suffix     : ". join(", ", $self->object_suffix);
   push @diag, "library suffix    : ". join(", ", $self->library_suffix);
+  push @diag, "cc                : ". $self->cc;
+  push @diag, "ld                : ". $self->ld;
   push @diag, "cflags            : ". $self->cflags;
+  push @diag, "ldflags           : ". $self->ldflags;
   push @diag, "extra system inc  : ". $self->extra_system_inc;
   push @diag, "extra system lib  : ". $self->extra_system_lib;
 

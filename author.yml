@@ -11,6 +11,8 @@ pod_spelling_system:
     - diag
     - cflags
     - fPIC
+    - ld
+    - ldflags
 
 pod_coverage:
   skip: 0

@@ -11,6 +11,7 @@ my $post_diag;
 
 $modules{$_} = $_ for qw(
   ExtUtils::MakeMaker
+  List::Util
   Test::More
 );
 
