@@ -8,6 +8,7 @@ pod_spelling_system:
   stopwords:
     - dirname
     - osname
+    - diag
 
 pod_coverage:
   skip: 0

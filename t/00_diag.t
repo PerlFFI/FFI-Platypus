@@ -14,7 +14,11 @@ $modules{$_} = $_ for qw(
   Test::More
 );
 
-
+$post_diag = sub {
+  require FFI::Build::Platform;
+  diag "[PLATFORM]\n";
+  diag(FFI::Build::Platform->diag);
+};
 
 my @modules = sort keys %modules;
 

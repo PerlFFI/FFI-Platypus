@@ -114,4 +114,23 @@ sub library_suffix
   }
 }
 
+=head2 diag
+
+Diagnostic for the platform as a string.  This is for human consumption only, and the format
+may and will change over time so do not attempt to use is programmatically.
+
+=cut
+
+sub diag
+{
+  my $self = _self(shift);
+  my @diag;
+  
+  push @diag, "osname            : ". $self->osname;
+  push @diag, "object suffix     : ". $self->object_suffix;
+  push @diag, "library suffix    : ". $self->library_suffix;
+
+  join "\n", @diag;
+}
+
 1;
