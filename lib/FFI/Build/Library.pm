@@ -9,6 +9,7 @@ use File::Glob ();
 use File::Basename ();
 use List::Util 1.45 ();
 use Capture::Tiny ();
+use Text::ParseWords ();
 
 # ABSTRACT: Library builder class for native dynamic libraries
 # VERSION
@@ -37,12 +38,24 @@ sub new
 
   my $self = bless {
     source => [],
+    cflags => [],
+    libs   => [],
   }, $class;
   
   my $platform  = $self->{platform}  = FFI::Build::Platform->default;
   my $file      = $self->{file}      = $args{file} || FFI::Build::File::Library->new([$args{dir} || '.', $self->_native_name($name)], platform => $self->platform);
   my $buildname = $self->{buildname} = $args{buildname} || '_build';
   my $verbose   = $self->{verbose}   = $args{verbose};
+
+  if(defined $args{cflags})
+  {
+    $self->{cflags} = ref $args{cflags} ? [ @{ $args{cflags} } ]: [Text::ParseWords::shellwords($args{cflags})];
+  }
+  
+  if(defined $args{libs})
+  {
+    $self->{libs} = ref $args{libs} ? [ @{ $args{libs} } ] : [Text::ParseWords::shellwords($args{libs})];
+  }
   
   $self;
 }
@@ -59,12 +72,18 @@ sub new
 
 =head2 verbose
 
+=head2 cflags
+
+=head2 libs
+
 =cut
 
 sub buildname { shift->{buildname} }
 sub file      { shift->{file}      }
 sub platform  { shift->{platform}  }
 sub verbose   { shift->{verbose}   }
+sub cflags    { shift->{cflags}    }
+sub libs      { shift->{libs}      }
 
 =head2 source
 
@@ -162,12 +181,14 @@ sub build
   my @cmd = (
     $self->platform->ld,
     $self->platform->ldflags,
+    @{ $self->libs },
     $self->platform->extra_system_lib,
     (map { "$_" } @objects),
     -o => $self->file->path,
   );
   
   my($out, $exit) = Capture::Tiny::capture_merged(sub {
+    $DB::single = 1;
     print "+ @cmd\n";
     system @cmd;
   });

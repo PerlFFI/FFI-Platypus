@@ -209,6 +209,27 @@ sub build
   Carp::croak("Not implemented!");
 }
 
+=head2 needs_rebuild
+
+ my $bool = $file->needs_rebuild
+
+=cut
+
+sub needs_rebuild
+{
+  my($self, @source) = @_;
+  # if the target doesn't exist, then we definitely
+  # need a rebuild.
+  return 1 unless -f $self->path;
+  my $target_time = [stat $self->path]->[9];
+  foreach my $source (@source)
+  {
+    my $source_time = [stat "$source"]->[9];
+    return 1 if $source_time > $target_time;
+  }
+  return 0;
+}
+
 sub DESTROY
 {
   my($self) = @_;

@@ -7,6 +7,8 @@ use Config ();
 use Carp ();
 use Text::ParseWords ();
 use List::Util 1.45 ();
+use File::Temp ();
+use Capture::Tiny ();
 
 # ABSTRACT: Platform specific configuration.
 # VERSION
@@ -247,6 +249,59 @@ sub extra_system_lib
   _context_args @dir;  
 }
 
+=head2 cc_mm_works
+
+=cut
+
+sub cc_mm_works
+{
+  my $self = _self(shift);
+  my $verbose = shift;
+  
+  unless(defined $self->{cc_mm_works})
+  {
+    require FFI::Build::File::C;
+    my $c = FFI::Build::File::C->new(\"#include \"foo.h\"\n");
+    my $dir = File::Temp::tempdir( CLEANUP => 1 );
+    {
+      open my $fh, '>', "$dir/foo.h";
+      print $fh "\n";
+      close $fh;
+    }
+
+    my @cmd = (
+      $self->cc,
+      $self->cflags,
+      $self->extra_system_inc,
+      "-I$dir",
+      '-MM',
+      $c->path,
+    );
+    
+    my($out, $exit) = Capture::Tiny::capture_merged(sub {
+      print "+ @cmd\n";
+      system @cmd;
+    });
+    
+    if($verbose)
+    {
+      print $out;
+    }
+    
+    
+    if(!$exit && $out =~ /foo\.h/)
+    {
+      $self->{cc_mm_works} = '-MM';
+    }
+    else
+    {
+      $self->{cc_mm_works} = 0;
+    }
+  }
+  
+  $self->{cc_mm_works};
+}
+
 =head2 diag
 
 Diagnostic for the platform as a string.  This is for human consumption only, and the format
@@ -269,6 +324,7 @@ sub diag
   push @diag, "ldflags           : ". $self->ldflags;
   push @diag, "extra system inc  : ". $self->extra_system_inc;
   push @diag, "extra system lib  : ". $self->extra_system_lib;
+  push @diag, "cc mm works       : ". $self->cc_mm_works;
 
   join "\n", @diag;
 }

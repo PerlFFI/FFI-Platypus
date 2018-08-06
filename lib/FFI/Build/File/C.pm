@@ -35,12 +35,12 @@ sub build
     library  => $self->library,
   );
   
+  return $object if -f $object->path && !$object->needs_rebuild($self->_deps);
+  
   File::Path::mkpath($object->dirname, { verbose => 0, mode => 0700 });
 
   my @cmd = (
-    $self->platform->cc,
-    $self->platform->cflags,
-    $self->platform->extra_system_inc,
+    $self->_base_args,
     -c => $self->path,
     -o => $object->path,
   );
@@ -61,6 +61,50 @@ sub build
   }
   
   $object;
+}
+
+sub _base_args
+{
+  my($self) = @_;
+  my @cmd = (
+    $self->platform->cc,
+    $self->platform->cflags,
+  );
+  push @cmd, @{ $self->library->cflags } if $self->library;
+  push @cmd, $self->platform->extra_system_inc;
+  @cmd;
+}
+
+sub _deps
+{
+  my($self) = @_;
+  
+  return $self->path unless $self->platform->cc_mm_works;
+
+  my @cmd = (
+    $self->_base_args,
+    '-MM',
+    $self->path,
+  );
+  
+  my($out,$err,$exit) = Capture::Tiny::capture(sub {
+    print "+ @cmd\n";
+    system @cmd;
+  });
+  
+  if($exit)
+  {
+    print $out;
+    print $err;
+    die "error computing dependencies for $self";
+  }
+  else
+  {
+    my(undef, $deps) = split /:/, $out, 2;
+    $deps =~ s/^\s+//;
+    $deps =~ s/\s+$//;
+    return grep !/^\\$/, split /\s+/, $deps;
+  }
 }
 
 1;
