@@ -6,6 +6,7 @@ use 5.008001;
 use Config ();
 use Carp ();
 use Text::ParseWords ();
+use List::Util 1.45 ();
 
 # ABSTRACT: Platform specific configuration.
 # VERSION
@@ -122,23 +123,51 @@ On Linux, for example, this is usually -fPIC.
 
 =cut
 
+sub _uniq
+{
+  List::Util::uniq(@_);
+}
+
 sub _shellwords
 {
   Text::ParseWords::shellwords(@_);
 }
 
+sub _context_args
+{
+  wantarray ? @_ : join ' ', @_;
+}
+
 sub cflags
 {
   my $self = _self(shift);
-  
-  unless($self->{cflags})
-  {
-    my @cflags;
-    push @cflags, grep /^-fPIC$/i, _shellwords($self->{config}->{cccdlflags});
-    $self->{cflags} = \@cflags;
-  }
-  
-  wantarray ? @{ $self->{cflags} } : join ' ', @{ $self->{cflags} };
+  my @cflags;
+  push @cflags, _uniq grep /^-fPIC$/i, _shellwords($self->{config}->{cccdlflags});
+  _context_args @cflags;
+}
+
+=head2 extra_system_inc
+
+=cut
+
+sub extra_system_inc
+{
+  my $self = _self(shift);
+  my @dir;
+  push @dir, _uniq grep /^-I(.*)$/, _shellwords(map { $self->{config}->{$_} } qw( ccflags ccflags_nolargefiles cppflags ));
+  _context_args @dir;  
+}
+
+=head2 extra_system_lib
+
+=cut
+
+sub extra_system_lib
+{
+  my $self = _self(shift);
+  my @dir;
+  push @dir, _uniq grep /^-L(.*)$/, _shellwords(map { $self->{config}->{$_} } qw( lddlflags ldflags ldflags_nolargefiles ));
+  _context_args @dir;  
 }
 
 =head2 diag
@@ -157,6 +186,8 @@ sub diag
   push @diag, "object suffix     : ". join(", ", $self->object_suffix);
   push @diag, "library suffix    : ". join(", ", $self->library_suffix);
   push @diag, "cflags            : ". $self->cflags;
+  push @diag, "extra system inc  : ". $self->extra_system_inc;
+  push @diag, "extra system lib  : ". $self->extra_system_lib;
 
   join "\n", @diag;
 }
