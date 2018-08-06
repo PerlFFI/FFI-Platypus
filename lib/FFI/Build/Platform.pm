@@ -216,6 +216,7 @@ sub ldflags
   elsif($self->osname eq 'MSWin32')
   {
     # TODO: VCC support *sigh*
+    no warnings 'qw';
     push @ldflags, qw( -mdll -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
   }
   else
