@@ -6,6 +6,7 @@ use 5.008001;
 use Carp ();
 use File::Temp     ();
 use File::Basename ();
+use FFI::Build::Platform;
 
 # ABSTRACT: Base class for File::Build files
 # VERSION
@@ -27,7 +28,11 @@ sub new
   my $base = $config{base} || 'ffi_build_';
   my $dir  = $config{dir};
 
-  my $self = bless {}, $class;
+  my $platform = $config{platform} || FFI::Build::Platform->new;
+
+  my $self = bless {
+    platform => $platform,
+  }, $class;
   
   if(!defined $content)
   {
@@ -58,7 +63,7 @@ sub new
     $self->{path} = $content;
   }
   
-  if($^O eq 'MSWin32')
+  if($self->platform->osname eq 'MSWin32')
   {
     $self->{native} = File::Spec->catfile($self->{path});
     $self->{path} =~ s{\\}{/}g;
@@ -111,12 +116,19 @@ The directory part of the path.
 Returns true if the file is temporary, that is, it will be deleted when the file object falls out of scope.
 You can call C<keep>, to keep the file.
 
+=head2 platform
+
+ my $platform = $file->platform;
+
+The L<FFI::Build::Platform> instance used for this file object.
+
 =cut
 
 sub path      { shift->{path}                          }
 sub basename  { File::Basename::basename shift->{path} }
 sub dirname   { File::Basename::dirname  shift->{path} }
 sub is_temp   { shift->{temp}                          }
+sub platform  { shift->{platform}                      }
 
 =head2 native
 
@@ -129,7 +141,7 @@ used instead of backslash C</>.
 
 sub native {
   my($self) = @_;
-  $^O eq 'MSWin32'
+  $self->platform->osname eq 'MSWin32'
     ? $self->{native}
     : $self->{path};
 }
