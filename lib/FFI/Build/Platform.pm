@@ -152,7 +152,16 @@ sub _uniq
 
 sub _shellwords
 {
-  Text::ParseWords::shellwords(@_);
+  my $self = _self(shift);
+  if($self->osname eq 'MSWin32')
+  {
+    # Borrowed from Alien/Base.pm, see the caveat there.
+    Text::ParseWords::shellwords(map { s,\\,\\\\,g; $_ } @_);
+  }
+  else
+  {
+    Text::ParseWords::shellwords(@_);
+  }
 }
 
 sub _context_args
@@ -164,7 +173,7 @@ sub cflags
 {
   my $self = _self(shift);
   my @cflags;
-  push @cflags, _uniq grep /^-fPIC$/i, _shellwords($self->{config}->{cccdlflags});
+  push @cflags, _uniq grep /^-fPIC$/i, $self->_shellwords($self->{config}->{cccdlflags});
   _context_args @cflags;
 }
 
@@ -185,7 +194,7 @@ sub extra_system_inc
 {
   my $self = _self(shift);
   my @dir;
-  push @dir, _uniq grep /^-I(.*)$/, _shellwords(map { $self->{config}->{$_} } qw( ccflags ccflags_nolargefiles cppflags ));
+  push @dir, _uniq grep /^-I(.*)$/, $self->_shellwords(map { $self->{config}->{$_} } qw( ccflags ccflags_nolargefiles cppflags ));
   _context_args @dir;  
 }
 
@@ -197,7 +206,7 @@ sub extra_system_lib
 {
   my $self = _self(shift);
   my @dir;
-  push @dir, _uniq grep /^-L(.*)$/, _shellwords(map { $self->{config}->{$_} } qw( lddlflags ldflags ldflags_nolargefiles ));
+  push @dir, _uniq grep /^-L(.*)$/, $self->_shellwords(map { $self->{config}->{$_} } qw( lddlflags ldflags ldflags_nolargefiles ));
   _context_args @dir;  
 }
 
