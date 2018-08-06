@@ -55,11 +55,22 @@ subtest 'build' => sub {
   $lib->source('corpus/ffi_build_library/project1/*.c');
   note "$_" for $lib->source;
 
-  my $dll;
-  note capture_merged {
-    $dll = $lib->build;
-    ();
+  my($out, $dll, $error) = capture_merged {
+    my $dll = eval { $lib->build };
+    ($dll, $@);
   };
+
+  ok $error eq '', 'no error';
+
+  if($error)
+  {
+    diag $out;
+    return;
+  }
+  else
+  {
+    note $out;
+  }
   
   my $ffi = FFI::Platypus->new;
   $ffi->lib($dll);

@@ -177,7 +177,7 @@ sub _shellwords
   if($self->osname eq 'MSWin32')
   {
     # Borrowed from Alien/Base.pm, see the caveat there.
-    Text::ParseWords::shellwords(map { s,\\,\\\\,g; $_ } @_);
+    Text::ParseWords::shellwords(map { my $x = $_; $x =~ s,\\,\\\\,g; $x } @_);
   }
   else
   {
@@ -206,7 +206,20 @@ sub ldflags
 {
   my $self = _self(shift);
   my @ldflags;
-  push @ldflags, _uniq grep /^-shared$/i, $self->_shellwords($self->{config}->{lddlflags});
+  if($self->osname eq 'cygwin')
+  {
+    no warnings 'qw';
+    push @ldflags, qw( --shared -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
+  }
+  elsif($self->osname eq 'MSWin32')
+  {
+    # TODO: VCC support *sigh*
+    push @ldflags, qw( -mdll -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
+  }
+  else
+  {
+    push @ldflags, _uniq grep /^-shared$/i, $self->_shellwords($self->{config}->{lddlflags});
+  }
   _context_args @ldflags;
 }
 
