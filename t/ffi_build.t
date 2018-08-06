@@ -1,4 +1,6 @@
-use Test2::V0 -no_srand => 1;
+use strict;
+use warnings;
+use Test::More;
 use FFI::Build;
 
 ok 1, 'todo';
