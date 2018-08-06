@@ -69,7 +69,7 @@ sub new
   
   if($^O eq 'MSWin32')
   {
-    $self->{native_path} = File::Spec->catfile($self->{path});
+    $self->{native} = File::Spec->catfile($self->{path});
     $self->{path} =~ s{\\}{/}g;
   }
   
