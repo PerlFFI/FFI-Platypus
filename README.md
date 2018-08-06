@@ -1,4 +1,4 @@
-# FFI::Build [![Build Status](https://secure.travis-ci.org/plicease/FFI-Build.png)](http://travis-ci.org/plicease/FFI-Build)
+# FFI::Build [![Build Status](https://secure.travis-ci.org/Perl5-FFI/FFI-Build.png)](http://travis-ci.org/Perl5-FFI/FFI-Build)
 
 Build shared libraries for use with FFI::Platypus
 
