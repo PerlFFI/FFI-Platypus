@@ -42,7 +42,7 @@ sub build
   my @cmd = (
     $self->_base_args,
     -c => $self->path,
-    -o => $object->path,
+    $self->platform->flag_object_output($object->path),
   );
   
   my($out, $exit) = Capture::Tiny::capture_merged(sub {

@@ -184,7 +184,7 @@ sub build
     @{ $self->libs },
     $self->platform->extra_system_lib,
     (map { "$_" } @objects),
-    -o => $self->file->path,
+    $self->platform->flag_library_output($self->file->path),
   );
   
   my($out, $exit) = Capture::Tiny::capture_merged(sub {

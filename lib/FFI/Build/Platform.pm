@@ -213,6 +213,10 @@ sub ldflags
     no warnings 'qw';
     push @ldflags, qw( --shared -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
   }
+  elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
+  {
+    push @ldflags, qw( -link -dll );
+  }
   elsif($self->osname eq 'MSWin32')
   {
     # TODO: VCC support *sigh*
@@ -301,6 +305,42 @@ sub cc_mm_works
   }
   
   $self->{cc_mm_works};
+}
+
+=head2 flag_object_output
+
+=cut
+
+sub flag_object_output
+{
+  my $self = _self(shift);
+  my $file = shift;
+  if($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
+  {
+    return ("-Fo$file");
+  }
+  else
+  {
+    return ['-o' => $file];
+  }
+}
+
+=head2 flag_library_output
+
+=cut
+
+sub flag_library_output
+{
+  my $self = _self(shift);
+  my $file = shift;
+  if($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
+  {
+    return ("-OUT:$file");
+  }
+  else
+  {
+    return ['-o' => $file];
+  }
 }
 
 =head2 diag
