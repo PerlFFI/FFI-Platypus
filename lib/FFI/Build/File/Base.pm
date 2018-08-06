@@ -22,7 +22,10 @@ use File::Basename ();
 
 sub new
 {
-  my($class, $content, $dir, $base) = @_;
+  my($class, $content, %config) = @_;
+
+  my $base = $config{base} || 'ffi_build_';
+  my $dir  = $config{dir};
 
   my $self = bless {}, $class;
   
@@ -37,20 +40,8 @@ sub new
   elsif(ref($content) eq 'SCALAR')
   {
     my @args;
-    if($base)
-    {
-      push @args, "${base}XXXXXX";
-    }
-    else
-    {
-      push @args, "ffi_build_XXXXXX";
-    }
-    
-    if($dir)
-    {
-      push @args, DIR => $dir;
-    }
-    
+    push @args, "${base}XXXXXX";
+    push @args, DIR => $dir if $dir;
     push @args, SUFFIX => $self->default_suffix;
     
     my($fh, $filename) = File::Temp::tempfile(@args);
