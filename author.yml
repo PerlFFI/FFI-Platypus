@@ -9,6 +9,8 @@ pod_spelling_system:
     - dirname
     - osname
     - diag
+    - cflags
+    - fPIC
 
 pod_coverage:
   skip: 0

@@ -5,6 +5,7 @@ use warnings;
 use 5.008001;
 use Config ();
 use Carp ();
+use Text::ParseWords ();
 
 # ABSTRACT: Platform specific configuration.
 # VERSION
@@ -114,6 +115,32 @@ sub library_suffix
   }
 }
 
+=head2 cflags
+
+The compiler flags needed to compile object files that can be linked into a dynamic library.
+On Linux, for example, this is usually -fPIC.
+
+=cut
+
+sub _shellwords
+{
+  Text::ParseWords::shellwords(@_);
+}
+
+sub cflags
+{
+  my $self = _self(shift);
+  
+  unless($self->{cflags})
+  {
+    my @cflags;
+    push @cflags, grep /^-fPIC$/i, _shellwords($self->{config}->{cccdlflags});
+    $self->{cflags} = \@cflags;
+  }
+  
+  wantarray ? @{ $self->{cflags} } : join ' ', @{ $self->{cflags} };
+}
+
 =head2 diag
 
 Diagnostic for the platform as a string.  This is for human consumption only, and the format
@@ -129,6 +156,7 @@ sub diag
   push @diag, "osname            : ". join(", ", $self->osname);
   push @diag, "object suffix     : ". join(", ", $self->object_suffix);
   push @diag, "library suffix    : ". join(", ", $self->library_suffix);
+  push @diag, "cflags            : ". $self->cflags;
 
   join "\n", @diag;
 }
