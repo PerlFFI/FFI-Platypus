@@ -7,6 +7,7 @@ pod_spelling_system:
   # intentionally
   stopwords:
     - dirname
+    - osname
 
 pod_coverage:
   skip: 0
