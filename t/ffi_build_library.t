@@ -96,7 +96,7 @@ subtest 'build' => sub {
 subtest 'build c++' => sub {
 
   plan skip_all => 'Test requires C++ compiler'
-    unless FFI::Build::Platform->which(FFI::Build::Platform->cxx);
+    unless eval { FFI::Build::Platform->which(FFI::Build::Platform->cxx) };
 
   my $lib = FFI::Build::Library->new('foo', 
     dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build_library/project-cxx' ),
@@ -148,7 +148,7 @@ subtest 'build c++' => sub {
 subtest 'Fortran' => sub {
 
   plan skip_all => 'Test requires Fortran compiler'
-    unless FFI::Build::Platform->which(FFI::Build::Platform->for);
+    unless eval { FFI::Build::Platform->which(FFI::Build::Platform->for) };
   
   plan skip_all => 'Test requires FFI::Platypus::Lang::Fortran'
     unless eval { require FFI::Platypus::Lang::Fortran };

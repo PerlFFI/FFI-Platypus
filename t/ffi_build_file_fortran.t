@@ -9,7 +9,7 @@ use FFI::Build::Platform;
 use Capture::Tiny qw( capture_merged );
 
 plan skip_all => 'Test requires Fortran compiler'
-  unless FFI::Build::Platform->which(FFI::Build::Platform->for);
+  unless eval { FFI::Build::Platform->which(FFI::Build::Platform->for) };
 
 subtest 'basic' => sub {
 
