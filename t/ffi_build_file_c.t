@@ -34,14 +34,14 @@ subtest 'compile' => sub {
 
 subtest 'headers' => sub {
 
-  my $lib = FFI::Build->new('foo',
+  my $build = FFI::Build->new('foo',
     verbose => 1,
     cflags  => "-Icorpus/ffi_build_file_c/include",
   );
 
-  note "cflags=$_" for @{ $lib->cflags };
+  note "cflags=$_" for @{ $build->cflags };
 
-  my $file = FFI::Build::File::C->new([qw( corpus ffi_build_file_c foo2.c )], library => $lib );
+  my $file = FFI::Build::File::C->new([qw( corpus ffi_build_file_c foo2.c )], builder => $build );
   
   my @deps = eval { $file->_deps };
   is $@, '', 'no die';

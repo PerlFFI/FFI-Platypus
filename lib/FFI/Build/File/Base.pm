@@ -28,12 +28,12 @@ sub new
 
   my $base     = $config{base} || 'ffi_build_';
   my $dir      = $config{dir};
-  my $library  = $config{library};
+  my $builder  = $config{builder};
   my $platform = $config{platform} || FFI::Build::Platform->new;
 
   my $self = bless {
     platform => $platform,
-    library  => $library,
+    builder  => $builder,
   }, $class;
   
   if(!defined $content)
@@ -131,9 +131,9 @@ You can call C<keep>, to keep the file.
 
 The L<FFI::Build::Platform> instance used for this file object.
 
-=head2 library
+=head2 builder
 
- my $library = $file->library;
+ my $build = $file->builder;
 
 The L<FFI::Build> instance used for this file object, if any.
 
@@ -144,7 +144,7 @@ sub basename  { File::Basename::basename shift->{path} }
 sub dirname   { File::Basename::dirname  shift->{path} }
 sub is_temp   { shift->{temp}                          }
 sub platform  { shift->{platform}                      }
-sub library   { shift->{library}                       }
+sub builder   { shift->{builder}                       }
 
 =head2 native
 
