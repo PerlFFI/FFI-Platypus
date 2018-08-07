@@ -150,6 +150,55 @@ sub cc
   shift->{config}->{cc};
 }
 
+=head2 cxx
+
+The C++ compiler that naturally goes with the C compiler.
+
+=cut
+
+sub cxx
+{
+  my($self) = @_;
+  if($self->{config}->{ccname} eq 'gcc')
+  {
+    if($self->cc =~ /clang/)
+    {
+      return 'clang';
+    }
+    else
+    {
+      return 'g++';
+    }
+  }
+  elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
+  {
+    return 'cl';
+  }
+  else
+  {
+    Carp::croak("unable to detect corresponding C++ compiler");
+  }
+}
+
+=head2 for
+
+The Fortran compiler that naturally goes with the C compiler.
+
+=cut
+
+sub for
+{
+  my($self) = @_;
+  if($self->{config}->{ccname} eq 'gcc')
+  {
+    return 'gfortran';
+  }
+  else
+  {
+    Carp::croak("unable to detect correspnding Fortran Compiler");
+  }
+}
+
 =head2 ld
 
 The C linker
@@ -356,15 +405,17 @@ sub diag
   my @diag;
   
   push @diag, "osname            : ". join(", ", $self->osname);
-  push @diag, "object suffix     : ". join(", ", $self->object_suffix);
-  push @diag, "library prefix    : ". join(", ", $self->library_prefix);
-  push @diag, "library suffix    : ". join(", ", $self->library_suffix);
   push @diag, "cc                : ". $self->cc;
+  push @diag, "cxx               : ". (eval { $self->cxx } || '???' );
+  push @diag, "for               : ". (eval { $self->for } || '???' );
   push @diag, "ld                : ". $self->ld;
   push @diag, "cflags            : ". $self->cflags;
   push @diag, "ldflags           : ". $self->ldflags;
   push @diag, "extra system inc  : ". $self->extra_system_inc;
   push @diag, "extra system lib  : ". $self->extra_system_lib;
+  push @diag, "object suffix     : ". join(", ", $self->object_suffix);
+  push @diag, "library prefix    : ". join(", ", $self->library_prefix);
+  push @diag, "library suffix    : ". join(", ", $self->library_suffix);
   push @diag, "cc mm works       : ". $self->cc_mm_works;
 
   join "\n", @diag;
