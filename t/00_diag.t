@@ -13,6 +13,7 @@ $modules{$_} = $_ for qw(
   Capture::Tiny
   ExtUtils::MakeMaker
   FFI::Platypus
+  FFI::Platypus::Lang::Fortran
   IPC::Cmd
   List::Util
   Test::More

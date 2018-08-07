@@ -8,7 +8,7 @@ use FFI::Build::Library;
 use FFI::Build::Platform;
 use Capture::Tiny qw( capture_merged );
 
-plak skip_all 'Test requires C++ compiler'
+plan skip_all => 'Test requires C++ compiler'
   unless FFI::Build::Platform->which(FFI::Build::Platform->cxx);
 
 subtest 'basic' => sub {

@@ -48,8 +48,8 @@ subtest 'file classes' => sub {
 subtest 'build' => sub {
 
   my $lib = FFI::Build::Library->new('foo', 
-    dir       => tempdir( DIR => 'corpus/ffi_build_library/project1' ),
-    buildname => "$$.@{[ time ]}",
+    dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build_library/project1' ),
+    buildname => "tmpbuild.tmpbuild.$$.@{[ time ]}",
     verbose   => 1,
   );
   
@@ -95,12 +95,12 @@ subtest 'build' => sub {
 
 subtest 'build c++' => sub {
 
-  plak skip_all 'Test requires C++ compiler'
+  plan skip_all => 'Test requires C++ compiler'
     unless FFI::Build::Platform->which(FFI::Build::Platform->cxx);
 
   my $lib = FFI::Build::Library->new('foo', 
-    dir       => tempdir( DIR => 'corpus/ffi_build_library/project-cxx' ),
-    buildname => "$$.@{[ time ]}",
+    dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build_library/project-cxx' ),
+    buildname => "tmpbuild.$$.@{[ time ]}",,
     verbose   => 1,
   );
   
@@ -140,7 +140,71 @@ subtest 'build c++' => sub {
 
   cleanup(
     $lib->file->dirname,
-    File::Spec->catdir(qw( corpus ffi_build_library project1 ), $lib->buildname)
+    File::Spec->catdir(qw( corpus ffi_build_library project-cxx ), $lib->buildname)
+  );
+
+};
+
+subtest 'Fortran' => sub {
+
+  plan skip_all => 'Test requires Fortran compiler'
+    unless FFI::Build::Platform->which(FFI::Build::Platform->for);
+  
+  plan skip_all => 'Test requires FFI::Platypus::Lang::Fortran'
+    unless eval { require FFI::Platypus::Lang::Fortran };
+  
+
+  my $lib = FFI::Build::Library->new('foo', 
+    dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build_library/project-fortran' ),
+    buildname => "tmpbuild.$$.@{[ time ]}",
+    verbose   => 1,
+  );
+  
+  $lib->source('corpus/ffi_build_library/project-fortran/add*.f*');
+  note "$_" for $lib->source;
+
+  my($out, $dll, $error) = capture_merged {
+    my $dll = eval { $lib->build };
+    ($dll, $@);
+  };
+
+  ok $error eq '', 'no error';
+
+  if($error)
+  {
+    diag $out;
+    return;
+  }
+  else
+  {
+    note $out;
+  }
+  
+  my $ffi = FFI::Platypus->new;
+  $ffi->lang('Fortran');
+  $ffi->lib($dll);
+
+  is(
+    $ffi->function( add1 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2),
+    3,
+    'FORTRAN 77',
+  );
+
+  is(
+    $ffi->function( add2 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2),
+    3,
+    'Fortran 90',
+  );
+  
+  is(
+    $ffi->function( add3 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2),
+    3,
+    'Fortran 95',
+  );
+  
+  cleanup(
+    $lib->file->dirname,
+    File::Spec->catdir(qw( corpus ffi_build_library project-fortran ), $lib->buildname)
   );
 
 };
