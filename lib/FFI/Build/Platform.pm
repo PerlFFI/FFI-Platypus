@@ -161,6 +161,12 @@ sub cxx
   my $self = _self(shift);
   if($self->{config}->{ccname} eq 'gcc')
   {
+    if($self->cc =~ /gcc$/)
+    {
+      my $maybe = $self->cc;
+      $maybe =~ s/gcc$/g++/;
+      return $maybe if $self->which($maybe);
+    }
     if($self->cc =~ /clang/)
     {
       return 'clang++';
@@ -191,6 +197,12 @@ sub for
   my $self = _self(shift);
   if($self->{config}->{ccname} eq 'gcc')
   {
+    if($self->cc =~ /gcc$/)
+    {
+      my $maybe = $self->cc;
+      $maybe =~ s/gcc$/gfortran/;
+      return $maybe if $self->which($maybe);
+    }
     return 'gfortran';
   }
   else
