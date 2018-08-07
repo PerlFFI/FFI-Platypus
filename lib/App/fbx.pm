@@ -14,7 +14,7 @@ sub main
 {
   my(undef, @ARGV) = @_;
 
-  unless(-f 'pbx.json')
+  unless(-f 'fbx.json')
   {
     my $mm = FFI::Build::MM->new;
     $mm->mm_args( DISTNAME => basename getcwd() );
