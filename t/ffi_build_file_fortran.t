@@ -26,11 +26,11 @@ subtest 'basic' => sub {
 subtest 'compile' => sub {
 
   my $file = FFI::Build::File::Fortran->new([qw( corpus ffi_build_file_fortran add.f )]);
-  my $object = $file->build;
+  my $object = $file->build_item;
   isa_ok $object, 'FFI::Build::File::Object';
   
   is_deeply
-    [ $object->build ],
+    [ $object->build_item ],
     [];
 
   cleanup 'corpus/ffi_build_file_fortran/_build';

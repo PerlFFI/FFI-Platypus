@@ -21,11 +21,11 @@ subtest 'basic' => sub {
 subtest 'compile' => sub {
 
   my $file = FFI::Build::File::C->new([qw( corpus ffi_build_file_c foo1.c )]);
-  my $object = $file->build;
+  my $object = $file->build_item;
   isa_ok $object, 'FFI::Build::File::Object';
   
   is_deeply
-    [ $object->build ],
+    [ $object->build_item ],
     [];
 
   cleanup 'corpus/ffi_build_file_c/_build';

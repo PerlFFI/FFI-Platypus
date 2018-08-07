@@ -197,7 +197,7 @@ sub build
   {
     $ld = $source->ld if $source->ld;
     my $output;
-    while(my $next = $source->build)
+    while(my $next = $source->build_item)
     {
       $ld = $next->ld if $next->ld;
       $output = $source = $next;

@@ -18,7 +18,7 @@ sub accept_suffix
   (qr/\.c$/)
 }
 
-sub build
+sub build_item
 {
   my($self) = @_;
 

@@ -204,7 +204,7 @@ or if the file is an object file then it returns empty list.
 
 =cut
 
-sub build
+sub build_item
 {
   Carp::croak("Not implemented!");
 }

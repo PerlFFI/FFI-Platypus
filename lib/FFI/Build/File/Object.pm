@@ -15,7 +15,7 @@ sub default_suffix
   shift->platform->object_suffix;
 }
 
-sub build
+sub build_item
 {
   my($self) = @_;
   unless(-f $self->path)
