@@ -99,7 +99,7 @@ subtest 'with a build!' => sub {
     note $out;
     is $err, '';
     
-    is slurp 'blib/arch/auto/Crock/O/Stimpy/Stimpy.txt', "FFI::Build\@Crock-O-Stimpy\n";
+    is slurp 'blib/arch/auto/Crock/O/Stimpy/Stimpy.txt', "FFI::Build\@auto/share/dist/Crock-O-Stimpy/lib/libCrock-O-Stimpy.so\n";
     
     my $ffi = FFI::Platypus->new;
     $ffi->lib('blib/lib/auto/share/dist/Crock-O-Stimpy/lib/libCrock-O-Stimpy.so');
