@@ -39,9 +39,10 @@ sub new
     source => [],
     cflags => [],
     libs   => [],
+    alien  => [],
   }, $class;
   
-  my $platform  = $self->{platform}  = FFI::Build::Platform->default;
+  my $platform  = $self->{platform}  = $args{platform} || FFI::Build::Platform->default;
   my $file      = $self->{file}      = $args{file} || FFI::Build::File::Library->new([$args{dir} || '.', $self->_native_name($name)], platform => $self->platform);
   my $buildname = $self->{buildname} = $args{buildname} || '_build';
   my $verbose   = $self->{verbose}   = $args{verbose};
@@ -67,6 +68,7 @@ sub new
         $pm =~ s/::/\//g;
         require $pm;
       }
+      push @{ $self->{alien} }, $alien;
       push @{ $self->{cflags} }, $self->platform->shellwords($alien->cflags);
       push @{ $self->{libs} }, $self->platform->shellwords($alien->libs);
     }
@@ -93,6 +95,8 @@ sub new
 
 =head2 libs
 
+=head2 alien
+
 =cut
 
 sub buildname { shift->{buildname} }
@@ -101,6 +105,7 @@ sub platform  { shift->{platform}  }
 sub verbose   { shift->{verbose}   }
 sub cflags    { shift->{cflags}    }
 sub libs      { shift->{libs}      }
+sub alien     { shift->{alien}     }
 
 =head2 source
 
@@ -224,6 +229,14 @@ sub build
   }
   
   $self->file;
+}
+
+=head2 clean
+
+=cut
+
+sub clean
+{
 }
 
 1;

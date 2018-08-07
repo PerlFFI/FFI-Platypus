@@ -37,3 +37,4 @@ pod_coverage:
     - FFI::Build::File::Fortran#accept_suffix
     - FFI::Build::File::C#build
     - FFI::Build::File::Object#build
+    - FFI::Build::MM
