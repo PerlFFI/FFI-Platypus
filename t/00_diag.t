@@ -13,6 +13,7 @@ $modules{$_} = $_ for qw(
   Capture::Tiny
   ExtUtils::MakeMaker
   FFI::Platypus
+  File::Copy
   IPC::Cmd
   JSON::PP
   List::Util

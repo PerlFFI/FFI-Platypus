@@ -13,17 +13,17 @@ use FFI::Platypus;
 
 subtest 'basic' => sub {
 
-  my $lib = FFI::Build->new('foo');
-  isa_ok $lib, 'FFI::Build';
-  like $lib->file->path, qr/foo/, 'foo is somewhere in the native name for the lib';
-  note "lib.file.path = @{[ $lib->file->path ]}";
+  my $build = FFI::Build->new('foo');
+  isa_ok $build, 'FFI::Build';
+  like $build->file->path, qr/foo/, 'foo is somewhere in the native name for the lib';
+  note "lib.file.path = @{[ $build->file->path ]}";
 
-  ok(-d $lib->file->dirname, "dir is a dir" );
-  isa_ok $lib->platform, 'FFI::Build::Platform';
+  ok(-d $build->file->dirname, "dir is a dir" );
+  isa_ok $build->platform, 'FFI::Build::Platform';
 
-  $lib->source('corpus/*.c');
+  $build->source('corpus/*.c');
   
-  my($cfile) = $lib->source;
+  my($cfile) = $build->source;
   isa_ok $cfile, 'FFI::Build::File::C';
 
 };
@@ -47,17 +47,17 @@ subtest 'file classes' => sub {
 
 subtest 'build' => sub {
 
-  my $lib = FFI::Build->new('foo', 
+  my $build = FFI::Build->new('foo', 
     dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project1' ),
     buildname => "tmpbuild.tmpbuild.$$.@{[ time ]}",
     verbose   => 1,
   );
   
-  $lib->source('corpus/ffi_build/project1/*.c');
-  note "$_" for $lib->source;
+  $build->source('corpus/ffi_build/project1/*.c');
+  note "$_" for $build->source;
 
   my($out, $dll, $error) = capture_merged {
-    my $dll = eval { $lib->build };
+    my $dll = eval { $build->build };
     ($dll, $@);
   };
 
@@ -87,8 +87,8 @@ subtest 'build' => sub {
   );
 
   cleanup(
-    $lib->file->dirname,
-    File::Spec->catdir(qw( corpus ffi_build project1 ), $lib->buildname)
+    $build->file->dirname,
+    File::Spec->catdir(qw( corpus ffi_build project1 ), $build->buildname)
   );
 
 };
@@ -98,18 +98,18 @@ subtest 'build c++' => sub {
   plan skip_all => 'Test requires C++ compiler'
     unless eval { FFI::Build::Platform->which(FFI::Build::Platform->cxx) };
 
-  my $lib = FFI::Build->new('foo', 
+  my $build = FFI::Build->new('foo', 
     dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project-cxx' ),
     buildname => "tmpbuild.$$.@{[ time ]}",,
     verbose   => 1,
   );
   
-  $lib->source('corpus/ffi_build/project-cxx/*.cxx');
-  $lib->source('corpus/ffi_build/project-cxx/*.cpp');
-  note "$_" for $lib->source;
+  $build->source('corpus/ffi_build/project-cxx/*.cxx');
+  $build->source('corpus/ffi_build/project-cxx/*.cpp');
+  note "$_" for $build->source;
 
   my($out, $dll, $error) = capture_merged {
-    my $dll = eval { $lib->build };
+    my $dll = eval { $build->build };
     ($dll, $@);
   };
 
@@ -138,9 +138,12 @@ subtest 'build c++' => sub {
     "42",
   );
 
+  undef $ffi;
+  $build->clean;
+
   cleanup(
-    $lib->file->dirname,
-    File::Spec->catdir(qw( corpus ffi_build project-cxx ), $lib->buildname)
+    $build->file->dirname,
+    File::Spec->catdir(qw( corpus ffi_build project-cxx ), $build->buildname)
   );
 
 };
@@ -154,17 +157,17 @@ subtest 'Fortran' => sub {
     unless eval { require FFI::Platypus::Lang::Fortran };
   
 
-  my $lib = FFI::Build->new('foo', 
+  my $build = FFI::Build->new('foo', 
     dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project-fortran' ),
     buildname => "tmpbuild.$$.@{[ time ]}",
     verbose   => 1,
   );
   
-  $lib->source('corpus/ffi_build/project-fortran/add*.f*');
-  note "$_" for $lib->source;
+  $build->source('corpus/ffi_build/project-fortran/add*.f*');
+  note "$_" for $build->source;
 
   my($out, $dll, $error) = capture_merged {
-    my $dll = eval { $lib->build };
+    my $dll = eval { $build->build };
     ($dll, $@);
   };
 
@@ -203,8 +206,8 @@ subtest 'Fortran' => sub {
   );
   
   cleanup(
-    $lib->file->dirname,
-    File::Spec->catdir(qw( corpus ffi_build project-fortran ), $lib->buildname)
+    $build->file->dirname,
+    File::Spec->catdir(qw( corpus ffi_build project-fortran ), $build->buildname)
   );
 
 };
@@ -215,18 +218,18 @@ subtest 'alien' => sub {
     unless eval { require Acme::Alien::DontPanic; Acme::Alien::DontPanic->VERSION("1.03") };
 
 
-  my $lib = FFI::Build->new('bar',
+  my $build = FFI::Build->new('bar',
     dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project2' ),
     buildname => "tmpbuild.$$.@{[ time ]}",
     verbose   => 1,
     alien     => ['Acme::Alien::DontPanic'],
   );
   
-  $lib->source('corpus/ffi_build/project2/*.c');
-  note "$_" for $lib->source;
+  $build->source('corpus/ffi_build/project2/*.c');
+  note "$_" for $build->source;
 
   my($out, $dll, $error) = capture_merged {
-    my $dll = eval { $lib->build };
+    my $dll = eval { $build->build };
     ($dll, $@);
   };
 
@@ -251,8 +254,8 @@ subtest 'alien' => sub {
   );
 
   cleanup(
-    $lib->file->dirname,
-    File::Spec->catdir(qw( corpus ffi_build project2 ), $lib->buildname)
+    $build->file->dirname,
+    File::Spec->catdir(qw( corpus ffi_build project2 ), $build->buildname)
   );
 };
 

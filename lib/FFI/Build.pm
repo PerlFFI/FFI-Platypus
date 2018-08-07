@@ -9,6 +9,7 @@ use File::Glob ();
 use File::Basename ();
 use List::Util 1.45 ();
 use Capture::Tiny ();
+use File::Path ();
 
 # ABSTRACT: Build shared libraries for use with FFI::Platypus
 # VERSION
@@ -204,6 +205,22 @@ sub build
     push @objects, $output;
   }
   
+  my $needs_rebuild = sub {
+    my(@objects) = @_;
+    return 1 unless -f $self->file->path;
+    my $target_time = [stat $self->file->path]->[9];
+    foreach my $object (@objects)
+    {
+      my $object_time = [stat "$object"]->[9];
+      return 1 if $object_time > $target_time;
+    }
+    return 0;
+  };
+  
+  return $self->file unless $needs_rebuild->(@objects);
+  
+  File::Path::mkpath($self->file->dirname, 0, 0755);
+  
   my @cmd = (
     $ld,
     $self->platform->ldflags,
@@ -237,6 +254,18 @@ sub build
 
 sub clean
 {
+  my($self) = @_;
+  my $dll = $self->file->path;
+  unlink $dll if -f $dll;
+  foreach my $source ($self->source)
+  {
+    my $dir = File::Spec->catdir($source->dirname, $self->buildname);
+    if(-d $dir)
+    {
+      unlink $_ for File::Glob::bsd_glob("$dir/*");
+      rmdir $dir;
+    }
+  }
 }
 
 1;

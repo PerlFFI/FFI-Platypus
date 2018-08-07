@@ -8,6 +8,8 @@ use FFI::Build;
 use JSON::PP ();
 use File::Glob ();
 use File::Basename ();
+use File::Path ();
+use File::Copy ();
 
 # ABSTRACT: FFI::Build installer code for ExtUtils::MakeMaker
 # VERSION
@@ -28,7 +30,9 @@ sub mm_args
   
   if($args{DISTNAME})
   {
-    my $self->{prop}->{distname} = $args{DISTNAME};
+    $self->{prop}->{distname} ||= $args{DISTNAME};
+    $self->{prop}->{share}    ||= "blib/lib/auto/share/dist/@{[ $self->distname ]}";
+    $self->{prop}->{arch}     ||= "blib/arch/auto/@{[ join '/', split /-/, $self->distname ]}";
     $self->save_prop;
   }
   else
@@ -61,11 +65,37 @@ sub mm_args
 
 sub distname { shift->{prop}->{distname} }
 
+sub sharedir
+{
+  my($self, $new) = @_;
+  
+  if(defined $new)
+  {
+    $self->{prop}->{share} = $new;
+    $self->save_prop;
+  }
+  
+  $self->{prop}->{share};
+}
+
+sub archdir
+{
+  my($self, $new) = @_;
+  
+  if(defined $new)
+  {
+    $self->{prop}->{arch} = $new;
+    $self->save_prop;
+  }
+  
+  $self->{prop}->{arch};
+}
+
 sub load_builder
 {
   my($self, $dir, $name, $install) = @_;
   return unless -d $dir;
-  my($fbx) = File::Glob::bsd_glob("$dir/*.fbx");
+  my($fbx) = File::Glob::bsd_glob("./$dir/*.fbx");
   
   my $options;
   my $platform = FFI::Build::Platform->default;
@@ -90,20 +120,25 @@ sub load_builder
   }
   
   $options->{platform} ||= $platform;
-  $options->{dir}      ||= $install;
+  $options->{dir}      ||= ref $install ? $install->($options) : $install;
+  $options->{verbose}  = 1 unless defined $options->{verbose};
   FFI::Build->new($name, %$options);
 }
 
 sub build
 {
   my($self) = @_;
-  $self->{build} ||= $self->load_builder('ffi', undef, "blib/lib/auto/share/dist/@{[ $self->distname ]}/lib");
+  $self->{build} ||= $self->load_builder('ffi', undef, $self->sharedir . "/lib");
 }
 
 sub test
 {
   my($self) = @_;
-  $self->{test} ||= $self->load_builder('t/ffi', 'test');
+  $self->{test} ||= $self->load_builder('t/ffi', 'test', sub {
+    my($opt) = @_;
+    my $buildname = $opt->{buildname} || '_build';
+    "t/ffi/$buildname";
+  });
 }
 
 sub save_prop
@@ -117,7 +152,11 @@ sub save_prop
 sub load_prop
 {
   my($self) = @_;
-  return unless -f 'fbx.json';
+  unless(-f 'fbx.json')
+  {
+    $self->{prop} = {};
+    return;
+  }
   open my $fh, '<', 'fbx.json';
   $self->{prop} = JSON::PP::decode_json(do { local $/; <$fh> });
   close $fh;
@@ -139,6 +178,24 @@ sub mm_postamble
   my($self) = @_;
   
   my $postamble = '';
+
+  # make fbx_realclean ; make clean
+  $postamble .= "realclean :: fbx_clean\n" .
+                "\n" .
+                "fbx_clean:\n" .
+                "\t\$(FULLPERL) -MFFI::Build::MM=cmd -e fbx_clean\n\n";
+  
+  # make fbx_build; make
+  $postamble .= "pure_all :: fbx_build\n" .
+                "\n" .
+                "fbx_build:\n" .
+                "\t\$(FULLPERL) -MFFI::Build::MM=cmd -e fbx_build\n\n";
+
+  # make fbx_test; make test
+  $postamble .= "subdirs-test_dynamic subdirs-test_static subdirs-test :: fbx_test\n" .
+                "\n" .
+                "fbx_test:\n" .
+                "\t\$(FULLPERL) -MFFI::Build::MM=cmd -e fbx_test\n\n";
   
   $postamble;
 }
@@ -158,25 +215,41 @@ sub import
 
       no warnings 'once';
       
-      *ffi_build = sub {
-        my $build = $mm->()->build;
+      *fbx_build = sub {
+        my $mm = $mm->();
+        my $build = $mm->build;
         if($build)
         {
           $build->build;
           if(-d 'ffi/include')
           {
-            # TODO: copy include files into the share directory too
+            File::Path::mkpath($mm->sharedir . "/include", 0, 0755);
+            foreach my $h (File::Glob::bsd_glob('ffi/include/*.h'))
+            {
+              File::Copy::cp($h, $build->sharedir . "/include");
+            }
+          }
+          if($mm->archdir)
+          {
+            File::Path::mkpath($mm->archdir, 0, 0755);
+            my $archfile = File::Spec->catfile($mm->archdir, File::Basename::basename($mm->archdir) . ".txt");
+            open my $fh, '>', $archfile;
+            print $fh "FFI::Build\@@{[ $mm->distname ]}\n";
+            close $fh;
           }
         }
+        ();
       };
       
-      *ffi_build_test = sub {
+      *fbx_test = sub {
         my $build = $mm->()->test;
         $build->build if $build;
+        ();
       };
       
-      *ffi_build_clean = sub {
+      *fbx_clean = sub {
         $mm->()->clean;
+        ();
       };
     }
   }
