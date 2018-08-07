@@ -63,11 +63,17 @@ sub build
   $object;
 }
 
+sub cc
+{
+  my($self) = @_;
+  $self->platform->cc;
+}
+
 sub _base_args
 {
   my($self) = @_;
   my @cmd = (
-    $self->platform->cc,
+    $self->cc,
     $self->platform->cflags,
   );
   push @cmd, @{ $self->library->cflags } if $self->library;

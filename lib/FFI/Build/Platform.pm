@@ -158,12 +158,12 @@ The C++ compiler that naturally goes with the C compiler.
 
 sub cxx
 {
-  my($self) = @_;
+  my $self = _self(shift);
   if($self->{config}->{ccname} eq 'gcc')
   {
     if($self->cc =~ /clang/)
     {
-      return 'clang';
+      return 'clang++';
     }
     else
     {
@@ -188,7 +188,7 @@ The Fortran compiler that naturally goes with the C compiler.
 
 sub for
 {
-  my($self) = @_;
+  my $self = _self(shift);
   if($self->{config}->{ccname} eq 'gcc')
   {
     return 'gfortran';
