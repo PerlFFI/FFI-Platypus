@@ -41,7 +41,7 @@ subtest 'headers' => sub {
 
   note "cflags=$_" for @{ $build->cflags };
 
-  my $file = FFI::Build::File::C->new([qw( corpus ffi_build_file_c foo2.c )], builder => $build );
+  my $file = FFI::Build::File::C->new([qw( corpus ffi_build_file_c foo2.c )], build => $build );
   
   my @deps = eval { $file->_deps };
   is $@, '', 'no die';

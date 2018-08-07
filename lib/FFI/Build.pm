@@ -169,7 +169,7 @@ path:
         {
           if($path =~ $regex)
           {
-            push @{ $self->{source} }, $class->new($path, platform => $self->platform, builder => $self);
+            push @{ $self->{source} }, $class->new($path, platform => $self->platform, build => $self);
             next path;
           }
         }

@@ -27,12 +27,12 @@ sub build_item
   $oname .= $self->platform->object_suffix;
 
   my $buildname = '_build';
-  $buildname = $self->builder->buildname if $self->builder;
+  $buildname = $self->build->buildname if $self->build;
 
   my $object = FFI::Build::File::Object->new(
     [ $self->dirname, $buildname, $oname ],
     platform => $self->platform,
-    builder  => $self->builder,
+    build    => $self->build,
   );
   
   return $object if -f $object->path && !$object->needs_rebuild($self->_deps);
@@ -55,7 +55,7 @@ sub build_item
     print $out;
     die "error building $object from $self";
   }
-  elsif($self->builder && $self->builder->verbose)
+  elsif($self->build && $self->build->verbose)
   {
     print $out;
   }
@@ -76,7 +76,7 @@ sub _base_args
     $self->cc,
     $self->platform->cflags,
   );
-  push @cmd, @{ $self->builder->cflags } if $self->builder;
+  push @cmd, @{ $self->build->cflags } if $self->build;
   push @cmd, $self->platform->extra_system_inc;
   @cmd;
 }

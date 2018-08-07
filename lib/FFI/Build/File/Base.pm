@@ -28,12 +28,12 @@ sub new
 
   my $base     = $config{base} || 'ffi_build_';
   my $dir      = $config{dir};
-  my $builder  = $config{builder};
+  my $build    = $config{build};
   my $platform = $config{platform} || FFI::Build::Platform->new;
 
   my $self = bless {
     platform => $platform,
-    builder  => $builder,
+    build    => $build,
   }, $class;
   
   if(!defined $content)
@@ -131,9 +131,9 @@ You can call C<keep>, to keep the file.
 
 The L<FFI::Build::Platform> instance used for this file object.
 
-=head2 builder
+=head2 build
 
- my $build = $file->builder;
+ my $build = $file->build;
 
 The L<FFI::Build> instance used for this file object, if any.
 
@@ -144,7 +144,7 @@ sub basename  { File::Basename::basename shift->{path} }
 sub dirname   { File::Basename::dirname  shift->{path} }
 sub is_temp   { shift->{temp}                          }
 sub platform  { shift->{platform}                      }
-sub builder   { shift->{builder}                       }
+sub build     { shift->{build}                         }
 
 =head2 native
 
@@ -195,9 +195,9 @@ sub keep
   delete shift->{temp};
 }
 
-=head2 build
+=head2 build_item
 
- $file->build;
+ $file->build_item;
 
 Builds the file into its natural output type, usually an object file.  It returns a new file instance,
 or if the file is an object file then it returns empty list.

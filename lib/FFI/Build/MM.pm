@@ -91,7 +91,7 @@ sub archdir
   $self->{prop}->{arch};
 }
 
-sub load_builder
+sub load_build
 {
   my($self, $dir, $name, $install) = @_;
   return unless -d $dir;
@@ -128,13 +128,13 @@ sub load_builder
 sub build
 {
   my($self) = @_;
-  $self->{build} ||= $self->load_builder('ffi', undef, $self->sharedir . "/lib");
+  $self->{build} ||= $self->load_build('ffi', undef, $self->sharedir . "/lib");
 }
 
 sub test
 {
   my($self) = @_;
-  $self->{test} ||= $self->load_builder('t/ffi', 'test', sub {
+  $self->{test} ||= $self->load_build('t/ffi', 'test', sub {
     my($opt) = @_;
     my $buildname = $opt->{buildname} || '_build';
     "t/ffi/$buildname";
