@@ -4,6 +4,7 @@ use Test::More;
 use lib 't/lib';
 use Test::Cleanup;
 use FFI::Build::Library;
+use FFI::Build::Platform;
 use File::Temp qw( tempdir );
 use Capture::Tiny qw( capture_merged );
 use File::Spec;
@@ -95,11 +96,7 @@ subtest 'build' => sub {
 subtest 'build c++' => sub {
 
   plak skip_all 'Test requires C++ compiler'
-    unless do {
-      require IPC::Cmd;
-      require FFI::Build::Platform;
-      IPC::Cmd::can_run(FFI::Build::Platform->cxx);
-    };
+    unless FFI::Build::Platform->which(FFI::Build::Platform->cxx);
 
   my $lib = FFI::Build::Library->new('foo', 
     dir       => tempdir( DIR => 'corpus/ffi_build_library/project-cxx' ),

@@ -23,7 +23,7 @@ sub build
   my($self) = @_;
 
   my $oname = $self->basename;
-  $oname =~ s/\.c$//;
+  $oname =~ s/\.c(xx|pp)?$//;
   $oname .= $self->platform->object_suffix;
 
   my $buildname = '_build';

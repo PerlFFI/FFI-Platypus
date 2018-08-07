@@ -5,14 +5,11 @@ use lib 't/lib';
 use Test::Cleanup;
 use FFI::Build::File::CXX;
 use FFI::Build::Library;
+use FFI::Build::Platform;
 use Capture::Tiny qw( capture_merged );
 
 plak skip_all 'Test requires C++ compiler'
-  unless do {
-    require IPC::Cmd;
-    require FFI::Build::Platform;
-    IPC::Cmd::can_run(FFI::Build::Platform->cxx);
-  };
+  unless FFI::Build::Platform->which(FFI::Build::Platform->cxx);
 
 subtest 'basic' => sub {
 

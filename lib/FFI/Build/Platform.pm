@@ -222,7 +222,11 @@ sub _uniq
   List::Util::uniq(@_);
 }
 
-sub _shellwords
+=head2 shellwords
+
+=cut
+
+sub shellwords
 {
   my $self = _self(shift);
   if($self->osname eq 'MSWin32')
@@ -245,7 +249,7 @@ sub cflags
 {
   my $self = _self(shift);
   my @cflags;
-  push @cflags, _uniq grep /^-fPIC$/i, $self->_shellwords($self->{config}->{cccdlflags});
+  push @cflags, _uniq grep /^-fPIC$/i, $self->shellwords($self->{config}->{cccdlflags});
   _context_args @cflags;
 }
 
@@ -274,7 +278,7 @@ sub ldflags
   }
   else
   {
-    push @ldflags, _uniq grep /^-shared$/i, $self->_shellwords($self->{config}->{lddlflags});
+    push @ldflags, _uniq grep /^-shared$/i, $self->shellwords($self->{config}->{lddlflags});
   }
   _context_args @ldflags;
 }
@@ -287,7 +291,7 @@ sub extra_system_inc
 {
   my $self = _self(shift);
   my @dir;
-  push @dir, _uniq grep /^-I(.*)$/, $self->_shellwords(map { $self->{config}->{$_} } qw( ccflags ccflags_nolargefiles cppflags ));
+  push @dir, _uniq grep /^-I(.*)$/, $self->shellwords(map { $self->{config}->{$_} } qw( ccflags ccflags_nolargefiles cppflags ));
   _context_args @dir;  
 }
 
@@ -299,7 +303,7 @@ sub extra_system_lib
 {
   my $self = _self(shift);
   my @dir;
-  push @dir, _uniq grep /^-L(.*)$/, $self->_shellwords(map { $self->{config}->{$_} } qw( lddlflags ldflags ldflags_nolargefiles ));
+  push @dir, _uniq grep /^-L(.*)$/, $self->shellwords(map { $self->{config}->{$_} } qw( lddlflags ldflags ldflags_nolargefiles ));
   _context_args @dir;  
 }
 
@@ -390,6 +394,17 @@ sub flag_library_output
   {
     return ('-o' => $file);
   }
+}
+
+=head2 which
+
+=cut
+
+sub which
+{
+  my(undef, $command) = @_;
+  require IPC::Cmd;
+  IPC::Cmd::can_run($command);
 }
 
 =head2 diag

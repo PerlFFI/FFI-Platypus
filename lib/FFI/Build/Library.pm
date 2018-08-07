@@ -9,7 +9,6 @@ use File::Glob ();
 use File::Basename ();
 use List::Util 1.45 ();
 use Capture::Tiny ();
-use Text::ParseWords ();
 
 # ABSTRACT: Library builder class for native dynamic libraries
 # VERSION
@@ -49,12 +48,12 @@ sub new
 
   if(defined $args{cflags})
   {
-    $self->{cflags} = ref $args{cflags} ? [ @{ $args{cflags} } ]: [Text::ParseWords::shellwords($args{cflags})];
+    $self->{cflags} = ref $args{cflags} ? [ @{ $args{cflags} } ]: [$self->platform->shellwords($args{cflags})];
   }
   
   if(defined $args{libs})
   {
-    $self->{libs} = ref $args{libs} ? [ @{ $args{libs} } ] : [Text::ParseWords::shellwords($args{libs})];
+    $self->{libs} = ref $args{libs} ? [ @{ $args{libs} } ] : [$self->platform->shellwords($args{libs})];
   }
   
   $self;
