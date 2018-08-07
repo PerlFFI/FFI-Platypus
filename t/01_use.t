@@ -11,6 +11,5 @@ require_ok 'FFI::Build::File::CXX';
 require_ok 'FFI::Build::File::Fortran';
 require_ok 'FFI::Build::File::Object';
 require_ok 'FFI::Build::File::Library';
-require_ok 'FFI::Build::Library';
 
 done_testing;

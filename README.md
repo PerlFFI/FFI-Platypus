@@ -2,6 +2,40 @@
 
 Build shared libraries for use with FFI::Platypus
 
+# SYNOPSIS
+
+# DESCRIPTION
+
+# CONSTRUCTOR
+
+## new
+
+# METHODS
+
+## dir
+
+## buildname
+
+## file
+
+## platform
+
+## verbose
+
+## cflags
+
+## libs
+
+## alien
+
+## source
+
+## source
+
+## build
+
+## clean
+
 # AUTHOR
 
 Graham Ollis <plicease@cpan.org>

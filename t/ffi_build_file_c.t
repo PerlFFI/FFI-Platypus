@@ -4,7 +4,7 @@ use Test::More;
 use lib 't/lib';
 use Test::Cleanup;
 use FFI::Build::File::C;
-use FFI::Build::Library;
+use FFI::Build;
 use Capture::Tiny qw( capture_merged );
 
 subtest 'basic' => sub {
@@ -34,7 +34,7 @@ subtest 'compile' => sub {
 
 subtest 'headers' => sub {
 
-  my $lib = FFI::Build::Library->new('foo',
+  my $lib = FFI::Build->new('foo',
     verbose => 1,
     cflags  => "-Icorpus/ffi_build_file_c/include",
   );

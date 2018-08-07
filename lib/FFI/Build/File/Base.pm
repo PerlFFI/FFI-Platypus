@@ -135,7 +135,7 @@ The L<FFI::Build::Platform> instance used for this file object.
 
  my $library = $file->library;
 
-The L<FFI::Build::Library> instance used for this file object, if any.
+The L<FFI::Build> instance used for this file object, if any.
 
 =cut
 

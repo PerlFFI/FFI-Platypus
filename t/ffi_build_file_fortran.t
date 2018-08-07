@@ -4,7 +4,7 @@ use Test::More;
 use lib 't/lib';
 use Test::Cleanup;
 use FFI::Build::File::Fortran;
-use FFI::Build::Library;
+use FFI::Build;
 use FFI::Build::Platform;
 use Capture::Tiny qw( capture_merged );
 

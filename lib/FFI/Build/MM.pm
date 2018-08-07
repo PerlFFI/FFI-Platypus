@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 use Carp ();
-use FFI::Build::Library;
+use FFI::Build;
 use JSON::PP ();
 use File::Glob ();
 use File::Basename ();
@@ -91,7 +91,7 @@ sub load_builder
   
   $options->{platform} ||= $platform;
   $options->{dir}      ||= $install;
-  FFI::Build::Library->new($name, %$options);
+  FFI::Build->new($name, %$options);
 }
 
 sub build
