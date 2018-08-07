@@ -200,6 +200,39 @@ sub mm_postamble
   $postamble;
 }
 
+sub action_build
+{
+  my($self) = @_;
+  my $build = $self->build;
+  if($build)
+  {
+    $build->build;
+    if($self->archdir)
+    {
+      File::Path::mkpath($self->archdir, 0, 0755);
+      my $archfile = File::Spec->catfile($self->archdir, File::Basename::basename($self->archdir) . ".txt");
+      open my $fh, '>', $archfile;
+      print $fh "FFI::Build\@@{[ $self->distname ]}\n";
+      close $fh;
+    }
+  }
+  return;
+}
+
+sub action_test
+{
+  my($self) = @_;
+  my $build = $self->test;
+  $build->build if $build;
+}
+
+sub action_clean
+{
+  my($self) = @_;
+  my $build = $self->clean;
+  ();
+}
+
 sub import
 {
   my(undef, @args) = @_;
@@ -210,46 +243,23 @@ sub import
       package main;
       
       my $mm = sub {
-        FFI::Build::MM->new;
+        my($action) = @_;
+        my $build = FFI::Build::MM->new;
+        $build->$action;
       };
 
       no warnings 'once';
       
       *fbx_build = sub {
-        my $mm = $mm->();
-        my $build = $mm->build;
-        if($build)
-        {
-          $build->build;
-          if(-d 'ffi/include')
-          {
-            File::Path::mkpath($mm->sharedir . "/include", 0, 0755);
-            foreach my $h (File::Glob::bsd_glob('ffi/include/*.h'))
-            {
-              File::Copy::cp($h, $build->sharedir . "/include");
-            }
-          }
-          if($mm->archdir)
-          {
-            File::Path::mkpath($mm->archdir, 0, 0755);
-            my $archfile = File::Spec->catfile($mm->archdir, File::Basename::basename($mm->archdir) . ".txt");
-            open my $fh, '>', $archfile;
-            print $fh "FFI::Build\@@{[ $mm->distname ]}\n";
-            close $fh;
-          }
-        }
-        ();
+        $mm->('action_build');
       };
       
       *fbx_test = sub {
-        my $build = $mm->()->test;
-        $build->build if $build;
-        ();
+        $mm->('action_test');
       };
       
       *fbx_clean = sub {
-        $mm->()->clean;
-        ();
+        $mm->('action_clean');
       };
     }
   }
