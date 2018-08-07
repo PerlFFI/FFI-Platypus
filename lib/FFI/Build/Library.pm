@@ -72,6 +72,8 @@ sub new
     }
   }
   
+  $self->source(ref $args{source} ? @{ $args{source} } : ($args{source})) if $args{source};
+
   $self;
 }
 
@@ -183,18 +185,22 @@ sub build
 
   my @objects;
   
+  my $ld = $self->platform->ld;
+  
   foreach my $source ($self->source)
   {
+    $ld = $source->ld if $source->ld;
     my $output;
     while(my $next = $source->build)
     {
+      $ld = $next->ld if $next->ld;
       $output = $source = $next;
     }
     push @objects, $output;
   }
   
   my @cmd = (
-    $self->platform->ld,
+    $ld,
     $self->platform->ldflags,
     (map { "$_" } @objects),
     $self->platform->flag_library_output($self->file->path),
@@ -203,7 +209,6 @@ sub build
   );
   
   my($out, $exit) = Capture::Tiny::capture_merged(sub {
-    $DB::single = 1;
     print "+ @cmd\n";
     system @cmd;
   });

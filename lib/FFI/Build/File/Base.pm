@@ -230,6 +230,15 @@ sub needs_rebuild
   return 0;
 }
 
+=head2 ld
+
+=cut
+
+sub ld
+{
+  return undef;
+}
+
 sub DESTROY
 {
   my($self) = @_;

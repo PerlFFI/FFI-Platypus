@@ -21,4 +21,10 @@ sub cc
   $self->platform->for;
 }
 
+sub ld
+{
+  my($self) = @_;
+  $self->platform->for;
+}
+
 1;

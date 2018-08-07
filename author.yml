@@ -27,10 +27,13 @@ pod_coverage:
     - FFI::Build::File::Object#default_suffix
     - FFI::Build::File::Library#default_suffix
     - FFI::Build::File::C#cc
+    - FFI::Build::File::C#ld
     - FFI::Build::File::C#accept_suffix
     - FFI::Build::File::CXX#cc
+    - FFI::Build::File::CXX#ld
     - FFI::Build::File::CXX#accept_suffix
     - FFI::Build::File::Fortran#cc
+    - FFI::Build::File::Fortran#ld
     - FFI::Build::File::Fortran#accept_suffix
     - FFI::Build::File::C#build
     - FFI::Build::File::Object#build
