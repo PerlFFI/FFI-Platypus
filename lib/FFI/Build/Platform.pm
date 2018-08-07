@@ -321,7 +321,7 @@ sub flag_object_output
   }
   else
   {
-    return ['-o' => $file];
+    return ('-o' => $file);
   }
 }
 
@@ -339,7 +339,7 @@ sub flag_library_output
   }
   else
   {
-    return ['-o' => $file];
+    return ('-o' => $file);
   }
 }
 
