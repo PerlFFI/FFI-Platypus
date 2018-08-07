@@ -15,6 +15,8 @@ pod_spelling_system:
     - ldflags
     - buildname
     - libs
+    - cxx
+    - Fortran
 
 pod_coverage:
   skip: 0
@@ -23,6 +25,9 @@ pod_coverage:
   private:
     - FFI::Build::File::Object#default_suffix
     - FFI::Build::File::Library#default_suffix
+    - FFI::Build::File::C#cc
+    - FFI::Build::File::CXX#cc
     - FFI::Build::File::C#accept_suffix
+    - FFI::Build::File::CXX#accept_suffix
     - FFI::Build::File::C#build
     - FFI::Build::File::Object#build
