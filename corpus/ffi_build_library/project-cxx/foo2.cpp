@@ -1,3 +1,5 @@
+// This requires C++11 (I believe)
+// TODO: support older c++ compilers.
 #include <iostream>
 
 class Foo2 {
