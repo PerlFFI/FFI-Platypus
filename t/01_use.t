@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 
+require_ok 'App::fbx';
 require_ok 'FFI::Build';
 require_ok 'FFI::Build::MM';
 require_ok 'FFI::Build::Platform';

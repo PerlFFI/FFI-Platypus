@@ -24,6 +24,7 @@ pod_coverage:
   # format is "Class#method" or "Class",regex allowed
   # for either Class or method.
   private:
+    - App::fbx#main
     - FFI::Build::File::Object#default_suffix
     - FFI::Build::File::Library#default_suffix
     - FFI::Build::File::C#cc
