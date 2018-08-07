@@ -92,4 +92,60 @@ subtest 'build' => sub {
 
 };
 
+subtest 'build c++' => sub {
+
+  plak skip_all 'Test requires C++ compiler'
+    unless do {
+      require IPC::Cmd;
+      require FFI::Build::Platform;
+      IPC::Cmd::can_run(FFI::Build::Platform->cxx);
+    };
+
+  my $lib = FFI::Build::Library->new('foo', 
+    dir       => tempdir( DIR => 'corpus/ffi_build_library/project-cxx' ),
+    buildname => "$$.@{[ time ]}",
+    verbose   => 1,
+  );
+  
+  $lib->source('corpus/ffi_build_library/project-cxx/*.cxx');
+  $lib->source('corpus/ffi_build_library/project-cxx/*.cpp');
+  note "$_" for $lib->source;
+
+  my($out, $dll, $error) = capture_merged {
+    my $dll = eval { $lib->build };
+    ($dll, $@);
+  };
+
+  ok $error eq '', 'no error';
+
+  if($error)
+  {
+    diag $out;
+    return;
+  }
+  else
+  {
+    note $out;
+  }
+  
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($dll);
+  
+  is(
+    $ffi->function(foo1 => [] => 'int')->call,
+    42,
+  );
+
+  is(
+    $ffi->function(foo2 => [] => 'string')->call,
+    "42",
+  );
+
+  cleanup(
+    $lib->file->dirname,
+    File::Spec->catdir(qw( corpus ffi_build_library project1 ), $lib->buildname)
+  );
+
+};
+
 done_testing;
