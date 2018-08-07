@@ -48,12 +48,28 @@ sub new
 
   if(defined $args{cflags})
   {
-    $self->{cflags} = ref $args{cflags} ? [ @{ $args{cflags} } ]: [$self->platform->shellwords($args{cflags})];
+    push @{ $self->{cflags} }, ref $args{cflags} ? @{ $args{cflags} } : $self->platform->shellwords($args{cflags});
   }
   
   if(defined $args{libs})
   {
-    $self->{libs} = ref $args{libs} ? [ @{ $args{libs} } ] : [$self->platform->shellwords($args{libs})];
+    push @{ $self->{libs} }, ref $args{libs} ? @{ $args{libs} } : $self->platform->shellwords($args{libs});
+  }
+  
+  if(defined $args{alien})
+  {
+    my @aliens = ref $args{alien} ? @{ $args{alien} } : ($args{alien});
+    foreach my $alien (@aliens)
+    {
+      unless(eval { $alien->can('cflags') && $alien->can('libs') })
+      {
+        my $pm = "$alien.pm";
+        $pm =~ s/::/\//g;
+        require $pm;
+      }
+      push @{ $self->{cflags} }, $self->platform->shellwords($alien->cflags);
+      push @{ $self->{libs} }, $self->platform->shellwords($alien->libs);
+    }
   }
   
   $self;
@@ -180,10 +196,10 @@ sub build
   my @cmd = (
     $self->platform->ld,
     $self->platform->ldflags,
-    @{ $self->libs },
-    $self->platform->extra_system_lib,
     (map { "$_" } @objects),
     $self->platform->flag_library_output($self->file->path),
+    @{ $self->libs },
+    $self->platform->extra_system_lib,
   );
   
   my($out, $exit) = Capture::Tiny::capture_merged(sub {

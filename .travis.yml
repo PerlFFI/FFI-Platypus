@@ -7,6 +7,7 @@ install:
   - cpanm -n Dist::Zilla
   - dzil authordeps --missing | cpanm -n
   - dzil listdeps   --missing | cpanm -n
+  - cpanm Acme::Alien::DontPanic
 
 perl:
   - "5.14"

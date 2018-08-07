@@ -209,4 +209,51 @@ subtest 'Fortran' => sub {
 
 };
 
+subtest 'alien' => sub {
+
+  plan skip_all => 'Test requires Acme::Alien::DontPanic 1.03'
+    unless eval { require Acme::Alien::DontPanic; Acme::Alien::DontPanic->VERSION("1.03") };
+
+
+  my $lib = FFI::Build::Library->new('bar',
+    dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build_library/project2' ),
+    buildname => "tmpbuild.$$.@{[ time ]}",
+    verbose   => 1,
+    alien     => ['Acme::Alien::DontPanic'],
+  );
+  
+  $lib->source('corpus/ffi_build_library/project2/*.c');
+  note "$_" for $lib->source;
+
+  my($out, $dll, $error) = capture_merged {
+    my $dll = eval { $lib->build };
+    ($dll, $@);
+  };
+
+  ok $error eq '', 'no error';
+
+  if($error)
+  {
+    diag $out;
+    return;
+  }
+  else
+  {
+    note $out;
+  }
+  
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($dll);
+
+  is(
+    $ffi->function(myanswer => [] => 'int')->call,
+    42,
+  );
+
+  cleanup(
+    $lib->file->dirname,
+    File::Spec->catdir(qw( corpus ffi_build_library project2 ), $lib->buildname)
+  );
+};
+
 done_testing;
