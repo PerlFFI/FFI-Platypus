@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - update the package method to work with FFI-Build
 
 0.50      2018-06-01 07:58:33 -0400
   - Additional diagnostics

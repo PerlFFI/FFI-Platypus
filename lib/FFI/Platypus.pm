@@ -934,16 +934,37 @@ sub package
 {
   my($self, $module, $modlibname) = @_;
 
-  require FFI::Platypus::ShareConfig;  
-  my @dlext = @{ FFI::Platypus::ShareConfig->get("config_dlext") };
-
   ($module, $modlibname) = caller() unless defined $modlibname;  
   my @modparts = split /::/, $module;
   my $modfname = $modparts[-1];
   my $modpname = join('/',@modparts);
   my $c = @modparts;
   $modlibname =~ s,[\\/][^\\/]+$,, while $c--;    # Q&D basename
+
+  {
+    my @maybe = (
+      "$modlibname/auto/$modpname/$modfname.txt",
+      "$modlibname/../arch/auto/$modpname/$modfname.txt",
+    );
+    foreach my $file (@maybe)
+    {
+      if(-f $file)
+      {
+        open my $fh, '<', $file;
+        my $line = <$fh>;
+        close $fh;
+        if($line =~ /^FFI::Build\@(.*)$/)
+        {
+          $self->lib("$modlibname/$1");
+          return $self;
+        }
+      }
+    }
+  }
   
+  require FFI::Platypus::ShareConfig;  
+  my @dlext = @{ FFI::Platypus::ShareConfig->get("config_dlext") };
+
   foreach my $dlext (@dlext)
   {
     my $file = "$modlibname/auto/$modpname/$modfname.$dlext";
