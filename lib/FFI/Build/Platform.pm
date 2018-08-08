@@ -288,6 +288,10 @@ sub ldflags
     no warnings 'qw';
     push @ldflags, qw( -mdll -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
   }
+  elsif($self->osname eq 'darwin')
+  {
+    push @ldflags, '-shared';
+  }
   else
   {
     push @ldflags, _uniq grep /^-shared$/i, $self->shellwords($self->{config}->{lddlflags});

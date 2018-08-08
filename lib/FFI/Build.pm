@@ -27,7 +27,7 @@ use File::Path ();
 sub _native_name
 {
   my($self, $name) = @_;
-  join '', $self->platform->library_prefix, $name, $self->platform->library_suffix;
+  join '', $self->platform->library_prefix, $name, scalar $self->platform->library_suffix;
 }
 
 sub new
