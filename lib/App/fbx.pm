@@ -42,6 +42,15 @@ sub main
     {
       $mm->clean;
     }
+    elsif($command eq 'all')
+    {
+      my $build = $mm->build;
+      $build->build if $build;
+      undef $mm;
+      $mm = FFI::Build::MM->new;
+      $build = $mm->test;
+      $build->build if $build;
+    }
     else
     {
       die "unknown command: $command";

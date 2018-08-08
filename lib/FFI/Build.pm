@@ -225,9 +225,9 @@ sub build
     $ld,
     $self->platform->ldflags,
     (map { "$_" } @objects),
-    $self->platform->flag_library_output($self->file->path),
     @{ $self->libs },
     $self->platform->extra_system_lib,
+    $self->platform->flag_library_output($self->file->path),
   );
   
   my($out, $exit) = Capture::Tiny::capture_merged(sub {
