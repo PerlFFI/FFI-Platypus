@@ -10,6 +10,7 @@ use Capture::Tiny qw( capture_merged );
 use File::Spec;
 use File::Path qw( rmtree );
 use FFI::Platypus;
+use File::Glob qw( bsd_glob );
 
 subtest 'basic' => sub {
 
@@ -47,49 +48,61 @@ subtest 'file classes' => sub {
 
 subtest 'build' => sub {
 
-  my $build = FFI::Build->new('foo', 
-    dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project1' ),
-    buildname => "tmpbuild.tmpbuild.$$.@{[ time ]}",
-    verbose   => 1,
-  );
-  
-  $build->source('corpus/ffi_build/project1/*.c');
-  note "$_" for $build->source;
-
-  my($out, $dll, $error) = capture_merged {
-    my $dll = eval { $build->build };
-    ($dll, $@);
-  };
-
-  ok $error eq '', 'no error';
-
-  if($error)
+  foreach my $type (qw( name object ))
   {
-    diag $out;
-    return;
-  }
-  else
-  {
-    note $out;
-  }
   
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($dll);
+    subtest $type => sub {
+
+      my $build = FFI::Build->new('foo', 
+        dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project1' ),
+        buildname => "tmpbuild.tmpbuild.$$.@{[ time ]}",
+        verbose   => 1,
+      );
+
+      my @source = $type eq 'name'
+        ? ('corpus/ffi_build/project1/*.c')
+        : (map { FFI::Build::File::C->new($_) } bsd_glob('corpus/ffi_build/project1/*.c'));
+      $build->source(@source);
+      note "$_" for $build->source;
+
+      my($out, $dll, $error) = capture_merged {
+        my $dll = eval { $build->build };
+        ($dll, $@);
+      };
+
+      ok $error eq '', 'no error';
+
+      if($error)
+      {
+        diag $out;
+        return;
+      }
+      else
+      {
+        note $out;
+      }
+    
+      my $ffi = FFI::Platypus->new;
+      $ffi->lib($dll);
   
-  is(
-    $ffi->function(foo1 => [] => 'int')->call,
-    42,
-  );
+      is(
+        $ffi->function(foo1 => [] => 'int')->call,
+        42,
+      );
 
-  is(
-    $ffi->function(foo2 => [] => 'string')->call,
-    "42",
-  );
+      is(
+        $ffi->function(foo2 => [] => 'string')->call,
+        "42",
+      );
+  
+      $build->clean;
 
-  cleanup(
-    $build->file->dirname,
-    File::Spec->catdir(qw( corpus ffi_build project1 ), $build->buildname)
-  );
+      cleanup(
+        $build->file->dirname,
+        File::Spec->catdir(qw( corpus ffi_build project1 ), $build->buildname)
+      );
+    };
+  }
 
 };
 
