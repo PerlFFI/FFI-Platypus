@@ -6,7 +6,7 @@ use File::Temp qw( tempdir );
 
 my $lib = tempdir( CLEANUP => 1 );
 
-my @cmd = ( 'cpanm', '-n', '-l' => $lib, 'FFI::TinyCC', 'FFI::Platypus::Type::StringArray', );
+my @cmd = ( 'cpanm', '-n', '-l' => $lib, 'FFI::TinyCC', 'FFI::TinyCC::Inline', 'FFI::Platypus::Type::StringArray', );
 print "+ @cmd\n";
 system @cmd;
 exit 2 if $?;
