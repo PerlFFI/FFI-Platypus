@@ -18,6 +18,8 @@ pod_spelling_system:
     - cxx
     - Fortran
     - shellwords
+    - libffi
+    - fbx
 
 pod_coverage:
   skip: 0

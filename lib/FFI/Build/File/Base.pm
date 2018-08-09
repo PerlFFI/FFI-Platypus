@@ -14,11 +14,57 @@ use overload '""' => sub { $_[0]->path };
 
 =head1 SYNOPSIS
 
+Create your own file class
+
+ package FFI::Build::File::Foo;
+ use base qw( FFI::Build::File::Base );
+ use constant default_suffix => '.foo';
+ use constant default_encoding => ':utf8';
+
+Use it:
+
+ # use an existing file in the filesystem
+ my $file = FFI::Build::File::Foo->new('src/myfile.foo');
+ 
+ # generate a temp file with provided content
+ # file will be deletd when $file falls out of scope.
+ my $file = FFI::Build::File::Foo->new(\'content for a temp foo');
+ 
+
 =head1 DESCRIPTION
+
+This class is the base class for other L<FFI::Build::File> classes.
 
 =head1 CONSTRUCTOR
 
 =head2 new
+
+ my $file = FFI::Build::File::Base->new(\$content, %options);
+ my $file = FFI::Build::File::Base->new($filename, %options);
+
+Create a new instance of the file class.  You may provide either the
+content of the file as a scalar reference, or the path to an existing
+filename.  Options:
+
+=over 4
+
+=item base
+
+The base name for any temporary file C<ffi_build_> by default.
+
+=item build
+
+The L<FFI::Build> instance to use.
+
+=item dir
+
+The directory to store any temporary file.
+
+=item platform
+
+The L<FFI::Build::Platform> instance to use.
+
+=back
 
 =cut
 

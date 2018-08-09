@@ -10,6 +10,51 @@ use File::Basename qw( basename dirname );
 # ABSTRACT: Command line interface to FFI::Build
 # VERSION
 
+=head1 SYNOPSIS
+
+Create a script named C<fbx>:
+
+ #!/usr/bin/env perl
+ use App::fbx;
+ exit App::fbx->main(@ARGV);
+
+=head1 DESCRIPTION
+
+This module provides a command line interface to L<FFI::Build::MM>,
+which allows you to build libraries for a distribution in a development
+environment without invoking L<ExtUtils::MakeMaker> or L<Dist::Zilla>.
+
+At the moment a script invoking this module is not provided, but it may
+be added if/when this module is spun off from the rest of L<FFI::Build>.
+
+=head1 COMMANDS
+
+=head2 fbx all
+
+ ./fbx all
+
+Build the library in C<./ffi> and C<./t/ffi>.
+
+=head2 fbx build
+
+ ./fbx build
+
+Builds the library in C<./ffi>.
+
+=head2 fbx test
+
+ ./fbx test
+
+Builds the library in C<./t/ffi>.
+
+=head2 fbx clean
+
+ ./fbx clean
+
+Remove the libraries and intermediate files from C<./ffi> and C<./t/ffi>.
+
+=cut
+
 sub main
 {
   my(undef, @ARGV) = @_;

@@ -10,6 +10,18 @@ use constant default_encoding => ':utf8';
 # ABSTRACT: Class to track C source file in FFI::Build
 # VERSION
 
+=head1 SYNOPSIS
+
+ use FFI::Build::File::CXX;
+ 
+ my $c = FFI::Build::File::CXX->new('src/foo.cxx');
+
+=head1 DESCRIPTION
+
+File class for C++ source files.
+
+=cut
+
 sub accept_suffix
 {
   (qr/\.c(xx|pp)$/)

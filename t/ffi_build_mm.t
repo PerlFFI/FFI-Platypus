@@ -3,7 +3,7 @@ use warnings;
 use Test::More;
 use FFI::Build::MM;
 use Capture::Tiny qw( capture_merged );
-use FFI::Platypus;
+use FFI::Platypus 0.51;
 use File::Glob qw( bsd_glob );
 
 sub dont_save_prop (&)

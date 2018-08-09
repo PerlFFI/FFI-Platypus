@@ -14,6 +14,50 @@ use File::Copy ();
 # ABSTRACT: FFI::Build installer code for ExtUtils::MakeMaker
 # VERSION
 
+=head1 SYNOPSIS
+
+In your Makefile.PL:
+
+ use ExtUtils::MakeMaker;
+ use FFI::Build::MM;
+ 
+ my $fbmm = Alien::Build::MM->new;
+ 
+ WriteMakefile($fbmm->mm_args(
+   ABSTRACT     => 'My FFI extension',
+   DISTNAME     => 'Foo-Bar-Baz-FFI',
+   NAME         => 'Foo::Bar::Baz::FFI',
+   VERSION_FROM => 'lib/Foo/Bar/Baz/FFI.pm',
+   ...
+ ));
+ 
+ sub MY::postamble {
+   $fbmm->mm_postamble;
+ }
+
+Then put the C, C++ or Fortran files in C<./ffi> for your runtime library
+and C<./t/ffi> for your test time library.
+
+=head1 DESCRIPTION
+
+This module provides a thin layer between L<FFI::Build> and L<ExtUtils::MakeMaker>.
+Its interface is influenced by the design of L<Alien::Build::MM>.  The idea is that
+for your distribution you throw some C, C++ or Fortran source files into a directory
+called C<ffi> and these files will be compiled and linked into a library that can
+be used by your module.  There is a control file C<ffi/*.fbx> which can be used to
+control the compiler and linker options.  (options passed directly into L<FFI::Build>).
+The interface for this file is still under development.
+
+=head1 CONSTRUCTOR
+
+=head2 new
+
+ my $fbmm = FFI::Build::MM->new;
+
+Create a new instance of L<FFI::Build::MM>.
+
+=cut
+
 sub new
 {
   my($class) = @_;
@@ -23,6 +67,24 @@ sub new
   
   $self;
 }
+
+=head1 METHODS
+
+=head2 mm_args
+
+ my %new_args = $fbmm->mm_args(%old_args);
+
+This method does two things:
+
+=over 4
+
+=item reads the arguments to determine sensible defaults (library name, install location, etc).
+
+=item adjusts the arguments as necessary and returns an updated set of arguments.
+
+=back
+
+=cut
 
 sub mm_args
 {
@@ -172,6 +234,34 @@ sub clean
   }
   unlink 'fbx.json' if -f 'fbx.json';
 }
+
+=head2 mm_postamble
+
+ my $postamble = $fbmm->mm_postamble;
+
+This returns the Makefile postamble used by L<ExtUtils::MakeMaker>.  The synopsis above for
+how to invoke it properly.  It adds the following Make targets:
+
+=over 4
+
+=item fbx_build
+
+build the main runtime library in C<./ffi>.
+
+=item fbx_test
+
+Build the test library in C<./t/ffi>.
+
+=item fbx_clean
+
+Clean any runtime or test libraries already built.
+
+=back
+
+Normally you do not need to build these targets manually, they will be built automatically
+at the appropriate stage.
+
+=cut
 
 sub mm_postamble
 {

@@ -15,11 +15,21 @@ use Capture::Tiny ();
 
 =head1 SYNOPSIS
 
+ use FFI::Build::Platform;
+
 =head1 DESCRIPTION
+
+This class is used to abstract out the platform specific parts of the L<FFI::Build> system.
+You shouldn't need to use it directly in most cases, unless you are working on L<FFI::Build>
+itself.
 
 =head1 CONSTRUCTOR
 
 =head2 new
+
+ my $platform = FFI::Build::Platform->new;
+
+Create a new instance of L<FFI::Build::Platform>.
 
 =cut
 
@@ -34,6 +44,10 @@ sub new
 }
 
 =head2 default
+
+ my $platform = FFI::Build::Platform->default;
+
+Returns the default instance of L<FFI::Build::Platform>.
 
 =cut
 
@@ -70,7 +84,13 @@ sub _self
 
 =head1 METHODS
 
+All of these methods may be called either as instance or classes
+methods.  If called as a class method, the default instance will
+be used.
+
 =head2 osname
+
+ my $osname = $platform->osname;
 
 The "os name" as understood by Perl.  This is the same as C<$^O>.
 
@@ -83,6 +103,8 @@ sub osname
 
 =head2 object_suffix
 
+ my $suffix = $platform->object_suffix;
+
 The object suffix for the platform.  On UNIX this is usually C<.o>.  On Windows this
 is usually C<.obj>.
 
@@ -94,6 +116,9 @@ sub object_suffix
 }
 
 =head2 library_suffix
+
+ my(@suffix) = $platform->library_suffix;
+ my $suffix  = $platform->library_suffix;
 
 The library suffix for the platform.  On Linux and some other UNIX this is often C<.so>.
 On OS X, this is C<.dylib> and C<.bundle>.  On Windows this is C<.dll>.
@@ -120,6 +145,8 @@ sub library_suffix
 
 =head2 library_prefix
 
+ my $prefix = $platform->library_prefix;
+
 The library prefix for the platform.  On Unix this is usually C<lib>, as in C<libfoo>.
 
 =cut
@@ -141,6 +168,8 @@ sub library_prefix
 
 =head2 cc
 
+ my $cc = $platform->cc;
+
 The C compiler
 
 =cut
@@ -151,6 +180,8 @@ sub cc
 }
 
 =head2 cxx
+
+ my $cxx = $platform->cxx;
 
 The C++ compiler that naturally goes with the C compiler.
 
@@ -188,6 +219,8 @@ sub cxx
 
 =head2 for
 
+ my $for = $platform->for;
+
 The Fortran compiler that naturally goes with the C compiler.
 
 =cut
@@ -213,6 +246,8 @@ sub for
 
 =head2 ld
 
+ my $ld = $platform->ld;
+
 The C linker
 
 =cut
@@ -222,19 +257,17 @@ sub ld
   shift->{config}->{ld};
 }
 
-=head2 cflags
-
-The compiler flags needed to compile object files that can be linked into a dynamic library.
-On Linux, for example, this is usually -fPIC.
-
-=cut
-
 sub _uniq
 {
   List::Util::uniq(@_);
 }
 
 =head2 shellwords
+
+ my @words = $platform->shellwords(@strings);
+
+This is a wrapper around L<Text::ParseWords>'s C<shellwords> with some platform  workarounds
+applied.
 
 =cut
 
@@ -257,6 +290,15 @@ sub _context_args
   wantarray ? @_ : join ' ', @_;
 }
 
+=head2 cflags
+
+ my $cflags = $platform->cflags;
+
+The compiler flags needed to compile object files that can be linked into a dynamic library.
+On Linux, for example, this is usually -fPIC.
+
+=cut
+
 sub cflags
 {
   my $self = _self(shift);
@@ -266,6 +308,12 @@ sub cflags
 }
 
 =head2 ldflags
+
+ my $ldflags = $platform->ldflags;
+
+The linker flags needed to link object files into a dynamic library.  This is NOT the C<libs> style library
+flags that specify the location and name of a library to link against, this is instead the flags that tell
+the linker to generate a dynamic library.  On Linux, for example, this is usually C<-shared>.
 
 =cut
 
@@ -301,6 +349,10 @@ sub ldflags
 
 =head2 extra_system_inc
 
+ my @dir = $platform->extra_syste_inc;
+
+Extra include directory flags, such as C<-I/usr/local/include>, which were configured when Perl was built.
+
 =cut
 
 sub extra_system_inc
@@ -313,6 +365,10 @@ sub extra_system_inc
 
 =head2 extra_system_lib
 
+ my @dir = $platform->extra_syste_lib;
+
+Extra library directory flags, such as C<-L/usr/local/lib>, which were configured when Perl was built.
+
 =cut
 
 sub extra_system_lib
@@ -324,6 +380,10 @@ sub extra_system_lib
 }
 
 =head2 cc_mm_works
+
+ my $flags = $platform->cc_mm_works;
+
+Returns the flags that can be passed into the C compiler to compute dependencies.
 
 =cut
 
@@ -378,6 +438,10 @@ sub cc_mm_works
 
 =head2 flag_object_output
 
+ my $flag = $platform->flag_object_output($object_filename);
+
+Returns the flags that the compiler recognizes as being used to write out to a specific object filename.
+
 =cut
 
 sub flag_object_output
@@ -396,6 +460,10 @@ sub flag_object_output
 
 =head2 flag_library_output
 
+ my $flag = $platform->flag_library_output($library_filename);
+
+Returns the flags that the compiler recognizes as being used to write out to a specific library filename.
+
 =cut
 
 sub flag_library_output
@@ -413,6 +481,10 @@ sub flag_library_output
 }
 
 =head2 which
+
+ my $path = $platform->which($command);
+
+Returns the full path of the given command, if it is available, otherwise C<undef> is returned.
 
 =cut
 

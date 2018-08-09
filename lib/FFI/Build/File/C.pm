@@ -13,6 +13,18 @@ use FFI::Build::File::Object;
 # ABSTRACT: Class to track C source file in FFI::Build
 # VERSION
 
+=head1 SYNOPSIS
+
+ use FFI::Build::File::C;
+ 
+ my $c = FFI::Build::File::C->new('src/foo.c');
+
+=head1 DESCRIPTION
+
+File class for C source files.
+
+=cut
+
 sub accept_suffix
 {
   (qr/\.c$/)

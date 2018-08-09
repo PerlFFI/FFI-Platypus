@@ -9,7 +9,7 @@ use File::Temp qw( tempdir );
 use Capture::Tiny qw( capture_merged );
 use File::Spec;
 use File::Path qw( rmtree );
-use FFI::Platypus;
+use FFI::Platypus 0.51;
 use File::Glob qw( bsd_glob );
 
 subtest 'basic' => sub {

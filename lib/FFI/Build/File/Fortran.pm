@@ -10,6 +10,18 @@ use constant default_encoding => ':utf8';
 # ABSTRACT: Class to track Fortran source file in FFI::Build
 # VERSION
 
+=head1 SYNOPSIS
+
+ use FFI::Build::File::Fortran;
+ 
+ my $c = FFI::Build::File::C->new('src/foo.f');
+
+=head1 DESCRIPTION
+
+File class for Fortran source files.
+
+=cut
+
 sub accept_suffix
 {
   (qr/\.f(90|95)?$/)
