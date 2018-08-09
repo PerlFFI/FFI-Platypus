@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.51      2018-08-09 03:14:15 -0400
   - update the package method to work with FFI-Build
 
 0.50      2018-06-01 07:58:33 -0400
