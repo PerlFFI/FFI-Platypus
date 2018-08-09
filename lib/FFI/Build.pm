@@ -28,6 +28,7 @@ use File::Path ();
  my $lib = $build->build;
  
  my $ffi = FFI::Platypus->new;
+ # The filename will be platform dependant, but something like libfrooble.so or frooble.dll
  $ffi->lib($lib->path);
  
  ... # use $ffi to attach functions in ffi/*.c
