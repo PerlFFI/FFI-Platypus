@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Testing: moved libtest to t/ffi, using the same convention as FFI::Build
 
 0.51      2018-08-09 03:14:15 -0400
   - update the package method to work with FFI-Build

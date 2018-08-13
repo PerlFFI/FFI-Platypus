@@ -4,7 +4,7 @@ use Test::More tests => 3;
 use FFI::Platypus::Declare;
 use FFI::CheckLib;
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach string_matches_foobarbaz => ['opaque'] => 'int';
 attach string_return_foobarbaz  => [] => 'opaque';

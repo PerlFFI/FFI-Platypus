@@ -4,7 +4,7 @@ use Test::More tests => 6;
 use FFI::Platypus;
 use FFI::CheckLib;
 
-my $lib = find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+my $lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 note "lib=$lib";
 

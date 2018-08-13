@@ -17,7 +17,7 @@ use FFI::Platypus::Declare
 
 plan tests => 2;
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 attach [longdouble_add => 'add'] => [longdouble,longdouble] => longdouble;
 attach longdouble_pointer_test => [longdouble_p, longdouble_p] => int;
 attach longdouble_array_test => [longdouble_a, int] => int;

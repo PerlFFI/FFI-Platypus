@@ -9,7 +9,7 @@ subtest 'basic' => sub {
 
   my $ffi = FFI::Platypus->new;
 
-  my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+  my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
   ok -e $lib, "exists $lib";
 
   eval { $ffi->lib($lib) };

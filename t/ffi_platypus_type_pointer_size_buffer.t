@@ -30,7 +30,7 @@ SKIP: {
 
 }
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach memcmp4 => ['buffer_t', 'buffer_t'] => 'int';
 

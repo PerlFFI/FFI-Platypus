@@ -5,7 +5,7 @@ use FFI::Platypus;
 use FFI::CheckLib;
 
 my $ffi = FFI::Platypus->new;
-$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 'libtest');
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
 $ffi->attach('f0' => ['uint8'] => 'uint8');
 $ffi->attach([f0=>'f1'] => ['uint8'] => 'uint8');

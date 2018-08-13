@@ -4,7 +4,7 @@ use Test::More tests => 5;
 use FFI::CheckLib;
 use FFI::Platypus;
 
-my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 subtest C => sub {
   plan tests => 4;

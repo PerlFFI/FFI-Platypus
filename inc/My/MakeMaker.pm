@@ -111,11 +111,11 @@ sub action_clean
 {
   My::AutoConf->clean;
   unlink $_ for map { bsd_glob($_) } (
-    'libtest/*.o',
-    'libtest/*.obj',
-    'libtest/*.so',
-    'libtest/*.dll',
-    'libtest/*.bundle',
+    't/ffi/*.o',
+    't/ffi/*.obj',
+    't/ffi/*.so',
+    't/ffi/*.dll',
+    't/ffi/*.bundle',
     'examples/*.o',
     'examples/*.so',
     'examples/*.dll',

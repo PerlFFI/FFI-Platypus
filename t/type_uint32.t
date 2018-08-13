@@ -14,7 +14,7 @@ use FFI::Platypus::Declare
   ['uint32 []' => 'uint32_a2'],
   ['(uint32)->uint32' => 'uint32_c'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [uint32_add => 'add'] => [uint32, uint32] => uint32;
 attach [uint32_inc => 'inc'] => [uint32_p, uint32] => uint32_p;

@@ -14,7 +14,7 @@ use FFI::Platypus::Declare
   ['uint16 []' => 'uint16_a2'],
   ['(uint16)->uint16' => 'uint16_c'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [uint16_add => 'add'] => [uint16, uint16] => uint16;
 attach [uint16_inc => 'inc'] => [uint16_p, uint16] => uint16_p;

@@ -9,7 +9,7 @@ use FFI::Platypus::Declare
   ['sint8 []' => 'sint8_a2'],
   ['(sint8)->sint8' => 'sint8_c'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [sint8_add => 'add'] => [sint8, sint8] => sint8;
 attach [sint8_inc => 'inc'] => [sint8_p, sint8] => sint8_p;

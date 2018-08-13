@@ -7,7 +7,7 @@ use FFI::Platypus::Declare
   ['string(10)' => 'string_10'],
   ['string(5)'  => 'string_5'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach 'string_matches_foobarbaz'     => [string] => int;
 attach 'string_return_foobarbaz'      => []       => string;

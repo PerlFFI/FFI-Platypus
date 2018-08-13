@@ -1,6 +1,6 @@
 /*
  * DO NOT MODIFY THIS FILE.
- * Thisfile generated from similar file libtest/float.c
+ * Thisfile generated from similar file t/ffi/float.c
  * all instances of "float" have been changed to "double"
  */
 #include "libtest.h"

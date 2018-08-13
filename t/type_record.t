@@ -4,7 +4,7 @@ use Test::More tests => 2;
 use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
 
-my $lib = find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+my $lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 my $record_size = My::FooRecord->ffi_record_size;
 note "record size = $record_size";
 

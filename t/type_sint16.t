@@ -14,7 +14,7 @@ use FFI::Platypus::Declare
   ['sint16 []' => 'sint16_a2'],
   ['(sint16)->sint16' => 'sint16_c'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [sint16_add => 'add'] => [sint16, sint16] => sint16;
 attach [sint16_inc => 'inc'] => [sint16_p, sint16] => sint16_p;

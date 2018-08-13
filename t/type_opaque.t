@@ -5,7 +5,7 @@ use FFI::CheckLib;
 use FFI::Platypus::Declare qw( opaque int void string );
 use FFI::Platypus::Memory qw( malloc free );
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [pointer_null => 'null']           => []          => opaque;
 attach [pointer_is_null => 'is_null']     => [opaque]    => int;

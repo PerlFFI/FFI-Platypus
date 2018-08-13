@@ -5,7 +5,7 @@ use FFI::Platypus;
 use FFI::CheckLib;
 
 my $ffi = FFI::Platypus->new;
-$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 'libtest');
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
 subtest 'cast from string to pointer' => sub {
   plan tests => 2;

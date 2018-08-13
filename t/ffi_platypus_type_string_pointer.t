@@ -6,7 +6,7 @@ use FFI::Platypus::Declare
   qw( int string void ),
   [ '::StringPointer' => 'string_p'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 attach string_pointer_pointer_get => [string_p] => string;
 attach string_pointer_pointer_set => [string_p, string] => void;
 attach pointer_pointer_is_null => [string_p] => int;

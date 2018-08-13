@@ -14,7 +14,7 @@ use FFI::Platypus::Declare
   ['sint32 []' => 'sint32_a2'],
   ['(sint32)->sint32' => 'sint32_c'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [sint32_add => 'add'] => [sint32, sint32] => sint32;
 attach [sint32_inc => 'inc'] => [sint32_p, sint32] => sint32_p;

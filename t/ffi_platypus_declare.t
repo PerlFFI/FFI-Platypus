@@ -9,7 +9,7 @@ do {
   use FFI::CheckLib;
   use FFI::Platypus::Declare;
 
-  lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+  lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
   attach 'f0', ['uint8'] => 'uint8';
   attach [f0 => 'f1'], ['uint8'] => 'uint8';
   
@@ -41,7 +41,7 @@ do {
     'string',
     [int => 'myint'];
   
-  lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+  lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
   attach [my_atoi=>'atoi'], [string] => myint;
   
   

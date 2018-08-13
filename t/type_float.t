@@ -9,7 +9,7 @@ use FFI::Platypus::Declare
   ['float []' => 'float_a2'],
   ['(float)->float' => 'float_c'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [float_add => 'add'] => [float, float] => float;
 attach [float_inc => 'inc'] => [float_p, float] => float_p;

@@ -14,7 +14,7 @@ use FFI::Platypus::Declare
 
 plan tests => 1;
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach ['complex_float_get_real' => 'creal'] => [complex_float] => float;
 attach ['complex_float_get_imag' => 'cimag'] => [complex_float] => float;

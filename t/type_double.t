@@ -14,7 +14,7 @@ use FFI::Platypus::Declare
   ['double []' => 'double_a2'],
   ['(double)->double' => 'double_c'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [double_add => 'add'] => [double, double] => double;
 attach [double_inc => 'inc'] => [double_p, double] => double_p;

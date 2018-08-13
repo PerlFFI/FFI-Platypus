@@ -4,7 +4,7 @@ use Test::More tests => 2;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( void opaque );
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 my $closure = closure {
   die "omg i don't want to die!";

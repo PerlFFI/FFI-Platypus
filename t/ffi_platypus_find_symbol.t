@@ -9,7 +9,7 @@ subtest external => sub {
   plan tests => 2;
 
   my $ffi = FFI::Platypus->new;
-  $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 'libtest');
+  $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
   my $good = $ffi->find_symbol('f0');
   ok $good, "ffi.find_symbol(f0) = $good";

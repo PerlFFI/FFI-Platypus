@@ -37,14 +37,14 @@ sub build
       $compile_count++;
     }
     $obj_name;
-  } bsd_glob("libtest/*.c");
+  } bsd_glob("t/ffi/*.c");
   
   return unless $compile_count > 0;
   
   if($^O ne 'MSWin32')
   {
     my $dll = $b->link(
-      lib_file           => $b->lib_file(File::Spec->catfile($root, 'libtest', $b->object_file('libtest.c'))),
+      lib_file           => $b->lib_file(File::Spec->catfile($root, 't/ffi', $b->object_file('libtest.c'))),
       objects            => \@obj,
       extra_linker_flags => $extra_linker_flags,
     );
@@ -72,7 +72,7 @@ sub build
   {
     # On windows we can't depend on MM::CBuilder to make the .dll file because it creates dlls
     # that export only one symbol (which is used for bootstrapping XS modules).
-    my $dll = File::Spec->catfile($FindBin::Bin, 'libtest', 'libtest.dll');
+    my $dll = File::Spec->catfile($FindBin::Bin, 't/ffi', 'libtest.dll');
     $dll =~ s{\\}{/}g;
     my @cmd;
     my $cc = $Config{cc};

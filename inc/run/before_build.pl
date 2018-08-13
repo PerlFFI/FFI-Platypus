@@ -25,7 +25,7 @@ if(@ARGV > 0)
 
 foreach my $bits (qw( 16 32 64 ))
 {
-  foreach my $orig (qw( libtest/uint8.c libtest/sint8.c t/type_uint8.t t/type_sint8.t ))
+  foreach my $orig (qw( t/ffi/uint8.c t/ffi/sint8.c t/type_uint8.t t/type_sint8.t ))
   {
     my $new = $orig;
     $new =~ s/8/$bits/;
@@ -65,7 +65,7 @@ foreach my $bits (qw( 16 32 64 ))
 
 foreach my $type (qw( double ))
 {
-  foreach my $orig (qw( libtest/float.c t/type_float.t ))
+  foreach my $orig (qw( t/ffi/float.c t/type_float.t ))
   {
     my $new = $orig;
     $new =~ s/float/$type/;

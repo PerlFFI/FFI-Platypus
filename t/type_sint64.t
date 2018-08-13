@@ -14,7 +14,7 @@ use FFI::Platypus::Declare
   ['sint64 []' => 'sint64_a2'],
   ['(sint64)->sint64' => 'sint64_c'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 'libtest';
+lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 attach [sint64_add => 'add'] => [sint64, sint64] => sint64;
 attach [sint64_inc => 'inc'] => [sint64_p, sint64] => sint64_p;

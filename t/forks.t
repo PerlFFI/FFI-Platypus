@@ -7,7 +7,7 @@ use FFI::Platypus;
 
 plan tests => 2;
 
-my $ffi = FFI::Platypus->new(lib => find_lib(lib => 'test', symbol => 'f0', libpath => 'libtest' ));
+my $ffi = FFI::Platypus->new(lib => find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi' ));
 
 sub f0
 {

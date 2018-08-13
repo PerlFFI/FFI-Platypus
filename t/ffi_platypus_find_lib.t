@@ -5,6 +5,6 @@ use File::Spec;
 use FFI::Platypus;
 
 my $ffi = FFI::Platypus->new;
-$ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 'libtest');
+$ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
 my $address = $ffi->find_symbol('f0');
 ok $address, "found f0 = $address";

@@ -1,6 +1,6 @@
 /*
  * DO NOT MODIFY THIS FILE.
- * Thisfile generated from similar file libtest/uint8.c
+ * Thisfile generated from similar file t/ffi/uint8.c
  * all instances of "int8" have been changed to "int64"
  */
 #include "libtest.h"
