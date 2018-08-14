@@ -75,7 +75,7 @@ Not all flags are supported on all platforms.  You can test if a flag is availab
    ...
  }
 
-Typically where flags are not mutally exclusive, they can be or'd together:
+Typically where flags are not mutually exclusive, they can be or'd together:
 
  my $handle = dlopen("libfoo.so", RTLD_LAZY | RTLD_GLOBAL);
 

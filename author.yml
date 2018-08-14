@@ -93,6 +93,7 @@ pod_spelling_system:
     - dlopen
     - dlsym
     - libdl
+    - or'd
 
 pod_coverage:
   skip: 0
