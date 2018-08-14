@@ -39,10 +39,6 @@
 extern "C" {
 #endif
 
-#ifndef RTLD_LAZY
-#define RTLD_LAZY 0
-#endif
-
 #ifdef PERL_OS_WINDOWS
 
 void *windlopen(const char *, int);

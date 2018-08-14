@@ -82,6 +82,12 @@ windlopen(const char *filename, int flags)
   {
     handle->is_null = 0;
     handle->os_handle = LoadLibrary(filename);
+    if(handle->os_handle == NULL)
+    {
+      free(handle);
+      error = "Error loading file";
+      return NULL;
+    }
   }
   
   handle->flags = flags;
