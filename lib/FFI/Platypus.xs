@@ -65,7 +65,7 @@ BOOT:
   MY_CXT.have_math_longdouble = -1;
   MY_CXT.have_math_complex    = -1;
 #ifndef HAVE_IV_IS_64
-    PERL_MATH_INT64_LOAD_OR_CROAK;
+  PERL_MATH_INT64_LOAD_OR_CROAK;
 #endif
 }
 
