@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.52_02   2018-08-14 08:05:07 -0400
   - Added standard RTLD_ constants to FFI::Platypus::DL
   - Fixed long standing but till now unused bug on Windows where dlopen was
     returning a handle for libraries that weren't actually being loaded.
