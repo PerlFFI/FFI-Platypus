@@ -1,7 +1,13 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More tests;
 use FFI::Platypus;
+
+subtest 'basic' => sub {
+  my $ffi = eval { FFI::Platypus->new };
+  diag $@ if $@;
+  isa_ok $ffi, 'FFI::Platypus';
+};
 
 subtest 'no arguments' => sub {
   plan tests => 2;
@@ -23,3 +29,5 @@ subtest 'with multiple lib' => sub {
   isa_ok $ffi, 'FFI::Platypus', 'FFI::Platypus.new';
   is_deeply [$ffi->lib], ['libfoo.so', 'libbar.so', 'libbaz.so'], 'ffi.lib';
 };
+
+done_testing;
