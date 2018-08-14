@@ -1,25 +1,26 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::DL
 
-int
-RTLD_DEFAULT()
-  PROTOTYPE: 
-  CODE:
+BOOT:
+{
+  HV *stash;
+  stash = gv_stashpv("FFI::Platypus::DL", TRUE);
 #ifdef RTLD_LAZY
-    RETVAL = RTLD_LAZY;
+  newCONSTSUB(stash, "RTLD_DEFAULT", newSViv(RTLD_LAZY));
+  newCONSTSUB(stash, "RTLD_PLATYPUS_DEFAULT", newSViv(RTLD_LAZY));
 #else
-    /* For windows, really */
-    RETVAL = 0;
+  newCONSTSUB(stash, "RTLD_DEFAULT", newSViv(0));
+  newCONSTSUB(stash, "RTLD_PLATYPUS_DEFAULT", newSViv(0));
 #endif
-  OUTPUT:
-    RETVAL
+}
 
 void *
 dlopen(filename, flags);
     ffi_pl_string filename
     int flags
-  PROTOTYPE: $$
+  INIT:
+    void *ptr;
   CODE:
-    void *ptr = dlopen(filename, flags);
+    ptr = dlopen(filename, flags);
     if(ptr == NULL)
     {
       XSRETURN_EMPTY;
@@ -33,15 +34,15 @@ dlopen(filename, flags);
 
 const char *
 dlerror();
-  PROTOTYPE: 
 
 void *
 dlsym(handle, symbol);
     void *handle
     const char *symbol
-  PROTOTYPE: $$
+  INIT:
+    void *ptr;
   CODE:
-    void *ptr = dlsym(handle, symbol);
+    ptr = dlsym(handle, symbol);
     if(ptr == NULL)
     {
       XSRETURN_EMPTY;
@@ -56,7 +57,6 @@ dlsym(handle, symbol);
 int
 dlclose(handle);
     void *handle
-  PROTOTYPE: $
   CODE:
     if(!PL_dirty)
       RETVAL = dlclose(handle);
