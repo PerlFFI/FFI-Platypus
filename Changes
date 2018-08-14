@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.52_01   2018-08-13 20:39:32 -0400
   - Testing: moved libtest to t/ffi, using the same convention as FFI::Build
   - Added FFI::Platypus::DL.  Previously this had been (under a different
     name) a private interface to libdl used by FFI::Platypus under the covers.
