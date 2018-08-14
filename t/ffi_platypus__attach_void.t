@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
@@ -18,3 +18,4 @@ is $i_ptr, 43, '$i_ptr = 43 after f2(\$i_ptr)';
 f2_implicit(\$i_ptr);
 is $i_ptr, 44, '$i_ptr = 44 after f2_implicit(\$i_ptr)';
 
+done_testing;

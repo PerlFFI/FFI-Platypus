@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   qw( int string void ),
@@ -15,15 +15,12 @@ attach string_pointer_pointer_return => [string] => string_p;
 attach pointer_null => [] => string_p;
 
 subtest 'arg pass in' => sub {
-  plan tests => 3;
   is string_pointer_pointer_get(\"hello there"), "hello there", "not null";
   is pointer_pointer_is_null(\undef), 1, "\\undef is null";
   is pointer_is_null(undef), 1, "undef is null";
 };
 
 subtest 'arg pass out' => sub {
-  plan tests => 2;
-
   my $string = '';
   string_pointer_pointer_set(\$string, "hi there");
   is $string, "hi there", "not null string = $string";
@@ -35,8 +32,6 @@ subtest 'arg pass out' => sub {
 };
 
 subtest 'return value' => sub {
-  plan tests => 3;
-  
   my $string = "once more onto";
 
   is_deeply string_pointer_pointer_return($string), \"once more onto", "not null string = $string";
@@ -45,3 +40,5 @@ subtest 'return value' => sub {
   is $value, undef, "null";
 
 };
+
+done_testing;

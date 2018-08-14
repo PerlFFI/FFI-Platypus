@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( void opaque );
 
@@ -25,3 +25,5 @@ do {
 like $warning, qr{omg i don't want to die};
 pass 'does not exit';
 note "warning = '$warning'";
+
+done_testing;

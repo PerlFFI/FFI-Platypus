@@ -15,8 +15,6 @@ use FFI::Platypus::Declare
   ['longdouble[3]' => 'longdouble_a3' ],
   ['longdouble[]'  => 'longdouble_a'  ];
 
-plan tests => 2;
-
 lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 attach [longdouble_add => 'add'] => [longdouble,longdouble] => longdouble;
 attach longdouble_pointer_test => [longdouble_p, longdouble_p] => int;
@@ -30,7 +28,6 @@ attach pointer_null => [] => longdouble_p;
 subtest 'with Math::LongDouble' => sub {
   plan skip_all => 'test requires Math::LongDouble'
     unless eval q{ use Math::LongDouble; 1 };
-  plan tests => 5;
   
   my $ld15 = Math::LongDouble->new(1.5);
   my $ld25 = Math::LongDouble->new(2.5);
@@ -38,14 +35,12 @@ subtest 'with Math::LongDouble' => sub {
   my $ld80 = Math::LongDouble->new(8.0);
 
   subtest 'scalar' => sub {
-    plan tests => 2;
     my $result = add($ld15, $ld25);
     isa_ok $result, 'Math::LongDouble';
     ok $result == $ld40, "add(1.5,2.5) = 4.0";
   };
   
   subtest 'pointer' => sub {
-    plan tests => 6;
     my $a = Math::LongDouble->new(1.5);
     my $b = Math::LongDouble->new(2.5);
     ok longdouble_pointer_test(\$a, \$b);
@@ -63,7 +58,6 @@ subtest 'with Math::LongDouble' => sub {
   my $ld30 = Math::LongDouble->new(3.0);
 
   subtest 'array fixed' => sub {
-    plan tests => 4;
     my $list = [ map { Math::LongDouble->new($_) } qw( 25.0 25.0 50.0 )];
     
     ok longdouble_array_test3($list, 3);
@@ -74,7 +68,6 @@ subtest 'with Math::LongDouble' => sub {
   };
 
   subtest 'array var' => sub {
-    plan tests => 4;
     my $list = [ map { Math::LongDouble->new($_) } qw( 25.0 25.0 50.0 )];
     
     ok longdouble_array_test($list, 3);
@@ -85,7 +78,6 @@ subtest 'with Math::LongDouble' => sub {
   };
   
   subtest 'array return' => sub {
-    plan tests => 3;
     my $list = longdouble_array_return_test();
     note "[", join(',', map { "$_" } @$list), "]";
     ok $list->[0] == $ld10;
@@ -95,8 +87,6 @@ subtest 'with Math::LongDouble' => sub {
 };
 
 subtest 'without Math::LongDouble' => sub {
-  plan tests => 5;
-
   if(FFI::Platypus::_have_math_longdouble())
   {
     note "You have Math::LongDouble, but for this test we are going to turn it off";
@@ -104,12 +94,10 @@ subtest 'without Math::LongDouble' => sub {
   }
 
   subtest 'scalar' => sub {
-    plan tests => 1;
     is add(1.5, 2.5), 4.0, "add(1.5,2.5) = 4";
   };
 
   subtest 'pointer' => sub {
-    plan tests => 5;
     my $a = 1.5;
     my $b = 2.5;
     ok longdouble_pointer_test(\$a, \$b);
@@ -122,7 +110,6 @@ subtest 'without Math::LongDouble' => sub {
   };
 
   subtest 'array fixed' => sub {
-    plan tests => 4;
     my $list = [ qw( 25.0 25.0 50.0 )];
     
     ok longdouble_array_test3($list, 3);
@@ -133,7 +120,6 @@ subtest 'without Math::LongDouble' => sub {
   };
 
   subtest 'array var' => sub {
-    plan tests => 4;
     my $list = [ qw( 25.0 25.0 50.0 )];
     
     ok longdouble_array_test($list, 3);
@@ -144,7 +130,6 @@ subtest 'without Math::LongDouble' => sub {
   };
 
   subtest 'array return' => sub {
-    plan tests => 3;
     my $list = longdouble_array_return_test();
     note "[", join(',', map { "$_" } @$list), "]";
     ok $list->[0] == 1.0;
@@ -152,3 +137,5 @@ subtest 'without Math::LongDouble' => sub {
     ok $list->[2] == 3.0;
   };
 };
+
+done_testing;

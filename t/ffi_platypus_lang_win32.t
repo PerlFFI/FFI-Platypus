@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More;
 use FFI::Platypus::Lang::Win32;
 
 my $map = FFI::Platypus::Lang::Win32->native_type_map;
@@ -12,3 +12,5 @@ foreach my $alias (sort keys %$map)
 }
 
 pass 'good';
+
+done_testing;

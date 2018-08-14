@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
@@ -8,8 +8,6 @@ my $ffi = FFI::Platypus->new;
 $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
 subtest 'cast from string to pointer' => sub {
-  plan tests => 2;
-
   my $string = "foobarbaz";
   my $pointer = $ffi->cast(string => opaque => $string);
   
@@ -23,8 +21,6 @@ subtest 'cast from string to pointer' => sub {
 };
 
 subtest 'cast from pointer to string' => sub {
-  plan tests => 2;
-
   my $pointer = $ffi->function(string_return_foobarbaz => [] => 'opaque')->call();
   my $string = $ffi->cast(opaque => string => $pointer);
   
@@ -38,8 +34,6 @@ subtest 'cast from pointer to string' => sub {
 };
 
 subtest 'cast closure to opaque' => sub {
-  plan tests => 4;
-
   my $testname = 'dynamic';
 
   my $closure = $ffi->closure(sub { is $_[0], "testvalue", $testname });
@@ -61,3 +55,5 @@ subtest 'cast closure to opaque' => sub {
   $ffi->function(string_set_closure => ['(string)->void'] => 'void')->call($pointer2);
   $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
 };
+
+done_testing;

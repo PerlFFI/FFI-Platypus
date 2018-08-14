@@ -6,8 +6,6 @@ use FFI::CheckLib;
 use FFI::Platypus;
 use Config;
 
-plan tests => 2;
-
 # if the perl was built under a chroot with a x64_64 kernel,
 # then the archcname may not be sufficient to verify that this
 # is a 32bit Perl.  Use $Config{longsize} to probe for 64bit Perls.
@@ -43,3 +41,5 @@ sub otherthread
 is(threads->create(\&otherthread)->join(), 22, 'works in a thread');
 
 is f0(24), 24, 'works in main thread';
+
+done_testing;

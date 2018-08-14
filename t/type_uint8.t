@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 20;
+use Test::More;
 use FFI::CheckLib;
 use FFI::Platypus::Declare
   'uint8', 'void', 'int', 'size_t',
@@ -62,21 +62,18 @@ set_closure($closure);
 is do { no warnings; call_closure(2) }, 0, 'call_closure(2) = 0';
 
 subtest 'custom type input' => sub {
-  plan tests => 2;
   custom_type type1 => { native_type => 'uint8', perl_to_native => sub { is $_[0], 2; $_[0]*2 } };
   attach [uint8_add => 'custom_add'] => ['type1',uint8] => uint8;
   is custom_add(2,1), 5, 'custom_add(2,1) = 5';
 };
 
 subtest 'custom type output' => sub {
-  plan tests => 2;
   custom_type type2 => { native_type => 'uint8', native_to_perl => sub { is $_[0], 2; $_[0]*2 } };
   attach [uint8_add => 'custom_add2'] => [uint8,uint8] => 'type2';
   is custom_add2(1,1), 4, 'custom_add2(1,1) = 4';
 };
 
 subtest 'custom type post' => sub {
-  plan tests => 2;
   custom_type type3 => { native_type => 'uint8', perl_to_native_post => sub { is $_[0], 1 } };
   attach [uint8_add => 'custom_add3'] => ['type3',uint8] => uint8;
   is custom_add3(1,2), 3, 'custom_add3(1,2) = 3';
@@ -84,3 +81,5 @@ subtest 'custom type post' => sub {
 
 attach [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => int;
 is closure_pointer_is_null(), 1, 'closure_pointer_is_null() = 1';
+
+done_testing;

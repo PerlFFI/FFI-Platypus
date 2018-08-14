@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More;
 use FFI::CheckLib;
 use FFI::Platypus::Memory qw( malloc );
 use FFI::Platypus::Declare
@@ -38,3 +38,5 @@ my $str1 = "test";
 my $str2 = "test2";
 is !!memcmp4($str1, $str2), 1;
 is memcmp4($str1, $str1), 0;
+
+done_testing;

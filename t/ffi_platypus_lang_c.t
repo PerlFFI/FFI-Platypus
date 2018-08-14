@@ -7,8 +7,6 @@ use FFI::Platypus;
 my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 subtest C => sub {
-  plan tests => 4;
-
   my $ffi = FFI::Platypus->new;
   $ffi->lib($libtest);
 

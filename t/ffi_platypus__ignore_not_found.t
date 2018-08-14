@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 6;
+use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
@@ -9,8 +9,6 @@ my $lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 note "lib=$lib";
 
 subtest 'ignore_not_found=undef' => sub {
-  plan tests => 4;
-
   my $ffi = FFI::Platypus->new;
   $ffi->lib($lib);
   
@@ -30,8 +28,6 @@ subtest 'ignore_not_found=undef' => sub {
 };
 
 subtest 'ignore_not_found=0' => sub {
-  plan tests => 4;
-
   my $ffi = FFI::Platypus->new;
   $ffi->lib($lib);
   $ffi->ignore_not_found(0);
@@ -51,8 +47,6 @@ subtest 'ignore_not_found=0' => sub {
 };
 
 subtest 'ignore_not_found=0 (constructor)' => sub {
-  plan tests => 4;
-
   my $ffi = FFI::Platypus->new( ignore_not_found => 0 );
   $ffi->lib($lib);
   
@@ -71,8 +65,6 @@ subtest 'ignore_not_found=0 (constructor)' => sub {
 };
 
 subtest 'ignore_not_found=1' => sub {
-  plan tests => 5;
-
   my $ffi = FFI::Platypus->new;
   $ffi->lib($lib);
   $ffi->ignore_not_found(1);
@@ -92,8 +84,6 @@ subtest 'ignore_not_found=1' => sub {
 };
 
 subtest 'ignore_not_found=1 (constructor)' => sub {
-  plan tests => 5;
-
   my $ffi = FFI::Platypus->new( ignore_not_found => 1 );
   $ffi->lib($lib);
   
@@ -111,8 +101,6 @@ subtest 'ignore_not_found=1 (constructor)' => sub {
 };
 
 subtest 'ignore_not_found bool context' => sub {
-  plan tests => 2;
-
   my $ffi = FFI::Platypus->new( ignore_not_found => 1 );
   $ffi->lib($lib);
 
@@ -122,3 +110,5 @@ subtest 'ignore_not_found bool context' => sub {
   my $f2 = eval { $ffi->function(bogus => [] => 'void') };
   ok !$f2, 'f2 does not exist and resolved to boolean false';
 };
+
+done_testing;

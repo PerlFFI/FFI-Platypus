@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
 
@@ -9,8 +9,6 @@ my $record_size = My::FooRecord->ffi_record_size;
 note "record size = $record_size";
 
 subtest 'not a reference' => sub {
-  plan tests => 2;
-
   my $ffi = FFI::Platypus->new;
   $ffi->lib($lib);
 
@@ -22,7 +20,6 @@ subtest 'not a reference' => sub {
   my $null      = $ffi->function( pointer_null    => [] => 'foo_record_t' );
   
   subtest in => sub {
-    plan tests => 3;
     my $packed = pack('A16l', "hi there\0", 42);
     note "packed size = ", length $packed;
   
@@ -32,7 +29,6 @@ subtest 'not a reference' => sub {
   };
   
   subtest out => sub {
-    plan tests => 3;  
     my $packed = $create->("platypus", 47);
     note "packed size = ", length $packed;
     
@@ -45,8 +41,6 @@ subtest 'not a reference' => sub {
 
 
 subtest 'is a reference' => sub {
-  plan tests => 2;
-
   my $ffi = FFI::Platypus->new;
   $ffi->lib($lib);
 
@@ -58,7 +52,6 @@ subtest 'is a reference' => sub {
   my $null      = $ffi->function( pointer_null    => [] => 'foo_record_t' );
   
   subtest in => sub {
-    plan tests => 3;
     my $packed = pack('A16l', "hi there\0", 42);
     note "packed size = ", length $packed;
   
@@ -68,7 +61,6 @@ subtest 'is a reference' => sub {
   };
 
   subtest out => sub {
-    plan tests => 5;
     my $packed = $create->("platypus", 47);
     note "packed size = ", length $packed;
 
@@ -81,6 +73,7 @@ subtest 'is a reference' => sub {
 
 };
 
+done_testing;
 
 package
   My::FooRecord;

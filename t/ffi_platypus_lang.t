@@ -8,8 +8,6 @@ use FFI::Platypus;
 my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 subtest 'Foo constructor' => sub {
-  plan tests => 6;
-
   my $ffi = FFI::Platypus->new(lang => 'Foo');
   $ffi->lib($libtest);
   
@@ -29,8 +27,6 @@ subtest 'Foo constructor' => sub {
 };
 
 subtest 'Foo attribute' => sub {
-  plan tests => 6;
-
   my $ffi = FFI::Platypus->new;
   $ffi->lib($libtest);
   $ffi->lang('Foo');

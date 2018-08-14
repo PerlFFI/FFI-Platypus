@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 45;
+use Test::More;
 
 do {
   package
@@ -40,3 +40,5 @@ is $foo->bar->[$_], 0 for 0..19;
 
 is $foo->bar->[$_], $_ for 0..5;
 is $foo->bar->[$_], 0  for 6..19;
+
+done_testing;

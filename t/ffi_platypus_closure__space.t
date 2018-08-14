@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::Platypus;
-use Test::More tests => 2;
+use Test::More;
 
 my $ffi = FFI::Platypus->new;
 
@@ -10,3 +10,5 @@ is $@, '', 'good without space';
 
 eval { $ffi->type('(int, int) -> void') };
 is $@, '', 'good with space';
+
+done_testing;

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More;
 use FFI::CheckLib;
 use FFI::Platypus::Declare qw( void int );
 
@@ -23,3 +23,5 @@ set_closure2($closure);
 
 is call_closure1(), 21;
 is call_closure2(42), 294;
+
+done_testing;

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
@@ -29,3 +29,5 @@ $ffi->attach([f0 => 'f0_wrap2'] => ['uint8'] => uint8 => '$' => sub {
 
 is f0_wrap(22), 25, 'f0_wrap(22) = 25';
 is f0_wrap2(22), 25, 'f0_wrap(22) = 25';
+
+done_testing;
