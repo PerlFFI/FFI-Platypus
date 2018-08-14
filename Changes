@@ -2,10 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Added standard RTLD_ constants to FFI::Platypus::DL
-  - Fixed long standing bug on Windows where dlopen was returning a handle
-    for libraries that weren't actually being loaded.  The bug wasn't a problem
-    in the way that Platypus was being used, but now that FFI::Platypus::DL
-    is a documented interface this needed to be fixed.
+  - Fixed long standing but till now unused bug on Windows where dlopen was
+    returning a handle for libraries that weren't actually being loaded.
 
 0.52_01   2018-08-13 20:39:32 -0400
   - Testing: moved libtest to t/ffi, using the same convention as FFI::Build
