@@ -895,14 +895,14 @@ sub find_symbol
 
   foreach my $path (@{ $self->{lib} })
   {
-    my $handle = do { no warnings; $self->{handles}->{$path||0} } || FFI::Platypus::dl::dlopen($path);
+    my $handle = do { no warnings; $self->{handles}->{$path||0} } || FFI::Platypus::DL::dlopen($path, FFI::Platypus::DL::RTLD_DEFAULT());
     unless($handle)
     {
-      warn "error loading $path: ", FFI::Platypus::dl::dlerror()
+      warn "error loading $path: ", FFI::Platypus::DL::dlerror()
         if $ENV{FFI_PLATYPUS_DLERROR};
       next;
     }
-    my $address = FFI::Platypus::dl::dlsym($handle, $self->{mangler}->($name));
+    my $address = FFI::Platypus::DL::dlsym($handle, $self->{mangler}->($name));
     if($address)
     {
       $self->{handles}->{$path||0} = $handle;
@@ -910,7 +910,7 @@ sub find_symbol
     }
     else
     {
-      FFI::Platypus::dl::dlclose($handle) unless $self->{handles}->{$path||0};
+      FFI::Platypus::DL::dlclose($handle) unless $self->{handles}->{$path||0};
     }
   }
   return;
@@ -1042,7 +1042,7 @@ sub DESTROY
   foreach my $handle (values %{ $self->{handles} })
   {
     next unless $handle;
-    FFI::Platypus::dl::dlclose($handle);
+    FFI::Platypus::DL::dlclose($handle);
   }
   delete $self->{handles};
 }

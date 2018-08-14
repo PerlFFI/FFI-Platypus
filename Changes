@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Testing: moved libtest to t/ffi, using the same convention as FFI::Build
+  - Added FFI::Platypus::DL.  Previously this had been (under a different
+    name) a private interface to libdl used by FFI::Platypus under the covers.
+    On Windows it is an emulation layer over the native equivalents.
 
 0.51      2018-08-09 03:14:15 -0400
   - update the package method to work with FFI-Build

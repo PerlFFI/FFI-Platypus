@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 
 use_ok 'FFI::Platypus';
+use_ok 'FFI::Platypus::DL';
 use_ok 'FFI::Platypus::Declare';
 use_ok 'FFI::Platypus::Memory';
 use_ok 'FFI::Platypus::Buffer';

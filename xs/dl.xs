@@ -1,11 +1,33 @@
-MODULE = FFI::Platypus PACKAGE = FFI::Platypus::dl
+MODULE = FFI::Platypus PACKAGE = FFI::Platypus::DL
+
+int
+RTLD_DEFAULT()
+  PROTOTYPE: 
+  CODE:
+#ifdef RTLD_LAZY
+    RETVAL = RTLD_LAZY;
+#else
+    /* For windows, really */
+    RETVAL = 0;
+#endif
+  OUTPUT:
+    RETVAL
 
 void *
-dlopen(filename);
+dlopen(filename, flags);
     ffi_pl_string filename
-  PROTOTYPE: $
+    int flags
+  PROTOTYPE: $$
   CODE:
-    RETVAL = dlopen(filename, RTLD_LAZY);
+    void *ptr = dlopen(filename, flags);
+    if(ptr == NULL)
+    {
+      XSRETURN_EMPTY;
+    }
+    else
+    {
+      RETVAL = ptr;
+    }
   OUTPUT:
     RETVAL
 
@@ -18,6 +40,18 @@ dlsym(handle, symbol);
     void *handle
     const char *symbol
   PROTOTYPE: $$
+  CODE:
+    void *ptr = dlsym(handle, symbol);
+    if(ptr == NULL)
+    {
+      XSRETURN_EMPTY;
+    }
+    else
+    {
+      RETVAL = ptr;
+    }
+  OUTPUT:
+    RETVAL
 
 int
 dlclose(handle);
