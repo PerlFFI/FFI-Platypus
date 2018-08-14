@@ -94,6 +94,7 @@ pod_spelling_system:
     - dlsym
     - libdl
     - or'd
+    - customizations
 
 pod_coverage:
   skip: 0

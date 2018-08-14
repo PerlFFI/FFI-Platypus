@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
+use FFI::Platypus::Lang;
 use FFI::CheckLib;
 use FFI::Platypus;
 

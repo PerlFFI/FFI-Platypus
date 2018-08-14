@@ -11,6 +11,10 @@ sub new
   {
     $data = do "./share/config.pl";
   }
+  else
+  {
+    $data = { 'test-key' => 'test-value' };
+  }
   bless { data => $data }, __PACKAGE__;
 }
 

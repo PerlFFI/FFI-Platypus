@@ -25,7 +25,7 @@ sub get
     };
   }
   
-  $config->{$name};
+  defined $name ? $config->{$name} : $config;
 }
 
 1;
