@@ -895,7 +895,7 @@ sub find_symbol
 
   foreach my $path (@{ $self->{lib} })
   {
-    my $handle = do { no warnings; $self->{handles}->{$path||0} } || FFI::Platypus::DL::dlopen($path, FFI::Platypus::DL::RTLD_DEFAULT());
+    my $handle = do { no warnings; $self->{handles}->{$path||0} } || FFI::Platypus::DL::dlopen($path, FFI::Platypus::DL::RTLD_PLATYPUS_DEFAULT());
     unless($handle)
     {
       warn "error loading $path: ", FFI::Platypus::DL::dlerror()

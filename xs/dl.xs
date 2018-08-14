@@ -5,10 +5,8 @@ BOOT:
   HV *stash;
   stash = gv_stashpv("FFI::Platypus::DL", TRUE);
 #ifdef RTLD_LAZY
-  newCONSTSUB(stash, "RTLD_DEFAULT", newSViv(RTLD_LAZY));
   newCONSTSUB(stash, "RTLD_PLATYPUS_DEFAULT", newSViv(RTLD_LAZY));
 #else
-  newCONSTSUB(stash, "RTLD_DEFAULT", newSViv(0));
   newCONSTSUB(stash, "RTLD_PLATYPUS_DEFAULT", newSViv(0));
 #endif
 }

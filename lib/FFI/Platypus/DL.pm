@@ -17,7 +17,7 @@ push @EXPORT, grep /RTLD_/, keys %FFI::Platypus::DL::;
  use FFI::Platypus;
  use FFI::Platypus::DL;
  
- my $handle = dlopen("./libfoo.so", RTLD_DEFAULT);
+ my $handle = dlopen("./libfoo.so", RTLD_PLATYPUS_DEFAULT);
  my $address = dlsym($handle, "my_function_named_foo");
  my $ffi = FFI::Platypus->new;
  $ffi->function($address => [] => 'void')->call;
@@ -40,7 +40,7 @@ It provides some GNU extensions to platforms such as Linux that support them.
 
 =item Windows
 
-It provides an emulation layer on Windows.  The emulation layer only supports C<RTLD_DEFAULT>
+It provides an emulation layer on Windows.  The emulation layer only supports C<RTLD_PLATYPUS_DEFAULT>
 as a flag.  The emulation layer emulates the convention described below of passing C<undef> as
 the dynamic library name to mean, use the currently running executable.  I've used it without
 any problems for years, but Windows is not my main development platform.
@@ -70,7 +70,7 @@ for the failure can be retrieved with C<dlerror> as described below.
 
 =over 4
 
-=item RTLD_DEFAULT
+=item RTLD_PLATYPUS_DEFAULT
 
 This is the L<FFI::Platypus> default for C<dlopen> (NOTE: NOT the libdl default).  This is the only
 flag supported on Windows.
