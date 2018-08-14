@@ -68,12 +68,54 @@ but this capability is emulated in Windows which doesn't come with the capabilit
 If there is an error in opening the library then C<undef> will be returned and the diagnostic
 for the failure can be retrieved with C<dlerror> as described below.
 
+Not all flags are supported on all platforms.  You can test if a flag is available using can:
+
+ if(FFI::Platypus::DL->can('RTLD_LAZY'))
+ {
+   ...
+ }
+
+Typically where flags are not mutally exclusive, they can be or'd together:
+
+ my $handle = dlopen("libfoo.so", RTLD_LAZY | RTLD_GLOBAL);
+
+Check your operating system documentation for detailed descriptions of these flags.
+
 =over 4
 
 =item RTLD_PLATYPUS_DEFAULT
 
 This is the L<FFI::Platypus> default for C<dlopen> (NOTE: NOT the libdl default).  This is the only
-flag supported on Windows.
+flag supported on Windows.  For historical reasons, this is usually C<RTLD_LAZY> on Unix and C<0> on
+Windows.
+
+=item RTLD_LAZY
+
+Perform lazy binding.
+
+=item RTLD_NOW
+
+Resolve all symbols before returning from C<dlopen>.  Error if all symbols cannot resolve.
+
+=item RTLD_GLOBAL
+
+Symbols are shared.
+
+=item RTLD_LOCAL
+
+Symbols are NOT shared.
+
+=item RTLD_NODELETE
+
+glibc 2.2 extension.
+
+=item RTLD_NOLOAD
+
+glibc 2.2 extension.
+
+=item RTLD_DEEPBIND
+
+glibc 2.3.4 extension.
 
 =back
 

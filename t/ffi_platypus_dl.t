@@ -10,7 +10,7 @@ subtest 'flags' => sub {
 
   ok(FFI::Platypus::DL->can('RTLD_PLATYPUS_DEFAULT'), "RTLD_PLATYPUS_DEFAULT is defined");
   
-  note "$_=@{[ FFI::Platypus::DL->can($_)->() ]}" for sort grep /^RTLD_/, keys %main::;
+  note sprintf "%-25s %04x %s", $_, FFI::Platypus::DL->can($_)->(), FFI::Platypus::DL->can($_)->() for sort { FFI::Platypus::DL->can($a)->() <=> FFI::Platypus::DL->can($b)->() } grep /^RTLD_/, keys %main::;
 
 };
 
