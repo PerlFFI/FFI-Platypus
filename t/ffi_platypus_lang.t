@@ -1,47 +1,10 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More;
 use FFI::CheckLib;
 use FFI::Platypus;
 
 my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
-
-subtest C => sub {
-  plan tests => 4;
-
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($libtest);
-
-  eval { $ffi->type('int') };
-  is $@, '', 'int is an okay type';
-  eval { $ffi->type('foo_t') };
-  isnt $@, '', 'foo_t is not an okay type';
-  note $@;
-  eval { $ffi->type('sint16') };
-  is $@, '', 'sint16 is an okay type';
-
-  is $ffi->find_symbol('UnMangled::Name(int i)'), undef, 'unable to find unmangled name';
-
-};
-
-subtest ASM => sub {
-  plan tests => 4;
-
-  my $ffi = FFI::Platypus->new(lang => 'ASM');
-  $ffi->lib($libtest);
-
-  eval { $ffi->type('int') };
-  isnt $@, '', 'int is not an okay type';
-  note $@;
-  eval { $ffi->type('foo_t') };
-  isnt $@, '', 'foo_t is not an okay type';
-  note $@;
-  eval { $ffi->type('sint16') };
-  is $@, '', 'sint16 is an okay type';
-
-  is $ffi->find_symbol('UnMangled::Name(int i)'), undef, 'unable to find unmangled name';
-
-};
 
 subtest 'Foo constructor' => sub {
   plan tests => 6;
@@ -98,6 +61,8 @@ subtest 'MyLang::Roger' => sub {
 
 };
 
+done_testing;
+
 package
   MyLang::Roger;
 
@@ -135,3 +100,4 @@ sub mangler
     defined $mangle{$_[0]} ? $mangle{$_[0]} : $_[0];
   };
 }
+
