@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.52_04   2018-08-15 05:52:15 -0400
   - Work-around for Strawberry Perl 5.14.4 unicode bug (see gh#85)
 
 0.52_03   2018-08-14 15:28:19 -0400
