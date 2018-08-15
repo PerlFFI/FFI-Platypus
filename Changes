@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Work-around for Strawberry Perl 5.14.4 unicode bug (see gh#85)
 
 0.52_03   2018-08-14 15:28:19 -0400
   - Major refactoring of test suite
