@@ -152,7 +152,8 @@ _new_closure(class, return_type, ...)
       arg = ST(2+i);
       tmp = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
       if(tmp->platypus_type != FFI_PL_NATIVE
-      && tmp->platypus_type != FFI_PL_STRING)
+      && tmp->platypus_type != FFI_PL_STRING
+      && tmp->platypus_type != FFI_PL_RECORD)
       {
         croak("Only native types and strings are supported as closure argument types");
       }

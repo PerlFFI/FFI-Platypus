@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Experimental: allow record as closure argument
 
 0.53      2018-08-15 20:38:29 -0400
   - Production release identical to 0.52_04

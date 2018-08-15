@@ -4,13 +4,13 @@ use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
 
-my $lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 my $record_size = My::FooRecord->ffi_record_size;
 note "record size = $record_size";
 
 subtest 'not a reference' => sub {
   my $ffi = FFI::Platypus->new;
-  $ffi->lib($lib);
+  $ffi->lib($libtest);
 
   $ffi->type("record($record_size)" => 'foo_record_t');
   my $get_name  = $ffi->function( foo_get_name    => [ 'foo_record_t' ] => 'string' );
@@ -42,7 +42,7 @@ subtest 'not a reference' => sub {
 
 subtest 'is a reference' => sub {
   my $ffi = FFI::Platypus->new;
-  $ffi->lib($lib);
+  $ffi->lib($libtest);
 
   $ffi->type("record(My::FooRecord)" => 'foo_record_t');
   my $get_name  = $ffi->function( foo_get_name    => [ 'foo_record_t' ] => 'string' );
@@ -71,6 +71,67 @@ subtest 'is a reference' => sub {
     is $null->(), undef, 'null() = \undef';
   };
 
+};
+
+subtest 'closure' => sub {
+
+  { package Closture::Record;
+  
+    use FFI::Platypus::Record;
+  
+    record_layout(
+      'string_rw' => 'one',
+      'string_rw' => 'two',
+      'int'       => 'three',
+      'string_rw' => 'four',
+    );
+  }
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($libtest);
+  
+  $ffi->type('record(Closture::Record)' => 'cx_struct_t');
+  eval { $ffi->type('(cx_struct_t,int)->void' => 'cx_closure_t') };
+  is $@, '', 'allow record type as arg';
+
+  my $cx_closure_set = $ffi->function(cx_closure_set => [ 'cx_closure_t' ] => 'void' );
+  my $cx_closure_call = $ffi->function(cx_closure_call => [ 'cx_struct_t', 'int' ] => 'void' );
+
+  my $r = Closture::Record->new;
+  $r->one("one");
+  $r->two("two");
+  $r->three(3);
+  $r->four("four");
+
+  my $here = 0;
+
+  my $f = $ffi->closure(sub {
+    my($r2,$num) = @_;
+    is($r2->one, "one");
+    is($r2->two, "two");
+    is($r2->three, 3);
+    is($r2->four, "four");
+    is($num, 42);
+    $here = 1;
+  });
+  
+  $cx_closure_set->($f);
+  $cx_closure_call->($r, 42);
+  
+  is($here, 1);
+  
+  $here = 0;
+  my $f2 = $ffi->closure(sub {
+    my($r2, $num) = @_;
+    is($r2, undef);
+    is($num, 0);
+    $here = 1;
+  });
+  
+  $cx_closure_set->($f2);
+  $cx_closure_call->(undef, undef);
+  is($here,  1);
+  
 };
 
 done_testing;

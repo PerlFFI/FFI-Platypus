@@ -28,3 +28,25 @@ closure_call_closure2(int arg)
 {
   return my_closure2(arg);
 }
+
+typedef struct {
+  const char *one;
+  const char *two;
+  int three;
+  const char *four;
+} cx_struct_t;
+
+typedef void (*cx_closure_t)(cx_struct_t *, int);
+static cx_closure_t my_cx_closure;
+
+EXTERN void
+cx_closure_set(cx_closure_t closure)
+{
+  my_cx_closure = closure;
+}
+
+EXTERN void
+cx_closure_call(cx_struct_t *s, int i)
+{
+  my_cx_closure(s, i);
+}

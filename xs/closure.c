@@ -163,6 +163,21 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
         }
         XPUSHs(sv);
       }
+      else if(extra->argument_types[i]->platypus_type == FFI_PL_RECORD)
+      {
+        sv = sv_newmortal();
+        if( *((char**)arguments[i]) != NULL)
+        {
+          sv_setpvn(sv, *((char**)arguments[i]), extra->argument_types[i]->extra[0].record.size);
+          if(extra->argument_types[i]->extra[0].record.stash)
+          {
+            SV *ref = newRV_inc(sv);
+            sv_bless(ref, extra->argument_types[i]->extra[0].record.stash);
+            sv = ref;
+          }
+        }
+        XPUSHs(sv);
+      }
     }
     PUTBACK;
   }
