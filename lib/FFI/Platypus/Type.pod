@@ -470,6 +470,13 @@ return type.  As of this writing only native types and strings are
 supported as closure argument types and only native types are supported 
 as closure return types.  Here is an example, with C code:
 
+[ version 0.54 ]
+
+EXPERIMENTAL: As of version 0.54, the record type (see L<FFI::Platypus::Record>)
+is also experimentally supported as a closure argument type.  One
+caveat is that  the record member type string_rw is NOT supported
+and probably never will be.
+
 # EXAMPLE: examples/closure.c
 
 And the Perl code:
