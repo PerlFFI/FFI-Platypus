@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.03      2018-08-16 04:03:09 -0400
   - Fix for test failure on cygwin + MSWin32
   - Additional diagnostics for Fortran build test
 
