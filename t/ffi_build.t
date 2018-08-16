@@ -168,7 +168,6 @@ subtest 'Fortran' => sub {
   
   plan skip_all => 'Test requires FFI::Platypus::Lang::Fortran'
     unless eval { require FFI::Platypus::Lang::Fortran };
-  
 
   my $build = FFI::Build->new('foo', 
     dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project-fortran' ),
@@ -200,23 +199,39 @@ subtest 'Fortran' => sub {
   $ffi->lang('Fortran');
   $ffi->lib($dll);
 
-  is(
-    $ffi->function( add1 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2),
+  my $ok = 1;
+
+  $ok &&= is(
+    eval { $ffi->function( add1 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2) } || diag($@),
     3,
     'FORTRAN 77',
   );
 
-  is(
-    $ffi->function( add2 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2),
+  $ok &&= is(
+    eval { $ffi->function( add5 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2) } || diag($@),
     3,
     'Fortran 90',
   );
   
-  is(
-    $ffi->function( add3 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2),
+  $ok &&= is(
+    eval { $ffi->function( add3 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2) } || diag($@),
     3,
     'Fortran 95',
   );
+
+  unless($ok)
+  {
+    diag("build output:\n$out");
+    if(my $nm = FFI::Build::Platform->which('nm'))
+    {
+      diag capture_merged {
+        my @cmd = ('nm', $build->file->path);
+        print "+ @cmd\n";
+        system @cmd;
+        ();
+      };
+    }
+  }
   
   cleanup(
     $build->file->dirname,
