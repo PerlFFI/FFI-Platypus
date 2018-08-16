@@ -543,4 +543,223 @@ subtest 'class or instance method' => sub {
   note "type: $_" foreach sort @class;
 };
 
+subtest 'cast' => sub {
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+
+  subtest 'cast from string to pointer' => sub {
+    my $string = "foobarbaz";
+    my $pointer = $ffi->cast(string => opaque => $string);
+
+    is $ffi->function(string_matches_foobarbaz => ['opaque'] => 'int')->call($pointer), 1, 'dynamic';
+
+    $ffi->attach_cast(cast1 => string => 'opaque');
+    my $pointer2 = cast1($string);
+
+    is $ffi->function(string_matches_foobarbaz => ['opaque'] => 'int')->call($pointer2), 1, 'static';
+
+  };
+
+  subtest 'cast from pointer to string' => sub {
+    my $pointer = $ffi->function(string_return_foobarbaz => [] => 'opaque')->call();
+    my $string = $ffi->cast(opaque => string => $pointer);
+
+    is $string, "foobarbaz", "dynamic";
+
+    $ffi->attach_cast(cast2 => pointer => 'string');
+    my $string2 = cast2($pointer);
+
+    is $string2, "foobarbaz", "static";
+
+  };
+
+  subtest 'cast closure to opaque' => sub {
+    my $testname = 'dynamic';
+
+    my $closure = $ffi->closure(sub { is $_[0], "testvalue", $testname });
+    my $pointer = $ffi->cast('(string)->void' => opaque => $closure);
+
+    $ffi->function(string_set_closure => ['opaque'] => 'void')->call($pointer);
+    $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
+
+    $ffi->function(string_set_closure => ['(string)->void'] => 'void')->call($pointer);
+    $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
+
+    $ffi->attach_cast('cast3', '(string)->void' => 'opaque');
+    my $pointer2 = cast3($closure);
+
+    $testname = 'static';
+    $ffi->function(string_set_closure => ['opaque'] => 'void')->call($pointer2);
+    $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
+
+    $ffi->function(string_set_closure => ['(string)->void'] => 'void')->call($pointer2);
+    $ffi->function(string_call_closure => ['string'] => 'void')->call("testvalue");
+  };
+};
+
+subtest 'ignore_not_found' => sub {
+
+  subtest 'ignore_not_found=undef' => sub {
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib($libtest);
+
+    my $f1 = eval { $ffi->function(f1 => [] => 'void') };
+    is $@, '', 'no exception';
+    ok ref($f1), 'returned a function';
+    note "f1 isa ", ref($f1);
+
+    my $f2 = eval { $ffi->function(bogus => [] => 'void') };
+    isnt $@, '', 'function exception';
+    note "exception=$@";
+
+    eval { $ffi->attach(bogus => [] => 'void') };
+    isnt $@, '', 'attach exception';
+    note "exception=$@";
+
+  };
+
+  subtest 'ignore_not_found=0' => sub {
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib($libtest);
+    $ffi->ignore_not_found(0);
+
+    my $f1 = eval { $ffi->function(f1 => [] => 'void') };
+    is $@, '', 'no exception';
+    ok ref($f1), 'returned a function';
+    note "f1 isa ", ref($f1);
+
+    my $f2 = eval { $ffi->function(bogus => [] => 'void') };
+    isnt $@, '', 'function exception';
+    note "exception=$@";
+
+    eval { $ffi->attach(bogus => [] => 'void') };
+    isnt $@, '', 'attach exception';
+    note "exception=$@";
+  };
+
+  subtest 'ignore_not_found=0 (constructor)' => sub {
+    my $ffi = FFI::Platypus->new( ignore_not_found => 0 );
+    $ffi->lib($libtest);
+
+    my $f1 = eval { $ffi->function(f1 => [] => 'void') };
+    is $@, '', 'no exception';
+    ok ref($f1), 'returned a function';
+    note "f1 isa ", ref($f1);
+
+    my $f2 = eval { $ffi->function(bogus => [] => 'void') };
+    isnt $@, '', 'function exception';
+    note "exception=$@";
+
+    eval { $ffi->attach(bogus => [] => 'void') };
+    isnt $@, '', 'attach exception';
+    note "exception=$@";
+  };
+
+  subtest 'ignore_not_found=1' => sub {
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib($libtest);
+    $ffi->ignore_not_found(1);
+
+    my $f1 = eval { $ffi->function(f1 => [] => 'void') };
+    is $@, '', 'no exception';
+    ok ref($f1), 'returned a function';
+    note "f1 isa ", ref($f1);
+
+    my $f2 = eval { $ffi->function(bogus => [] => 'void') };
+    is $@, '', 'function no exception';
+    is $f2, undef, 'f2 is undefined';
+
+    eval { $ffi->attach(bogus => [] => 'void') };
+    is $@, '', 'attach no exception';
+
+  };
+
+  subtest 'ignore_not_found=1 (constructor)' => sub {
+    my $ffi = FFI::Platypus->new( ignore_not_found => 1 );
+    $ffi->lib($libtest);
+
+    my $f1 = eval { $ffi->function(f1 => [] => 'void') };
+    is $@, '', 'no exception';
+    ok ref($f1), 'returned a function';
+    note "f1 isa ", ref($f1);
+
+    my $f2 = eval { $ffi->function(bogus => [] => 'void') };
+    is $@, '', 'function no exception';
+
+    is $f2, undef, 'f2 is undefined';
+    eval { $ffi->attach(bogus => [] => 'void') };
+    is $@, '', 'attach no exception';
+  };
+
+  subtest 'ignore_not_found bool context' => sub {
+    my $ffi = FFI::Platypus->new( ignore_not_found => 1 );
+    $ffi->lib($libtest);
+
+    my $f1 = eval { $ffi->function(f1 => [] => 'void') };
+    ok $f1, 'f1 exists and resolved to boolean true';
+
+    my $f2 = eval { $ffi->function(bogus => [] => 'void') };
+    ok !$f2, 'f2 does not exist and resolved to boolean false';
+  };
+};
+
+subtest 'attach basic' => sub {
+
+  package
+    attach_basic;
+
+  use FFI::Platypus;
+  use Test::More;
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($libtest);
+
+  $ffi->attach('f0' => ['uint8'] => 'uint8');
+  $ffi->attach([f0=>'f1'] => ['uint8'] => 'uint8');
+  $ffi->attach([f0=>'Roger::f1'] => ['uint8'] => 'uint8');
+
+  is f0(22), 22, 'f0(22) = 22';
+  is f1(22), 22, 'f1(22) = 22';
+  is Roger::f1(22), 22, 'Roger::f1(22) = 22';
+
+  $ffi->attach([f0 => 'f0_wrap'] => ['uint8'] => uint8 => sub {
+    my($inner, $value) = @_;
+
+    return $inner->($value+1)+2;
+  });
+
+  $ffi->attach([f0 => 'f0_wrap2'] => ['uint8'] => uint8 => '$' => sub {
+    my($inner, $value) = @_;
+
+    return $inner->($value+1)+2;
+  });
+
+  is f0_wrap(22), 25, 'f0_wrap(22) = 25';
+  is f0_wrap2(22), 25, 'f0_wrap(22) = 25';
+};
+
+subtest 'attach void' => sub {
+
+  package
+    attach_void;
+
+  use FFI::Platypus;
+  use Test::More;
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($libtest);
+
+  $ffi->attach('f2' => ['int*'] => 'void');
+  $ffi->attach([f2=>'f2_implicit'] => ['int*']);
+
+  my $i_ptr = 42;
+
+  f2(\$i_ptr);
+  is $i_ptr, 43, '$i_ptr = 43 after f2(\$i_ptr)';
+
+  f2_implicit(\$i_ptr);
+  is $i_ptr, 44, '$i_ptr = 44 after f2_implicit(\$i_ptr)';
+
+};
+
 done_testing;
