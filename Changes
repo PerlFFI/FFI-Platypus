@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.54_01   2018-08-16 03:27:31 -0400
   - Experimental: allow record as closure argument
     Records with string_rw are not supported, and
     will likely crash your script if you try to use
