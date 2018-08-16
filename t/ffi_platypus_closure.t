@@ -18,4 +18,7 @@ $closure = $ffi->closure($c);
 isa_ok $closure, 'FFI::Platypus::Closure';
 is $closure->(1), 3, 'closure.(1) = 3';
 
+eval { $closure->sticky };
+is $@, '', 'able to call sticky';
+
 done_testing;

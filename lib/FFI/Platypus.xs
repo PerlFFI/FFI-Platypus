@@ -114,3 +114,4 @@ INCLUDE: ../../xs/ClosureData.xs
 INCLUDE: ../../xs/API.xs
 INCLUDE: ../../xs/ABI.xs
 INCLUDE: ../../xs/Record.xs
+INCLUDE: ../../xs/Closure.xs
