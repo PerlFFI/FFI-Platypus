@@ -2,8 +2,11 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Experimental: allow record as closure argument
-    Some record member types may not be supported,
-    members with the type string_rw are definitely NOT supported.
+    Records with string_rw are not supported, and
+    will likely crash your script if you try to use
+    them.  Support for such records is probably not in
+    the cards, but a future version may disallow them
+    to avoid crashes.
   - Closure objects now have a sticky method, similar to what
     is already available in the discouraged FFI::Platypus::Declare
     interface
