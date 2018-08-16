@@ -1,18 +1,19 @@
 use strict;
 use warnings;
 use Test::More;
+use FFI::Platypus;
 use FFI::CheckLib;
-use FFI::Platypus::Declare
-  qw( int string void ),
-  [ '::StringPointer' => 'string_p'];
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
-attach string_pointer_pointer_get => [string_p] => string;
-attach string_pointer_pointer_set => [string_p, string] => void;
-attach pointer_pointer_is_null => [string_p] => int;
-attach pointer_is_null => [string_p] => int;
-attach string_pointer_pointer_return => [string] => string_p;
-attach pointer_null => [] => string_p;
+my $ffi = FFI::Platypus->new;
+$ffi->load_custom_type('::StringPointer' => 'string_p');
+
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+$ffi->attach( string_pointer_pointer_get => ['string_p'] => 'string');
+$ffi->attach( string_pointer_pointer_set => ['string_p', 'string'] => 'void');
+$ffi->attach( pointer_pointer_is_null => ['string_p'] => 'int');
+$ffi->attach( pointer_is_null => ['string_p'] => 'int');
+$ffi->attach( string_pointer_pointer_return => ['string'] => 'string_p');
+$ffi->attach( pointer_null => [] => 'string_p');
 
 subtest 'arg pass in' => sub {
   is string_pointer_pointer_get(\"hello there"), "hello there", "not null";

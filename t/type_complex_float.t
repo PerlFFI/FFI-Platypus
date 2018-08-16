@@ -9,14 +9,12 @@ BEGIN {
     unless FFI::Platypus::_have_type('complex_float');
 }
 
-use FFI::Platypus::Declare
-  'complex_float', 'float', 'string';
+my $ffi = FFI::Platypus->new;
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
-
-attach ['complex_float_get_real' => 'creal'] => [complex_float] => float;
-attach ['complex_float_get_imag' => 'cimag'] => [complex_float] => float;
-attach ['complex_float_to_string' => 'to_string'] => [complex_float] => string;
+$ffi->attach(['complex_float_get_real' => 'creal'] => ['complex_float'] => 'float');
+$ffi->attach(['complex_float_get_imag' => 'cimag'] => ['complex_float'] => 'float');
+$ffi->attach(['complex_float_to_string' => 'to_string'] => ['complex_float'] => 'string');
 
 subtest 'standard argument' => sub {
   subtest 'with a real number' => sub {

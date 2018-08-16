@@ -1,18 +1,18 @@
 use strict;
 use warnings;
 use Test::More;
+use FFI::Platypus;
 use FFI::CheckLib;
-use FFI::Platypus::Declare qw( void opaque );
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my $ffi = FFI::Platypus->new;
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
-my $closure = closure {
+my $closure = $ffi->closure(sub {
   die "omg i don't want to die!";
-};
+});
 
-attach [pointer_set_closure => 'set_closure'] => ['(opaque)->opaque'] => void;
-attach [pointer_call_closure => 'call_closure'] => [opaque] => opaque;
-
+$ffi->attach([pointer_set_closure => 'set_closure'] => ['(opaque)->opaque'] => 'void');
+$ffi->attach([pointer_call_closure => 'call_closure'] => ['opaque'] => 'opaque');
 
 set_closure($closure);
 

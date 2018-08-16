@@ -9,14 +9,12 @@ BEGIN {
     unless FFI::Platypus::_have_type('complex_double');
 }
 
-use FFI::Platypus::Declare
-  'complex_double', 'double', 'string';
+my $ffi = FFI::Platypus->new;
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
-
-attach ['complex_double_get_real' => 'creal'] => [complex_double] => double;
-attach ['complex_double_get_imag' => 'cimag'] => [complex_double] => double;
-attach ['complex_double_to_string' => 'to_string'] => [complex_double] => string;
+$ffi->attach( ['complex_double_get_real' => 'creal'] => ['complex_double'] => 'double');
+$ffi->attach( ['complex_double_get_imag' => 'cimag'] => ['complex_double'] => 'double');
+$ffi->attach( ['complex_double_to_string' => 'to_string'] => ['complex_double'] => 'string');
 
 subtest 'standard argument' => sub {
   subtest 'with a real number' => sub {

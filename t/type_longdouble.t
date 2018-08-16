@@ -9,21 +9,20 @@ BEGIN {
     unless FFI::Platypus::_have_type('longdouble');
 }
 
-use FFI::Platypus::Declare
-  'longdouble', 'int', 
-  ['longdouble*' => 'longdouble_p'],
-  ['longdouble[3]' => 'longdouble_a3' ],
-  ['longdouble[]'  => 'longdouble_a'  ];
+my $ffi = FFI::Platypus->new;
+$ffi->type('longdouble*' => 'longdouble_p');
+$ffi->type('longdouble[3]' => 'longdouble_a3');
+$ffi->type('longdouble[]'  => 'longdouble_a');
 
-lib find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
-attach [longdouble_add => 'add'] => [longdouble,longdouble] => longdouble;
-attach longdouble_pointer_test => [longdouble_p, longdouble_p] => int;
-attach longdouble_array_test => [longdouble_a, int] => int;
-attach [longdouble_array_test => 'longdouble_array_test3'] => [longdouble_a3, int] => int;
-attach longdouble_array_return_test => [] => longdouble_a3;
-attach pointer_is_null => [longdouble_p] => int;
-attach longdouble_pointer_return_test => [longdouble] => longdouble_p;
-attach pointer_null => [] => longdouble_p;
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+$ffi->attach( [longdouble_add => 'add'] => ['longdouble','longdouble'] => 'longdouble');
+$ffi->attach( longdouble_pointer_test => ['longdouble_p', 'longdouble_p'] => 'int');
+$ffi->attach( longdouble_array_test => ['longdouble_a', 'int'] => 'int');
+$ffi->attach( [longdouble_array_test => 'longdouble_array_test3'] => ['longdouble_a3', 'int'] => 'int');
+$ffi->attach( longdouble_array_return_test => [] => 'longdouble_a3');
+$ffi->attach( pointer_is_null => ['longdouble_p'] => 'int');
+$ffi->attach( longdouble_pointer_return_test => ['longdouble'] => 'longdouble_p');
+$ffi->attach( pointer_null => [] => 'longdouble_p');
 
 subtest 'with Math::LongDouble' => sub {
   plan skip_all => 'test requires Math::LongDouble'
