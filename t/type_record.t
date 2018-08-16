@@ -75,7 +75,7 @@ subtest 'is a reference' => sub {
 
 subtest 'closure' => sub {
 
-  { package Closture::Record;
+  { package Closture::Record::RW;
   
     use FFI::Platypus::Record;
   
@@ -87,17 +87,30 @@ subtest 'closure' => sub {
     );
   }
 
+  { package Closture::Record::RO;
+  
+    use FFI::Platypus::Record;
+  
+    record_layout(
+      'string_ro' => 'one',
+      'string_ro' => 'two',
+      'int'       => 'three',
+      'string_ro' => 'four',
+    );
+  }
+
   my $ffi = FFI::Platypus->new;
   $ffi->lib($libtest);
   
-  $ffi->type('record(Closture::Record)' => 'cx_struct_t');
-  eval { $ffi->type('(cx_struct_t,int)->void' => 'cx_closure_t') };
+  $ffi->type('record(Closture::Record::RO)' => 'cx_struct_ro_t');
+  $ffi->type('record(Closture::Record::RW)' => 'cx_struct_rw_t');
+  eval { $ffi->type('(cx_struct_ro_t,int)->void' => 'cx_closure_t') };
   is $@, '', 'allow record type as arg';
 
   my $cx_closure_set = $ffi->function(cx_closure_set => [ 'cx_closure_t' ] => 'void' );
-  my $cx_closure_call = $ffi->function(cx_closure_call => [ 'cx_struct_t', 'int' ] => 'void' );
+  my $cx_closure_call = $ffi->function(cx_closure_call => [ 'cx_struct_rw_t', 'int' ] => 'void' );
 
-  my $r = Closture::Record->new;
+  my $r = Closture::Record::RW->new;
   $r->one("one");
   $r->two("two");
   $r->three(3);
