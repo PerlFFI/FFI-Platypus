@@ -208,7 +208,7 @@ subtest 'Fortran' => sub {
   );
 
   $ok &&= is(
-    eval { $ffi->function( add5 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2) } || diag($@),
+    eval { $ffi->function( add2 => [ 'integer*', 'integer*' ] => 'integer' )->call(\1,\2) } || diag($@),
     3,
     'Fortran 90',
   );
