@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix for test failure on cygwin + MSWin32
 
 0.02      2018-08-09 04:54:30 -0400
   - initial version

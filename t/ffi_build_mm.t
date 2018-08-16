@@ -100,7 +100,7 @@ subtest 'with a build!' => sub {
     note $out;
     is $err, '';
     
-    is slurp 'blib/arch/auto/Crock/O/Stimpy/Stimpy.txt', "FFI::Build\@auto/share/dist/Crock-O-Stimpy/lib/libCrock-O-Stimpy@{[ scalar FFI::Build::Platform->library_suffix]}\n";
+    is slurp 'blib/arch/auto/Crock/O/Stimpy/Stimpy.txt', "FFI::Build\@auto/share/dist/Crock-O-Stimpy/lib/@{[ FFI::Build::Platform->library_prefix ]}Crock-O-Stimpy@{[ scalar FFI::Build::Platform->library_suffix]}\n";
     
     my $ffi = FFI::Platypus->new;
     $ffi->lib(bsd_glob 'blib/lib/auto/share/dist/Crock-O-Stimpy/lib/*');
