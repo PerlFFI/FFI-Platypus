@@ -114,7 +114,8 @@ sub _deps
   {
     print $out;
     print $err;
-    die "error computing dependencies for $self";
+    warn "error computing dependencies for $self";
+    return ($self->path);
   }
   else
   {
