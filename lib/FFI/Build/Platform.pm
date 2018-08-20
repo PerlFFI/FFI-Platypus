@@ -176,7 +176,12 @@ The C compiler
 
 sub cc
 {
-  shift->{config}->{cc};
+  # TODO: cc could include flags "cc --some-flag" so we should really parse
+  # the first element of cc to be our cc, and push the rest into cflags.
+  my $cc = shift->{config}->{cc};
+  $cc =~ s/^\s+//;
+  $cc =~ s/\s+$//;
+  $cc;
 }
 
 =head2 cxx
