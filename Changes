@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix test
 
 0.05      2018-08-20 05:17:36 -0400
   - Removed FFI::Build::File::Fortran, which is now part of the
