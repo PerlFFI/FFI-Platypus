@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Removed FFI::Build::File::Fortran, which is now part of the
+    FFI-Platypus-Lang-Fortran dist
 
 0.04      2018-08-19 12:56:54 -0400
   - When `cc -MM` or `c++ -MM` fails for computing dependencies, fall back
