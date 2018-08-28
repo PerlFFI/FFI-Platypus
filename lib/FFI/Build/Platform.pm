@@ -259,7 +259,10 @@ The C linker
 
 sub ld
 {
-  shift->{config}->{ld};
+  my $ld = shift->{config}->{ld};
+  $ld =~ s/^\s+//;
+  $ld =~ s/\s+$//;
+  $ld;
 }
 
 sub _uniq
