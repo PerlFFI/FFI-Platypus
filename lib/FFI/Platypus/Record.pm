@@ -269,6 +269,7 @@ sub record_layout
   no strict 'refs';
   constant->import("${caller}::_ffi_record_size", $size);
   constant->import("${caller}::_ffi_record_align", $record_align);
+  *{join '::', $caller, '_ffi_record_ro'} = \&_ffi_record_ro;
   *{join '::', $caller, 'new'} = sub {
     my $class = shift;
     my $args = ref($_[0]) ? [%{$_[0]}] : \@_;
@@ -292,6 +293,7 @@ sub record_layout
   if(@destroy)
   {
     $destroy_sub = sub {
+      return if _ffi_record_ro($_[0]);
       $_->($_[0]) for @destroy;
     };
   }

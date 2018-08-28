@@ -88,25 +88,11 @@ subtest 'closure' => sub {
     );
   }
 
-  { package Closture::Record::RO;
-  
-    use FFI::Platypus::Record;
-  
-    record_layout(
-      'string_ro' => 'one',
-      'string_ro' => 'two',
-      'int'       => 'three',
-      'string_ro' => 'four',
-      'int[2]'    => 'myarray1',
-    );
-  }
-
   my $ffi = FFI::Platypus->new;
   $ffi->lib($libtest);
   
-  $ffi->type('record(Closture::Record::RO)' => 'cx_struct_ro_t');
   $ffi->type('record(Closture::Record::RW)' => 'cx_struct_rw_t');
-  eval { $ffi->type('(cx_struct_ro_t,int)->void' => 'cx_closure_t') };
+  eval { $ffi->type('(cx_struct_rw_t,int)->void' => 'cx_closure_t') };
   is $@, '', 'allow record type as arg';
 
   my $cx_closure_set = $ffi->function(cx_closure_set => [ 'cx_closure_t' ] => 'void' );
@@ -118,11 +104,13 @@ subtest 'closure' => sub {
   $r->three(3);
   $r->four("four");
   $r->myarray1([1,2]);
+  is($r->_ffi_record_ro, 0);
 
   my $here = 0;
 
   my $f = $ffi->closure(sub {
     my($r2,$num) = @_;
+    is($r2->_ffi_record_ro, 1);
     is($r2->one, "one");
     is($r2->two, "two");
     is($r2->three, 3);

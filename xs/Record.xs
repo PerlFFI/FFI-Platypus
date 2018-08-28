@@ -1,5 +1,17 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Record
 
+int
+_ffi_record_ro(self)
+    SV* self
+  CODE:
+    if(SvROK(self))
+      self = SvRV(self);
+    if(!SvOK(self))
+      croak("Null record error");
+    RETVAL = SvREADONLY(self) ? 1 : 0;
+  OUTPUT:
+    RETVAL
+
 void
 _accessor(perl_name, path_name, type, offset)
     const char *perl_name

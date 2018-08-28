@@ -3,7 +3,9 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - record as closure argument is now read-only.  This makes
     sense since such records are actually copies.  For when
-    you need a non-copy use an opaque type instead.
+    you need a non-copy use an opaque type instead.  This allows
+    records with rw strings (although they will be ro in the
+    closure).
 
 0.54_01   2018-08-16 03:27:31 -0400
   - Experimental: allow record as closure argument
