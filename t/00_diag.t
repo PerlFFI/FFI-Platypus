@@ -23,6 +23,15 @@ $post_diag = sub {
   require FFI::Build::Platform;
   diag "[PLATFORM]\n";
   diag(FFI::Build::Platform->diag);
+  require IPC::Cmd;
+  if(IPC::Cmd::can_run('lsb_release'))
+  {
+    spacer();
+    diag Capture::Tiny::capture_merged(sub {
+      system 'lsb_release', '-a';
+      ();
+    });
+  }
 };
 
 my @modules = sort keys %modules;

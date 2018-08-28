@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Additional test diagnostics
 
 0.08      2018-08-28 09:58:19 -0400
   - Same workaroudn for linkers with space
