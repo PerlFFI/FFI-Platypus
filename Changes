@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Additional test diagnostics.
 
 0.54_02   2018-08-28 05:30:04 -0400
   - record as closure argument is now read-only.  This makes

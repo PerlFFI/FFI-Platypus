@@ -12,10 +12,12 @@ my $post_diag;
 $modules{$_} = $_ for qw(
   Alien::Base
   Alien::FFI
+  Capture::Tiny
   Config::AutoConf
   ExtUtils::CBuilder
   FFI::CheckLib
   File::ShareDir
+  IPC::Cmd
   Module::Build
   PkgConfig
   Test::More
@@ -85,6 +87,15 @@ $post_diag = sub {
     diag "  $model_name";
     diag "  $flags" if $flags;;
     diag "  $address_sizes" if $address_sizes;
+  }
+  require IPC::Cmd;
+  if(IPC::Cmd::can_run('lsb_release'))
+  {
+    spacer();
+    diag Capture::Tiny::capture_merged(sub {
+      system 'lsb_release', '-a';
+      ();
+    });
   }
 };
 
