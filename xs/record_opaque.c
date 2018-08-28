@@ -33,8 +33,15 @@ XS(ffi_pl_record_accessor_opaque)
 
   if(items > 1)
   {
-    arg = ST(1);
-    *ptr2 = SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL;
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      arg = ST(1);
+      *ptr2 = SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL;
+    }
   }
 
   if(GIMME_V == G_VOID)
@@ -73,6 +80,11 @@ XS(ffi_pl_record_accessor_opaque_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (void**) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {

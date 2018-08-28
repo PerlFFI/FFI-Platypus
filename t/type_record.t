@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
+use FFI::Platypus::Memory qw( malloc free );
 
 my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 my $record_size = My::FooRecord->ffi_record_size;
@@ -85,6 +86,8 @@ subtest 'closure' => sub {
       'int'       => 'three',
       'string_rw' => 'four',
       'int[2]'    => 'myarray1',
+      'opaque'    => 'opaque1',
+      'opaque[2]' => 'myarray2',
     );
   }
 
@@ -104,6 +107,8 @@ subtest 'closure' => sub {
   $r->three(3);
   $r->four("four");
   $r->myarray1([1,2]);
+  $r->opaque1(malloc(22));
+  $r->myarray2([malloc(33),malloc(44)]);
   is($r->_ffi_record_ro, 0);
 
   my $here = 0;
@@ -129,12 +134,40 @@ subtest 'closure' => sub {
       isnt $@, '';
       note "error = $@";
     }
+    is_deeply($r2->myarray1, [1,2]);
     {
       local $@ = '';
       eval { $r2->myarray1(3,4) };
       isnt $@, '';
       note "error = $@";
     }
+    is_deeply($r2->myarray1, [1,2]);
+
+    is($r2->opaque1, $r->opaque1);
+    {
+      local $@ = '';
+      eval { $r2->opaque1(undef) };
+      isnt $@, '';
+      note "error = $@";
+    }
+    is($r2->opaque1, $r->opaque1);
+
+    is_deeply($r2->myarray2, $r->myarray2);
+    {
+      local $@ = '';
+      eval { $r2->myarray2([undef,undef]) };
+      isnt $@, '';
+      note "error = $@";
+    }
+    is_deeply($r2->myarray2, $r->myarray2);
+    {
+      local $@ = '';
+      eval { $r2->myarray2(undef,undef) };
+      isnt $@, '';
+      note "error = $@";
+    }
+    is_deeply($r2->myarray2, $r->myarray2);
+
     is($num, 42);
     $here = 1;
   });
