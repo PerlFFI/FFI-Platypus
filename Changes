@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.08      2018-08-28 09:58:19 -0400
   - Same workaroudn for linkers with space
 
 0.07      2018-08-20 10:52:27 -0400
