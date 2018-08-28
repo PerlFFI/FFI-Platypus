@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.09      2018-08-28 10:50:27 -0400
   - Additional test diagnostics
 
 0.08      2018-08-28 09:58:19 -0400
