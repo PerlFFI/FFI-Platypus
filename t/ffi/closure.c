@@ -34,6 +34,7 @@ typedef struct {
   const char *two;
   int three;
   const char *four;
+  int myarray1[2];
 } cx_struct_t;
 
 typedef void (*cx_closure_t)(cx_struct_t *, int);

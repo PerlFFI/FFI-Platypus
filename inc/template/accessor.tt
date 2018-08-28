@@ -24,7 +24,16 @@ XS(ffi_pl_record_accessor_[% ffi_type %])
   ptr2 = ([% c_type %]*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = ([% c_type %]) Sv[% perl_type %](ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = ([% c_type %]) Sv[% perl_type %](ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -56,6 +65,11 @@ XS(ffi_pl_record_accessor_[% ffi_type %]_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = ([% c_type %]*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {

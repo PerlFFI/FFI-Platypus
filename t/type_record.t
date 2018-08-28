@@ -84,6 +84,7 @@ subtest 'closure' => sub {
       'string_rw' => 'two',
       'int'       => 'three',
       'string_rw' => 'four',
+      'int[2]'    => 'myarray1',
     );
   }
 
@@ -96,6 +97,7 @@ subtest 'closure' => sub {
       'string_ro' => 'two',
       'int'       => 'three',
       'string_ro' => 'four',
+      'int[2]'    => 'myarray1',
     );
   }
 
@@ -115,6 +117,7 @@ subtest 'closure' => sub {
   $r->two("two");
   $r->three(3);
   $r->four("four");
+  $r->myarray1([1,2]);
 
   my $here = 0;
 
@@ -123,7 +126,27 @@ subtest 'closure' => sub {
     is($r2->one, "one");
     is($r2->two, "two");
     is($r2->three, 3);
+    {
+      local $@ = '';
+      eval { $r2->three(64) };
+      isnt $@, '';
+      note "error = $@";
+    }
+    is($r2->three, 3);
     is($r2->four, "four");
+    is_deeply($r2->myarray1, [1,2]);
+    {
+      local $@ = '';
+      eval { $r2->myarray1([3,4]) };
+      isnt $@, '';
+      note "error = $@";
+    }
+    {
+      local $@ = '';
+      eval { $r2->myarray1(3,4) };
+      isnt $@, '';
+      note "error = $@";
+    }
     is($num, 42);
     $here = 1;
   });

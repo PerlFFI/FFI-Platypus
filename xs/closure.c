@@ -173,7 +173,12 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
           {
             SV *ref = newRV_inc(sv);
             sv_bless(ref, extra->argument_types[i]->extra[0].record.stash);
+            SvREADONLY_on(sv);
             sv = ref;
+          }
+          else
+          {
+            SvREADONLY_on(sv);
           }
         }
         XPUSHs(sv);

@@ -37,7 +37,16 @@ XS(ffi_pl_record_accessor_uint8)
   ptr2 = (uint8_t*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (uint8_t) SvUV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (uint8_t) SvUV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -69,6 +78,11 @@ XS(ffi_pl_record_accessor_uint8_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (uint8_t*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -155,7 +169,16 @@ XS(ffi_pl_record_accessor_sint8)
   ptr2 = (int8_t*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (int8_t) SvIV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (int8_t) SvIV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -187,6 +210,11 @@ XS(ffi_pl_record_accessor_sint8_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (int8_t*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -273,7 +301,16 @@ XS(ffi_pl_record_accessor_uint16)
   ptr2 = (uint16_t*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (uint16_t) SvUV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (uint16_t) SvUV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -305,6 +342,11 @@ XS(ffi_pl_record_accessor_uint16_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (uint16_t*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -391,7 +433,16 @@ XS(ffi_pl_record_accessor_sint16)
   ptr2 = (int16_t*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (int16_t) SvIV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (int16_t) SvIV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -423,6 +474,11 @@ XS(ffi_pl_record_accessor_sint16_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (int16_t*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -509,7 +565,16 @@ XS(ffi_pl_record_accessor_uint32)
   ptr2 = (uint32_t*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (uint32_t) SvUV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (uint32_t) SvUV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -541,6 +606,11 @@ XS(ffi_pl_record_accessor_uint32_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (uint32_t*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -627,7 +697,16 @@ XS(ffi_pl_record_accessor_sint32)
   ptr2 = (int32_t*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (int32_t) SvIV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (int32_t) SvIV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -659,6 +738,11 @@ XS(ffi_pl_record_accessor_sint32_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (int32_t*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -745,7 +829,16 @@ XS(ffi_pl_record_accessor_uint64)
   ptr2 = (uint64_t*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (uint64_t) SvUV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (uint64_t) SvUV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -777,6 +870,11 @@ XS(ffi_pl_record_accessor_uint64_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (uint64_t*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -863,7 +961,16 @@ XS(ffi_pl_record_accessor_sint64)
   ptr2 = (int64_t*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (int64_t) SvIV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (int64_t) SvIV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -895,6 +1002,11 @@ XS(ffi_pl_record_accessor_sint64_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (int64_t*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -981,7 +1093,16 @@ XS(ffi_pl_record_accessor_float)
   ptr2 = (float*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (float) SvNV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (float) SvNV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -1013,6 +1134,11 @@ XS(ffi_pl_record_accessor_float_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (float*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
@@ -1099,7 +1225,16 @@ XS(ffi_pl_record_accessor_double)
   ptr2 = (double*) &ptr1[member->offset];
 
   if(items > 1)
-    *ptr2 = (double) SvNV(ST(1));
+  {
+    if(SvREADONLY(self))
+    {
+      croak("record is read-only");
+    }
+    else
+    {
+      *ptr2 = (double) SvNV(ST(1));
+    }
+  }
 
   if(GIMME_V == G_VOID)
     XSRETURN_EMPTY;
@@ -1131,6 +1266,11 @@ XS(ffi_pl_record_accessor_double_array)
 
   ptr1 = (char*) SvPV_nolen(self);
   ptr2 = (double*) &ptr1[member->offset];
+
+  if(items > 1 && SvREADONLY(self))
+  {
+    croak("record is read-only");
+  }
 
   if(items > 2)
   {
