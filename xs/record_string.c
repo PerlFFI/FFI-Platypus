@@ -74,18 +74,25 @@ XS(ffi_pl_record_accessor_string_rw)
 
   if(items > 1)
   {
-    arg = ST(1);
-    if(SvOK(arg))
+    if(SvREADONLY(self))
     {
-      arg_ptr = SvPV(arg, len);
-      *ptr2 = realloc(*ptr2, len+1);
-      (*ptr2)[len] = 0;
-      memcpy(*ptr2, arg_ptr, len);
+      croak("record is read-only");
     }
-    else if(*ptr2 != NULL)
+    else
     {
-      free(*ptr2);
-      *ptr2 = NULL;
+      arg = ST(1);
+      if(SvOK(arg))
+      {
+        arg_ptr = SvPV(arg, len);
+        *ptr2 = realloc(*ptr2, len+1);
+        (*ptr2)[len] = 0;
+        memcpy(*ptr2, arg_ptr, len);
+      }
+      else if(*ptr2 != NULL)
+      {
+        free(*ptr2);
+        *ptr2 = NULL;
+      }
     }
   }
 
@@ -128,17 +135,24 @@ XS(ffi_pl_record_accessor_string_fixed)
 
   if(items > 1)
   {
-    arg = ST(1);
-    if(SvOK(arg))
+    if(SvREADONLY(self))
     {
-      arg_ptr = SvPV(ST(1), len);
-      if(len > member->count)
-        len = member->count;
-      memcpy(ptr2, arg_ptr, len);
+      croak("record is read-only");
     }
     else
     {
-      croak("Cannot assign undef to a fixed string field");
+      arg = ST(1);
+      if(SvOK(arg))
+      {
+        arg_ptr = SvPV(ST(1), len);
+        if(len > member->count)
+          len = member->count;
+        memcpy(ptr2, arg_ptr, len);
+      }
+      else
+      {
+        croak("Cannot assign undef to a fixed string field");
+      }
     }
   }
 

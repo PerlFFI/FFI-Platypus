@@ -19,25 +19,25 @@ subtest 'not a reference' => sub {
   my $is_null   = $ffi->function( pointer_is_null => [ 'foo_record_t' ] => 'int' );
   my $create    = $ffi->function( foo_create      => [ 'string', 'sint32' ] => 'foo_record_t' );
   my $null      = $ffi->function( pointer_null    => [] => 'foo_record_t' );
-  
+
   subtest in => sub {
     my $packed = pack('A16l', "hi there\0", 42);
     note "packed size = ", length $packed;
-  
+
     is $get_value->($packed), 42, "get_value(\$packed) = 42";
     is $get_name->($packed),  "hi there", "get_name(\$packed) = hi there";
     is $is_null->(undef), 1, "is_null(undef)";
   };
-  
+
   subtest out => sub {
     my $packed = $create->("platypus", 47);
     note "packed size = ", length $packed;
-    
+
     is $get_value->($packed), 47, "get_value(\$packed) = 47";
     is $get_name->($packed), 'platypus', "get_value(\$packed) = platypus";
     is $null->(), undef, 'null() = undef';
   };
-  
+
 };
 
 
@@ -51,11 +51,11 @@ subtest 'is a reference' => sub {
   my $is_null   = $ffi->function( pointer_is_null => [ 'foo_record_t' ] => 'int' );
   my $create    = $ffi->function( foo_create      => [ 'string', 'sint32' ] => 'foo_record_t' );
   my $null      = $ffi->function( pointer_null    => [] => 'foo_record_t' );
-  
+
   subtest in => sub {
     my $packed = pack('A16l', "hi there\0", 42);
     note "packed size = ", length $packed;
-  
+
     is $get_value->(\$packed), 42, "get_value(\\\$packed) = 42";
     is $get_name->(\$packed),  "hi there", "get_name(\\\$packed) = hi there";
     is $is_null->(\undef), 1, "is_null(\\undef)";
@@ -77,9 +77,9 @@ subtest 'is a reference' => sub {
 subtest 'closure' => sub {
 
   { package Closture::Record::RW;
-  
+
     use FFI::Platypus::Record;
-  
+
     record_layout(
       'string_rw' => 'one',
       'string_rw' => 'two',
@@ -88,12 +88,13 @@ subtest 'closure' => sub {
       'int[2]'    => 'myarray1',
       'opaque'    => 'opaque1',
       'opaque[2]' => 'myarray2',
+      'string(5)' => 'fixedfive',
     );
   }
 
   my $ffi = FFI::Platypus->new;
   $ffi->lib($libtest);
-  
+
   $ffi->type('record(Closture::Record::RW)' => 'cx_struct_rw_t');
   eval { $ffi->type('(cx_struct_rw_t,int)->void' => 'cx_closure_t') };
   is $@, '', 'allow record type as arg';
@@ -109,6 +110,7 @@ subtest 'closure' => sub {
   $r->myarray1([1,2]);
   $r->opaque1(malloc(22));
   $r->myarray2([malloc(33),malloc(44)]);
+  $r->fixedfive("five\0");
   is($r->_ffi_record_ro, 0);
 
   my $here = 0;
@@ -168,15 +170,32 @@ subtest 'closure' => sub {
     }
     is_deeply($r2->myarray2, $r->myarray2);
 
+    {
+      local $@ = '';
+      eval { $r2->one("new string!") };
+      isnt $@, '';
+      note "error = $@";
+    }
+    is($r2->one, "one");
+
+    is($r2->fixedfive, "five\0");
+    {
+      local $@ = '';
+      eval { $r2->fixedfive("xxxxx") };
+      isnt $@, '';
+      note "error = $@";
+    }
+    is($r2->fixedfive, "five\0");
+
     is($num, 42);
     $here = 1;
   });
-  
+
   $cx_closure_set->($f);
   $cx_closure_call->($r, 42);
-  
+
   is($here, 1);
-  
+
   $here = 0;
   my $f2 = $ffi->closure(sub {
     my($r2, $num) = @_;
@@ -184,11 +203,11 @@ subtest 'closure' => sub {
     is($num, 0);
     $here = 1;
   });
-  
+
   $cx_closure_set->($f2);
   $cx_closure_call->(undef, undef);
   is($here,  1);
-  
+
 };
 
 done_testing;

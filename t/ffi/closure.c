@@ -37,6 +37,7 @@ typedef struct {
   int myarray1[2];
   void *opaque1;
   void *myarray2[2];
+  char fixedfive[5];
 } cx_struct_t;
 
 typedef void (*cx_closure_t)(cx_struct_t *, int);
