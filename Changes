@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - lib method accepts code reference which will be called immediately
+    and results added to lib list
 
 0.55      2018-08-29 10:37:36 -0400
   - Production release identical to 0.54_03

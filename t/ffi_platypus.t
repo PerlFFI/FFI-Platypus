@@ -252,6 +252,20 @@ subtest 'lib' => sub {
     };
 
   };
+
+  subtest 'coderef' => sub {
+
+    my $ffi = FFI::Platypus->new;
+
+    my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+    ok -e $lib, "exists $lib";
+
+    eval { $ffi->lib(sub{ $lib }) };
+    is $@, '', 'ffi.lib (set)';
+
+    is_deeply [eval { $ffi->lib }], [$lib], 'ffi.lib (get)';
+
+  };
 };
 
 subtest 'sizeof' => sub {

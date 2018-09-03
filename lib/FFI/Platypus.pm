@@ -292,7 +292,7 @@ sub lib
 
   if(@new)
   {
-    push @{ $self->{lib} }, @new;
+    push @{ $self->{lib} }, map { ref $_ eq 'CODE' ? $_->() : $_ } @new;
     delete $self->{mangler};
   }
   
