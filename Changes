@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.56      2018-09-03 09:17:42 -0400
   - lib method accepts code reference which will be called immediately
     and results added to lib list
 
