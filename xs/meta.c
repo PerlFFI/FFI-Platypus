@@ -5,29 +5,47 @@
 
 #include "ffi_platypus.h"
 
+/*
+ * - negative shift is undefined, so while it may work somewheree we make an explicit check for the
+ *   0 size.
+ * - We will eventually migrate fixed strings to be internally of record type, for now we have to
+ *   check the platypus type when we have a type_code == FFI_PL_BASE_RECORD
+ */
+#define unit_size(self)                                                                                \
+  ((self->type_code & FFI_PL_BASE_MASK) == FFI_PL_BASE_RECORD                                          \
+    ? (self->platypus_type == FFI_PL_RECORD ? self->extra[0].record.size : self->extra[0].string.size) \
+    : ((self->type_code & FFI_PL_SIZE_MASK) == FFI_PL_SIZE_0                                           \
+      ? 0                                                                                              \
+      : 1 << ((self->type_code & FFI_PL_SIZE_MASK)-1)                                                  \
+    )                                                                                                  \
+  )
+
+size_t
+ffi_pl_sizeof_new(ffi_pl_type *self)
+{
+  switch( self->type_code & (FFI_PL_SHAPE_SCALAR | FFI_PL_SHAPE_POINTER | FFI_PL_SHAPE_ARRAY) )
+  {
+    case FFI_PL_SHAPE_SCALAR:
+      return unit_size(self);
+    case FFI_PL_SHAPE_POINTER:
+      return sizeof(void*);
+    case FFI_PL_SHAPE_ARRAY:
+      return unit_size(self) * self->extra[0].array.element_count;
+    default:
+      return 0;
+  }
+}
+
 size_t
 ffi_pl_sizeof(ffi_pl_type *self)
 {
-  switch(self->platypus_type)
+  if(self->type_code == FFI_PL_TYPE_RECORD)
   {
-    case FFI_PL_NATIVE:
-    case FFI_PL_CUSTOM_PERL:
-    case FFI_PL_EXOTIC_FLOAT:
-      return self->ffi_type->size;
-    case FFI_PL_STRING:
-      if(self->extra[0].string.platypus_string_type == FFI_PL_STRING_FIXED)
-        return self->extra[0].string.size;
-      else
-        return sizeof(void*);
-    case FFI_PL_POINTER:
-    case FFI_PL_CLOSURE:
-      return sizeof(void*);
-    case FFI_PL_ARRAY:
-      return self->ffi_type->size * self->extra[0].array.element_count;
-    case FFI_PL_RECORD:
-      return self->extra[0].record.size;
-    default:
-      return 0;
+    return self->platypus_type == FFI_PL_RECORD ? self->extra[0].record.size : self->extra[0].string.size;
+  }
+  else
+  {
+    return ffi_pl_sizeof_new(self);
   }
 }
 
@@ -39,7 +57,8 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
   meta = newHV();
 
-  hv_store(meta, "size", 4, newSViv(ffi_pl_sizeof(self)), 0);
+  hv_store(meta, "size",      4, newSViv(ffi_pl_sizeof(self)), 0);
+  hv_store(meta, "type_code", 9, newSViv(self->type_code), 0);
 
   if(self->platypus_type == FFI_PL_NATIVE || self->platypus_type == FFI_PL_EXOTIC_FLOAT)
   {
