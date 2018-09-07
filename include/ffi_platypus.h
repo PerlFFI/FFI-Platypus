@@ -53,7 +53,7 @@ int windlclose(void *);
 
 #endif
 
-typedef enum _x_platypus_type {
+typedef enum _ffi_pl_type_code {
 
   /*
    * the first three bits represent the
@@ -138,7 +138,7 @@ typedef enum _x_platypus_type {
   FFI_PL_TYPE_COMPLEX_FLOAT  = FFI_PL_SIZE_64  | FFI_PL_BASE_COMPLEX,
   FFI_PL_TYPE_COMPLEX_DOUBLE = FFI_PL_SIZE_128 | FFI_PL_BASE_COMPLEX,
 
-  FFI_PL_TYPE_OPAQUE         = FFI_PL_SIZE_PTR    | FFI_PL_BASE_OPAQUE,
+  FFI_PL_TYPE_OPAQUE         = FFI_PL_SIZE_PTR | FFI_PL_BASE_OPAQUE,
 
   /*
    * These types are passed as pointers, and act like opaque types
@@ -147,7 +147,7 @@ typedef enum _x_platypus_type {
   FFI_PL_TYPE_STRING         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_STRING,
   FFI_PL_TYPE_CLOSURE        = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_CLOSURE,
   FFI_PL_TYPE_RECORD         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_RECORD,
-} x_platypus_type;
+} ffi_pl_type_code;
 
 #define ffi_pl_shapeof(t) (t->x_platypus_type & FFI_PL_SHAPE_MASK)
 
@@ -209,6 +209,7 @@ typedef union _ffi_pl_type_extra {
 typedef struct _ffi_pl_type {
   ffi_type *ffi_type;
   platypus_type platypus_type;
+  unsigned short type_code;
   ffi_pl_type_extra extra[0];
 } ffi_pl_type;
 
@@ -342,6 +343,7 @@ typedef struct _ffi_pl_record_member {
 #endif
 
 ffi_type *ffi_pl_name_to_type(const char *);
+int ffi_pl_name_to_code(const char *name);
 
 #ifdef __cplusplus
 }

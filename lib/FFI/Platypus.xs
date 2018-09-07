@@ -106,7 +106,8 @@ CLONE(...)
   CODE:
     MY_CXT_CLONE;
 
-INCLUDE: ../../xs/dl.xs
+INCLUDE: ../../xs/DL.xs
+INCLUDE: ../../xs/Internal.xs
 INCLUDE: ../../xs/Type.xs
 INCLUDE: ../../xs/Function.xs
 INCLUDE: ../../xs/Declare.xs

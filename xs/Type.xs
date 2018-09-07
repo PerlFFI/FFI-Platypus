@@ -18,31 +18,43 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     {
       Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_string), char);
       self = (ffi_pl_type*) buffer;
+      self->type_code = 0;
       self->ffi_type = NULL;
       self->platypus_type = FFI_PL_STRING;
       self->extra[0].string.size = array_or_record_or_string_size;
       if(array_or_record_or_string_size == 0)
       {
+        self->type_code |= FFI_PL_TYPE_STRING;
         self->extra[0].string.platypus_string_type = rw ? FFI_PL_STRING_RW : FFI_PL_STRING_RO;
       }
       else
       {
+        self->type_code |= FFI_PL_TYPE_RECORD;
         self->extra[0].string.platypus_string_type = FFI_PL_STRING_FIXED;
       }
     }
     else if(!strcmp(platypus_type, "ffi"))
     {
       Newx(self, 1, ffi_pl_type);
+      self->type_code = 0;
       self->ffi_type = NULL;
       if(!strcmp(type, "longdouble"))
       {
+        self->type_code |= FFI_PL_TYPE_LONG_DOUBLE;
         self->platypus_type = FFI_PL_EXOTIC_FLOAT;
         if(MY_CXT.have_math_longdouble == -1)
           MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
       }
-      else if(!strcmp(type, "complex_float")
-      ||    !strcmp(type, "complex_double"))
+      else if(!strcmp(type, "complex_float"))
       {
+        self->type_code |= FFI_PL_TYPE_COMPLEX_FLOAT;
+        self->platypus_type = FFI_PL_EXOTIC_FLOAT;
+        if(MY_CXT.have_math_complex == -1)
+          MY_CXT.have_math_complex = have_pm("Math::Complex");
+      }
+      else if(!strcmp(type, "complex_double"))
+      {
+        self->type_code |= FFI_PL_TYPE_COMPLEX_DOUBLE;
         self->platypus_type = FFI_PL_EXOTIC_FLOAT;
         if(MY_CXT.have_math_complex == -1)
           MY_CXT.have_math_complex = have_pm("Math::Complex");
@@ -55,14 +67,18 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     else if(!strcmp(platypus_type, "pointer"))
     {
       Newx(self, 1, ffi_pl_type);
+      self->type_code = 0;
       self->ffi_type = NULL;
+      self->type_code |= FFI_PL_SHAPE_POINTER;
       self->platypus_type = FFI_PL_POINTER;
     }
     else if(!strcmp(platypus_type, "array"))
     {
       Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_array), char);
       self = (ffi_pl_type*) buffer;
+      self->type_code = 0;
       self->ffi_type = NULL;
+      self->type_code |= FFI_PL_SHAPE_ARRAY;
       self->platypus_type = FFI_PL_ARRAY;
       self->extra[0].array.element_count = array_or_record_or_string_size;
     }
@@ -70,7 +86,9 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     {
       Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_record), char);
       self = (ffi_pl_type*) buffer;
+      self->type_code = 0;
       self->ffi_type = NULL;
+      self->type_code |= FFI_PL_TYPE_RECORD;
       self->platypus_type = FFI_PL_RECORD;
       self->extra[0].record.size = array_or_record_or_string_size;
       self->extra[0].record.stash = type_classname != NULL ? gv_stashpv(type_classname, GV_ADD) : NULL;
@@ -82,13 +100,15 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
 
     if(self != NULL && self->ffi_type == NULL)
     {
+      int type_code = ffi_pl_name_to_code(type);
       self->ffi_type = ffi_pl_name_to_type(type);
-      if(self->ffi_type == NULL)
+      if(self->ffi_type == NULL || type_code == -1)
       {
         Safefree(self);
         self = NULL;
         croak("unknown ffi/platypus type: %s/%s", type, platypus_type);
       }
+      self->type_code |= type_code;
     }
 
     RETVAL = self;
@@ -108,15 +128,18 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
     ffi_pl_type *self;
     ffi_type *ffi_type;
     ffi_pl_type_extra_custom_perl *custom;
+    int type_code;
   CODE:
     ffi_type = ffi_pl_name_to_type(type);
-    if(ffi_type == NULL)
+    type_code = ffi_pl_name_to_code(type);
+    if(ffi_type == NULL || type_code == -1)
       croak("unknown ffi/platypus type: %s/custom", type);
       
     Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_custom_perl), char);
     self = (ffi_pl_type*) buffer;
     self->platypus_type = FFI_PL_CUSTOM_PERL;
     self->ffi_type = ffi_type;
+    self->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
     
     custom = &self->extra[0].custom_perl;
     custom->perl_to_native = SvOK(perl_to_native) ? SvREFCNT_inc(perl_to_native) : NULL;
@@ -162,6 +185,7 @@ _new_closure(class, return_type, ...)
     Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2), char);
     Newx(ffi_argument_types, items-2, ffi_type*);
     self = (ffi_pl_type*) buffer;
+    self->type_code = FFI_PL_TYPE_CLOSURE;
     
     self->ffi_type = &ffi_type_pointer;
     self->platypus_type = FFI_PL_CLOSURE;
