@@ -53,6 +53,104 @@ int windlclose(void *);
 
 #endif
 
+typedef enum _x_platypus_type {
+
+  /*
+   * the first three bits represent the
+   * native unit size for each type.
+   */
+  FFI_PL_SIZE_0        = 0x0000,
+  FFI_PL_SIZE_8        = 0x0001,
+  FFI_PL_SIZE_16       = 0x0002,
+  FFI_PL_SIZE_32       = 0x0003,
+  FFI_PL_SIZE_64       = 0x0004,
+  FFI_PL_SIZE_128      = 0x0005,
+  FFI_PL_SIZE_256      = 0x0006,
+  FFI_PL_SIZE_512      = 0x0007,
+#if SIZEOF_VOIDP == 4
+  FFI_PL_SIZE_PTR      = FFI_PL_SIZE_32,
+#elif SIZEOF_VOIDP == 8
+  FFI_PL_SIZE_PTR      = FFI_PL_SIZE_64,
+#else
+#error "strange pointer size"
+#endif
+  FFI_PL_SIZE_MASK     = 0x0007,
+
+  /*
+   * The next nine bits represent the type:
+   * basics: void, integer, float, complex
+   *
+   * opaque is a pointer to something, a void*
+   * 
+   * string is a pointer to a null terminated string
+   * (a c string, basically)
+   *
+   * closure is a pointer to a function, usually a
+   * Perl function, enclosed within a FFI::Platypus::Closure
+   *
+   * record is a fixed bitmap, could be either a struct,
+   * or a fixed length string.
+   */
+  FFI_PL_BASE_VOID     = 0x0008,
+  FFI_PL_BASE_SINT     = 0x0010,
+  FFI_PL_BASE_UINT     = 0x0020,
+  FFI_PL_BASE_FLOAT    = 0x0040,
+  FFI_PL_BASE_COMPLEX  = 0x0080,
+  FFI_PL_BASE_OPAQUE   = 0x0100,
+  FFI_PL_BASE_STRING   = 0x0200,
+  FFI_PL_BASE_CLOSURE  = 0x0400,
+  FFI_PL_BASE_RECORD   = 0x0800,
+  FFI_PL_BASE_MASK     = 0x0ff8,
+
+  /*
+   * The shape describes how the data is organized.
+   * sclar is a simple value, pointer is usually used
+   * for pass by reference, array is a list of objects
+   * and custom types allow users to create their own
+   * custom types.
+   */
+  FFI_PL_SHAPE_SCALAR        = 0x0000,
+  FFI_PL_SHAPE_POINTER       = 0x1000,
+  FFI_PL_SHAPE_ARRAY         = 0x2000,
+  FFI_PL_SHAPE_CUSTOM_PERL   = 0x4000,
+  FFI_PL_SHAPE_CUSTOM_NATIVE = 0x8000,
+  FFI_PL_SHAPE_MASK          = 0xf000,
+
+  /*
+   * You can or together the different bit fields above to
+   * describe a type.  An int for example (usually signed 32 bit integer)
+   * is `FFI_PL_SIZE_32 | FFI_PL_BASE_SINT`.  Not all combinations
+   * have meaning, for example `FFI_PL_SIZE_8 | FFI_PL_BASE_FLOAT`
+   * is gibberish
+   */
+  FFI_PL_TYPE_VOID           = FFI_PL_SIZE_0   | FFI_PL_BASE_VOID,
+  FFI_PL_TYPE_SINT8          = FFI_PL_SIZE_8   | FFI_PL_BASE_SINT,
+  FFI_PL_TYPE_SINT16         = FFI_PL_SIZE_16  | FFI_PL_BASE_SINT,
+  FFI_PL_TYPE_SINT32         = FFI_PL_SIZE_32  | FFI_PL_BASE_SINT,
+  FFI_PL_TYPE_SINT64         = FFI_PL_SIZE_64  | FFI_PL_BASE_SINT,
+  FFI_PL_TYPE_UINT8          = FFI_PL_SIZE_8   | FFI_PL_BASE_UINT,
+  FFI_PL_TYPE_UINT16         = FFI_PL_SIZE_16  | FFI_PL_BASE_UINT,
+  FFI_PL_TYPE_UINT32         = FFI_PL_SIZE_32  | FFI_PL_BASE_UINT,
+  FFI_PL_TYPE_UINT64         = FFI_PL_SIZE_64  | FFI_PL_BASE_UINT,
+  FFI_PL_TYPE_FLOAT          = FFI_PL_SIZE_32  | FFI_PL_BASE_FLOAT,
+  FFI_PL_TYPE_DOUBLE         = FFI_PL_SIZE_64  | FFI_PL_BASE_FLOAT,
+  FFI_PL_TYPE_LONG_DOUBLE    = FFI_PL_SIZE_128 | FFI_PL_BASE_FLOAT,
+  FFI_PL_TYPE_COMPLEX_FLOAT  = FFI_PL_SIZE_64  | FFI_PL_BASE_COMPLEX,
+  FFI_PL_TYPE_COMPLEX_DOUBLE = FFI_PL_SIZE_128 | FFI_PL_BASE_COMPLEX,
+
+  FFI_PL_TYPE_OPAQUE         = FFI_PL_SIZE_PTR    | FFI_PL_BASE_OPAQUE,
+
+  /*
+   * These types are passed as pointers, and act like opaque types
+   * in terms of sizeof, alignof, etc, but get passed differently.
+   */
+  FFI_PL_TYPE_STRING         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_STRING,
+  FFI_PL_TYPE_CLOSURE        = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_CLOSURE,
+  FFI_PL_TYPE_RECORD         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_RECORD,
+} x_platypus_type;
+
+#define ffi_pl_shapeof(t) (t->x_platypus_type & FFI_PL_SHAPE_MASK)
+
 typedef enum _platypus_type {
   FFI_PL_NATIVE = 0,
   FFI_PL_STRING,

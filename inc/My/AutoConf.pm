@@ -52,6 +52,7 @@ float
 double
 bool
 _Bool
+void*
 EOF
 
 my @extra_probe_types = split /\n/, <<EOF;
