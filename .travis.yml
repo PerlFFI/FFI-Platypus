@@ -51,7 +51,6 @@ script:
   - perl inc/run/travis_cpan.pl Phash::FFI
   - perl inc/run/travis_cpan.pl Acme::Ford::Prefect::FFI
   - perl inc/run/travis_cpan.pl File::LibMagic::FFI
-  #- perl inc/run/travis_cpan.pl Archive::Libarchive::FFI
   - cpanm -n Math::BigInt
 
   - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::CPP
@@ -67,7 +66,6 @@ env:
   global:
     - PERL_USE_UNSAFE_INC=0
   matrix:
-    - FFI_PLATYPUS=1
+    - 
     - FFI_PLATYPUS_DEBUG_FAKE32=1
     - FFI_PLATYPUS_NO_ALLOCA=1
-    - FFI_PLATYPUS_DEBUG_FAKE32=1 FFI_PLATYPUS_NO_ALLOCA=1
