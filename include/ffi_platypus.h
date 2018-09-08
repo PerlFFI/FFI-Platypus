@@ -151,6 +151,10 @@ typedef enum _ffi_pl_type_code {
 
 #define ffi_pl_shapeof(t) (t->x_platypus_type & FFI_PL_SHAPE_MASK)
 
+/*
+ * platypus_type is deprecatd and due to be removed as soon
+ * as we can update all the places that reference it.
+ */
 typedef enum _platypus_type {
   FFI_PL_NATIVE = 0,
   FFI_PL_STRING,
@@ -164,8 +168,7 @@ typedef enum _platypus_type {
 
 typedef enum _platypus_string_type {
   FFI_PL_STRING_RO = 0,
-  FFI_PL_STRING_RW,
-  FFI_PL_STRING_FIXED
+  FFI_PL_STRING_RW
 } platypus_string_type;
 
 typedef struct _ffi_pl_type_extra_record {
@@ -195,7 +198,6 @@ typedef struct _ffi_pl_type_extra_closure {
 
 typedef struct _ffi_pl_type_extra_string {
   platypus_string_type platypus_string_type;
-  size_t size;
 } ffi_pl_type_extra_string;
 
 typedef union _ffi_pl_type_extra {

@@ -13,7 +13,7 @@
  */
 #define unit_size(self)                                                                                \
   ((self->type_code & FFI_PL_BASE_MASK) == FFI_PL_BASE_RECORD                                          \
-    ? (self->platypus_type == FFI_PL_RECORD ? self->extra[0].record.size : self->extra[0].string.size) \
+    ? (self->extra[0].record.size)                                                                     \
     : ((self->type_code & FFI_PL_SIZE_MASK) == FFI_PL_SIZE_0                                           \
       ? 0                                                                                              \
       : 1 << ((self->type_code & FFI_PL_SIZE_MASK)-1)                                                  \
@@ -41,7 +41,7 @@ ffi_pl_sizeof(ffi_pl_type *self)
 {
   if(self->type_code == FFI_PL_TYPE_RECORD)
   {
-    return self->platypus_type == FFI_PL_RECORD ? self->extra[0].record.size : self->extra[0].string.size;
+    return self->extra[0].record.size;
   }
   else
   {
@@ -80,10 +80,6 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
       case FFI_PL_STRING_RW:
         hv_store(meta, "access",        6, newSVpv("rw",0), 0);
         hv_store(meta, "fixed_size",    10, newSViv(0), 0);
-        break;
-      case FFI_PL_STRING_FIXED:
-        hv_store(meta, "access",        6, newSVpv("rw",0), 0);
-        hv_store(meta, "fixed_size",    10, newSViv(1), 0);
         break;
     }
   }

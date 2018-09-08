@@ -1,7 +1,9 @@
 use strict;
 use warnings;
+use FFI::Platypus;
 use FFI::Platypus::Memory qw( malloc free );
 use Test::More;
+use Data::Dumper;
 
 do {
   package
@@ -15,6 +17,14 @@ do {
   );
 
 };
+
+sub xdump_meta ($)
+{
+  my($type) = @_;
+  my $ffi = FFI::Platypus->new;
+  my $object = $ffi->type_meta($type);
+  note(Data::Dumper->new([$object])->Indent(0)->Terse(1)->Sortkeys(1)->Dump);
+}
 
 subtest 'integer accessor' => sub {
   my $foo = Foo1->new( first => 1, second => 2 );
@@ -36,6 +46,9 @@ subtest 'integer accessor' => sub {
   
   is $foo->first,  3, 'foo.first   = 3';
   is $foo->second, 4, 'foo.second  = 4';
+
+  xdump_meta('record(Foo1)');
+  xdump_meta('record(8)');
 
 };
 

@@ -153,11 +153,12 @@ _accessor(perl_name, path_name, type, offset)
           member->count = 1;
           function = ffi_pl_record_accessor_string_rw;
           break;
-        case FFI_PL_STRING_FIXED:
-          member->count = type->extra[0].string.size;
-          function = ffi_pl_record_accessor_string_fixed;
-          break;
       }
+    }
+    else if(type->platypus_type == FFI_PL_RECORD && type->extra[0].record.stash == NULL)
+    {
+      member->count = type->extra[0].record.size;
+      function = ffi_pl_record_accessor_string_fixed;
     }
     else
     {
