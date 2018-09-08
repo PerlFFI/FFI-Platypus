@@ -206,84 +206,86 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
     else
       sv = POPs;
 
-    if(extra->return_type->platypus_type == FFI_PL_NATIVE)
+    switch(extra->return_type->type_code)
     {
-      switch(extra->return_type->ffi_type->type)
-      {
-        case FFI_TYPE_UINT8:
+      case FFI_PL_TYPE_VOID:
+        break;
+      case FFI_PL_TYPE_UINT8:
 #if defined FFI_PL_PROBE_BIGENDIAN
-          ((uint8_t*)result)[3] = SvUV(sv);
+        ((uint8_t*)result)[3] = SvUV(sv);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-          ((uint8_t*)result)[7] = SvUV(sv);
+        ((uint8_t*)result)[7] = SvUV(sv);
 #else
-          *((uint8_t*)result) = SvUV(sv);
+        *((uint8_t*)result) = SvUV(sv);
 #endif
-          break;
-        case FFI_TYPE_SINT8:
+        break;
+      case FFI_PL_TYPE_SINT8:
 #if defined FFI_PL_PROBE_BIGENDIAN
-          ((int8_t*)result)[3] = SvIV(sv);
+        ((int8_t*)result)[3] = SvIV(sv);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-          ((int8_t*)result)[7] = SvIV(sv);
+        ((int8_t*)result)[7] = SvIV(sv);
 #else
-          *((int8_t*)result) = SvIV(sv);
+        *((int8_t*)result) = SvIV(sv);
 #endif
-          break;
-        case FFI_TYPE_UINT16:
+        break;
+      case FFI_PL_TYPE_UINT16:
 #if defined FFI_PL_PROBE_BIGENDIAN
-          ((uint16_t*)result)[1] = SvUV(sv);
+        ((uint16_t*)result)[1] = SvUV(sv);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-          ((uint16_t*)result)[3] = SvUV(sv);
+        ((uint16_t*)result)[3] = SvUV(sv);
 #else
-          *((uint16_t*)result) = SvUV(sv);
+        *((uint16_t*)result) = SvUV(sv);
 #endif
-          break;
-        case FFI_TYPE_SINT16:
+        break;
+      case FFI_PL_TYPE_SINT16:
 #if defined FFI_PL_PROBE_BIGENDIAN
-          ((int16_t*)result)[1] = SvIV(sv);
+        ((int16_t*)result)[1] = SvIV(sv);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-          ((int16_t*)result)[3] = SvIV(sv);
+        ((int16_t*)result)[3] = SvIV(sv);
 #else
-          *((int16_t*)result) = SvIV(sv);
+        *((int16_t*)result) = SvIV(sv);
 #endif
-          break;
-        case FFI_TYPE_UINT32:
+        break;
+      case FFI_PL_TYPE_UINT32:
 #if defined FFI_PL_PROBE_BIGENDIAN64
-          ((uint32_t*)result)[1] = SvUV(sv);
+        ((uint32_t*)result)[1] = SvUV(sv);
 #else
-          *((uint32_t*)result) = SvUV(sv);
+        *((uint32_t*)result) = SvUV(sv);
 #endif
-          break;
-        case FFI_TYPE_SINT32:
+        break;
+      case FFI_PL_TYPE_SINT32:
 #if defined FFI_PL_PROBE_BIGENDIAN64
-          ((int32_t*)result)[1] = SvIV(sv);
+        ((int32_t*)result)[1] = SvIV(sv);
 #else
-          *((int32_t*)result) = SvIV(sv);
+        *((int32_t*)result) = SvIV(sv);
 #endif
-          break;
-        case FFI_TYPE_UINT64:
+        break;
+      case FFI_PL_TYPE_UINT64:
 #ifdef HAVE_IV_IS_64
-          *((uint64_t*)result) = SvUV(sv);
+        *((uint64_t*)result) = SvUV(sv);
 #else
-          *((uint64_t*)result) = SvU64(sv);
+        *((uint64_t*)result) = SvU64(sv);
 #endif
-          break;
-        case FFI_TYPE_SINT64:
+        break;
+      case FFI_PL_TYPE_SINT64:
 #ifdef HAVE_IV_IS_64
-          *((int64_t*)result) = SvIV(sv);
+        *((int64_t*)result) = SvIV(sv);
 #else
-          *((int64_t*)result) = SvI64(sv);
+        *((int64_t*)result) = SvI64(sv);
 #endif
-          break;
-        case FFI_TYPE_FLOAT:
-          *((float*)result) = SvNV(sv);
-          break;
-        case FFI_TYPE_DOUBLE:
-          *((double*)result) = SvNV(sv);
-          break;
-        case FFI_TYPE_POINTER:
-          *((void**)result) = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
-          break;
-      }
+        break;
+      case FFI_PL_TYPE_FLOAT:
+        *((float*)result) = SvNV(sv);
+        break;
+      case FFI_PL_TYPE_DOUBLE:
+        *((double*)result) = SvNV(sv);
+        break;
+      case FFI_PL_TYPE_OPAQUE:
+        *((void**)result) = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
+        break;
+      default:
+        warn("bad type");
+        break;
     }
 
     PUTBACK;
