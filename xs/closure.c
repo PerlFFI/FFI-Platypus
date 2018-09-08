@@ -156,10 +156,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
         sv = sv_newmortal();
         if( *((char**)arguments[i]) != NULL)
         {
-          if(extra->argument_types[i]->extra[0].string.platypus_string_type == FFI_PL_STRING_FIXED)
-            sv_setpvn(sv, *((char**)arguments[i]), extra->argument_types[i]->extra[0].string.size);
-          else
-            sv_setpv(sv, *((char**)arguments[i]));
+          sv_setpv(sv, *((char**)arguments[i]));
         }
         XPUSHs(sv);
       }

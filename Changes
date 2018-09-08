@@ -1,6 +1,17 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Major refactor of the internals of the type system.  The API is
+    the same but some type meta-data (which was never guaranteed
+    to stay the same) may have changed.
+
+    * Fixed width strings example: `string(32)` are now internally
+      treated the same as a record with no class `record(32)`.
+      Previously these were separate types but worked identically,
+      this removes duplicate code.
+
+    * Fixed width string arguments to a closure are now read-only,
+      Usually you should be copying these arguments anyway.
 
 0.56      2018-09-03 09:17:42 -0400
   - lib method accepts code reference which will be called immediately

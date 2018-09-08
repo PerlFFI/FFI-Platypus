@@ -21,17 +21,8 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
       self->type_code = 0;
       self->ffi_type = NULL;
       self->platypus_type = FFI_PL_STRING;
-      self->extra[0].string.size = array_or_record_or_string_size;
-      if(array_or_record_or_string_size == 0)
-      {
-        self->type_code |= FFI_PL_TYPE_STRING;
-        self->extra[0].string.platypus_string_type = rw ? FFI_PL_STRING_RW : FFI_PL_STRING_RO;
-      }
-      else
-      {
-        self->type_code |= FFI_PL_TYPE_RECORD;
-        self->extra[0].string.platypus_string_type = FFI_PL_STRING_FIXED;
-      }
+      self->type_code |= FFI_PL_TYPE_STRING;
+      self->extra[0].string.platypus_string_type = rw ? FFI_PL_STRING_RW : FFI_PL_STRING_RO;
     }
     else if(!strcmp(platypus_type, "ffi"))
     {

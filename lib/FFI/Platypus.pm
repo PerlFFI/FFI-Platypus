@@ -119,7 +119,7 @@ and its custom types API at L<FFI::Platypus::API>.
 
 =cut
 
-our @CARP_NOT = qw( FFI::Platypus::Declare );
+our @CARP_NOT = qw( FFI::Platypus::Declare FFI::Platypus::Record );
 
 require XSLoader;
 XSLoader::load(
@@ -823,16 +823,20 @@ sub alignof
 {
   my($self, $name) = @_;
   my $meta = $self->type_meta($name);
-  
+
+  # TODO: it is possible, though complicated
+  #       to compute the alignment of a struct
+  #       type record.  
   croak "cannot determine alignment of record"
-    if $meta->{type} eq 'record';
+    if $meta->{type} eq 'record'
+    && $meta->{ref} == 1;
   
   my $ffi_type;
   if($meta->{type} eq 'pointer')
   {
     $ffi_type = 'pointer';
   }
-  elsif($meta->{type} eq 'string' && $meta->{fixed_size})
+  elsif($meta->{type} eq 'record')
   {
     $ffi_type = 'uint8';
   }
@@ -1140,9 +1144,17 @@ sub new
   {
     my $extra = $1;
     $ffi_type = 'pointer';
-    $platypus_type = 'string';
     $rw = 1 if $extra =~ /rw$/;
-    $size = $1 if $extra =~ /\(([0-9]+)\)$/;
+    if($extra =~ /\(([0-9]+)\)$/)
+    {
+      # Fixed string is really an alias for an unpackaged record
+      $size = $1;
+      $platypus_type = 'record';
+    }
+    else
+    {
+      $platypus_type = 'string';
+    }
   }
   elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
   {

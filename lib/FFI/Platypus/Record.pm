@@ -252,13 +252,13 @@ sub record_layout
         die $@ if $@;
       }
 
-      $name = join '::', $caller, $name;
-      my $error_str =_accessor
-        $name,
+      my $full_name = join '::', $caller, $name;
+      my $error_str = _accessor
+        $full_name,
         "$filename:$line",
         $ffi->_type_lookup($type),
         $offset;
-      croak($error_str) if $error_str;
+      croak("$error_str ($type $name)") if $error_str;
     };
     
     $offset += $size;
