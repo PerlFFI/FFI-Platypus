@@ -329,6 +329,31 @@ typedef struct _ffi_pl_record_member {
 
 #define ffi_pl_arguments_pointers(arguments) ((void**)&arguments->slot[arguments->count])
 
+typedef struct _ffi_pl_heap {
+  void *_this;
+  void *_next;
+} ffi_pl_heap;
+
+#define ffi_pl_heap_add(ptr, count, type) { \
+  ffi_pl_heap *n;                           \
+  Newx(ptr, count, type);                   \
+  Newx(n, 1, ffi_pl_heap);                  \
+  n->_this = ptr;                           \
+  n->_next = (void*) heap;                  \
+  heap = n;                                 \
+}
+
+#define ffi_pl_heap_free() {                \
+  while(heap != NULL)                       \
+  {                                         \
+    ffi_pl_heap *old = heap;                \
+    heap = (ffi_pl_heap *) old->_next;      \
+    Safefree(old->_this);                   \
+    Safefree(old);                          \
+  }                                         \
+}
+
+
 #if defined(_MSC_VER)
 #define Newx_or_alloca(ptr, count, type) ptr = _alloca(sizeof(type)*count)
 #define Safefree_or_alloca(ptr)
