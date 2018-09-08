@@ -168,7 +168,7 @@ typedef enum _platypus_type {
 
 typedef enum _platypus_string_type {
   FFI_PL_STRING_RO = 0,
-  FFI_PL_STRING_RW
+  FFI_PL_STRING_RW = 1
 } platypus_string_type;
 
 typedef struct _ffi_pl_type_extra_record {
@@ -196,22 +196,18 @@ typedef struct _ffi_pl_type_extra_closure {
   struct _ffi_pl_type *argument_types[0];
 } ffi_pl_type_extra_closure;
 
-typedef struct _ffi_pl_type_extra_string {
-  platypus_string_type platypus_string_type;
-} ffi_pl_type_extra_string;
-
 typedef union _ffi_pl_type_extra {
   ffi_pl_type_extra_custom_perl  custom_perl;
   ffi_pl_type_extra_array        array;
   ffi_pl_type_extra_closure      closure;
   ffi_pl_type_extra_record       record;
-  ffi_pl_type_extra_string       string;
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {
   ffi_type *ffi_type;
   platypus_type platypus_type;
   unsigned short type_code;
+  unsigned short sub_type;
   ffi_pl_type_extra extra[0];
 } ffi_pl_type;
 
@@ -346,6 +342,7 @@ typedef struct _ffi_pl_record_member {
 
 ffi_type *ffi_pl_name_to_type(const char *);
 int ffi_pl_name_to_code(const char *name);
+ffi_pl_type *ffi_pl_type_new(size_t size);
 
 #ifdef __cplusplus
 }

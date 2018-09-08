@@ -71,7 +71,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
   {
     hv_store(meta, "element_size",  12, newSViv(sizeof(void*)), 0);
     hv_store(meta, "type",           4, newSVpv("string",0),0);
-    switch(self->extra[0].string.platypus_string_type)
+    switch(self->sub_type)
     {
       case FFI_PL_STRING_RO:
         hv_store(meta, "access",        6, newSVpv("ro",0), 0);
@@ -229,4 +229,19 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
   hv_store(meta, "ffi_type", 8, newSVpv(string,0),0);
 
   return meta;
+}
+
+ffi_pl_type *ffi_pl_type_new(size_t size)
+{
+  char *buffer;
+  ffi_pl_type *self;
+
+  Newx(buffer, sizeof(ffi_pl_type) + size, char);
+  self = (ffi_pl_type*) buffer;
+  self->type_code = 0;
+  self->ffi_type = NULL;
+  self->sub_type = 0;
+  self->ffi_type = NULL;
+
+  return self;
 }

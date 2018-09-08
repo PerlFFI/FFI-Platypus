@@ -16,19 +16,14 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     self = NULL;
     if(!strcmp(platypus_type, "string"))
     {
-      Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_string), char);
-      self = (ffi_pl_type*) buffer;
-      self->type_code = 0;
-      self->ffi_type = NULL;
+      self = ffi_pl_type_new(0);
       self->platypus_type = FFI_PL_STRING;
       self->type_code |= FFI_PL_TYPE_STRING;
-      self->extra[0].string.platypus_string_type = rw ? FFI_PL_STRING_RW : FFI_PL_STRING_RO;
+      self->sub_type = rw ? FFI_PL_STRING_RW : FFI_PL_STRING_RO;
     }
     else if(!strcmp(platypus_type, "ffi"))
     {
-      Newx(self, 1, ffi_pl_type);
-      self->type_code = 0;
-      self->ffi_type = NULL;
+      self = ffi_pl_type_new(0);
       if(!strcmp(type, "longdouble"))
       {
         self->type_code |= FFI_PL_TYPE_LONG_DOUBLE;
@@ -57,28 +52,20 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     }
     else if(!strcmp(platypus_type, "pointer"))
     {
-      Newx(self, 1, ffi_pl_type);
-      self->type_code = 0;
-      self->ffi_type = NULL;
+      self = ffi_pl_type_new(0);
       self->type_code |= FFI_PL_SHAPE_POINTER;
       self->platypus_type = FFI_PL_POINTER;
     }
     else if(!strcmp(platypus_type, "array"))
     {
-      Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_array), char);
-      self = (ffi_pl_type*) buffer;
-      self->type_code = 0;
-      self->ffi_type = NULL;
+      self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
       self->type_code |= FFI_PL_SHAPE_ARRAY;
       self->platypus_type = FFI_PL_ARRAY;
       self->extra[0].array.element_count = array_or_record_or_string_size;
     }
     else if(!strcmp(platypus_type, "record"))
     {
-      Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_record), char);
-      self = (ffi_pl_type*) buffer;
-      self->type_code = 0;
-      self->ffi_type = NULL;
+      self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
       self->type_code |= FFI_PL_TYPE_RECORD;
       self->platypus_type = FFI_PL_RECORD;
       self->extra[0].record.size = array_or_record_or_string_size;
@@ -125,9 +112,8 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
     type_code = ffi_pl_name_to_code(type);
     if(ffi_type == NULL || type_code == -1)
       croak("unknown ffi/platypus type: %s/custom", type);
-      
-    Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_custom_perl), char);
-    self = (ffi_pl_type*) buffer;
+    
+    self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));  
     self->platypus_type = FFI_PL_CUSTOM_PERL;
     self->ffi_type = ffi_type;
     self->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
@@ -173,9 +159,8 @@ _new_closure(class, return_type, ...)
       }
     }
     
-    Newx(buffer, sizeof(ffi_pl_type) + sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2), char);
     Newx(ffi_argument_types, items-2, ffi_type*);
-    self = (ffi_pl_type*) buffer;
+    self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2));
     self->type_code = FFI_PL_TYPE_CLOSURE;
     
     self->ffi_type = &ffi_type_pointer;
