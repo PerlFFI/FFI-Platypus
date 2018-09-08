@@ -112,8 +112,6 @@ void
 call(self, ...)
     ffi_pl_function *self
   PREINIT:
-    char *buffer;
-    size_t buffer_size;
     int i, n, perl_arg_index;
     SV *arg;
     ffi_pl_result result;

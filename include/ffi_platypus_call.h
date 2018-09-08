@@ -1,11 +1,14 @@
     ffi_pl_heap *heap = NULL;
 
-    /* buffer contains the memory required for the arguments structure */
-    buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs +
-                  sizeof(void*) * self->ffi_cif.nargs +
-                  sizeof(ffi_pl_arguments);
-    Newx_or_alloca(buffer, buffer_size, char);
-    MY_CXT.current_argv = arguments = (ffi_pl_arguments*) buffer;
+    {
+      /* buffer contains the memory required for the arguments structure */
+      char *buffer;
+      size_t buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs +
+                    sizeof(void*) * self->ffi_cif.nargs +
+                    sizeof(ffi_pl_arguments);
+      ffi_pl_heap_add(buffer, buffer_size, char);
+      MY_CXT.current_argv = arguments = (ffi_pl_arguments*) buffer;
+    }
 
     arguments->count = self->ffi_cif.nargs;
     argument_pointers = (void**) &arguments->slot[arguments->count];
@@ -756,8 +759,7 @@
 #endif
     }
     if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
-      Safefree_or_alloca(arguments);
-    ffi_pl_heap_free();
+      ffi_pl_heap_free();
 
     MY_CXT.current_argv = NULL;
 
@@ -1168,7 +1170,7 @@
             ret_in = newSViv(PTR2IV(result.pointer));
           break;
         default:
-          Safefree_or_alloca(arguments);
+          ffi_pl_heap_free();
           warn("return type not supported");
           XSRETURN_EMPTY;
       }
@@ -1183,7 +1185,7 @@
 
       MY_CXT.current_argv = NULL;
 
-      Safefree_or_alloca(arguments);
+      ffi_pl_heap_free();
 
       if(ret_in != NULL)
       {
