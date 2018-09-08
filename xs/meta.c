@@ -242,6 +242,7 @@ ffi_pl_type *ffi_pl_type_new(size_t size)
   self->ffi_type = NULL;
   self->sub_type = 0;
   self->ffi_type = NULL;
+  self->x_ffi_type = 0;
 
   return self;
 }

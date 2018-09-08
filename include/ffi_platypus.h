@@ -207,7 +207,8 @@ typedef struct _ffi_pl_type {
   ffi_type *ffi_type;
   platypus_type platypus_type;
   unsigned short type_code;
-  unsigned short sub_type;
+  unsigned char sub_type;
+  unsigned char x_ffi_type;
   ffi_pl_type_extra extra[0];
 } ffi_pl_type;
 
