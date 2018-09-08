@@ -122,7 +122,9 @@ call(self, ...)
     dMY_CXT;
   CODE:
 #define EXTRA_ARGS 1
+    {
 #include "ffi_platypus_call.h"
+    }
 
 void
 attach(self, perl_name, path_name, proto)

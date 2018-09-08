@@ -1,3 +1,5 @@
+    ffi_pl_heap *heap = NULL;
+
     /* buffer contains the memory required for the arguments structure */
     buffer_size = sizeof(ffi_pl_argument) * self->ffi_cif.nargs +
                   sizeof(void*) * self->ffi_cif.nargs +
@@ -755,6 +757,7 @@
     }
     if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
       Safefree_or_alloca(arguments);
+    ffi_pl_heap_free();
 
     MY_CXT.current_argv = NULL;
 

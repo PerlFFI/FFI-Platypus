@@ -53,7 +53,9 @@ XS(ffi_pl_sub_call)
   self = (ffi_pl_function*) CvXSUBANY(cv).any_ptr;
 
 #define EXTRA_ARGS 0
+  {
 #include "ffi_platypus_call.h"
+  }
 }
 
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus
