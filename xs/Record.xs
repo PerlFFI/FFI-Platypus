@@ -143,7 +143,7 @@ _accessor(perl_name, path_name, type, offset)
     }
     else if(type->platypus_type == FFI_PL_STRING)
     {
-      switch(type->extra[0].string.platypus_string_type)
+      switch(type->sub_type)
       {
         case FFI_PL_STRING_RO:
           member->count = 1;
