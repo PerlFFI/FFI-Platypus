@@ -42,8 +42,7 @@ new(class, platypus, address, abi, return_type, ...)
     self->return_type = return_type;
     
     if(return_type->platypus_type == FFI_PL_NATIVE 
-    || return_type->platypus_type == FFI_PL_CUSTOM_PERL
-    || return_type->platypus_type == FFI_PL_EXOTIC_FLOAT)
+    || return_type->platypus_type == FFI_PL_CUSTOM_PERL)
     {
       ffi_return_type = return_type->ffi_type;
     }
@@ -57,8 +56,7 @@ new(class, platypus, address, abi, return_type, ...)
       arg = ST(i+5);
       self->argument_types[n] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
       if(self->argument_types[n]->platypus_type == FFI_PL_NATIVE
-      || self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL
-      || self->argument_types[n]->platypus_type == FFI_PL_EXOTIC_FLOAT)
+      || self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL)
       {
         ffi_argument_types[n] = self->argument_types[n]->ffi_type;
       }

@@ -23,7 +23,7 @@
       argument_pointers[i] = (void*) &arguments->slot[i];
 
       arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-      if(platypus_type == FFI_PL_NATIVE || platypus_type == FFI_PL_EXOTIC_FLOAT)
+      if(platypus_type == FFI_PL_NATIVE)
       {
         switch(self->argument_types[i]->type_code)
         {
@@ -733,7 +733,7 @@
      * RETURN VALUE
      */
 
-    if(self->return_type->platypus_type == FFI_PL_NATIVE || self->return_type->platypus_type == FFI_PL_EXOTIC_FLOAT)
+    if(self->return_type->platypus_type == FFI_PL_NATIVE)
     {
       int type = self->return_type->ffi_type->type;
       if(type == FFI_TYPE_VOID || (type == FFI_TYPE_POINTER && result.pointer == NULL))
@@ -1188,32 +1188,6 @@
         XSRETURN(1);
       }
 
-    }
-    else if(self->return_type->platypus_type == FFI_PL_EXOTIC_FLOAT)
-    {
-      switch(self->return_type->ffi_type->type)
-      {
-#ifdef FFI_PL_PROBE_LONGDOUBLE
-        case FFI_TYPE_LONGDOUBLE:
-        {
-          if(MY_CXT.have_math_longdouble)
-          {
-            SV *sv;
-            long double *ptr;
-            Newx(ptr, 1, long double);
-            *ptr = result.longdouble;
-            sv = sv_newmortal();
-            sv_setref_pv(sv, "Math::LongDouble", (void*)ptr);
-            ST(0) = sv;
-            XSRETURN(1);
-          }
-          else
-          {
-            XSRETURN_NV((NV) result.longdouble);
-          }
-        }
-#endif
-      }
     }
 
     warn("return type not supported");

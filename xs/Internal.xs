@@ -92,4 +92,3 @@ _init()
     newCONSTSUB(stash, "FFI_PL_CLOSURE",        newSViv(FFI_PL_CLOSURE));
     newCONSTSUB(stash, "FFI_PL_CUSTOM_PERL",    newSViv(FFI_PL_CUSTOM_PERL));
     newCONSTSUB(stash, "FFI_PL_RECORD",         newSViv(FFI_PL_RECORD));
-    newCONSTSUB(stash, "FFI_PL_EXOTIC_FLOAT",   newSViv(FFI_PL_EXOTIC_FLOAT));

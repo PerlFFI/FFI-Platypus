@@ -13,6 +13,10 @@ Revision history for {{$dist->name}}
     * Fixed width string arguments to a closure are now read-only,
       Usually you should be copying these arguments anyway.
 
+    * Removed the internal type "exotic float" which includes
+      `long double`, `complex float` and `complex double`.  These are
+      now grouped internally with other scalar types.
+
 0.56      2018-09-03 09:17:42 -0400
   - lib method accepts code reference which will be called immediately
     and results added to lib list
@@ -174,7 +178,7 @@ Revision history for {{$dist->name}}
     Alien::FFI 0.09 or beter)
 
 0.31      2015-02-26 13:41:23 -0500
-  - Fix bug involving wide custom arguments 
+  - Fix bug involving wide custom arguments
     "wide" meaning where a single Perl argument is translated
     into multiple machine code arguments.  (pipcet++ gh#43)
 
@@ -234,7 +238,7 @@ Revision history for {{$dist->name}}
   - Variable length arrays
   - More recent version of Config::AutoConf required in the configure step
     (gh#33 zmughal)
-  - Documentation improvements and additional examples, including a 
+  - Documentation improvements and additional examples, including a
     crazy Java one
 
 0.21      2015-02-09 06:23:03 -0500
@@ -258,12 +262,12 @@ Revision history for {{$dist->name}}
 
 0.18      2015-01-30 15:22:07 -0500
   - Improved support for C++ in Module::Build::FFI
-  - Module::Build::FFI can now be subclassed to support foreign 
-    languages other than C and C++.  See Module::Build::FFI::Rust as an 
+  - Module::Build::FFI can now be subclassed to support foreign
+    languages other than C and C++.  See Module::Build::FFI::Rust as an
     example.
-  - Added a hook to allow different names for native types.  See 
+  - Added a hook to allow different names for native types.  See
     FFI::Platypus::Lang::Rust for an example.
-  - Added a hook to allow mangling of symbol (function) names.  See 
+  - Added a hook to allow mangling of symbol (function) names.  See
     FFI::Platypus::Lang::CPP for an example with C++
   - Module::Build::FFI#ffi_include_dir can now be an array reference
   - Module::Build::FFI#ffi_source_dir can now be an array reference
@@ -284,7 +288,7 @@ Revision history for {{$dist->name}}
 0.16      2015-01-23 17:31:00 -0500
   - Bumping Alien::FFI version requirement up to 0.04
     Thus indirectly Alien::Base to 0.07
-    Believe this may fix a cpan testers failure that I am seeing 
+    Believe this may fix a cpan testers failure that I am seeing
 
 0.15      2015-01-23 16:46:27 -0500
   - add FFI::Platypus#ignore_not_found attribute

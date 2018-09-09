@@ -27,21 +27,21 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
       if(!strcmp(type, "longdouble"))
       {
         self->type_code |= FFI_PL_TYPE_LONG_DOUBLE;
-        self->platypus_type = FFI_PL_EXOTIC_FLOAT;
+        self->platypus_type = FFI_PL_NATIVE;
         if(MY_CXT.have_math_longdouble == -1)
           MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
       }
       else if(!strcmp(type, "complex_float"))
       {
         self->type_code |= FFI_PL_TYPE_COMPLEX_FLOAT;
-        self->platypus_type = FFI_PL_EXOTIC_FLOAT;
+        self->platypus_type = FFI_PL_NATIVE;
         if(MY_CXT.have_math_complex == -1)
           MY_CXT.have_math_complex = have_pm("Math::Complex");
       }
       else if(!strcmp(type, "complex_double"))
       {
         self->type_code |= FFI_PL_TYPE_COMPLEX_DOUBLE;
-        self->platypus_type = FFI_PL_EXOTIC_FLOAT;
+        self->platypus_type = FFI_PL_NATIVE;
         if(MY_CXT.have_math_complex == -1)
           MY_CXT.have_math_complex = have_pm("Math::Complex");
       }

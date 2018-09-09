@@ -60,12 +60,10 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
   hv_store(meta, "size",      4, newSViv(ffi_pl_sizeof(self)), 0);
   hv_store(meta, "type_code", 9, newSViv(self->type_code), 0);
 
-  if(self->platypus_type == FFI_PL_NATIVE || self->platypus_type == FFI_PL_EXOTIC_FLOAT)
+  if(self->platypus_type == FFI_PL_NATIVE)
   {
     hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "type",          4, newSVpv("scalar",0),0);
-    if(self->platypus_type == FFI_PL_EXOTIC_FLOAT)
-      hv_store(meta, "exotic", 6, newSViv(1), 0);
   }
   else if(self->platypus_type == FFI_PL_STRING)
   {
