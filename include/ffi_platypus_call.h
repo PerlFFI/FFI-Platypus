@@ -620,7 +620,6 @@
             }
           }
         }
-        Safefree_or_alloca(ptr);
       }
       else if(platypus_type == FFI_PL_ARRAY)
       {
@@ -727,7 +726,6 @@
 #endif
           }
         }
-        Safefree_or_alloca(ptr);
       }
       else if(platypus_type == FFI_PL_CLOSURE)
       {
@@ -750,13 +748,6 @@
           }
         }
       }
-#ifndef HAVE_ALLOCA
-      else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
-      {
-        void *ptr = argument_pointers[i];
-        Safefree_or_alloca(ptr);
-      }
-#endif
     }
     if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
       ffi_pl_heap_free();
