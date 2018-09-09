@@ -362,8 +362,8 @@ typedef struct _ffi_pl_heap {
 #define Newx_or_alloca(ptr, count, type) ptr = alloca(sizeof(type)*count)
 #define Safefree_or_alloca(ptr)
 #else
-#define Newx_or_alloca(ptr, count, type) Newx(ptr, count, type)
-#define Safefree_or_alloca(ptr) Safefree(ptr)
+#define Newx_or_alloca(ptr, count, type) ffi_pl_heap_add(ptr, count, type)
+#define Safefree_or_alloca(ptr)
 #endif
 
 ffi_type *ffi_pl_name_to_type(const char *);
