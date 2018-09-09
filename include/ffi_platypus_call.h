@@ -23,54 +23,82 @@
       argument_pointers[i] = (void*) &arguments->slot[i];
 
       arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-      if(platypus_type == FFI_PL_NATIVE)
+      if(platypus_type == FFI_PL_NATIVE || platypus_type == FFI_PL_EXOTIC_FLOAT)
       {
-        switch(self->argument_types[i]->ffi_type->type)
+        switch(self->argument_types[i]->type_code)
         {
-          case FFI_TYPE_UINT8:
+          case FFI_PL_TYPE_UINT8:
             ffi_pl_arguments_set_uint8(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
-          case FFI_TYPE_SINT8:
+          case FFI_PL_TYPE_SINT8:
             ffi_pl_arguments_set_sint8(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
             break;
-          case FFI_TYPE_UINT16:
+          case FFI_PL_TYPE_UINT16:
             ffi_pl_arguments_set_uint16(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
-          case FFI_TYPE_SINT16:
+          case FFI_PL_TYPE_SINT16:
             ffi_pl_arguments_set_sint16(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
             break;
-          case FFI_TYPE_UINT32:
+          case FFI_PL_TYPE_UINT32:
             ffi_pl_arguments_set_uint32(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
-          case FFI_TYPE_SINT32:
+          case FFI_PL_TYPE_SINT32:
             ffi_pl_arguments_set_sint32(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
             break;
 #ifdef HAVE_IV_IS_64
-          case FFI_TYPE_UINT64:
+          case FFI_PL_TYPE_UINT64:
             ffi_pl_arguments_set_uint64(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
-          case FFI_TYPE_SINT64:
+          case FFI_PL_TYPE_SINT64:
             ffi_pl_arguments_set_sint64(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
             break;
 #else
-          case FFI_TYPE_UINT64:
+          case FFI_PL_TYPE_UINT64:
             ffi_pl_arguments_set_uint64(arguments, i, SvOK(arg) ? SvU64(arg) : 0);
             break;
-          case FFI_TYPE_SINT64:
+          case FFI_PL_TYPE_SINT64:
             ffi_pl_arguments_set_sint64(arguments, i, SvOK(arg) ? SvI64(arg) : 0);
             break;
 #endif
-          case FFI_TYPE_FLOAT:
+          case FFI_PL_TYPE_FLOAT:
             ffi_pl_arguments_set_float(arguments, i, SvOK(arg) ? SvNV(arg) : 0.0);
             break;
-          case FFI_TYPE_DOUBLE:
+          case FFI_PL_TYPE_DOUBLE:
             ffi_pl_arguments_set_double(arguments, i, SvOK(arg) ? SvNV(arg) : 0.0);
             break;
-          case FFI_TYPE_POINTER:
+          case FFI_PL_TYPE_OPAQUE:
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+          case FFI_PL_TYPE_LONG_DOUBLE:
+            {
+              long double *ptr;
+              Newx_or_alloca(ptr, 1, long double);
+              argument_pointers[i] = ptr;
+              ffi_pl_perl_to_long_double(arg, ptr);
+            }
+            break;
+#endif
+#ifdef FFI_PL_PROBE_COMPLEX
+            case FFI_PL_TYPE_COMPLEX_FLOAT:
+              {
+                float *ptr;
+                Newx_or_alloca(ptr, 2, float complex);
+                argument_pointers[i] = ptr;
+                ffi_pl_perl_complex_float(arg, ptr);
+              }
+              break;
+            case FFI_PL_TYPE_COMPLEX_DOUBLE:
+              {
+                double *ptr;
+                Newx_or_alloca(ptr, 2, double);
+                argument_pointers[i] = ptr;
+                ffi_pl_perl_complex_double(arg, ptr);
+              }
+              break;
+#endif
           default:
-            warn("argument type not supported (%d)", i);
+            warn("FFI::Platypus: argument type not supported (%d)", self->argument_types[i]->type_code);
             break;
         }
       }
@@ -431,51 +459,6 @@
           argument_pointers[i] = &arguments->slot[i];
         }
       }
-      else if(platypus_type == FFI_PL_EXOTIC_FLOAT)
-      {
-        switch(self->argument_types[i]->ffi_type->type)
-        {
-#ifdef FFI_PL_PROBE_LONGDOUBLE
-          case FFI_TYPE_LONGDOUBLE:
-            {
-              long double *ptr;
-              Newx_or_alloca(ptr, 1, long double);
-              argument_pointers[i] = ptr;
-              ffi_pl_perl_to_long_double(arg, ptr);
-            }
-            break;
-#endif
-#ifdef FFI_PL_PROBE_COMPLEX
-          case FFI_TYPE_COMPLEX:
-            switch(self->argument_types[i]->ffi_type->size)
-            {
-              case  8:
-                {
-                  float *ptr;
-                  Newx_or_alloca(ptr, 2, float complex);
-                  argument_pointers[i] = ptr;
-                  ffi_pl_perl_complex_float(arg, ptr);
-                }
-                break;
-              case 16:
-                {
-                  double *ptr;
-                  Newx_or_alloca(ptr, 2, double);
-                  argument_pointers[i] = ptr;
-                  ffi_pl_perl_complex_double(arg, ptr);
-                }
-                break;
-              default :
-                warn("argument type not supported (%d)", i);
-                break;
-            }
-            break;
-#endif
-          default:
-            warn("argument type not supported (%d)", i);
-            break;
-        }
-      }
       else
       {
         warn("argument type not supported (%d)", i);
@@ -497,34 +480,26 @@
         argument_pointers[i],
         &arguments->slot[i]
       );
-      if(self->argument_types[i]->platypus_type  == FFI_PL_EXOTIC_FLOAT)
+      switch(self->argument_types[i]->type_code)
       {
-        switch(self->argument_types[i]->ffi_type->type)
-        {
-          case FFI_TYPE_LONGDOUBLE:
-            fprintf(stderr, " %Lg", *((long double*)argument_pointers[i]));
-            break;
-          case FFI_TYPE_COMPLEX:
-            switch(self->argument_types[i]->ffi_type->size)
-            {
-              case 8:
-                fprintf(stderr, " %g + %g * i",
-                  crealf(*((float complex*)argument_pointers[i])),
-                  cimagf(*((float complex*)argument_pointers[i]))
-                );
-                break;
-              case 16:
-                fprintf(stderr, " %g + %g * i",
-                  creal(*((double complex*)argument_pointers[i])),
-                  cimag(*((double complex*)argument_pointers[i]))
-                );
-                break;
-            }
-        }
-      }
-      else
-      {
-        fprintf(stderr, "%016llx", ffi_pl_arguments_get_uint64(arguments, i));
+        case FFI_PL_TYPE_LONG_DOUBLE:
+          fprintf(stderr, " %Lg", *((long double*)argument_pointers[i]));
+          break;
+        case FFI_PL_TYPE_COMPLEX_FLOAT:
+          fprintf(stderr, " %g + %g * i",
+            crealf(*((float complex*)argument_pointers[i])),
+            cimagf(*((float complex*)argument_pointers[i]))
+          );
+          break;
+        case FFI_PL_TYPE_COMPLEX_DOUBLE:
+          fprintf(stderr, " %g + %g * i",
+            creal(*((double complex*)argument_pointers[i])),
+            cimag(*((double complex*)argument_pointers[i]))
+          );
+          break;
+        default:
+          fprintf(stderr, "%016llx", ffi_pl_arguments_get_uint64(arguments, i));
+          break;
       }
       fprintf(stderr, "\n");
     }
@@ -758,7 +733,7 @@
      * RETURN VALUE
      */
 
-    if(self->return_type->platypus_type == FFI_PL_NATIVE)
+    if(self->return_type->platypus_type == FFI_PL_NATIVE || self->return_type->platypus_type == FFI_PL_EXOTIC_FLOAT)
     {
       int type = self->return_type->ffi_type->type;
       if(type == FFI_TYPE_VOID || (type == FFI_TYPE_POINTER && result.pointer == NULL))
@@ -767,9 +742,9 @@
       }
       else
       {
-        switch(self->return_type->ffi_type->type)
+        switch(self->return_type->type_code)
         {
-          case FFI_TYPE_UINT8:
+          case FFI_PL_TYPE_UINT8:
 #if defined FFI_PL_PROBE_BIGENDIAN
             XSRETURN_UV(result.uint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
@@ -778,7 +753,7 @@
             XSRETURN_UV(result.uint8);
 #endif
             break;
-          case FFI_TYPE_SINT8:
+          case FFI_PL_TYPE_SINT8:
 #if defined FFI_PL_PROBE_BIGENDIAN
             XSRETURN_IV(result.sint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
@@ -787,7 +762,7 @@
             XSRETURN_IV(result.sint8);
 #endif
             break;
-          case FFI_TYPE_UINT16:
+          case FFI_PL_TYPE_UINT16:
 #if defined FFI_PL_PROBE_BIGENDIAN
             XSRETURN_UV(result.uint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
@@ -796,7 +771,7 @@
             XSRETURN_UV(result.uint16);
 #endif
             break;
-          case FFI_TYPE_SINT16:
+          case FFI_PL_TYPE_SINT16:
 #if defined FFI_PL_PROBE_BIGENDIAN
             XSRETURN_IV(result.sint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
@@ -805,21 +780,21 @@
             XSRETURN_IV(result.sint16);
 #endif
             break;
-          case FFI_TYPE_UINT32:
+          case FFI_PL_TYPE_UINT32:
 #if defined FFI_PL_PROBE_BIGENDIAN64
             XSRETURN_UV(result.uint32_array[1]);
 #else
             XSRETURN_UV(result.uint32);
 #endif
             break;
-          case FFI_TYPE_SINT32:
+          case FFI_PL_TYPE_SINT32:
 #if defined FFI_PL_PROBE_BIGENDIAN64
             XSRETURN_IV(result.sint32_array[1]);
 #else
             XSRETURN_IV(result.sint32);
 #endif
             break;
-          case FFI_TYPE_UINT64:
+          case FFI_PL_TYPE_UINT64:
 #ifdef HAVE_IV_IS_64
             XSRETURN_UV(result.uint64);
 #else
@@ -830,7 +805,7 @@
             }
 #endif
             break;
-          case FFI_TYPE_SINT64:
+          case FFI_PL_TYPE_SINT64:
 #ifdef HAVE_IV_IS_64
             XSRETURN_IV(result.sint64);
 #else
@@ -841,15 +816,35 @@
             }
 #endif
             break;
-          case FFI_TYPE_FLOAT:
+          case FFI_PL_TYPE_FLOAT:
             XSRETURN_NV(result.xfloat);
             break;
-          case FFI_TYPE_DOUBLE:
+          case FFI_PL_TYPE_DOUBLE:
             XSRETURN_NV(result.xdouble);
             break;
-          case FFI_TYPE_POINTER:
+          case FFI_PL_TYPE_OPAQUE:
             XSRETURN_IV(PTR2IV(result.pointer));
             break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+          case FFI_PL_TYPE_LONG_DOUBLE:
+          {
+            if(MY_CXT.have_math_longdouble)
+            {
+              SV *sv;
+              long double *ptr;
+              Newx(ptr, 1, long double);
+              *ptr = result.longdouble;
+              sv = sv_newmortal();
+              sv_setref_pv(sv, "Math::LongDouble", (void*)ptr);
+              ST(0) = sv;
+              XSRETURN(1);
+            }
+            else
+            {
+              XSRETURN_NV((NV) result.longdouble);
+            }
+          }
+#endif
         }
       }
     }
