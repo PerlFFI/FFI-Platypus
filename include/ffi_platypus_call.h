@@ -23,7 +23,7 @@
       argument_pointers[i] = (void*) &arguments->slot[i];
 
       arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-      if(platypus_type == FFI_PL_NATIVE)
+      if(platypus_type == FFI_PL_NATIVE || platypus_type == FFI_PL_STRING)
       {
         switch(self->argument_types[i]->type_code)
         {
@@ -69,6 +69,9 @@
           case FFI_PL_TYPE_OPAQUE:
             ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg) ? INT2PTR(void*, SvIV(arg)) : NULL);
             break;
+          case FFI_PL_TYPE_STRING:
+            ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
+            break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
           case FFI_PL_TYPE_LONG_DOUBLE:
             {
@@ -102,10 +105,6 @@
             break;
         }
       }
-      else if(platypus_type == FFI_PL_STRING)
-      {
-        ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
-      }
       else if(platypus_type == FFI_PL_POINTER)
       {
         void *ptr;
@@ -115,33 +114,33 @@
           SV *arg2 = SvRV(arg);
           if(SvTYPE(arg2) < SVt_PVAV)
           {
-            switch(self->argument_types[i]->ffi_type->type)
+            switch(self->argument_types[i]->type_code)
             {
-              case FFI_TYPE_UINT8:
+              case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, uint8_t);
                 *((uint8_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
                 break;
-              case FFI_TYPE_SINT8:
+              case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, int8_t);
                 *((int8_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
                 break;
-              case FFI_TYPE_UINT16:
+              case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, uint16_t);
                 *((uint16_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
                 break;
-              case FFI_TYPE_SINT16:
+              case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, int16_t);
                 *((int16_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
                 break;
-              case FFI_TYPE_UINT32:
+              case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, uint32_t);
                 *((uint32_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
                 break;
-              case FFI_TYPE_SINT32:
+              case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, int32_t);
                 *((int32_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
                 break;
-              case FFI_TYPE_UINT64:
+              case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, uint64_t);
 #ifdef HAVE_IV_IS_64
                 *((uint64_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
@@ -149,7 +148,7 @@
                 *((uint64_t*)ptr) = SvOK(arg2) ? SvU64(arg2) : 0;
 #endif
                 break;
-              case FFI_TYPE_SINT64:
+              case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, int64_t);
 #ifdef HAVE_IV_IS_64
                 *((int64_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
@@ -157,15 +156,15 @@
                 *((int64_t*)ptr) = SvOK(arg2) ? SvI64(arg2) : 0;
 #endif
                 break;
-              case FFI_TYPE_FLOAT:
+              case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, float);
                 *((float*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
                 break;
-              case FFI_TYPE_DOUBLE:
+              case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, double);
                 *((double*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
                 break; 
-              case FFI_TYPE_POINTER:
+              case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, void*);
                 {
                   SV *tmp = SvRV(arg);
@@ -173,7 +172,7 @@
                 }
                 break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
-              case FFI_TYPE_LONGDOUBLE:
+              case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, long double);
                 ffi_pl_perl_to_long_double(arg2, (long double*)ptr);
                 break;
@@ -224,51 +223,51 @@
           AV *av = (AV*) SvRV(arg);
           if(count == 0)
             count = av_len(av)+1;
-          switch(self->argument_types[i]->ffi_type->type)
+          switch(self->argument_types[i]->type_code)
           {
-            case FFI_TYPE_UINT8:
+            case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, uint8_t);
               for(n=0; n<count; n++)
               {
                 ((uint8_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
               }
               break;
-            case FFI_TYPE_SINT8:
+            case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, int8_t);
               for(n=0; n<count; n++)
               {
                 ((int8_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
               }
               break;
-            case FFI_TYPE_UINT16:
+            case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, uint16_t);
               for(n=0; n<count; n++)
               {
                 ((uint16_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
               }
               break;
-            case FFI_TYPE_SINT16:
+            case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, int16_t);
               for(n=0; n<count; n++)
               {
                 ((int16_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
               }
               break;
-            case FFI_TYPE_UINT32:
+            case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, uint32_t);
               for(n=0; n<count; n++)
               {
                 ((uint32_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
               }
               break;
-            case FFI_TYPE_SINT32:
+            case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, int32_t);
               for(n=0; n<count; n++)
               {
                 ((int32_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
               }
               break;
-            case FFI_TYPE_UINT64:
+            case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, uint64_t);
               for(n=0; n<count; n++)
               {
@@ -279,7 +278,7 @@
 #endif
               }
               break;
-            case FFI_TYPE_SINT64:
+            case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, int64_t);
               for(n=0; n<count; n++)
               {
@@ -290,21 +289,21 @@
 #endif
               }
               break;
-            case FFI_TYPE_FLOAT:
+            case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, float);
               for(n=0; n<count; n++)
               {
                 ((float*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
               }
               break;
-            case FFI_TYPE_DOUBLE:
+            case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, double);
               for(n=0; n<count; n++)
               {
                 ((double*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
               }
               break;
-            case FFI_TYPE_POINTER:
+            case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, void*);
               for(n=0; n<count; n++)
               {
@@ -313,7 +312,7 @@
               }
               break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
-            case FFI_TYPE_LONGDOUBLE:
+            case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_ARRAY:
               Newx(ptr, count, long double);
               for(n=0; n<count; n++)
               {
@@ -323,7 +322,7 @@
               break;
 #endif
             default:
-              Newxz(ptr, count*self->argument_types[i]->ffi_type->size, char);
+              Newxz(ptr, count*(1 << ((self->argument_types[i]->type_code & FFI_PL_SIZE_MASK)-1)), char);
               warn("argument type not supported (%d)", i);
               break;
           }
@@ -331,7 +330,7 @@
         else
         {
           warn("passing non array reference into ffi/platypus array argument type");
-          Newxz(ptr, count*self->argument_types[i]->ffi_type->size, char);
+          Newxz(ptr, count*(1 << ((self->argument_types[i]->type_code & FFI_PL_SIZE_MASK)-1)), char);
         }
         ffi_pl_arguments_set_pointer(arguments, i, ptr);
       }
@@ -475,7 +474,7 @@
     {
       fprintf(stderr, "# [%d] <%d:%d> %p %p",
         i,
-        self->argument_types[i]->ffi_type->type,
+        self->argument_types[i]->code_type,
         self->argument_types[i]->platypus_type,
         argument_pointers[i],
         &arguments->slot[i]
@@ -538,54 +537,54 @@
           arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
           if(!SvREADONLY(SvRV(arg)))
           {
-            switch(self->argument_types[i]->ffi_type->type)
+            switch(self->argument_types[i]->type_code)
             {
-              case FFI_TYPE_UINT8:
+              case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
                 sv_setuv(SvRV(arg), *((uint8_t*)ptr));
                 break;
-              case FFI_TYPE_SINT8:
+              case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
                 sv_setiv(SvRV(arg), *((int8_t*)ptr));
                 break;
-              case FFI_TYPE_UINT16:
+              case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
                 sv_setuv(SvRV(arg), *((uint16_t*)ptr));
                 break;
-              case FFI_TYPE_SINT16:
+              case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
                 sv_setiv(SvRV(arg), *((int16_t*)ptr));
                 break;
-              case FFI_TYPE_UINT32:
+              case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
                 sv_setuv(SvRV(arg), *((uint32_t*)ptr));
                 break;
-              case FFI_TYPE_SINT32:
+              case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
                 sv_setiv(SvRV(arg), *((int32_t*)ptr));
                 break;
-              case FFI_TYPE_UINT64:
+              case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
 #ifdef HAVE_IV_IS_64
                 sv_setuv(SvRV(arg), *((uint64_t*)ptr));
 #else
                 sv_setu64(SvRV(arg), *((uint64_t*)ptr));
 #endif
                 break;
-              case FFI_TYPE_SINT64:
+              case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
 #ifdef HAVE_IV_IS_64
                 sv_setiv(SvRV(arg), *((int64_t*)ptr));
 #else
                 sv_seti64(SvRV(arg), *((int64_t*)ptr));
 #endif
                 break;
-              case FFI_TYPE_FLOAT:
+              case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
                 sv_setnv(SvRV(arg), *((float*)ptr));
                 break;
-              case FFI_TYPE_POINTER:
+              case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
                 if( *((void**)ptr) == NULL)
                   sv_setsv(SvRV(arg), &PL_sv_undef);
                 else
                   sv_setiv(SvRV(arg), PTR2IV(*((void**)ptr)));
                 break;
-              case FFI_TYPE_DOUBLE:
+              case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
                 sv_setnv(SvRV(arg), *((double*)ptr));
                 break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
-              case FFI_TYPE_LONGDOUBLE:
+              case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
                 {
                   SV *arg2 = SvRV(arg);
                   ffi_pl_long_double_to_perl(arg2,(long double*)ptr);
@@ -606,45 +605,45 @@
           AV *av = (AV*) SvRV(arg);
           if(count == 0)
             count = av_len(av)+1;
-          switch(self->argument_types[i]->ffi_type->type)
+          switch(self->argument_types[i]->type_code)
           {
-            case FFI_TYPE_UINT8:
+            case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 sv_setuv(*av_fetch(av, n, 1), ((uint8_t*)ptr)[n]);
               }
               break;
-            case FFI_TYPE_SINT8:
+            case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 sv_setiv(*av_fetch(av, n, 1), ((int8_t*)ptr)[n]);
               }
               break;
-            case FFI_TYPE_UINT16:
+            case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 sv_setuv(*av_fetch(av, n, 1), ((uint16_t*)ptr)[n]);
               }
               break;
-            case FFI_TYPE_SINT16:
+            case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 sv_setiv(*av_fetch(av, n, 1), ((int16_t*)ptr)[n]);
               }
               break;
-            case FFI_TYPE_UINT32:
+            case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 sv_setuv(*av_fetch(av, n, 1), ((uint32_t*)ptr)[n]);
               }
               break;
-            case FFI_TYPE_SINT32:
+            case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 sv_setiv(*av_fetch(av, n, 1), ((int32_t*)ptr)[n]);
               }
               break;
-            case FFI_TYPE_UINT64:
+            case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
 #ifdef HAVE_IV_IS_64
@@ -654,7 +653,7 @@
 #endif
               }
               break;
-            case FFI_TYPE_SINT64:
+            case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
 #ifdef HAVE_IV_IS_64
@@ -664,13 +663,13 @@
 #endif
               }
               break;
-            case FFI_TYPE_FLOAT:
+            case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 sv_setnv(*av_fetch(av, n, 1), ((float*)ptr)[n]);
               }
               break;
-            case FFI_TYPE_POINTER:
+            case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 if( ((void**)ptr)[n] == NULL)
@@ -683,14 +682,14 @@
                 }
               }
               break;
-            case FFI_TYPE_DOUBLE:
+            case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 sv_setnv(*av_fetch(av, n, 1), ((double*)ptr)[n]);
               }
               break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
-            case FFI_TYPE_LONGDOUBLE:
+            case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_ARRAY:
               for(n=0; n<count; n++)
               {
                 SV *sv;
