@@ -162,8 +162,7 @@ typedef enum _platypus_type {
   FFI_PL_ARRAY,
   FFI_PL_CLOSURE,
   FFI_PL_CUSTOM_PERL,
-  FFI_PL_RECORD,
-  FFI_PL_EXOTIC_FLOAT
+  FFI_PL_RECORD
 } platypus_type;
 
 typedef enum _platypus_string_type {
