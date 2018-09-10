@@ -1,10 +1,10 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type
 
 ffi_pl_type *
-_new(class, type, platypus_type, array_or_record_or_string_size, type_classname, rw)
+_new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw)
     const char *class
     const char *type
-    const char *platypus_type
+    const char *fuzzy_type
     size_t array_or_record_or_string_size
     ffi_pl_string type_classname
     int rw
@@ -14,14 +14,14 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     dMY_CXT;
   CODE:
     self = NULL;
-    if(!strcmp(platypus_type, "string"))
+    if(!strcmp(fuzzy_type, "string"))
     {
       self = ffi_pl_type_new(0);
       self->platypus_type = FFI_PL_NATIVE;
       self->type_code |= FFI_PL_TYPE_STRING;
       self->sub_type = rw ? FFI_PL_TYPE_STRING_RW : FFI_PL_TYPE_STRING_RO;
     }
-    else if(!strcmp(platypus_type, "ffi"))
+    else if(!strcmp(fuzzy_type, "ffi"))
     {
       self = ffi_pl_type_new(0);
       if(!strcmp(type, "longdouble"))
@@ -50,20 +50,20 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
         self->platypus_type = FFI_PL_NATIVE;
       }
     }
-    else if(!strcmp(platypus_type, "pointer"))
+    else if(!strcmp(fuzzy_type, "pointer"))
     {
       self = ffi_pl_type_new(0);
       self->type_code |= FFI_PL_SHAPE_POINTER;
       self->platypus_type = FFI_PL_POINTER;
     }
-    else if(!strcmp(platypus_type, "array"))
+    else if(!strcmp(fuzzy_type, "array"))
     {
       self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
       self->type_code |= FFI_PL_SHAPE_ARRAY;
       self->platypus_type = FFI_PL_ARRAY;
       self->extra[0].array.element_count = array_or_record_or_string_size;
     }
-    else if(!strcmp(platypus_type, "record"))
+    else if(!strcmp(fuzzy_type, "record"))
     {
       self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
       self->type_code |= FFI_PL_TYPE_RECORD;
@@ -73,7 +73,7 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     }
     else
     {
-      croak("unknown ffi/platypus type: %s/%s", type, platypus_type);
+      croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
     }
 
     if(self != NULL && self->ffi_type == NULL)
@@ -84,7 +84,7 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
       {
         Safefree(self);
         self = NULL;
-        croak("unknown ffi/platypus type: %s/%s", type, platypus_type);
+        croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
       }
       self->type_code |= type_code;
     }
