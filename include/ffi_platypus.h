@@ -149,8 +149,6 @@ typedef enum _ffi_pl_type_code {
   FFI_PL_TYPE_RECORD         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_RECORD,
 } ffi_pl_type_code;
 
-#define ffi_pl_shapeof(t) (t->x_platypus_type & FFI_PL_SHAPE_MASK)
-
 /*
  * platypus_type is deprecatd and due to be removed as soon
  * as we can update all the places that reference it.
