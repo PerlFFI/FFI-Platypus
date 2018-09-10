@@ -477,7 +477,6 @@ subtest 'type' => sub {
         my $meta = $ffi->type_meta($type);
 
         is $meta->{size}, $ptr_size, "sizeof $type = $ptr_size";
-        is $meta->{fixed_size}, 0, 'not fixed size';
 
         my $access = $type =~ /rw$/ ? 'rw' : 'ro';
 

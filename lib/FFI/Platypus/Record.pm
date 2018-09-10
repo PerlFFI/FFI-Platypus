@@ -241,8 +241,7 @@ sub record_layout
     {
 
       if($meta->{type} eq 'string'
-      && $meta->{access} eq 'rw'
-      && $meta->{fixed_size} == 0)
+      && $meta->{access} eq 'rw')
       {
         push @destroy, eval '# line '. __LINE__ . ' "' . __FILE__ . qq("\n) .qq{
           sub {
