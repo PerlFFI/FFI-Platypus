@@ -818,24 +818,24 @@
           XSRETURN_NV(result.xdouble);
           break;
         case FFI_PL_TYPE_OPAQUE:
+        case FFI_PL_TYPE_STRING:
           if(result.pointer == NULL)
           {
             XSRETURN_EMPTY;
           }
           else
           {
-            XSRETURN_IV(PTR2IV(result.pointer));
+            switch(self->return_type->type_code)
+            {
+              case FFI_PL_TYPE_OPAQUE:
+                XSRETURN_IV(PTR2IV(result.pointer));
+                break;
+              case FFI_PL_TYPE_STRING:
+                XSRETURN_PV(result.pointer);
+                break;
+            }
           }
           break;
-        case FFI_PL_TYPE_STRING:
-          if( result.pointer == NULL )
-          {
-            XSRETURN_EMPTY;
-          }
-          else
-          {
-            XSRETURN_PV(result.pointer);
-          }
 #ifdef FFI_PL_PROBE_LONGDOUBLE
         case FFI_PL_TYPE_LONG_DOUBLE:
         {
@@ -940,7 +940,11 @@
     }
     else if(self->return_type->platypus_type == FFI_PL_RECORD)
     {
-      if(result.pointer != NULL)
+      if(result.pointer == NULL)
+      {
+        XSRETURN_EMPTY;
+      }
+      else
       {
         SV *value = sv_newmortal();
         sv_setpvn(value, result.pointer, self->return_type->extra[0].record.size);
@@ -954,10 +958,6 @@
           ST(0) = value;
         }
         XSRETURN(1);
-      }
-      else
-      {
-        XSRETURN_EMPTY;
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_ARRAY)
