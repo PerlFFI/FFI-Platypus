@@ -31,7 +31,7 @@
 /*
  * ARGUMENT IN - SCALAR TYPES
  */
-        
+
           case FFI_PL_TYPE_UINT8:
             ffi_pl_arguments_set_uint8(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
             break;
@@ -156,7 +156,7 @@
                   else
                   {
                     closure->type = self->argument_types[i];
-      
+
                     ffi_status = ffi_prep_closure_loc(
                       closure->ffi_closure,
                       &self->argument_types[i]->extra[0].closure.ffi_cif,
@@ -164,7 +164,6 @@
                       closure,
                       closure->function_pointer
                     );
-      
                     if(ffi_status != FFI_OK)
                     {
                       ffi_closure_free(closure->ffi_closure);
@@ -191,7 +190,7 @@
 /*
  * ARGUMENT IN - POINTER TYPES
  */
-            
+
               case FFI_PL_SHAPE_POINTER:
                 {
                   void *ptr;
@@ -430,48 +429,48 @@
 
         if(arg2 != NULL)
         {
-          switch(self->argument_types[i]->ffi_type->type)
+          switch(type_code)
           {
-            case FFI_TYPE_UINT8:
+            case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_uint8(arguments, i, SvUV(arg2));
               break;
-            case FFI_TYPE_SINT8:
+            case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_sint8(arguments, i, SvIV(arg2));
               break;
-            case FFI_TYPE_UINT16:
+            case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_uint16(arguments, i, SvUV(arg2));
               break;
-            case FFI_TYPE_SINT16:
+            case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_sint16(arguments, i, SvIV(arg2));
               break;
-            case FFI_TYPE_UINT32:
+            case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_uint32(arguments, i, SvUV(arg2));
               break;
-            case FFI_TYPE_SINT32:
+            case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg2));
               break;
 #ifdef HAVE_IV_IS_64
-            case FFI_TYPE_UINT64:
+            case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_uint64(arguments, i, SvUV(arg2));
               break;
-            case FFI_TYPE_SINT64:
+            case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_sint64(arguments, i, SvIV(arg2));
               break;
 #else
-            case FFI_TYPE_UINT64:
+            case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_uint64(arguments, i, SvU64(arg2));
               break;
-            case FFI_TYPE_SINT64:
+            case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_sint64(arguments, i, SvI64(arg2));
               break;
 #endif
-            case FFI_TYPE_FLOAT:
+            case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_float(arguments, i, SvNV(arg2));
               break;
-            case FFI_TYPE_DOUBLE:
+            case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_double(arguments, i, SvNV(arg2));
               break;
-            case FFI_TYPE_POINTER:
+            case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_CUSTOM_PERL:
               ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg2) ? INT2PTR(void*, SvIV(arg2)) : NULL);
               break;
             default:
@@ -542,198 +541,227 @@
       ffi_call(&self->ffi_cif, address, &result, ffi_pl_arguments_pointers(arguments));
     }
 
-    /*
-     * ARGUMENT OUT
-     */
+/*
+ * ARGUMENT OUT
+ */
 
     MY_CXT.current_argv = arguments;
 
     for(i=self->ffi_cif.nargs-1,perl_arg_index--; i >= 0; i--, perl_arg_index--)
     {
-      platypus_type platypus_type;
-      platypus_type = self->argument_types[i]->platypus_type;
+      int type_code = self->argument_types[i]->type_code;
 
-      if(platypus_type == FFI_PL_POINTER)
+      if(self->argument_types[i]->platypus_type != FFI_PL_CUSTOM_PERL)
       {
-        void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
-        if(ptr != NULL)
+        switch(type_code)
         {
-          arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-          if(!SvREADONLY(SvRV(arg)))
-          {
-            switch(self->argument_types[i]->type_code)
+
+/*
+ * ARGUMENT OUT - SCALAR TYPES
+ */
+          case FFI_PL_TYPE_CLOSURE:
             {
-              case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
-                sv_setuv(SvRV(arg), *((uint8_t*)ptr));
-                break;
-              case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
-                sv_setiv(SvRV(arg), *((int8_t*)ptr));
-                break;
-              case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
-                sv_setuv(SvRV(arg), *((uint16_t*)ptr));
-                break;
-              case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
-                sv_setiv(SvRV(arg), *((int16_t*)ptr));
-                break;
-              case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
-                sv_setuv(SvRV(arg), *((uint32_t*)ptr));
-                break;
-              case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
-                sv_setiv(SvRV(arg), *((int32_t*)ptr));
-                break;
-              case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
-#ifdef HAVE_IV_IS_64
-                sv_setuv(SvRV(arg), *((uint64_t*)ptr));
-#else
-                sv_setu64(SvRV(arg), *((uint64_t*)ptr));
-#endif
-                break;
-              case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
-#ifdef HAVE_IV_IS_64
-                sv_setiv(SvRV(arg), *((int64_t*)ptr));
-#else
-                sv_seti64(SvRV(arg), *((int64_t*)ptr));
-#endif
-                break;
-              case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
-                sv_setnv(SvRV(arg), *((float*)ptr));
-                break;
-              case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
-                if( *((void**)ptr) == NULL)
-                  sv_setsv(SvRV(arg), &PL_sv_undef);
-                else
-                  sv_setiv(SvRV(arg), PTR2IV(*((void**)ptr)));
-                break;
-              case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
-                sv_setnv(SvRV(arg), *((double*)ptr));
-                break;
-#ifdef FFI_PL_PROBE_LONGDOUBLE
-              case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
-                {
-                  SV *arg2 = SvRV(arg);
-                  ffi_pl_long_double_to_perl(arg2,(long double*)ptr);
-                }
-                break;
-#endif
+              arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
+              if(SvROK(arg))
+              {
+                SvREFCNT_dec(arg);
+              }
             }
-          }
-        }
-      }
-      else if(platypus_type == FFI_PL_ARRAY)
-      {
-        void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
-        int count = self->argument_types[i]->extra[0].array.element_count;
-        arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-        if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
-        {
-          AV *av = (AV*) SvRV(arg);
-          if(count == 0)
-            count = av_len(av)+1;
-          switch(self->argument_types[i]->type_code)
-          {
-            case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                sv_setuv(*av_fetch(av, n, 1), ((uint8_t*)ptr)[n]);
-              }
-              break;
-            case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                sv_setiv(*av_fetch(av, n, 1), ((int8_t*)ptr)[n]);
-              }
-              break;
-            case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                sv_setuv(*av_fetch(av, n, 1), ((uint16_t*)ptr)[n]);
-              }
-              break;
-            case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                sv_setiv(*av_fetch(av, n, 1), ((int16_t*)ptr)[n]);
-              }
-              break;
-            case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                sv_setuv(*av_fetch(av, n, 1), ((uint32_t*)ptr)[n]);
-              }
-              break;
-            case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                sv_setiv(*av_fetch(av, n, 1), ((int32_t*)ptr)[n]);
-              }
-              break;
-            case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-#ifdef HAVE_IV_IS_64
-                sv_setuv(*av_fetch(av, n, 1), ((uint64_t*)ptr)[n]);
-#else
-                sv_setu64(*av_fetch(av, n, 1), ((uint64_t*)ptr)[n]);
-#endif
-              }
-              break;
-            case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-#ifdef HAVE_IV_IS_64
-                sv_setiv(*av_fetch(av, n, 1), ((int64_t*)ptr)[n]);
-#else
-                sv_seti64(*av_fetch(av, n, 1), ((int64_t*)ptr)[n]);
-#endif
-              }
-              break;
-            case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                sv_setnv(*av_fetch(av, n, 1), ((float*)ptr)[n]);
-              }
-              break;
-            case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                if( ((void**)ptr)[n] == NULL)
+            break;
+
+          default:
+            switch(type_code & FFI_PL_SHAPE_MASK)
+            {
+
+/*
+ * ARGUMENT OUT - POINTER TYPES
+ */
+
+              case FFI_PL_SHAPE_POINTER:
                 {
-                  av_store(av, n, &PL_sv_undef);
-                }
-                else
-                {
-                  sv_setnv(*av_fetch(av,n,1), PTR2IV( ((void**)ptr)[n]) );
-                }
-              }
-              break;
-            case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                sv_setnv(*av_fetch(av, n, 1), ((double*)ptr)[n]);
-              }
-              break;
+                  void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
+                  if(ptr != NULL)
+                  {
+                    arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
+                    if(!SvREADONLY(SvRV(arg)))
+                    {
+                      switch(self->argument_types[i]->type_code)
+                      {
+                        case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
+                          sv_setuv(SvRV(arg), *((uint8_t*)ptr));
+                          break;
+                        case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
+                          sv_setiv(SvRV(arg), *((int8_t*)ptr));
+                          break;
+                        case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
+                          sv_setuv(SvRV(arg), *((uint16_t*)ptr));
+                          break;
+                        case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
+                          sv_setiv(SvRV(arg), *((int16_t*)ptr));
+                          break;
+                        case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
+                          sv_setuv(SvRV(arg), *((uint32_t*)ptr));
+                          break;
+                        case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
+                          sv_setiv(SvRV(arg), *((int32_t*)ptr));
+                          break;
+                        case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
+#ifdef HAVE_IV_IS_64
+                          sv_setuv(SvRV(arg), *((uint64_t*)ptr));
+#else
+                          sv_setu64(SvRV(arg), *((uint64_t*)ptr));
+#endif
+                          break;
+                        case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
+#ifdef HAVE_IV_IS_64
+                          sv_setiv(SvRV(arg), *((int64_t*)ptr));
+#else
+                          sv_seti64(SvRV(arg), *((int64_t*)ptr));
+#endif
+                          break;
+                        case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
+                          sv_setnv(SvRV(arg), *((float*)ptr));
+                          break;
+                        case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
+                          if( *((void**)ptr) == NULL)
+                            sv_setsv(SvRV(arg), &PL_sv_undef);
+                          else
+                            sv_setiv(SvRV(arg), PTR2IV(*((void**)ptr)));
+                          break;
+                        case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
+                          sv_setnv(SvRV(arg), *((double*)ptr));
+                          break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
-            case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_ARRAY:
-              for(n=0; n<count; n++)
-              {
-                SV *sv;
-                sv = *av_fetch(av, n, 1);
-                ffi_pl_long_double_to_perl(sv, &((long double*)ptr)[n]);
-              }
-              break;
+                        case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
+                          {
+                            SV *arg2 = SvRV(arg);
+                            ffi_pl_long_double_to_perl(arg2,(long double*)ptr);
+                          }
+                          break;
 #endif
-          }
+                      }
+                    }
+                  }
+                }
+                break;
+
+/*
+ * ARGUMENT OUT - ARRAY TYPES
+ */
+
+              case FFI_PL_SHAPE_ARRAY:
+                {
+                  void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
+                  int count = self->argument_types[i]->extra[0].array.element_count;
+                  arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
+                  if(SvROK(arg) && SvTYPE(SvRV(arg)) == SVt_PVAV)
+                  {
+                    AV *av = (AV*) SvRV(arg);
+                    if(count == 0)
+                      count = av_len(av)+1;
+                    switch(self->argument_types[i]->type_code)
+                    {
+                      case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          sv_setuv(*av_fetch(av, n, 1), ((uint8_t*)ptr)[n]);
+                        }
+                        break;
+                      case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          sv_setiv(*av_fetch(av, n, 1), ((int8_t*)ptr)[n]);
+                        }
+                        break;
+                      case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          sv_setuv(*av_fetch(av, n, 1), ((uint16_t*)ptr)[n]);
+                        }
+                        break;
+                      case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          sv_setiv(*av_fetch(av, n, 1), ((int16_t*)ptr)[n]);
+                        }
+                        break;
+                      case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          sv_setuv(*av_fetch(av, n, 1), ((uint32_t*)ptr)[n]);
+                        }
+                        break;
+                      case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          sv_setiv(*av_fetch(av, n, 1), ((int32_t*)ptr)[n]);
+                        }
+                        break;
+                      case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+#ifdef HAVE_IV_IS_64
+                          sv_setuv(*av_fetch(av, n, 1), ((uint64_t*)ptr)[n]);
+#else
+                          sv_setu64(*av_fetch(av, n, 1), ((uint64_t*)ptr)[n]);
+#endif
+                        }
+                        break;
+                      case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+#ifdef HAVE_IV_IS_64
+                          sv_setiv(*av_fetch(av, n, 1), ((int64_t*)ptr)[n]);
+#else
+                          sv_seti64(*av_fetch(av, n, 1), ((int64_t*)ptr)[n]);
+#endif
+                        }
+                        break;
+                      case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          sv_setnv(*av_fetch(av, n, 1), ((float*)ptr)[n]);
+                        }
+                        break;
+                      case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          if( ((void**)ptr)[n] == NULL)
+                          {
+                            av_store(av, n, &PL_sv_undef);
+                          }
+                          else
+                          {
+                            sv_setnv(*av_fetch(av,n,1), PTR2IV( ((void**)ptr)[n]) );
+                          }
+                        }
+                        break;
+                      case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          sv_setnv(*av_fetch(av, n, 1), ((double*)ptr)[n]);
+                        }
+                        break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+                      case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_ARRAY:
+                        for(n=0; n<count; n++)
+                        {
+                          SV *sv;
+                          sv = *av_fetch(av, n, 1);
+                          ffi_pl_long_double_to_perl(sv, &((long double*)ptr)[n]);
+                        }
+                        break;
+#endif
+                    }
+                  }
+                }
+                break;
+              default:
+                break;
+            }
         }
       }
-      else if(platypus_type == FFI_PL_CLOSURE)
-      {
-        arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-        if(SvROK(arg))
-        {
-          SvREFCNT_dec(arg);
-        }
-      }
-      else if(platypus_type == FFI_PL_CUSTOM_PERL)
+      else
       {
         /* FIXME: need to fill out argument_types for skipping */
         i -= self->argument_types[i]->extra[0].custom_perl.argument_count;
@@ -747,19 +775,27 @@
         }
       }
     }
+
     if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
       ffi_pl_heap_free();
 
     MY_CXT.current_argv = NULL;
 
-    /*
-     * RETURN VALUE
-     */
+/*
+ * RETURN VALUE
+ */
 
-    if(self->return_type->platypus_type == FFI_PL_NATIVE)
+    if(self->return_type->platypus_type != FFI_PL_CUSTOM_PERL)
     {
-      switch(self->return_type->type_code)
+      int type_code = self->return_type->type_code;
+      switch(type_code)
       {
+
+/*
+ * RETURN VALUE - TYPE SCALAR
+ */
+
+
         case FFI_PL_TYPE_VOID:
           XSRETURN_EMPTY;
           break;
@@ -880,231 +916,246 @@
           }
         }
 #endif
-      }
-    }
-    else if(self->return_type->platypus_type == FFI_PL_POINTER)
-    {
-      if(result.pointer == NULL)
-      {
-        XSRETURN_EMPTY;
-      }
-      else
-      {
-        SV *value;
-        switch(self->return_type->ffi_type->type)
-        {
-          case FFI_TYPE_UINT8:
-            value = sv_newmortal();
-            sv_setuv(value, *((uint8_t*) result.pointer));
-            break;
-          case FFI_TYPE_SINT8:
-            value = sv_newmortal();
-            sv_setiv(value, *((int8_t*) result.pointer));
-            break;
-          case FFI_TYPE_UINT16:
-            value = sv_newmortal();
-            sv_setuv(value, *((uint16_t*) result.pointer));
-            break;
-          case FFI_TYPE_SINT16:
-            value = sv_newmortal();
-            sv_setiv(value, *((int16_t*) result.pointer));
-            break;
-          case FFI_TYPE_UINT32:
-            value = sv_newmortal();
-            sv_setuv(value, *((uint32_t*) result.pointer));
-            break;
-          case FFI_TYPE_SINT32:
-            value = sv_newmortal();
-            sv_setiv(value, *((int32_t*) result.pointer));
-            break;
-          case FFI_TYPE_UINT64:
-            value = sv_newmortal();
-#ifdef HAVE_IV_IS_64
-            sv_setuv(value, *((uint64_t*) result.pointer));
-#else
-            sv_seti64(value, *((int64_t*) result.pointer));
-#endif
-            break;
-          case FFI_TYPE_SINT64:
-            value = sv_newmortal();
-#ifdef HAVE_IV_IS_64
-            sv_setiv(value, *((int64_t*) result.pointer));
-#else
-            sv_seti64(value, *((int64_t*) result.pointer));
-#endif
-            break;
-          case FFI_TYPE_FLOAT:
-            value = sv_newmortal();
-            sv_setnv(value, *((float*) result.pointer));
-            break;
-          case FFI_TYPE_DOUBLE:
-            value = sv_newmortal();
-            sv_setnv(value, *((double*) result.pointer));
-            break;
-          case FFI_TYPE_POINTER:
-            value = sv_newmortal();
-            if( *((void**)result.pointer) == NULL )
-              value = &PL_sv_undef;
-            else
-              sv_setiv(value, PTR2IV(*((void**)result.pointer)));
-            break;
-#ifdef FFI_PL_PROBE_LONGDOUBLE
-          case FFI_TYPE_LONGDOUBLE:
-            value = sv_newmortal();
-            ffi_pl_long_double_to_perl(value, (long double*)result.pointer);
-            break;
-#endif
-          default:
-            warn("return type not supported");
+        case FFI_PL_TYPE_RECORD:
+          if(result.pointer == NULL)
+          {
             XSRETURN_EMPTY;
-        }
-        ST(0) = newRV_inc(value);
-        XSRETURN(1);
-      }
-    }
-    else if(self->return_type->platypus_type == FFI_PL_RECORD)
-    {
-      if(result.pointer == NULL)
-      {
-        XSRETURN_EMPTY;
-      }
-      else
-      {
-        SV *value = sv_newmortal();
-        sv_setpvn(value, result.pointer, self->return_type->extra[0].record.size);
-        if(self->return_type->extra[0].record.stash)
-        {
-          SV *ref = ST(0) = newRV_inc(value);
-          sv_bless(ref, self->return_type->extra[0].record.stash);
-        }
-        else
-        {
-          ST(0) = value;
-        }
-        XSRETURN(1);
-      }
-    }
-    else if(self->return_type->platypus_type == FFI_PL_ARRAY)
-    {
-      if(result.pointer == NULL)
-      {
-        XSRETURN_EMPTY;
-      }
-      else
-      {
-        int count = self->return_type->extra[0].array.element_count;
-        AV *av;
-        SV **sv;
-        Newx(sv, count, SV*);
-        switch(self->return_type->ffi_type->type)
-        {
-          case FFI_TYPE_UINT8:
-            for(i=0; i<count; i++)
+          }
+          else
+          {
+            SV *value = sv_newmortal();
+            sv_setpvn(value, result.pointer, self->return_type->extra[0].record.size);
+            if(self->return_type->extra[0].record.stash)
             {
-              sv[i] = newSVuv( ((uint8_t*)result.pointer)[i] );
+              SV *ref = ST(0) = newRV_inc(value);
+              sv_bless(ref, self->return_type->extra[0].record.stash);
             }
-            break;
-          case FFI_TYPE_SINT8:
-            for(i=0; i<count; i++)
+            else
             {
-              sv[i] = newSViv( ((int8_t*)result.pointer)[i] );
+              ST(0) = value;
             }
-            break;
-          case FFI_TYPE_UINT16:
-            for(i=0; i<count; i++)
-            {
-              sv[i] = newSVuv( ((uint16_t*)result.pointer)[i] );
-            }
-            break;
-          case FFI_TYPE_SINT16:
-            for(i=0; i<count; i++)
-            {
-              sv[i] = newSViv( ((int16_t*)result.pointer)[i] );
-            }
-            break;
-          case FFI_TYPE_UINT32:
-            for(i=0; i<count; i++)
-            {
-              sv[i] = newSVuv( ((uint32_t*)result.pointer)[i] );
-            }
-            break;
-          case FFI_TYPE_SINT32:
-            for(i=0; i<count; i++)
-            {
-              sv[i] = newSViv( ((int32_t*)result.pointer)[i] );
-            }
-            break;
-          case FFI_TYPE_UINT64:
-            for(i=0; i<count; i++)
-            {
-#ifdef HAVE_IV_IS_64
-              sv[i] = newSVuv( ((uint64_t*)result.pointer)[i] );
-#else
-              sv[i] = newSVu64( ((uint64_t*)result.pointer)[i] );
-#endif
-            }
-            break;
-          case FFI_TYPE_SINT64:
-            for(i=0; i<count; i++)
-            {
-#ifdef HAVE_IV_IS_64
-              sv[i] = newSViv( ((int64_t*)result.pointer)[i] );
-#else
-              sv[i] = newSVi64( ((int64_t*)result.pointer)[i] );
-#endif
-            }
-            break;
-          case FFI_TYPE_FLOAT:
-            for(i=0; i<count; i++)
-            {
-              sv[i] = newSVnv( ((float*)result.pointer)[i] );
-            }
-            break;
-          case FFI_TYPE_DOUBLE:
-            for(i=0; i<count; i++)
-            {
-              sv[i] = newSVnv( ((double*)result.pointer)[i] );
-            }
-            break;
-          case FFI_TYPE_POINTER:
-            for(i=0; i<count; i++)
-            {
-              if( ((void**)result.pointer)[i] == NULL)
+            XSRETURN(1);
+          }
+          break;
+        default:
+
+          switch(type_code & FFI_PL_SHAPE_MASK)
+          {
+
+/*
+ * RETURN VALUE - TYPE POINTER
+ */
+
+            case FFI_PL_SHAPE_POINTER:
+              if(result.pointer == NULL)
               {
-                sv[i] = &PL_sv_undef;
+                XSRETURN_EMPTY;
               }
               else
               {
-                sv[i] = newSViv( PTR2IV( ((void**)result.pointer)[i] ));
-              }
-            }
-            break;
-#ifdef FFI_PL_PROBE_LONGDOUBLE
-          case FFI_TYPE_LONGDOUBLE:
-            for(i=0; i<count; i++)
-            {
-              sv[i] = newSV(0);
-              ffi_pl_long_double_to_perl(sv[i], &((long double*)result.pointer)[i]);
-            }
-            break;
+                SV *value;
+                switch(type_code)
+                {
+                  case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    sv_setuv(value, *((uint8_t*) result.pointer));
+                    break;
+                  case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    sv_setiv(value, *((int8_t*) result.pointer));
+                    break;
+                  case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    sv_setuv(value, *((uint16_t*) result.pointer));
+                    break;
+                  case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    sv_setiv(value, *((int16_t*) result.pointer));
+                    break;
+                  case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    sv_setuv(value, *((uint32_t*) result.pointer));
+                    break;
+                  case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    sv_setiv(value, *((int32_t*) result.pointer));
+                    break;
+                  case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+#ifdef HAVE_IV_IS_64
+                    sv_setuv(value, *((uint64_t*) result.pointer));
+#else
+                    sv_seti64(value, *((int64_t*) result.pointer));
 #endif
-          default:
-            warn("return type not supported");
-            XSRETURN_EMPTY;
-        }
-        av = av_make(count, sv);
-        Safefree(sv);
-        ST(0) = newRV_inc((SV*)av);
-        XSRETURN(1);
+                    break;
+                  case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+#ifdef HAVE_IV_IS_64
+                    sv_setiv(value, *((int64_t*) result.pointer));
+#else
+                    sv_seti64(value, *((int64_t*) result.pointer));
+#endif
+                    break;
+                  case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    sv_setnv(value, *((float*) result.pointer));
+                    break;
+                  case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    sv_setnv(value, *((double*) result.pointer));
+                    break;
+                  case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    if( *((void**)result.pointer) == NULL )
+                      value = &PL_sv_undef;
+                    else
+                      sv_setiv(value, PTR2IV(*((void**)result.pointer)));
+                    break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+                  case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    ffi_pl_long_double_to_perl(value, (long double*)result.pointer);
+                    break;
+#endif
+                  default:
+                    warn("return type not supported");
+                    XSRETURN_EMPTY;
+                }
+                ST(0) = newRV_inc(value);
+                XSRETURN(1);
+              }
+              break;
+
+/*
+ * RETURN VALUE - TYPE ARRAY
+ */
+
+            case FFI_PL_SHAPE_ARRAY:
+              if(result.pointer == NULL)
+              {
+                XSRETURN_EMPTY;
+              }
+              else
+              {
+                int count = self->return_type->extra[0].array.element_count;
+                AV *av;
+                SV **sv;
+                Newx(sv, count, SV*);
+                switch(type_code)
+                {
+                  case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSVuv( ((uint8_t*)result.pointer)[i] );
+                    }
+                    break;
+                  case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSViv( ((int8_t*)result.pointer)[i] );
+                    }
+                    break;
+                  case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSVuv( ((uint16_t*)result.pointer)[i] );
+                    }
+                    break;
+                  case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSViv( ((int16_t*)result.pointer)[i] );
+                    }
+                    break;
+                  case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSVuv( ((uint32_t*)result.pointer)[i] );
+                    }
+                    break;
+                  case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSViv( ((int32_t*)result.pointer)[i] );
+                    }
+                    break;
+                  case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+#ifdef HAVE_IV_IS_64
+                      sv[i] = newSVuv( ((uint64_t*)result.pointer)[i] );
+#else
+                      sv[i] = newSVu64( ((uint64_t*)result.pointer)[i] );
+#endif
+                    }
+                    break;
+                  case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+#ifdef HAVE_IV_IS_64
+                      sv[i] = newSViv( ((int64_t*)result.pointer)[i] );
+#else
+                      sv[i] = newSVi64( ((int64_t*)result.pointer)[i] );
+#endif
+                    }
+                    break;
+                  case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSVnv( ((float*)result.pointer)[i] );
+                    }
+                    break;
+                  case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSVnv( ((double*)result.pointer)[i] );
+                    }
+                    break;
+                  case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      if( ((void**)result.pointer)[i] == NULL)
+                      {
+                        sv[i] = &PL_sv_undef;
+                      }
+                      else
+                      {
+                        sv[i] = newSViv( PTR2IV( ((void**)result.pointer)[i] ));
+                      }
+                    }
+                    break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+                  case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSV(0);
+                      ffi_pl_long_double_to_perl(sv[i], &((long double*)result.pointer)[i]);
+                    }
+                    break;
+#endif
+                  default:
+                    warn("return type not supported");
+                    XSRETURN_EMPTY;
+                }
+                av = av_make(count, sv);
+                Safefree(sv);
+                ST(0) = newRV_inc((SV*)av);
+                XSRETURN(1);
+              }
+              break;
+            default:
+              warn("return type not supported");
+              XSRETURN_EMPTY;
+              break;
+          }
       }
     }
-    else if(self->return_type->platypus_type == FFI_PL_CUSTOM_PERL)
+    else
     {
       SV *ret_in=NULL, *ret_out;
-
-      switch(self->return_type->ffi_type->type)
+      switch(self->return_type->type_code)
       {
-        case FFI_TYPE_UINT8:
+        case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
           ret_in = newSVuv(result.uint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
@@ -1113,7 +1164,7 @@
           ret_in = newSVuv(result.uint8);
 #endif
           break;
-        case FFI_TYPE_SINT8:
+        case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
           ret_in = newSViv(result.sint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
@@ -1122,7 +1173,7 @@
           ret_in = newSViv(result.sint8);
 #endif
           break;
-        case FFI_TYPE_UINT16:
+        case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
           ret_in = newSVuv(result.uint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
@@ -1131,7 +1182,7 @@
           ret_in = newSVuv(result.uint16);
 #endif
           break;
-        case FFI_TYPE_SINT16:
+        case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
           ret_in = newSViv(result.sint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
@@ -1140,41 +1191,41 @@
           ret_in = newSViv(result.sint16);
 #endif
           break;
-        case FFI_TYPE_UINT32:
+        case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN64
           ret_in = newSVuv(result.uint32_array[1]);
 #else
           ret_in = newSVuv(result.uint32);
 #endif
           break;
-        case FFI_TYPE_SINT32:
+        case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN64
           ret_in = newSViv(result.sint32_array[1]);
 #else
           ret_in = newSViv(result.sint32);
 #endif
           break;
-        case FFI_TYPE_UINT64:
+        case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
 #ifdef HAVE_IV_IS_64
           ret_in = newSVuv(result.uint64);
 #else
           ret_in = newSVu64(result.uint64);
 #endif
           break;
-        case FFI_TYPE_SINT64:
+        case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
 #ifdef HAVE_IV_IS_64
           ret_in = newSViv(result.sint64);
 #else
           ret_in = newSVi64(result.sint64);
 #endif
           break;
-        case FFI_TYPE_FLOAT:
+        case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_CUSTOM_PERL:
           ret_in = newSVnv(result.xfloat);
           break;
-        case FFI_TYPE_DOUBLE:
+        case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_CUSTOM_PERL:
           ret_in = newSVnv(result.xdouble);
           break;
-        case FFI_TYPE_POINTER:
+        case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_CUSTOM_PERL:
           if(result.pointer != NULL)
             ret_in = newSViv(PTR2IV(result.pointer));
           break;
