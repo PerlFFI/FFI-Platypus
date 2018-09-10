@@ -732,7 +732,7 @@
      * RETURN VALUE
      */
 
-    if(self->return_type->platypus_type == FFI_PL_NATIVE)
+    if(self->return_type->platypus_type == FFI_PL_NATIVE || self->return_type->platypus_type == FFI_PL_STRING)
     {
       switch(self->return_type->type_code)
       {
@@ -827,6 +827,15 @@
             XSRETURN_IV(PTR2IV(result.pointer));
           }
           break;
+        case FFI_PL_TYPE_STRING:
+          if( result.pointer == NULL )
+          {
+            XSRETURN_EMPTY;
+          }
+          else
+          {
+            XSRETURN_PV(result.pointer);
+          }
 #ifdef FFI_PL_PROBE_LONGDOUBLE
         case FFI_PL_TYPE_LONG_DOUBLE:
         {
@@ -847,17 +856,6 @@
           }
         }
 #endif
-      }
-    }
-    else if(self->return_type->platypus_type == FFI_PL_STRING)
-    {
-      if( result.pointer == NULL )
-      {
-        XSRETURN_EMPTY;
-      }
-      else
-      {
-        XSRETURN_PV(result.pointer);
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_POINTER)
