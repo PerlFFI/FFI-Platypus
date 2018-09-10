@@ -163,7 +163,7 @@
               case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, double);
                 *((double*)ptr) = SvOK(arg2) ? SvNV(arg2) : 0.0;
-                break; 
+                break;
               case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
                 Newx_or_alloca(ptr, 1, void*);
                 {
@@ -734,117 +734,119 @@
 
     if(self->return_type->platypus_type == FFI_PL_NATIVE)
     {
-      int type = self->return_type->ffi_type->type;
-      if(type == FFI_TYPE_VOID || (type == FFI_TYPE_POINTER && result.pointer == NULL))
+      switch(self->return_type->type_code)
       {
-        XSRETURN_EMPTY;
-      }
-      else
-      {
-        switch(self->return_type->type_code)
-        {
-          case FFI_PL_TYPE_UINT8:
+        case FFI_PL_TYPE_VOID:
+          XSRETURN_EMPTY;
+          break;
+        case FFI_PL_TYPE_UINT8:
 #if defined FFI_PL_PROBE_BIGENDIAN
-            XSRETURN_UV(result.uint8_array[3]);
+          XSRETURN_UV(result.uint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-            XSRETURN_UV(result.uint8_array[7]);
+          XSRETURN_UV(result.uint8_array[7]);
 #else
-            XSRETURN_UV(result.uint8);
+          XSRETURN_UV(result.uint8);
 #endif
-            break;
-          case FFI_PL_TYPE_SINT8:
+          break;
+        case FFI_PL_TYPE_SINT8:
 #if defined FFI_PL_PROBE_BIGENDIAN
-            XSRETURN_IV(result.sint8_array[3]);
+          XSRETURN_IV(result.sint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-            XSRETURN_IV(result.sint8_array[7]);
+          XSRETURN_IV(result.sint8_array[7]);
 #else
-            XSRETURN_IV(result.sint8);
+          XSRETURN_IV(result.sint8);
 #endif
-            break;
-          case FFI_PL_TYPE_UINT16:
+          break;
+        case FFI_PL_TYPE_UINT16:
 #if defined FFI_PL_PROBE_BIGENDIAN
-            XSRETURN_UV(result.uint16_array[1]);
+          XSRETURN_UV(result.uint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-            XSRETURN_UV(result.uint16_array[3]);
+          XSRETURN_UV(result.uint16_array[3]);
 #else
-            XSRETURN_UV(result.uint16);
+          XSRETURN_UV(result.uint16);
 #endif
-            break;
-          case FFI_PL_TYPE_SINT16:
+          break;
+        case FFI_PL_TYPE_SINT16:
 #if defined FFI_PL_PROBE_BIGENDIAN
-            XSRETURN_IV(result.sint16_array[1]);
+          XSRETURN_IV(result.sint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-            XSRETURN_IV(result.sint16_array[3]);
+          XSRETURN_IV(result.sint16_array[3]);
 #else
-            XSRETURN_IV(result.sint16);
+          XSRETURN_IV(result.sint16);
 #endif
-            break;
-          case FFI_PL_TYPE_UINT32:
+          break;
+        case FFI_PL_TYPE_UINT32:
 #if defined FFI_PL_PROBE_BIGENDIAN64
-            XSRETURN_UV(result.uint32_array[1]);
+          XSRETURN_UV(result.uint32_array[1]);
 #else
-            XSRETURN_UV(result.uint32);
+          XSRETURN_UV(result.uint32);
 #endif
-            break;
-          case FFI_PL_TYPE_SINT32:
+          break;
+        case FFI_PL_TYPE_SINT32:
 #if defined FFI_PL_PROBE_BIGENDIAN64
-            XSRETURN_IV(result.sint32_array[1]);
+          XSRETURN_IV(result.sint32_array[1]);
 #else
-            XSRETURN_IV(result.sint32);
+          XSRETURN_IV(result.sint32);
 #endif
-            break;
-          case FFI_PL_TYPE_UINT64:
+          break;
+        case FFI_PL_TYPE_UINT64:
 #ifdef HAVE_IV_IS_64
-            XSRETURN_UV(result.uint64);
+          XSRETURN_UV(result.uint64);
 #else
-            {
-              ST(0) = sv_newmortal();
-              sv_setu64(ST(0), result.uint64);
-              XSRETURN(1);
-            }
-#endif
-            break;
-          case FFI_PL_TYPE_SINT64:
-#ifdef HAVE_IV_IS_64
-            XSRETURN_IV(result.sint64);
-#else
-            {
-              ST(0) = sv_newmortal();
-              sv_seti64(ST(0), result.uint64);
-              XSRETURN(1);
-            }
-#endif
-            break;
-          case FFI_PL_TYPE_FLOAT:
-            XSRETURN_NV(result.xfloat);
-            break;
-          case FFI_PL_TYPE_DOUBLE:
-            XSRETURN_NV(result.xdouble);
-            break;
-          case FFI_PL_TYPE_OPAQUE:
-            XSRETURN_IV(PTR2IV(result.pointer));
-            break;
-#ifdef FFI_PL_PROBE_LONGDOUBLE
-          case FFI_PL_TYPE_LONG_DOUBLE:
           {
-            if(MY_CXT.have_math_longdouble)
-            {
-              SV *sv;
-              long double *ptr;
-              Newx(ptr, 1, long double);
-              *ptr = result.longdouble;
-              sv = sv_newmortal();
-              sv_setref_pv(sv, "Math::LongDouble", (void*)ptr);
-              ST(0) = sv;
-              XSRETURN(1);
-            }
-            else
-            {
-              XSRETURN_NV((NV) result.longdouble);
-            }
+            ST(0) = sv_newmortal();
+            sv_setu64(ST(0), result.uint64);
+            XSRETURN(1);
           }
 #endif
+          break;
+        case FFI_PL_TYPE_SINT64:
+#ifdef HAVE_IV_IS_64
+          XSRETURN_IV(result.sint64);
+#else
+          {
+            ST(0) = sv_newmortal();
+            sv_seti64(ST(0), result.uint64);
+            XSRETURN(1);
+          }
+#endif
+          break;
+        case FFI_PL_TYPE_FLOAT:
+          XSRETURN_NV(result.xfloat);
+          break;
+        case FFI_PL_TYPE_DOUBLE:
+          XSRETURN_NV(result.xdouble);
+          break;
+        case FFI_PL_TYPE_OPAQUE:
+          if(result.pointer == NULL)
+          {
+            XSRETURN_EMPTY;
+          }
+          else
+          {
+            XSRETURN_IV(PTR2IV(result.pointer));
+          }
+          break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+        case FFI_PL_TYPE_LONG_DOUBLE:
+        {
+          if(MY_CXT.have_math_longdouble)
+          {
+            SV *sv;
+            long double *ptr;
+            Newx(ptr, 1, long double);
+            *ptr = result.longdouble;
+            sv = sv_newmortal();
+            sv_setref_pv(sv, "Math::LongDouble", (void*)ptr);
+            ST(0) = sv;
+            XSRETURN(1);
+          }
+          else
+          {
+            XSRETURN_NV((NV) result.longdouble);
+          }
         }
+#endif
       }
     }
     else if(self->return_type->platypus_type == FFI_PL_STRING)
