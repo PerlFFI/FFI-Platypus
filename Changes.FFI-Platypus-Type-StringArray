@@ -1,0 +1,9 @@
+Revision history for FFI-Platypus-Type-StringArray
+
+After 0.02 FFI-Platypus-Type-StringArray was merged with FFI-Platypus
+
+0.02      2018-07-28 21:34:16 -0400
+  - Add support as a return type.
+
+0.01      2015-01-23 16:50:47 -0500
+  - initial version
