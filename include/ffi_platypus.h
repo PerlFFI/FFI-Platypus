@@ -200,7 +200,7 @@ typedef union _ffi_pl_type_extra {
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {
-  ffi_type *ffi_type;
+  ffi_type *libffi_type;
   platypus_type platypus_type;
   unsigned short type_code;
   unsigned char sub_type;

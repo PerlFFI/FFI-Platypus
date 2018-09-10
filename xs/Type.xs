@@ -76,11 +76,11 @@ _new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw
       croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
     }
 
-    if(self != NULL && self->ffi_type == NULL)
+    if(self != NULL && self->libffi_type == NULL)
     {
       int type_code = ffi_pl_name_to_code(type);
-      self->ffi_type = ffi_pl_name_to_type(type);
-      if(self->ffi_type == NULL || type_code == -1)
+      self->libffi_type = ffi_pl_name_to_type(type);
+      if(self->libffi_type == NULL || type_code == -1)
       {
         Safefree(self);
         self = NULL;
@@ -115,7 +115,7 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
     
     self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));  
     self->platypus_type = FFI_PL_CUSTOM_PERL;
-    self->ffi_type = ffi_type;
+    self->libffi_type = ffi_type;
     self->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
     
     custom = &self->extra[0].custom_perl;
@@ -162,14 +162,14 @@ _new_closure(class, return_type, ...)
     self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2));
     self->type_code = FFI_PL_TYPE_CLOSURE;
     
-    self->ffi_type = &ffi_type_pointer;
+    self->libffi_type = &ffi_type_pointer;
     self->platypus_type = FFI_PL_CLOSURE;
     self->extra[0].closure.return_type = return_type;
     self->extra[0].closure.flags = 0;
     
     if(return_type->platypus_type == FFI_PL_NATIVE)
     {
-      ffi_return_type = return_type->ffi_type;
+      ffi_return_type = return_type->libffi_type;
     }
     else
     {
@@ -182,7 +182,7 @@ _new_closure(class, return_type, ...)
       self->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
       if(self->extra[0].closure.argument_types[i]->platypus_type == FFI_PL_NATIVE)
       {
-        ffi_argument_types[i] = self->extra[0].closure.argument_types[i]->ffi_type;
+        ffi_argument_types[i] = self->extra[0].closure.argument_types[i]->libffi_type;
       }
       else
       {
@@ -215,7 +215,7 @@ _new_closure(class, return_type, ...)
       self->extra[0].closure.flags |= G_NOARGS;
     }
     
-    if(self->extra[0].closure.return_type->ffi_type->type == FFI_TYPE_VOID
+    if(self->extra[0].closure.return_type->libffi_type->type == FFI_TYPE_VOID
     && self->extra[0].closure.return_type->platypus_type == FFI_PL_NATIVE)
     {
       self->extra[0].closure.flags |= G_DISCARD | G_VOID;

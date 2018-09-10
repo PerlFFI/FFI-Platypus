@@ -78,18 +78,18 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     }
     else
     {
-      hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
+      hv_store(meta, "element_size", 12, newSViv(self->libffi_type->size), 0);
       hv_store(meta, "type",          4, newSVpv("scalar",0),0);
     }
   }
   else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_POINTER)
   {
-    hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
+    hv_store(meta, "element_size", 12, newSViv(self->libffi_type->size), 0);
     hv_store(meta, "type",          4, newSVpv("pointer",0),0);
   }
   else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_ARRAY)
   {
-    hv_store(meta, "element_size",  12, newSViv(self->ffi_type->size), 0);
+    hv_store(meta, "element_size",  12, newSViv(self->libffi_type->size), 0);
     hv_store(meta, "type",           4, newSVpv("array",0),0);
     hv_store(meta, "element_count", 13, newSViv(self->extra[0].array.element_count), 0);
   }
@@ -140,7 +140,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     hv_store(meta, "ref",           3, newSViv(self->extra[0].record.stash != NULL ? 1 : 0),0);
   }
 
-  switch(self->ffi_type->type)
+  switch(self->libffi_type->type)
   {
     case FFI_TYPE_VOID:
       hv_store(meta, "element_type", 12, newSVpv("void",0),0);
@@ -173,7 +173,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
       hv_store(meta, "element_type", 12, newSVpv("opaque",0),0);
       break;
   }
-  switch(self->ffi_type->type)
+  switch(self->libffi_type->type)
   {
     case FFI_TYPE_VOID:
       string = "void";
@@ -218,7 +218,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
       break;
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
     case FFI_TYPE_COMPLEX:
-      string = self->ffi_type->size == 16 ? "complex_double" : "complex_float";
+      string = self->libffi_type->size == 16 ? "complex_double" : "complex_float";
       break;
 #endif
     default:
@@ -238,9 +238,9 @@ ffi_pl_type *ffi_pl_type_new(size_t size)
   Newx(buffer, sizeof(ffi_pl_type) + size, char);
   self = (ffi_pl_type*) buffer;
   self->type_code = 0;
-  self->ffi_type = NULL;
+  self->libffi_type = NULL;
   self->sub_type = 0;
-  self->ffi_type = NULL;
+  self->libffi_type = NULL;
   self->x_ffi_type = 0;
 
   return self;
