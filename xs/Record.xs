@@ -56,40 +56,53 @@ _accessor(perl_name, path_name, type, offset)
     if(type->platypus_type == FFI_PL_NATIVE)
     {
       member->count = 1;
-      switch(type->ffi_type->type)
+      switch(type->type_code)
       {
-        case FFI_TYPE_UINT8:
+        case FFI_PL_TYPE_UINT8:
           function = ffi_pl_record_accessor_uint8;
           break;
-        case FFI_TYPE_SINT8:
+        case FFI_PL_TYPE_SINT8:
           function = ffi_pl_record_accessor_sint8;
           break;
-        case FFI_TYPE_UINT16:
+        case FFI_PL_TYPE_UINT16:
           function = ffi_pl_record_accessor_uint16;
           break;
-        case FFI_TYPE_SINT16:
+        case FFI_PL_TYPE_SINT16:
           function = ffi_pl_record_accessor_sint16;
           break;
-        case FFI_TYPE_UINT32:
+        case FFI_PL_TYPE_UINT32:
           function = ffi_pl_record_accessor_uint32;
           break;
-        case FFI_TYPE_SINT32:
+        case FFI_PL_TYPE_SINT32:
           function = ffi_pl_record_accessor_sint32;
           break;
-        case FFI_TYPE_UINT64:
+        case FFI_PL_TYPE_UINT64:
           function = ffi_pl_record_accessor_uint64;
           break;
-        case FFI_TYPE_SINT64:
+        case FFI_PL_TYPE_SINT64:
           function = ffi_pl_record_accessor_sint64;
           break;
-        case FFI_TYPE_FLOAT:
+        case FFI_PL_TYPE_FLOAT:
           function = ffi_pl_record_accessor_float;
           break;
-        case FFI_TYPE_DOUBLE:
+        case FFI_PL_TYPE_DOUBLE:
           function = ffi_pl_record_accessor_double;
           break;
-        case FFI_TYPE_POINTER:
+        case FFI_PL_TYPE_OPAQUE:
           function = ffi_pl_record_accessor_opaque;
+          break;
+        case FFI_PL_TYPE_STRING:
+          switch(type->sub_type)
+          {
+            case FFI_PL_TYPE_STRING_RO:
+              member->count = 1;
+              function = ffi_pl_record_accessor_string_ro;
+              break;
+            case FFI_PL_TYPE_STRING_RW:
+              member->count = 1;
+              function = ffi_pl_record_accessor_string_rw;
+              break;
+          }
           break;
         default:
           Safefree(member);
@@ -138,20 +151,6 @@ _accessor(perl_name, path_name, type, offset)
         default:
           Safefree(member);
           XSRETURN_PV("type not supported");
-          break;
-      }
-    }
-    else if(type->platypus_type == FFI_PL_STRING)
-    {
-      switch(type->sub_type)
-      {
-        case FFI_PL_STRING_RO:
-          member->count = 1;
-          function = ffi_pl_record_accessor_string_ro;
-          break;
-        case FFI_PL_STRING_RW:
-          member->count = 1;
-          function = ffi_pl_record_accessor_string_rw;
           break;
       }
     }

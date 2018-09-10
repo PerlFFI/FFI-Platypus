@@ -86,7 +86,6 @@ _init()
     newCONSTSUB(stash, "FFI_PL_TYPE_RECORD",           newSViv(FFI_PL_TYPE_RECORD));
 
     newCONSTSUB(stash, "FFI_PL_NATIVE",         newSViv(FFI_PL_NATIVE));
-    newCONSTSUB(stash, "FFI_PL_STRING",         newSViv(FFI_PL_STRING));
     newCONSTSUB(stash, "FFI_PL_POINTER",        newSViv(FFI_PL_POINTER));
     newCONSTSUB(stash, "FFI_PL_ARRAY",          newSViv(FFI_PL_ARRAY));
     newCONSTSUB(stash, "FFI_PL_CLOSURE",        newSViv(FFI_PL_CLOSURE));

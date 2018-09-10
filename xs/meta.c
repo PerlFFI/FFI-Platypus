@@ -62,23 +62,24 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
   if(self->platypus_type == FFI_PL_NATIVE)
   {
-    hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
-    hv_store(meta, "type",          4, newSVpv("scalar",0),0);
-  }
-  else if(self->platypus_type == FFI_PL_STRING)
-  {
-    hv_store(meta, "element_size",  12, newSViv(sizeof(void*)), 0);
-    hv_store(meta, "type",           4, newSVpv("string",0),0);
-    switch(self->sub_type)
+    if(self->type_code == FFI_PL_TYPE_STRING)
     {
-      case FFI_PL_STRING_RO:
-        hv_store(meta, "access",        6, newSVpv("ro",0), 0);
-        hv_store(meta, "fixed_size",    10, newSViv(0), 0);
-        break;
-      case FFI_PL_STRING_RW:
-        hv_store(meta, "access",        6, newSVpv("rw",0), 0);
-        hv_store(meta, "fixed_size",    10, newSViv(0), 0);
-        break;
+      hv_store(meta, "element_size",  12, newSViv(sizeof(void*)), 0);
+      hv_store(meta, "type",           4, newSVpv("string",0),0);
+      switch(self->sub_type)
+      {
+        case FFI_PL_TYPE_STRING_RO:
+          hv_store(meta, "access",        6, newSVpv("ro",0), 0);
+          break;
+        case FFI_PL_TYPE_STRING_RW:
+          hv_store(meta, "access",        6, newSVpv("rw",0), 0);
+          break;
+      }
+    }
+    else
+    {
+      hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
+      hv_store(meta, "type",          4, newSVpv("scalar",0),0);
     }
   }
   else if(self->platypus_type == FFI_PL_POINTER)

@@ -157,7 +157,6 @@ typedef enum _ffi_pl_type_code {
  */
 typedef enum _platypus_type {
   FFI_PL_NATIVE = 0,
-  FFI_PL_STRING,
   FFI_PL_POINTER,
   FFI_PL_ARRAY,
   FFI_PL_CLOSURE,
@@ -166,8 +165,8 @@ typedef enum _platypus_type {
 } platypus_type;
 
 typedef enum _platypus_string_type {
-  FFI_PL_STRING_RO = 0,
-  FFI_PL_STRING_RW = 1
+  FFI_PL_TYPE_STRING_RO = 0,
+  FFI_PL_TYPE_STRING_RW = 1
 } platypus_string_type;
 
 typedef struct _ffi_pl_type_extra_record {

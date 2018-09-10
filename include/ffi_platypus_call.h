@@ -23,7 +23,7 @@
       argument_pointers[i] = (void*) &arguments->slot[i];
 
       arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-      if(platypus_type == FFI_PL_NATIVE || platypus_type == FFI_PL_STRING)
+      if(platypus_type == FFI_PL_NATIVE)
       {
         switch(self->argument_types[i]->type_code)
         {
@@ -732,7 +732,7 @@
      * RETURN VALUE
      */
 
-    if(self->return_type->platypus_type == FFI_PL_NATIVE || self->return_type->platypus_type == FFI_PL_STRING)
+    if(self->return_type->platypus_type == FFI_PL_NATIVE)
     {
       switch(self->return_type->type_code)
       {

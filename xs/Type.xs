@@ -17,9 +17,9 @@ _new(class, type, platypus_type, array_or_record_or_string_size, type_classname,
     if(!strcmp(platypus_type, "string"))
     {
       self = ffi_pl_type_new(0);
-      self->platypus_type = FFI_PL_STRING;
+      self->platypus_type = FFI_PL_NATIVE;
       self->type_code |= FFI_PL_TYPE_STRING;
-      self->sub_type = rw ? FFI_PL_STRING_RW : FFI_PL_STRING_RO;
+      self->sub_type = rw ? FFI_PL_TYPE_STRING_RW : FFI_PL_TYPE_STRING_RO;
     }
     else if(!strcmp(platypus_type, "ffi"))
     {
@@ -152,7 +152,6 @@ _new_closure(class, return_type, ...)
       arg = ST(2+i);
       tmp = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
       if(tmp->platypus_type != FFI_PL_NATIVE
-      && tmp->platypus_type != FFI_PL_STRING
       && tmp->platypus_type != FFI_PL_RECORD)
       {
         croak("Only native types and strings are supported as closure argument types");
