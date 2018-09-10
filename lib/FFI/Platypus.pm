@@ -1135,7 +1135,7 @@ sub new
   }
   
   my $ffi_type;
-  my $platypus_type;
+  my $fuzzy_type;
   my $size = 0;
   my $classname;
   my $rw = 0;
@@ -1149,17 +1149,17 @@ sub new
     {
       # Fixed string is really an alias for an unpackaged record
       $size = $1;
-      $platypus_type = 'record';
+      $fuzzy_type = 'record';
     }
     else
     {
-      $platypus_type = 'string';
+      $fuzzy_type = 'string';
     }
   }
   elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
   {
     $ffi_type = 'pointer';
-    $platypus_type = 'record';
+    $fuzzy_type = 'record';
     if($1 =~ /^([0-9]+)$/)
     {
       $size = $1;
@@ -1188,21 +1188,21 @@ sub new
   }
   elsif($type =~ s/\s+\*$//) {
     $ffi_type = $type;
-    $platypus_type = 'pointer';
+    $fuzzy_type = 'pointer';
   }
   elsif($type =~ s/\s+\[([0-9]*)\]$//)
   {
     $ffi_type = $type;
-    $platypus_type = 'array';
+    $fuzzy_type = 'array';
     $size = $1 ? $1 : 0;
   }
   else
   {
     $ffi_type = $type;
-    $platypus_type = 'ffi';
+    $fuzzy_type = 'ffi';
   }
   
-  $class->_new($ffi_type, $platypus_type, $size, $classname, $rw);
+  $class->_new($ffi_type, $fuzzy_type, $size, $classname, $rw);
 }
 
 1;

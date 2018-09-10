@@ -82,18 +82,18 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
       hv_store(meta, "type",          4, newSVpv("scalar",0),0);
     }
   }
-  else if(self->platypus_type == FFI_PL_POINTER)
+  else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_POINTER)
   {
     hv_store(meta, "element_size", 12, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "type",          4, newSVpv("pointer",0),0);
   }
-  else if(self->platypus_type == FFI_PL_ARRAY)
+  else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_ARRAY)
   {
     hv_store(meta, "element_size",  12, newSViv(self->ffi_type->size), 0);
     hv_store(meta, "type",           4, newSVpv("array",0),0);
     hv_store(meta, "element_count", 13, newSViv(self->extra[0].array.element_count), 0);
   }
-  else if(self->platypus_type == FFI_PL_CLOSURE)
+  else if(self->type_code == FFI_PL_TYPE_CLOSURE)
   {
     AV *signature;
     AV *argument_types;
@@ -134,7 +134,7 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     if(self->extra[0].custom_perl.native_to_perl != NULL)
       hv_store(meta, "custom_native_to_perl", 18, newRV_inc((SV*)self->extra[0].custom_perl.native_to_perl), 0);
   }
-  else if(self->platypus_type == FFI_PL_RECORD)
+  else if(self->type_code == FFI_PL_TYPE_RECORD)
   {
     hv_store(meta, "type",          4, newSVpv("record",0),0);
     hv_store(meta, "ref",           3, newSViv(self->extra[0].record.stash != NULL ? 1 : 0),0);
