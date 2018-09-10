@@ -17,6 +17,8 @@ Revision history for {{$dist->name}}
       `long double`, `complex float` and `complex double`.  These are
       now grouped internally with other scalar types.
 
+  - Merge FFI::Platypus::Type::StringArray into this distribution
+
 0.56      2018-09-03 09:17:42 -0400
   - lib method accepts code reference which will be called immediately
     and results added to lib list

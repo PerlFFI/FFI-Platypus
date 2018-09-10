@@ -60,8 +60,6 @@ script:
   - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Pascal
   - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Rust
   
-  - perl inc/run/travis_cpan.pl FFI::Platypus::Type::StringArray
-
   - perl inc/run/test_examples.pl
 
 env:
