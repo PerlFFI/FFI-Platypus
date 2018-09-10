@@ -44,7 +44,7 @@ new(class, platypus, address, abi, return_type, ...)
     if(return_type->platypus_type == FFI_PL_NATIVE 
     || return_type->platypus_type == FFI_PL_CUSTOM_PERL)
     {
-      ffi_return_type = return_type->ffi_type;
+      ffi_return_type = return_type->libffi_type;
     }
     else
     {
@@ -58,7 +58,7 @@ new(class, platypus, address, abi, return_type, ...)
       if(self->argument_types[n]->platypus_type == FFI_PL_NATIVE
       || self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL)
       {
-        ffi_argument_types[n] = self->argument_types[n]->ffi_type;
+        ffi_argument_types[n] = self->argument_types[n]->libffi_type;
       }
       else
       {
@@ -70,7 +70,7 @@ new(class, platypus, address, abi, return_type, ...)
         for(j=1; j-1 < self->argument_types[n]->extra[0].custom_perl.argument_count; j++)
         {
           self->argument_types[n+j] = self->argument_types[n];
-          ffi_argument_types[n+j] = self->argument_types[n]->ffi_type;
+          ffi_argument_types[n+j] = self->argument_types[n]->libffi_type;
         }
 
         n += self->argument_types[n]->extra[0].custom_perl.argument_count;
