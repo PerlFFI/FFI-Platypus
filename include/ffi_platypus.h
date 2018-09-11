@@ -200,11 +200,9 @@ typedef union _ffi_pl_type_extra {
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {
-  ffi_type *libffi_type;
   platypus_type platypus_type;
   unsigned short type_code;
-  unsigned char sub_type;
-  unsigned char x_ffi_type;
+  unsigned short sub_type;
   ffi_pl_type_extra extra[0];
 } ffi_pl_type;
 
@@ -359,7 +357,7 @@ typedef struct _ffi_pl_heap {
 #define Newx_or_alloca(ptr, count, type) ffi_pl_heap_add(ptr, count, type)
 #endif
 
-ffi_type *ffi_pl_name_to_type(const char *);
+ffi_type *ffi_pl_type_to_libffi_type(ffi_pl_type *type);
 int ffi_pl_name_to_code(const char *name);
 ffi_pl_type *ffi_pl_type_new(size_t size);
 

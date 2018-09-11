@@ -5,6 +5,8 @@ Revision history for {{$dist->name}}
     the same but some type meta-data (which was never guaranteed
     to stay the same) may have changed.
 
+    * The internal representation of types is much smaller.
+
     * Fixed width strings example: `string(32)` are now internally
       treated the same as a record with no class `record(32)`.
       Previously these were separate types but worked identically,
