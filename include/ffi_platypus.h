@@ -149,19 +149,6 @@ typedef enum _ffi_pl_type_code {
   FFI_PL_TYPE_RECORD         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_RECORD,
 } ffi_pl_type_code;
 
-/*
- * platypus_type is deprecatd and due to be removed as soon
- * as we can update all the places that reference it.
- */
-typedef enum _platypus_type {
-  FFI_PL_NATIVE = 0,
-  FFI_PL_POINTER,
-  FFI_PL_ARRAY,
-  FFI_PL_CLOSURE,
-  FFI_PL_CUSTOM_PERL,
-  FFI_PL_RECORD
-} platypus_type;
-
 typedef enum _platypus_string_type {
   FFI_PL_TYPE_STRING_RO = 0,
   FFI_PL_TYPE_STRING_RW = 1
@@ -200,7 +187,6 @@ typedef union _ffi_pl_type_extra {
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {
-  platypus_type platypus_type;
   unsigned short type_code;
   unsigned short sub_type;
   ffi_pl_type_extra extra[0];

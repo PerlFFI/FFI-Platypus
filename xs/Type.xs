@@ -17,7 +17,6 @@ _new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw
     if(!strcmp(fuzzy_type, "string"))
     {
       self = ffi_pl_type_new(0);
-      self->platypus_type = FFI_PL_NATIVE;
       self->type_code |= FFI_PL_TYPE_STRING;
       self->sub_type = rw ? FFI_PL_TYPE_STRING_RW : FFI_PL_TYPE_STRING_RO;
     }
@@ -27,47 +26,37 @@ _new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw
       if(!strcmp(type, "longdouble"))
       {
         self->type_code |= FFI_PL_TYPE_LONG_DOUBLE;
-        self->platypus_type = FFI_PL_NATIVE;
         if(MY_CXT.have_math_longdouble == -1)
           MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
       }
       else if(!strcmp(type, "complex_float"))
       {
         self->type_code |= FFI_PL_TYPE_COMPLEX_FLOAT;
-        self->platypus_type = FFI_PL_NATIVE;
         if(MY_CXT.have_math_complex == -1)
           MY_CXT.have_math_complex = have_pm("Math::Complex");
       }
       else if(!strcmp(type, "complex_double"))
       {
         self->type_code |= FFI_PL_TYPE_COMPLEX_DOUBLE;
-        self->platypus_type = FFI_PL_NATIVE;
         if(MY_CXT.have_math_complex == -1)
           MY_CXT.have_math_complex = have_pm("Math::Complex");
-      }
-      else
-      {
-        self->platypus_type = FFI_PL_NATIVE;
       }
     }
     else if(!strcmp(fuzzy_type, "pointer"))
     {
       self = ffi_pl_type_new(0);
       self->type_code |= FFI_PL_SHAPE_POINTER;
-      self->platypus_type = FFI_PL_POINTER;
     }
     else if(!strcmp(fuzzy_type, "array"))
     {
       self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
       self->type_code |= FFI_PL_SHAPE_ARRAY;
-      self->platypus_type = FFI_PL_ARRAY;
       self->extra[0].array.element_count = array_or_record_or_string_size;
     }
     else if(!strcmp(fuzzy_type, "record"))
     {
       self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
       self->type_code |= FFI_PL_TYPE_RECORD;
-      self->platypus_type = FFI_PL_RECORD;
       self->extra[0].record.size = array_or_record_or_string_size;
       self->extra[0].record.stash = type_classname != NULL ? gv_stashpv(type_classname, GV_ADD) : NULL;
     }
@@ -108,7 +97,6 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
       croak("unknown ffi/platypus type: %s/custom", type);
     
     self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));  
-    self->platypus_type = FFI_PL_CUSTOM_PERL;
     self->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
     
     custom = &self->extra[0].custom_perl;
@@ -128,58 +116,74 @@ _new_closure(class, return_type, ...)
     ffi_pl_type *return_type
   PREINIT:
     char *buffer;
-    ffi_pl_type *self, *tmp;
+    ffi_pl_type *self;
     int i;
     SV *arg;
     ffi_type *ffi_return_type;
     ffi_type **ffi_argument_types;
     ffi_status ffi_status;
   CODE:
-    if(return_type->platypus_type != FFI_PL_NATIVE)
+    switch(return_type->type_code)
     {
-      croak("Only native types are supported as closure return types");
+      case FFI_PL_TYPE_VOID:
+      case FFI_PL_TYPE_SINT8:
+      case FFI_PL_TYPE_SINT16:
+      case FFI_PL_TYPE_SINT32:
+      case FFI_PL_TYPE_SINT64:
+      case FFI_PL_TYPE_UINT8:
+      case FFI_PL_TYPE_UINT16:
+      case FFI_PL_TYPE_UINT32:
+      case FFI_PL_TYPE_UINT64:
+      case FFI_PL_TYPE_FLOAT:
+      case FFI_PL_TYPE_DOUBLE:
+      case FFI_PL_TYPE_OPAQUE:
+        break;
+      default:
+        croak("Only native types are supported as closure return types");
+        break;
     }
     
     for(i=0; i<(items-2); i++)
     {
       arg = ST(2+i);
-      tmp = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
-      if(tmp->platypus_type != FFI_PL_NATIVE
-      && tmp->platypus_type != FFI_PL_RECORD)
+      ffi_pl_type *arg_type = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
+      switch(arg_type->type_code)
       {
-        croak("Only native types and strings are supported as closure argument types");
-      }
+        case FFI_PL_TYPE_VOID:
+        case FFI_PL_TYPE_SINT8:
+        case FFI_PL_TYPE_SINT16:
+        case FFI_PL_TYPE_SINT32:
+        case FFI_PL_TYPE_SINT64:
+        case FFI_PL_TYPE_UINT8:
+        case FFI_PL_TYPE_UINT16:
+        case FFI_PL_TYPE_UINT32:
+        case FFI_PL_TYPE_UINT64:
+        case FFI_PL_TYPE_FLOAT:
+        case FFI_PL_TYPE_DOUBLE:
+        case FFI_PL_TYPE_OPAQUE:
+        case FFI_PL_TYPE_STRING:
+        case FFI_PL_TYPE_RECORD:
+          break;
+        default:
+          croak("Only native types and strings are supported as closure argument types");
+          break;
+      } 
     }
     
     Newx(ffi_argument_types, items-2, ffi_type*);
     self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2));
     self->type_code = FFI_PL_TYPE_CLOSURE;
     
-    self->platypus_type = FFI_PL_CLOSURE;
     self->extra[0].closure.return_type = return_type;
     self->extra[0].closure.flags = 0;
     
-    if(return_type->platypus_type == FFI_PL_NATIVE)
-    {
-      ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
-    }
-    else
-    {
-      ffi_return_type = &ffi_type_pointer;
-    }
+    ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
     
     for(i=0; i<(items-2); i++)
     {
       arg = ST(2+i);
       self->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
-      if(self->extra[0].closure.argument_types[i]->platypus_type == FFI_PL_NATIVE)
-      {
-        ffi_argument_types[i] = ffi_pl_type_to_libffi_type(self->extra[0].closure.argument_types[i]);
-      }
-      else
-      {
-        ffi_argument_types[i] = &ffi_type_pointer;
-      }
+      ffi_argument_types[i] = ffi_pl_type_to_libffi_type(self->extra[0].closure.argument_types[i]);
     }
     
     ffi_status = ffi_prep_cif(
@@ -207,8 +211,7 @@ _new_closure(class, return_type, ...)
       self->extra[0].closure.flags |= G_NOARGS;
     }
     
-    if(self->extra[0].closure.return_type->type_code == FFI_PL_TYPE_VOID
-    && self->extra[0].closure.return_type->platypus_type == FFI_PL_NATIVE)
+    if(self->extra[0].closure.return_type->type_code == FFI_PL_TYPE_VOID)
     {
       self->extra[0].closure.flags |= G_DISCARD | G_VOID;
     }
@@ -245,12 +248,12 @@ void
 DESTROY(self)
     ffi_pl_type *self
   CODE:
-    if(self->platypus_type == FFI_PL_CLOSURE)
+    if(self->type_code == FFI_PL_TYPE_CLOSURE)
     {
       if(!PL_dirty)
         Safefree(self->extra[0].closure.ffi_cif.arg_types);
     }
-    else if(self->platypus_type == FFI_PL_CUSTOM_PERL)
+    else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
     {
       ffi_pl_type_extra_custom_perl *custom;
       

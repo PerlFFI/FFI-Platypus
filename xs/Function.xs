@@ -15,7 +15,6 @@ new(class, platypus, address, abi, return_type, ...)
     ffi_type *ffi_return_type;
     ffi_type **ffi_argument_types;
     ffi_status ffi_status;
-    ffi_pl_type *tmp;
     ffi_abi ffi_abi;
     int extra_arguments;
   CODE:
@@ -24,14 +23,15 @@ new(class, platypus, address, abi, return_type, ...)
     
     for(i=0,extra_arguments=0; i<(items-5); i++)
     {
+      ffi_pl_type *arg_type;
       arg = ST(i+5);
       if(!(sv_isobject(arg) && sv_derived_from(arg, "FFI::Platypus::Type")))
       {
         croak("non-type parameter passed in as type");
       }
-      tmp = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
-      if(tmp->platypus_type == FFI_PL_CUSTOM_PERL)
-        extra_arguments += tmp->extra[0].custom_perl.argument_count;
+      arg_type = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
+      if((arg_type->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
+        extra_arguments += arg_type->extra[0].custom_perl.argument_count;
     }
   
     Newx(buffer, (sizeof(ffi_pl_function) + sizeof(ffi_pl_type*)*(items-5+extra_arguments)), char);
@@ -40,31 +40,15 @@ new(class, platypus, address, abi, return_type, ...)
     
     self->address = address;
     self->return_type = return_type;
-    
-    if(return_type->platypus_type == FFI_PL_NATIVE 
-    || return_type->platypus_type == FFI_PL_CUSTOM_PERL)
-    {
-      ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
-    }
-    else
-    {
-      ffi_return_type = &ffi_type_pointer;
-    }
+    ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
     
     for(i=0,n=0; i<(items-5); i++,n++)
     {
       arg = ST(i+5);
       self->argument_types[n] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
-      if(self->argument_types[n]->platypus_type == FFI_PL_NATIVE
-      || self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL)
-      {
-        ffi_argument_types[n] = ffi_pl_type_to_libffi_type(self->argument_types[n]);
-      }
-      else
-      {
-        ffi_argument_types[n] = &ffi_type_pointer;
-      }
-      if(self->argument_types[n]->platypus_type == FFI_PL_CUSTOM_PERL
+      ffi_argument_types[n] = ffi_pl_type_to_libffi_type(self->argument_types[n]);
+
+      if((self->argument_types[n]->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL
       && self->argument_types[n]->extra[0].custom_perl.argument_count > 0)
       {
         for(j=1; j-1 < self->argument_types[n]->extra[0].custom_perl.argument_count; j++)
