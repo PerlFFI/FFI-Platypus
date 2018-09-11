@@ -1,3 +1,25 @@
+/*
+ * Philosophy: FFI dispatch should be as fast as possible considering
+ * reasonable trade offs.
+ *
+ *  - don't allocate memory for small things using `malloc`, instead use
+ *    alloca on platforms that allow it (most modern platforms do).
+ *  - don't make function calls.  You shouldn't have to make a function
+ *    calls to call a function.  Exceptions are for custom types and
+ *    some of the more esoteric types.
+ *  - one way we avoid making function calls is by putting the FFI dispatch
+ *    in this header file so that it can be "called" twice without an
+ *    extra function call.  (`$ffi->function(...)->call(...)` and 
+ *    `$ffi->attach(foo => ...); foo(...)`).  This is obviously absurd.
+ *
+ * Maybe all each of these weird trade offs each save only a few ms on
+ * each call, but in the end the can add up.  As a result of this
+ * priority set, FFI::Platypus does seem to perform considerably better
+ * than any other FFI implementations available in Perl ( see
+ * https://github.com/perl5-FFI/FFI-Performance ) and is even competitive
+ * with XS tbh.
+ */
+
     ffi_pl_heap *heap = NULL;
 
     {
