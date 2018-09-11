@@ -78,18 +78,18 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     }
     else
     {
-      hv_store(meta, "element_size", 12, newSViv(self->libffi_type->size), 0);
+      hv_store(meta, "element_size", 12, newSViv(unit_size(self)), 0);
       hv_store(meta, "type",          4, newSVpv("scalar",0),0);
     }
   }
   else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_POINTER)
   {
-    hv_store(meta, "element_size", 12, newSViv(self->libffi_type->size), 0);
+    hv_store(meta, "element_size", 12, newSViv(unit_size(self)), 0);
     hv_store(meta, "type",          4, newSVpv("pointer",0),0);
   }
   else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_ARRAY)
   {
-    hv_store(meta, "element_size",  12, newSViv(self->libffi_type->size), 0);
+    hv_store(meta, "element_size",  12, newSViv(unit_size(self)), 0);
     hv_store(meta, "type",           4, newSVpv("array",0),0);
     hv_store(meta, "element_count", 13, newSViv(self->extra[0].array.element_count), 0);
   }
@@ -140,88 +140,96 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     hv_store(meta, "ref",           3, newSViv(self->extra[0].record.stash != NULL ? 1 : 0),0);
   }
 
-  switch(self->libffi_type->type)
+  switch(self->type_code & (FFI_PL_SIZE_MASK | FFI_PL_BASE_MASK))
   {
-    case FFI_TYPE_VOID:
+    case FFI_PL_TYPE_VOID:
       hv_store(meta, "element_type", 12, newSVpv("void",0),0);
       break;
-    case FFI_TYPE_FLOAT:
-    case FFI_TYPE_DOUBLE:
+    case FFI_PL_TYPE_FLOAT:
+    case FFI_PL_TYPE_DOUBLE:
 #ifdef FFI_PL_PROBE_LONGDOUBLE
-    case FFI_TYPE_LONGDOUBLE:
+    case FFI_PL_TYPE_LONG_DOUBLE:
 #endif
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
-    case FFI_TYPE_COMPLEX:
+    case FFI_PL_TYPE_COMPLEX_FLOAT:
+    case FFI_PL_TYPE_COMPLEX_DOUBLE:
 #endif
       hv_store(meta, "element_type", 12, newSVpv("float",0),0);
       break;
-    case FFI_TYPE_UINT8:
-    case FFI_TYPE_UINT16:
-    case FFI_TYPE_UINT32:
-    case FFI_TYPE_UINT64:
+    case FFI_PL_TYPE_UINT8:
+    case FFI_PL_TYPE_UINT16:
+    case FFI_PL_TYPE_UINT32:
+    case FFI_PL_TYPE_UINT64:
       hv_store(meta, "element_type", 12, newSVpv("int",0),0);
       hv_store(meta, "sign",          4, newSViv(0),0);
       break;
-    case FFI_TYPE_SINT8:
-    case FFI_TYPE_SINT16:
-    case FFI_TYPE_SINT32:
-    case FFI_TYPE_SINT64:
+    case FFI_PL_TYPE_SINT8:
+    case FFI_PL_TYPE_SINT16:
+    case FFI_PL_TYPE_SINT32:
+    case FFI_PL_TYPE_SINT64:
       hv_store(meta, "element_type", 12, newSVpv("int",0),0);
       hv_store(meta, "sign",          4, newSViv(1),0);
       break;
-    case FFI_TYPE_POINTER:
+    case FFI_PL_TYPE_OPAQUE:
       hv_store(meta, "element_type", 12, newSVpv("opaque",0),0);
       break;
   }
-  switch(self->libffi_type->type)
+  switch(self->type_code & (FFI_PL_SIZE_MASK | FFI_PL_BASE_MASK))
   {
-    case FFI_TYPE_VOID:
+    case FFI_PL_TYPE_VOID:
       string = "void";
       break;
-    case FFI_TYPE_FLOAT:
+    case FFI_PL_TYPE_FLOAT:
       string = "float";
       break;
-    case FFI_TYPE_DOUBLE:
+    case FFI_PL_TYPE_DOUBLE:
       string = "double";
       break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
-    case FFI_TYPE_LONGDOUBLE:
+    case FFI_PL_TYPE_LONG_DOUBLE:
       string = "longdouble";
       break;
 #endif
-    case FFI_TYPE_UINT8:
+    case FFI_PL_TYPE_UINT8:
       string = "uint8";
       break;
-    case FFI_TYPE_SINT8:
+    case FFI_PL_TYPE_SINT8:
       string = "sint8";
       break;
-    case FFI_TYPE_UINT16:
+    case FFI_PL_TYPE_UINT16:
       string = "uint16";
       break;
-    case FFI_TYPE_SINT16:
+    case FFI_PL_TYPE_SINT16:
       string = "sint16";
       break;
-    case FFI_TYPE_UINT32:
+    case FFI_PL_TYPE_UINT32:
       string = "uint32";
       break;
-    case FFI_TYPE_SINT32:
+    case FFI_PL_TYPE_SINT32:
       string = "sint32";
       break;
-    case FFI_TYPE_UINT64:
+    case FFI_PL_TYPE_UINT64:
       string = "uint64";
       break;
-    case FFI_TYPE_SINT64:
+    case FFI_PL_TYPE_SINT64:
       string = "sint64";
       break;
-    case FFI_TYPE_POINTER:
+    case FFI_PL_TYPE_OPAQUE:
+    case FFI_PL_TYPE_STRING:
+    case FFI_PL_TYPE_CLOSURE:
+    case FFI_PL_TYPE_RECORD:
       string = "pointer";
       break;
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
-    case FFI_TYPE_COMPLEX:
-      string = self->libffi_type->size == 16 ? "complex_double" : "complex_float";
+    case FFI_PL_TYPE_COMPLEX_FLOAT:
+      string = "complex_float";
+      break;
+    case FFI_PL_TYPE_COMPLEX_DOUBLE:
+      string = "complex_double";
       break;
 #endif
     default:
+      warn("bad type: %04x\n", self->type_code & (FFI_PL_SIZE_MASK | FFI_PL_BASE_MASK));
       string = NULL;
       break;
   }
@@ -238,7 +246,6 @@ ffi_pl_type *ffi_pl_type_new(size_t size)
   Newx(buffer, sizeof(ffi_pl_type) + size, char);
   self = (ffi_pl_type*) buffer;
   self->type_code = 0;
-  self->libffi_type = NULL;
   self->sub_type = 0;
   self->libffi_type = NULL;
   self->x_ffi_type = 0;
