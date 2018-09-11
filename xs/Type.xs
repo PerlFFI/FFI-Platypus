@@ -76,18 +76,14 @@ _new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw
       croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
     }
 
-    if(self != NULL && self->libffi_type == NULL)
+    int type_code = ffi_pl_name_to_code(type);
+    if(type_code == -1)
     {
-      int type_code = ffi_pl_name_to_code(type);
-      self->libffi_type = ffi_pl_name_to_type(type);
-      if(self->libffi_type == NULL || type_code == -1)
-      {
-        Safefree(self);
-        self = NULL;
-        croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
-      }
-      self->type_code |= type_code;
+      Safefree(self);
+      self = NULL;
+      croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
     }
+    self->type_code |= type_code;
 
     RETVAL = self;
   OUTPUT:
@@ -104,18 +100,15 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
   PREINIT:
     char *buffer;
     ffi_pl_type *self;
-    ffi_type *ffi_type;
     ffi_pl_type_extra_custom_perl *custom;
     int type_code;
   CODE:
-    ffi_type = ffi_pl_name_to_type(type);
     type_code = ffi_pl_name_to_code(type);
-    if(ffi_type == NULL || type_code == -1)
+    if(type_code == -1)
       croak("unknown ffi/platypus type: %s/custom", type);
     
     self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));  
     self->platypus_type = FFI_PL_CUSTOM_PERL;
-    self->libffi_type = ffi_type;
     self->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
     
     custom = &self->extra[0].custom_perl;
@@ -162,14 +155,13 @@ _new_closure(class, return_type, ...)
     self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2));
     self->type_code = FFI_PL_TYPE_CLOSURE;
     
-    self->libffi_type = &ffi_type_pointer;
     self->platypus_type = FFI_PL_CLOSURE;
     self->extra[0].closure.return_type = return_type;
     self->extra[0].closure.flags = 0;
     
     if(return_type->platypus_type == FFI_PL_NATIVE)
     {
-      ffi_return_type = return_type->libffi_type;
+      ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
     }
     else
     {
@@ -182,7 +174,7 @@ _new_closure(class, return_type, ...)
       self->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
       if(self->extra[0].closure.argument_types[i]->platypus_type == FFI_PL_NATIVE)
       {
-        ffi_argument_types[i] = self->extra[0].closure.argument_types[i]->libffi_type;
+        ffi_argument_types[i] = ffi_pl_type_to_libffi_type(self->extra[0].closure.argument_types[i]);
       }
       else
       {
@@ -215,7 +207,7 @@ _new_closure(class, return_type, ...)
       self->extra[0].closure.flags |= G_NOARGS;
     }
     
-    if(self->extra[0].closure.return_type->libffi_type->type == FFI_TYPE_VOID
+    if(self->extra[0].closure.return_type->type_code == FFI_PL_TYPE_VOID
     && self->extra[0].closure.return_type->platypus_type == FFI_PL_NATIVE)
     {
       self->extra[0].closure.flags |= G_DISCARD | G_VOID;

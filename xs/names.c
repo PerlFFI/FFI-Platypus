@@ -1,44 +1,61 @@
 #include "ffi_platypus.h"
+#include <stdio.h>
 
 ffi_type *
-ffi_pl_name_to_type(const char *name)
+ffi_pl_type_to_libffi_type(ffi_pl_type *type)
 {
-  if(!strcmp(name, "void"))
-  { return &ffi_type_void; }
-  else if(!strcmp(name, "uint8"))
-  { return &ffi_type_uint8; }
-  else if(!strcmp(name, "sint8"))
-  { return &ffi_type_sint8; }
-  else if(!strcmp(name, "uint16"))
-  { return &ffi_type_uint16; }
-  else if(!strcmp(name, "sint16"))
-  { return &ffi_type_sint16; }
-  else if(!strcmp(name, "uint32"))
-  { return &ffi_type_uint32; }
-  else if(!strcmp(name, "sint32"))
-  { return &ffi_type_sint32; }
-  else if(!strcmp(name, "uint64"))
-  { return &ffi_type_uint64; }
-  else if(!strcmp(name, "sint64"))
-  { return &ffi_type_sint64; }
-  else if(!strcmp(name, "float"))
-  { return &ffi_type_float; }
-  else if(!strcmp(name, "double"))
-  { return &ffi_type_double; }
-  else if(!strcmp(name, "opaque") || !strcmp(name, "pointer"))
-  { return &ffi_type_pointer; }
+  int type_code = type->type_code;
+  type_code = type_code & ~(FFI_PL_SHAPE_CUSTOM_PERL | FFI_PL_SHAPE_CUSTOM_NATIVE);
+  switch(type_code)
+  {
+    case FFI_PL_TYPE_VOID:
+      return &ffi_type_void;
+    case FFI_PL_TYPE_SINT8:
+      return &ffi_type_sint8;
+    case FFI_PL_TYPE_SINT16:
+      return &ffi_type_sint16;
+    case FFI_PL_TYPE_SINT32:
+      return &ffi_type_sint32;
+    case FFI_PL_TYPE_SINT64:
+      return &ffi_type_sint64;
+    case FFI_PL_TYPE_UINT8:
+      return &ffi_type_uint8;
+    case FFI_PL_TYPE_UINT16:
+      return &ffi_type_uint16;
+    case FFI_PL_TYPE_UINT32:
+      return &ffi_type_uint32;
+    case FFI_PL_TYPE_UINT64:
+      return &ffi_type_uint64;
+    case FFI_PL_TYPE_FLOAT:
+      return &ffi_type_float;
+    case FFI_PL_TYPE_DOUBLE:
+      return &ffi_type_double;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
-  else if(!strcmp(name, "longdouble"))
-  { return &ffi_type_longdouble; }
+    case FFI_PL_TYPE_LONG_DOUBLE:
+      return &ffi_type_longdouble;
 #endif
 #if FFI_PL_PROBE_COMPLEX
-  else if(!strcmp(name, "complex_float"))
-  { return &ffi_type_complex_float; }
-  else if(!strcmp(name, "complex_double"))
-  { return &ffi_type_complex_double; }
+    case FFI_PL_TYPE_COMPLEX_FLOAT:
+      return &ffi_type_complex_float;
+    case FFI_PL_TYPE_COMPLEX_DOUBLE:
+      return &ffi_type_complex_double;
 #endif
-  else
-  { return NULL; }
+    case FFI_PL_TYPE_OPAQUE:
+    case FFI_PL_TYPE_STRING:
+    case FFI_PL_TYPE_CLOSURE:
+    case FFI_PL_TYPE_RECORD:
+      return &ffi_type_pointer;
+  }
+  switch(type_code & (FFI_PL_SHAPE_MASK))
+  {
+    case FFI_PL_SHAPE_POINTER:
+    case FFI_PL_SHAPE_ARRAY:
+      return &ffi_type_pointer;
+    default:
+      fprintf(stderr, "FFI::Platypus: internal error: type = %04x\n", type_code);
+      fflush(stderr);
+      return NULL;
+  }
 }
 
 int

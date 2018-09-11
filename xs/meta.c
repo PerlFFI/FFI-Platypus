@@ -247,8 +247,6 @@ ffi_pl_type *ffi_pl_type_new(size_t size)
   self = (ffi_pl_type*) buffer;
   self->type_code = 0;
   self->sub_type = 0;
-  self->libffi_type = NULL;
-  self->x_ffi_type = 0;
 
   return self;
 }
