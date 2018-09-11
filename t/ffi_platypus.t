@@ -122,6 +122,7 @@ subtest 'alignof' => sub {
   subtest 'record' => sub {
     my $align = $ffi->alignof('record(22)');
     is $align, 1;
+    xdump($ffi->type_meta('record(22)'));
   };
 };
 

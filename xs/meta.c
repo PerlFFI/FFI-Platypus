@@ -60,84 +60,93 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
   hv_store(meta, "size",      4, newSViv(ffi_pl_sizeof(self)), 0);
   hv_store(meta, "type_code", 9, newSViv(self->type_code), 0);
 
-  if(self->platypus_type == FFI_PL_NATIVE)
+  switch(self->type_code & FFI_PL_SHAPE_MASK)
   {
-    if(self->type_code == FFI_PL_TYPE_STRING)
-    {
-      hv_store(meta, "element_size",  12, newSViv(sizeof(void*)), 0);
-      hv_store(meta, "type",           4, newSVpv("string",0),0);
-      switch(self->sub_type)
+    case FFI_PL_SHAPE_SCALAR:
       {
-        case FFI_PL_TYPE_STRING_RO:
-          hv_store(meta, "access",        6, newSVpv("ro",0), 0);
-          break;
-        case FFI_PL_TYPE_STRING_RW:
-          hv_store(meta, "access",        6, newSVpv("rw",0), 0);
-          break;
+        switch(self->type_code)
+        {
+
+          case FFI_PL_TYPE_STRING:
+            hv_store(meta, "element_size",  12, newSViv(sizeof(void*)), 0);
+            hv_store(meta, "type",           4, newSVpv("string",0),0);
+            switch(self->sub_type)
+            {
+              case FFI_PL_TYPE_STRING_RO:
+                hv_store(meta, "access",        6, newSVpv("ro",0), 0);
+                break;
+              case FFI_PL_TYPE_STRING_RW:
+                hv_store(meta, "access",        6, newSVpv("rw",0), 0);
+                break;
+            }
+            break;
+
+          case FFI_PL_TYPE_CLOSURE:
+            {
+              AV *signature;
+              AV *argument_types;
+              HV *subtype;
+              int i;
+              int number_of_arguments;
+
+              number_of_arguments = self->extra[0].closure.ffi_cif.nargs;
+
+              signature = newAV();
+              argument_types = newAV();
+
+              for(i=0; i < number_of_arguments; i++)
+              {
+                subtype = ffi_pl_get_type_meta(self->extra[0].closure.argument_types[i]);
+                av_store(argument_types, i, newRV_noinc((SV*)subtype));
+              }
+              av_store(signature, 0, newRV_noinc((SV*)argument_types));
+
+              subtype = ffi_pl_get_type_meta(self->extra[0].closure.return_type);
+              av_store(signature, 1, newRV_noinc((SV*)subtype));
+
+              hv_store(meta, "signature",     9, newRV_noinc((SV*)signature), 0);
+
+              hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
+              hv_store(meta, "type",          4, newSVpv("closure",0),0);
+            }
+            break;
+
+          case FFI_PL_TYPE_RECORD:
+            hv_store(meta, "type",          4, newSVpv("record",0),0);
+            hv_store(meta, "ref",           3, newSViv(self->extra[0].record.stash != NULL ? 1 : 0),0);
+            break;
+
+          default:
+            hv_store(meta, "element_size", 12, newSViv(unit_size(self)), 0);
+            hv_store(meta, "type",          4, newSVpv("scalar",0),0);
+            break;
+        }
       }
-    }
-    else
-    {
+      break;
+
+    case FFI_PL_SHAPE_POINTER:
       hv_store(meta, "element_size", 12, newSViv(unit_size(self)), 0);
-      hv_store(meta, "type",          4, newSVpv("scalar",0),0);
-    }
-  }
-  else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_POINTER)
-  {
-    hv_store(meta, "element_size", 12, newSViv(unit_size(self)), 0);
-    hv_store(meta, "type",          4, newSVpv("pointer",0),0);
-  }
-  else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_ARRAY)
-  {
-    hv_store(meta, "element_size",  12, newSViv(unit_size(self)), 0);
-    hv_store(meta, "type",           4, newSVpv("array",0),0);
-    hv_store(meta, "element_count", 13, newSViv(self->extra[0].array.element_count), 0);
-  }
-  else if(self->type_code == FFI_PL_TYPE_CLOSURE)
-  {
-    AV *signature;
-    AV *argument_types;
-    HV *subtype;
-    int i;
-    int number_of_arguments;
+      hv_store(meta, "type",          4, newSVpv("pointer",0),0);
+      break;
 
-    number_of_arguments = self->extra[0].closure.ffi_cif.nargs;
+    case FFI_PL_SHAPE_ARRAY:
+      hv_store(meta, "element_size",  12, newSViv(unit_size(self)), 0);
+      hv_store(meta, "type",           4, newSVpv("array",0),0);
+      hv_store(meta, "element_count", 13, newSViv(self->extra[0].array.element_count), 0);
+      break;
 
-    signature = newAV();
-    argument_types = newAV();
+    case FFI_PL_SHAPE_CUSTOM_PERL:
+      hv_store(meta, "type",          4, newSVpv("custom_perl",0),0);
 
-    for(i=0; i < number_of_arguments; i++)
-    {
-      subtype = ffi_pl_get_type_meta(self->extra[0].closure.argument_types[i]);
-      av_store(argument_types, i, newRV_noinc((SV*)subtype));
-    }
-    av_store(signature, 0, newRV_noinc((SV*)argument_types));
+      if(self->extra[0].custom_perl.perl_to_native != NULL)
+        hv_store(meta, "custom_perl_to_native", 18, newRV_inc((SV*)self->extra[0].custom_perl.perl_to_native), 0);
 
-    subtype = ffi_pl_get_type_meta(self->extra[0].closure.return_type);
-    av_store(signature, 1, newRV_noinc((SV*)subtype));
+      if(self->extra[0].custom_perl.perl_to_native_post != NULL)
+        hv_store(meta, "custom_perl_to_native_post", 23, newRV_inc((SV*)self->extra[0].custom_perl.perl_to_native_post), 0);
 
-    hv_store(meta, "signature",     9, newRV_noinc((SV*)signature), 0);
-
-    hv_store(meta, "element_size", 12, newSViv(sizeof(void*)), 0);
-    hv_store(meta, "type",          4, newSVpv("closure",0),0);
-  }
-  else if(self->platypus_type == FFI_PL_CUSTOM_PERL)
-  {
-    hv_store(meta, "type",          4, newSVpv("custom_perl",0),0);
-
-    if(self->extra[0].custom_perl.perl_to_native != NULL)
-      hv_store(meta, "custom_perl_to_native", 18, newRV_inc((SV*)self->extra[0].custom_perl.perl_to_native), 0);
-
-    if(self->extra[0].custom_perl.perl_to_native_post != NULL)
-      hv_store(meta, "custom_perl_to_native_post", 23, newRV_inc((SV*)self->extra[0].custom_perl.perl_to_native_post), 0);
-
-    if(self->extra[0].custom_perl.native_to_perl != NULL)
-      hv_store(meta, "custom_native_to_perl", 18, newRV_inc((SV*)self->extra[0].custom_perl.native_to_perl), 0);
-  }
-  else if(self->type_code == FFI_PL_TYPE_RECORD)
-  {
-    hv_store(meta, "type",          4, newSVpv("record",0),0);
-    hv_store(meta, "ref",           3, newSViv(self->extra[0].record.stash != NULL ? 1 : 0),0);
+      if(self->extra[0].custom_perl.native_to_perl != NULL)
+        hv_store(meta, "custom_native_to_perl", 18, newRV_inc((SV*)self->extra[0].custom_perl.native_to_perl), 0);
+      break;
   }
 
   switch(self->type_code & (FFI_PL_SIZE_MASK | FFI_PL_BASE_MASK))

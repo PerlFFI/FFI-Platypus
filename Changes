@@ -5,7 +5,9 @@ Revision history for {{$dist->name}}
     the same but some type meta-data (which was never guaranteed
     to stay the same) may have changed.
 
-    * The internal representation of types is much smaller.
+    * The internal representation of types is much smaller (4 bytes
+      for simple types), which can save a lot of memory if you have
+      lots of types.
 
     * Fixed width strings example: `string(32)` are now internally
       treated the same as a record with no class `record(32)`.
