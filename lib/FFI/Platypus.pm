@@ -1140,7 +1140,12 @@ sub new
   my $classname;
   my $rw = 0;
 
-  if($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
+  if($type eq '@go_string')
+  {
+    $fuzzy_type = '@go_string';
+    $ffi_type = 'pointer';
+  }
+  elsif($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
   {
     my $extra = $1;
     $ffi_type = 'pointer';

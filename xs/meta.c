@@ -66,10 +66,9 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
       {
         switch(self->type_code)
         {
-
           case FFI_PL_TYPE_STRING:
-            hv_store(meta, "element_size",  12, newSViv(sizeof(void*)), 0);
             hv_store(meta, "type",           4, newSVpv("string",0),0);
+            hv_store(meta, "element_size",  12, newSViv(sizeof(char*)), 0);
             switch(self->sub_type)
             {
               case FFI_PL_TYPE_STRING_RO:
@@ -79,6 +78,11 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
                 hv_store(meta, "access",        6, newSVpv("rw",0), 0);
                 break;
             }
+            break;
+
+          case FFI_PL_TYPE_GO_STRING:
+            hv_store(meta, "type",           4, newSVpv("@go_string",0),0);
+            hv_store(meta, "element_size",  12, newSViv(sizeof(ffi_pl_lang_go_string)), 0);
             break;
 
           case FFI_PL_TYPE_CLOSURE:

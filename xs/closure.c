@@ -148,12 +148,41 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
           XPUSHs(sv);
           break;
         case FFI_PL_TYPE_STRING:
-          sv = sv_newmortal();
-          if( *((char**)arguments[i]) != NULL)
           {
-            sv_setpv(sv, *((char**)arguments[i]));
+            int sub_type = extra->argument_types[i]->sub_type;
+            switch(sub_type)
+            {
+              case FFI_PL_TYPE_STRING_RO:
+              case FFI_PL_TYPE_STRING_RW:
+                sv = sv_newmortal();
+                if( *((char**)arguments[i]) != NULL)
+                {
+                  sv_setpv(sv, *((char**)arguments[i]));
+                }
+                XPUSHs(sv);
+                break;
+              case FFI_PL_TYPE_STRING_GO:
+                {
+                  ffi_pl_lang_go_string *gostring = *(ffi_pl_lang_go_string**)arguments[i];
+                  if(gostring->n == 0)
+                  {
+                    sv_setpv(sv, "");
+                  }
+                  else
+                  {
+                    sv_setpvn(sv, gostring->p, gostring->n);
+                  }
+                }
+                break;
+            }
+            switch(sub_type)
+            {
+              case FFI_PL_TYPE_STRING_RO:
+              case FFI_PL_TYPE_STRING_GO:              
+                SvREADONLY_on(sv);
+                break;
+            }
           }
-          XPUSHs(sv);
           break;
         case FFI_PL_TYPE_RECORD:
           sv = sv_newmortal();

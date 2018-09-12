@@ -145,13 +145,20 @@ typedef enum _ffi_pl_type_code {
    * in terms of sizeof, alignof, etc, but get passed differently.
    */
   FFI_PL_TYPE_STRING         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_STRING,
+#if SIZEOF_VOIDP == 4
+  FFI_PL_TYPE_GO_STRING      = FFI_PL_SIZE_64     | FFI_PL_BASE_STRING,
+#elif SIZEOF_VOIDP == 8
+  FFI_PL_TYPE_GO_STRING      = FFI_PL_SIZE_128    | FFI_PL_BASE_STRING,
+#else
+#error "strange pointer size"
+#endif
   FFI_PL_TYPE_CLOSURE        = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_CLOSURE,
   FFI_PL_TYPE_RECORD         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_RECORD,
 } ffi_pl_type_code;
 
 typedef enum _platypus_string_type {
   FFI_PL_TYPE_STRING_RO = 0,
-  FFI_PL_TYPE_STRING_RW = 1
+  FFI_PL_TYPE_STRING_RW
 } platypus_string_type;
 
 typedef struct _ffi_pl_type_extra_record {
@@ -209,6 +216,12 @@ typedef struct _ffi_pl_closure {
 
 typedef const char *ffi_pl_string;
 
+typedef struct _ffi_pl_lang_go_string {
+  const char *p;
+  ptrdiff_t n;
+} ffi_pl_lang_go_string;
+
+
 typedef union _ffi_pl_result {
   void       *pointer;
   const char *string;
@@ -251,6 +264,7 @@ typedef union _ffi_pl_result {
   double complex complex_double;
 #endif
 #endif
+  ffi_pl_lang_go_string go_string;
 } ffi_pl_result;
 
 typedef union _ffi_pl_argument {

@@ -109,6 +109,10 @@ _accessor(perl_name, path_name, type, offset)
             member->count = 1;
             function = ffi_pl_record_accessor_string_rw;
             break;
+          default:
+            Safefree(member);
+            XSRETURN_PV("type not supported");
+            break;
         }
         break;
       case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_ARRAY:

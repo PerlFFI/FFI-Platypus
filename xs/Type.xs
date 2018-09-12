@@ -20,6 +20,11 @@ _new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw
       self->type_code |= FFI_PL_TYPE_STRING;
       self->sub_type = rw ? FFI_PL_TYPE_STRING_RW : FFI_PL_TYPE_STRING_RO;
     }
+    else if(!strcmp(fuzzy_type, "@go_string"))
+    {
+      self = ffi_pl_type_new(0);
+      self->type_code |= FFI_PL_TYPE_GO_STRING;
+    }
     else if(!strcmp(fuzzy_type, "ffi"))
     {
       self = ffi_pl_type_new(0);
@@ -65,14 +70,17 @@ _new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw
       croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
     }
 
-    int type_code = ffi_pl_name_to_code(type);
-    if(type_code == -1)
+    if(strcmp(fuzzy_type, "@go_string"))
     {
-      Safefree(self);
-      self = NULL;
-      croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
+      int type_code = ffi_pl_name_to_code(type);
+      if(type_code == -1)
+      {
+        Safefree(self);
+        self = NULL;
+        croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
+      }
+      self->type_code |= type_code;
     }
-    self->type_code |= type_code;
 
     RETVAL = self;
   OUTPUT:

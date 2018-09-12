@@ -42,6 +42,7 @@
     for(i=0, perl_arg_index=(EXTRA_ARGS); i < self->ffi_cif.nargs; i++, perl_arg_index++)
     {
       int type_code = self->argument_types[i]->type_code;
+      int sub_type  = self->argument_types[i]->sub_type;
       argument_pointers[i] = (void*) &arguments->slot[i];
 
       arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
@@ -96,6 +97,30 @@
           break;
         case FFI_PL_TYPE_STRING:
           ffi_pl_arguments_set_string(arguments, i, SvOK(arg) ? SvPV_nolen(arg) : NULL);
+          break;
+        case FFI_PL_TYPE_GO_STRING:
+          {
+            ffi_pl_lang_go_string *gostring;
+            Newx_or_alloca(gostring, 1, ffi_pl_lang_go_string);
+            if(SvOK(arg))
+            {
+              STRLEN len;
+              gostring->p = SvPV(arg, len);
+              if(len == 0)
+              {
+                gostring->p = NULL;
+              }
+              else
+              {
+                gostring->n = len;
+              }
+            }
+            else
+            {
+              gostring->p = NULL;
+              gostring->n = 0;
+            }
+          }
           break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
         case FFI_PL_TYPE_LONG_DOUBLE:
@@ -908,6 +933,15 @@
           XSRETURN_NV(result.xdouble);
           break;
         case FFI_PL_TYPE_OPAQUE:
+          if(result.pointer == NULL)
+          {
+            XSRETURN_EMPTY;
+          }
+          else
+          {
+            XSRETURN_IV(PTR2IV(result.pointer));
+          }
+          break;
         case FFI_PL_TYPE_STRING:
           if(result.pointer == NULL)
           {
@@ -915,15 +949,19 @@
           }
           else
           {
-            switch(type_code)
-            {
-              case FFI_PL_TYPE_OPAQUE:
-                XSRETURN_IV(PTR2IV(result.pointer));
-                break;
-              case FFI_PL_TYPE_STRING:
-                XSRETURN_PV(result.pointer);
-                break;
-            }
+            XSRETURN_PV(result.pointer);
+          }
+          break;
+        case FFI_PL_TYPE_GO_STRING:
+          if(result.go_string.n == 0)
+          {
+            XSRETURN_PV("");
+          }
+          else
+          {
+            ST(0) = sv_newmortal();
+            sv_setpvn(ST(0), result.go_string.p, result.go_string.n);
+            XSRETURN(1);
           }
           break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE

@@ -97,7 +97,7 @@ int
 _have_type(name)
     const char *name
   CODE:
-    RETVAL = !strcmp(name, "string") || ffi_pl_name_to_code(name) != -1;
+    RETVAL = ffi_pl_name_to_code(name) != -1;
   OUTPUT:
     RETVAL
 

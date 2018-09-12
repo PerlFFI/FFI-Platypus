@@ -1,6 +1,23 @@
 #include "ffi_platypus.h"
 #include <stdio.h>
 
+ffi_type *_ffi_type_go_string[3] = {
+  &ffi_type_pointer,
+#if SIZEOF_SIZE_T == 8
+  &ffi_type_sint64,
+#else
+  &ffi_type_sint32,
+#endif
+  NULL
+};
+
+ffi_type ffi_type_gostring = {
+  /* size      */  0,
+  /* alignment */  0,
+  /* type      */  FFI_TYPE_STRUCT,
+  /* elements  */  _ffi_type_go_string,
+};
+
 ffi_type *
 ffi_pl_type_to_libffi_type(ffi_pl_type *type)
 {
@@ -41,10 +58,13 @@ ffi_pl_type_to_libffi_type(ffi_pl_type *type)
       return &ffi_type_complex_double;
 #endif
     case FFI_PL_TYPE_OPAQUE:
-    case FFI_PL_TYPE_STRING:
     case FFI_PL_TYPE_CLOSURE:
     case FFI_PL_TYPE_RECORD:
       return &ffi_type_pointer;
+    case FFI_PL_TYPE_STRING:
+      return &ffi_type_pointer;
+    case FFI_PL_TYPE_GO_STRING:
+      return &ffi_type_gostring;
   }
   switch(type_code & (FFI_PL_SHAPE_MASK))
   {
@@ -85,6 +105,8 @@ ffi_pl_name_to_code(const char *name)
   { return FFI_PL_TYPE_DOUBLE; }
   else if(!strcmp(name, "opaque") || !strcmp(name, "pointer"))
   { return FFI_PL_TYPE_OPAQUE; }
+  else if(!strcmp(name, "string") || !strcmp(name, "@go_string"))
+  { return FFI_PL_TYPE_STRING; }
 #ifdef FFI_PL_PROBE_LONGDOUBLE
   else if(!strcmp(name, "longdouble"))
   { return FFI_PL_TYPE_LONG_DOUBLE; }
