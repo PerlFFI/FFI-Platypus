@@ -103,4 +103,5 @@ pod_coverage:
   private:
     - FFI::Platypus::Type::.*
     - FFI::Platypus::ShareConfig
+    - FFI::Platypus::Internal
 
