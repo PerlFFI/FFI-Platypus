@@ -21,9 +21,6 @@ subtest 'basic' => sub {
   $closure = $ffi->closure($c);
   isa_ok $closure, 'FFI::Platypus::Closure';
   is $closure->(1), 3, 'closure.(1) = 3';
-
-  eval { $closure->sticky };
-  is $@, '', 'able to call sticky';
 };
 
 subtest 'sticky' => sub {
@@ -32,6 +29,11 @@ subtest 'sticky' => sub {
 
   my $refcnt = $closure->_svrefcnt;
   note "_svrefcnt = $refcnt";
+
+  eval { $closure->sticky };
+  is $@, '', 'called $closure->sticky';
+
+  is($closure->_svrefcnt, $refcnt+2);
 
   eval { $closure->sticky };
   is $@, '', 'called $closure->sticky';
