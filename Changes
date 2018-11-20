@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add unstick method to FFI::Platypus::Closure
 
 0.57_01   2018-11-04 15:36:33 -0500
   - Major refactor of the internals of the type system.  The API is
