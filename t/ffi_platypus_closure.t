@@ -26,6 +26,24 @@ subtest 'basic' => sub {
   is $@, '', 'able to call sticky';
 };
 
+subtest 'sticky' => sub {
+  my $closure = FFI::Platypus::Closure->new(sub { 'foo' });
+  isa_ok $closure, 'FFI::Platypus::Closure';
+
+  my $refcnt = $closure->_svrefcnt;
+  note "_svrefcnt = $refcnt";
+
+  eval { $closure->sticky };
+  is $@, '', 'called $closure->sticky';
+
+  is($closure->_svrefcnt, $refcnt+2);
+
+  eval { $closure->unstick };
+  is $@, '', 'called $closure->unstick';
+
+  is($closure->_svrefcnt, $refcnt);
+};
+
 subtest 'private' => sub {
   my $closure = FFI::Platypus::Closure->new(sub { $_[0] + 1});
   isa_ok $closure, 'FFI::Platypus::Closure';
