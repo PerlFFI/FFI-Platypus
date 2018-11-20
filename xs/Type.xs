@@ -100,9 +100,9 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
     self->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
     
     custom = &self->extra[0].custom_perl;
-    custom->perl_to_native = SvOK(perl_to_native) ? SvREFCNT_inc(perl_to_native) : NULL;
-    custom->perl_to_native_post = SvOK(perl_to_native_post) ? SvREFCNT_inc(perl_to_native_post) : NULL;
-    custom->native_to_perl = SvOK(native_to_perl) ? SvREFCNT_inc(native_to_perl) : NULL;
+    custom->perl_to_native = SvOK(perl_to_native) ? SvREFCNT_inc_simple_NN(perl_to_native) : NULL;
+    custom->perl_to_native_post = SvOK(perl_to_native_post) ? SvREFCNT_inc_simple_NN(perl_to_native_post) : NULL;
+    custom->native_to_perl = SvOK(native_to_perl) ? SvREFCNT_inc_simple_NN(native_to_perl) : NULL;
     custom->argument_count = argument_count-1;
     
     RETVAL = self;

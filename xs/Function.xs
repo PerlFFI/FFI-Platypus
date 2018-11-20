@@ -84,7 +84,7 @@ new(class, platypus, address, abi, return_type, ...)
         croak("unknown error with ffi_prep_cif");
     }
     
-    self->platypus_sv = SvREFCNT_inc(platypus);
+    self->platypus_sv = SvREFCNT_inc_simple_NN(platypus);
 
     RETVAL = self;
   OUTPUT:
@@ -143,7 +143,7 @@ attach(self, perl_name, path_name, proto)
      * once attached, you can never free the function object, or the FFI::Platypus
      * it was created from.
      */
-    SvREFCNT_inc(self);
+    SvREFCNT_inc_simple_void_NN(self);
 
 void
 DESTROY(self)
