@@ -6,8 +6,8 @@ sticky(self)
   CODE:
     if(sv_isobject(self) && sv_derived_from(self, "FFI::Platypus::Closure"))
     {
-      SvREFCNT_inc(self);
-      SvREFCNT_inc(self);
+      SvREFCNT_inc_simple_void_NN(self);
+      SvREFCNT_inc_simple_void_NN(self);
     }
     else
       croak("object is not a closure");
