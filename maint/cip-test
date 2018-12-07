@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -ex
+
+perl Build.PL
+cpanm --installdeps .
+./Build
+./Build test verbose=1
+./Build install
+
+if perl -e 'exit ! ($] > 5.010)'; then
+
+  cpanm -n local::lib
+
+  perl inc/run/travis_cpan.pl FFI::Util
+  perl inc/run/travis_cpan.pl FFI::TinyCC
+  perl inc/run/travis_cpan.pl FFI::TinyCC::Inline
+  perl inc/run/travis_cpan.pl FFI::ExtractSymbols
+  
+  perl inc/run/travis_cpan.pl UUID::FFI
+  perl inc/run/travis_cpan.pl Acme::Ford::Prefect::FFI
+  perl inc/run/travis_cpan.pl File::LibMagic::FFI
+  cpanm -n Math::BigInt
+
+  perl inc/run/travis_cpan.pl FFI::Platypus::Lang::CPP
+  perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Fortran
+  perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Pascal
+  cpanm -n Test::Script IPC::Run3
+  perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Rust
+
+  ##cpanm -n Convert::Binary::C
+  ##perl inc/run/test_examples.pl
+
+fi

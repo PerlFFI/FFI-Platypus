@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -ex
+
+cip sudo apt-get update
+cip sudo apt-get -y install gfortran-6 fp-compiler-3.0.0 g++ gcj-jdk libgtop-2.0-10 libffi-dev
+cip exec cpanm -n version

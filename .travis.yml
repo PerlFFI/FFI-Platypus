@@ -1,69 +1,47 @@
-language: perl
-sudo: required
-dist: trusty
+language: minimal
+dist: xenial
+services:
+  - docker
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get -y install gfortran-4.8
-  - sudo apt-get -y install fp-compiler-2.6.2
-  - sudo apt-get -y install g++
-  - sudo apt-get -y install gcj-jdk
-  - sudo apt-get -y install libgtop2-7
+  - curl https://raw.githubusercontent.com/plicease/cip/master/bin/travis-bootstrap | bash
+  - cip before-install
 
 install:
-  - perlbrew list
-  - cpanm -n constant
-  - cpanm -n Alien::FFI
-  - cpanm -n ExtUtils::CBuilder
-  - cpanm -n Config::AutoConf
-  - cpanm -n FFI::CheckLib
-  - cpanm -n Math::Int64
-  - cpanm -n File::chdir
-  - cpanm -n Convert::Binary::C
-  - cpanm -n Time::Seconds
-  - cpanm -n Devel::PPPort
-  - cpanm -n local::lib
-  - cpanm -n Module::Build::FFI
-
-perl:
-  - "5.28"
-  - "5.26"
-  - "5.24"
-  - "5.22"
-  - "5.20"
-  - "5.18"
-  - "5.16"
-  - "5.14"
+  - cip diag
+  - cip install
 
 script:
-  - perl Build.PL
-  - perl inc/run/travis.pl
-  - ./Build --verbose
-  - ./Build test --verbose
-  - ./Build install --verbose
+  - cip script
 
-  - perl inc/run/travis_cpan.pl FFI::Util
-  - perl inc/run/travis_cpan.pl FFI::TinyCC
-  - perl inc/run/travis_cpan.pl FFI::TinyCC::Inline
-  - perl inc/run/travis_cpan.pl FFI::ExtractSymbols
-  
-  - perl inc/run/travis_cpan.pl UUID::FFI
-  - perl inc/run/travis_cpan.pl Phash::FFI
-  - perl inc/run/travis_cpan.pl Acme::Ford::Prefect::FFI
-  - perl inc/run/travis_cpan.pl File::LibMagic::FFI
-  - cpanm -n Math::BigInt
+jobs:
+  include:
+    - env: CIP_TAG=5.29
+    - env: CIP_TAG=5.28
+    - env: CIP_TAG=5.28-threads
+    - env: CIP_TAG=5.28-longdouble
+    - env: CIP_TAG=5.28-quadmath
+    - env: CIP_TAG=5.28 CIP_ENV=FFI_PLATYPUS_DEBUG_FAKE32=1
+    - env: CIP_TAG=5.28 CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
+    - env: CIP_TAG=5.26
+    - env: CIP_TAG=5.24
+    - env: CIP_TAG=5.22
+    - env: CIP_TAG=5.20
+    - env: CIP_TAG=5.18
+    - env: CIP_TAG=5.16
+    - env: CIP_TAG=5.14
+    - env: CIP_TAG=5.14-threads
+    - env: CIP_TAG=5.14-longdouble
+    - env: CIP_TAG=5.12
+    - env: CIP_TAG=5.10.1
+    - env: CIP_TAG=5.10.0
+    - env: CIP_TAG=5.8.9
+    - env: CIP_TAG=5.8.8
+    - env: CIP_TAG=5.8.1
+  allow_failures:
+    - env: CIP_TAG=5.29
+    - env: CIP_TAG=5.8.8
 
-  - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::CPP
-  - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Fortran
-  - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Pascal
-  - perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Rust
-  
-  - perl inc/run/test_examples.pl
-
-env:
-  global:
-    - PERL_USE_UNSAFE_INC=0
-  matrix:
-    - 
-    - FFI_PLATYPUS_DEBUG_FAKE32=1
-    - FFI_PLATYPUS_NO_ALLOCA=1
+cache:
+  directories:
+    - "$HOME/.cip"
