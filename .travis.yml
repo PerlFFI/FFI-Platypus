@@ -39,7 +39,6 @@ jobs:
     - env: CIP_TAG=5.8.8
     - env: CIP_TAG=5.8.1
   allow_failures:
-    - env: CIP_TAG=5.29
     - env: CIP_TAG=5.8.8
 
 cache:
