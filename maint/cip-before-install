@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -ex
+
+cip sudo apt-get update
+cip sudo apt-get -y install libffi-dev
+cip exec cpanm -n version
+cip exec cpanm -n Acme::Alien::DontPanic
