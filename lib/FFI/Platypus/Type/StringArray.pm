@@ -145,7 +145,7 @@ sub ffi_custom_type_api_1
     $config->{native_to_perl} = sub {
       return unless defined $_[0];
       my @pointer_pointer = unpack($incantation_count, unpack($pointer_buffer, pack(_incantation, $_[0])));
-      [map { defined $_ ? $_ : $default } map { unpack('p', pack(_incantation, $_)) } @pointer_pointer];
+      [map { $_ ? unpack('p', pack(_incantation, $_)) : $default } @pointer_pointer];
     };
 
   }
