@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.59      2018-12-16 16:33:37 -0700
+  - Workaround for possibly buggy pack/unpack on Perl 5.8.8 gh#91
+    Fixes FFI::Platypus::Type::StringArray
+
 0.58      2018-11-20 14:31:10 -0500
   - Add unstick method to FFI::Platypus::Closure
 
