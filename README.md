@@ -365,7 +365,7 @@ Examples:
 
 Prepares a code reference so that it can be used as a FFI closure (a 
 Perl subroutine that can be called from C code).  For details on 
-closures, see [FFI::Platypus::Type#Closures](https://metacpan.org/pod/FFI::Platypus::Type#Closures).
+closures, see [FFI::Platypus::Type#Closures](https://metacpan.org/pod/FFI::Platypus::Type#Closures) and [FFI::Platypus::Closure](https://metacpan.org/pod/FFI::Platypus::Closure).
 
 ## cast
 

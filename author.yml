@@ -95,6 +95,8 @@ pod_spelling_system:
     - libdl
     - or'd
     - customizations
+    - unmark
+    - unstick
 
 pod_coverage:
   skip: 0
@@ -104,4 +106,6 @@ pod_coverage:
     - FFI::Platypus::Type::.*
     - FFI::Platypus::ShareConfig
     - FFI::Platypus::Internal
+    - FFI::Platypus::Closure#get_data
+    - FFI::Platypus::Closure#add_data
 

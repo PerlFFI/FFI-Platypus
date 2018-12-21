@@ -724,7 +724,7 @@ sub attach
 
 Prepares a code reference so that it can be used as a FFI closure (a 
 Perl subroutine that can be called from C code).  For details on 
-closures, see L<FFI::Platypus::Type#Closures>.
+closures, see L<FFI::Platypus::Type#Closures> and L<FFI::Platypus::Closure>.
 
 =cut
 
@@ -732,6 +732,7 @@ sub closure
 {
   my($self, $coderef) = @_;
   croak "not a coderef" unless ref $coderef eq 'CODE';
+  require FFI::Platypus::Closure;
   FFI::Platypus::Closure->new($coderef);
 }
 
@@ -1072,62 +1073,6 @@ use overload 'bool' => sub {
   my $ffi = shift;
   return $ffi;
 };
-
-package FFI::Platypus::Closure;
-
-use Scalar::Util qw( refaddr);
-use Carp qw( croak );
-use overload '&{}' => sub {
-  my $self = shift;
-  sub { $self->{code}->(@_) };
-};
-
-# VERSION
-
-sub new
-{
-  my($class, $coderef) = @_;
-  croak "not a coderef" unless ref($coderef) eq 'CODE';
-  my $self = bless { code => $coderef, cbdata => {}, sticky => 0 }, $class;
-  $self;
-}
-
-sub add_data
-{
-  my($self, $payload, $type) = @_;
-  $self->{cbdata}{$type} = bless \$payload, 'FFI::Platypus::ClosureData';
-}
-
-sub get_data
-{
-  my($self, $type) = @_;
-
-  if (exists $self->{cbdata}{$type}) {
-      return ${$self->{cbdata}{$type}};
-  }
-
-  return 0;
-}
-
-sub sticky
-{
-  my($self) = @_;
-  return if $self->{sticky};
-  $self->{sticky} = 1;
-  $self->_sticky;
-}
-
-sub unstick
-{
-  my($self) = @_;
-  return unless $self->{sticky};
-  $self->{sticky} = 0;
-  $self->_unstick;
-}
-
-package FFI::Platypus::ClosureData;
-
-# VERSION
 
 package FFI::Platypus::Type;
 
