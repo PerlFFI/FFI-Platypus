@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Require EUMM 7.24 for fixes in testing
 
 0.10      2018-12-20 17:51:17 -0700
   - Fix bug where build aliens were used

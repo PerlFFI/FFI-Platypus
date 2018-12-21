@@ -10,6 +10,7 @@ use File::Glob ();
 use File::Basename ();
 use File::Path ();
 use File::Copy ();
+use ExtUtils::MakeMaker 7.24;
 
 # ABSTRACT: FFI::Build installer code for ExtUtils::MakeMaker
 # VERSION
@@ -102,7 +103,6 @@ sub mm_args
     Carp::croak "DISTNAME is required";
   }
 
-  # TODO: set configure requires of ExtUtils::MakeMaker to 7.24
 
   if(my $build = $self->build)
   {
