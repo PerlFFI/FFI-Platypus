@@ -156,7 +156,7 @@
               ffi_pl_closure *closure;
               ffi_status ffi_status;
 
-              SvREFCNT_inc(arg);
+              SvREFCNT_inc(SvRV(arg));
 
               closure = ffi_pl_closure_get_data(arg, self->argument_types[i]);
               if(closure != NULL)
@@ -587,7 +587,7 @@
             arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
             if(SvROK(arg))
             {
-              SvREFCNT_dec(arg);
+              SvREFCNT_dec(SvRV(arg));
             }
           }
           break;

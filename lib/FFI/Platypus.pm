@@ -1111,16 +1111,18 @@ sub get_data
 
 sub sticky
 {
-  return if $_[0]->{sticky};
-  $_[0]->{sticky} = 1;
-  goto \&_sticky;
+  my($self) = @_;
+  return if $self->{sticky};
+  $self->{sticky} = 1;
+  $self->_sticky;
 }
 
 sub unstick
 {
-  return unless $_[0]->{sticky};
-  $_[0]->{sticky} = 0;
-  goto \&_unstick;
+  my($self) = @_;
+  return unless $self->{sticky};
+  $self->{sticky} = 0;
+  $self->_unstick;
 }
 
 package FFI::Platypus::ClosureData;
