@@ -2,6 +2,7 @@ package FFI::Platypus::Declare;
 
 use strict;
 use warnings;
+use Carp ();
 use FFI::Platypus;
 
 # ABSTRACT: Declarative interface to FFI::Platypus
@@ -237,6 +238,17 @@ if you do not care about leaking memory), then you can add the sticky
 keyword to tell L<FFI::Platypus> to keep the thing in memory.
 
  foo(sticky closure { ... });  # OKAY
+
+=cut
+
+sub sticky ($)
+{
+  my($closure) = @_;
+  Carp::croak("usage: sticky \$closure")
+    unless defined $closure && ref($closure) eq 'FFI::Platypus::Closure';
+  $closure->sticky;
+  $closure;
+}
 
 =head2 cast
 

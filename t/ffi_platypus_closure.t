@@ -109,4 +109,15 @@ subtest 'reuse' => sub {
   is $call_closure2->(42), 294;
 };
 
+subtest 'immediate' => sub {
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($libtest);
+
+  my $ret = $ffi->function( closure_call_closure_immediate => ['()->int'] => 'int')->call(
+    $ffi->closure(sub { return 42; })
+  );
+
+  is $ret, 42;
+};
+
 done_testing;

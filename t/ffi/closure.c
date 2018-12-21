@@ -29,6 +29,12 @@ closure_call_closure2(int arg)
   return my_closure2(arg);
 }
 
+EXTERN int
+closure_call_closure_immediate(closure2_t closure, int arg)
+{
+  return closure(arg);
+}
+
 typedef struct {
   const char *one;
   const char *two;
