@@ -110,7 +110,6 @@ INCLUDE: ../../xs/DL.xs
 INCLUDE: ../../xs/Internal.xs
 INCLUDE: ../../xs/Type.xs
 INCLUDE: ../../xs/Function.xs
-INCLUDE: ../../xs/Declare.xs
 INCLUDE: ../../xs/ClosureData.xs
 INCLUDE: ../../xs/API.xs
 INCLUDE: ../../xs/ABI.xs
