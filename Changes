@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.10      2018-12-20 17:51:17 -0700
   - Fix bug where build aliens were used
     for test only build
 
