@@ -102,8 +102,7 @@ sub mm_args
     Carp::croak "DISTNAME is required";
   }
 
-  my $build = $self->build;
-  if($build)
+  if(my $build = $self->build)
   {
     foreach my $alien (@{ $build->alien })
     {
@@ -112,10 +111,9 @@ sub mm_args
     }
   }
   
-  my $test = $self->test;
-  if($test)
+  if(my $test = $self->test)
   {
-    foreach my $alien (@{ $build->alien })
+    foreach my $alien (@{ $test->alien })
     {
       next if ref $alien;
       $args{TEST_REQUIRES}->{$alien} ||= 0;
