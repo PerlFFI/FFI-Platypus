@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.11      2018-12-20 21:55:50 -0700
   - Require EUMM 7.24 for fixes in testing
 
 0.10      2018-12-20 17:51:17 -0700
