@@ -1,7 +1,7 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Closure
 
 void
-sticky(self)
+_sticky(self)
     SV *self
   CODE:
     if(sv_isobject(self) && sv_derived_from(self, "FFI::Platypus::Closure"))
@@ -13,7 +13,7 @@ sticky(self)
       croak("object is not a closure");
 
 void
-unstick(self)
+_unstick(self)
     SV *self
   CODE:
     if(sv_isobject(self) && sv_derived_from(self, "FFI::Platypus::Closure"))
