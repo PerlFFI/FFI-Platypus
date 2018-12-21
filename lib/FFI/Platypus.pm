@@ -1088,7 +1088,7 @@ sub new
 {
   my($class, $coderef) = @_;
   croak "not a coderef" unless ref($coderef) eq 'CODE';
-  my $self = bless { code => $coderef, cbdata => {} }, $class;
+  my $self = bless { code => $coderef, cbdata => {}, sticky => 0 }, $class;
   $self;
 }
 
@@ -1107,6 +1107,20 @@ sub get_data
   }
 
   return 0;
+}
+
+sub sticky
+{
+  return if $_[0]->{sticky};
+  $_[0]->{sticky} = 1;
+  goto \&_sticky;
+}
+
+sub unstick
+{
+  return unless $_[0]->{sticky};
+  $_[0]->{sticky} = 0;
+  goto \&_unstick;
 }
 
 package FFI::Platypus::ClosureData;
