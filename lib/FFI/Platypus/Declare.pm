@@ -214,6 +214,7 @@ Example:
 sub closure (&)
 {
   my($coderef) = @_;
+  require FFI::Platypus::Closure;
   FFI::Platypus::Closure->new($coderef);
 }
 

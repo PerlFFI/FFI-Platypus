@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-use FFI::Platypus;
+use FFI::Platypus::Closure;
 use FFI::CheckLib;
 
 my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
@@ -17,10 +17,12 @@ subtest 'basic' => sub {
   $closure = $ffi->closure($c);
   isa_ok $closure, 'FFI::Platypus::Closure';
   is $closure->(1), 3, 'closure.(1) = 3';
+  is $closure->call(1), 3, 'closure.call(1) = 3';
 
   $closure = $ffi->closure($c);
   isa_ok $closure, 'FFI::Platypus::Closure';
   is $closure->(1), 3, 'closure.(1) = 3';
+  is $closure->call(1), 3, 'closure.call(1) = 3';
 };
 
 subtest 'sticky' => sub {
