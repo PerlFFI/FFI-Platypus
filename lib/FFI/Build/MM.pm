@@ -102,6 +102,8 @@ sub mm_args
     Carp::croak "DISTNAME is required";
   }
 
+  # TODO: set configure requires of ExtUtils::MakeMaker to 7.24
+
   if(my $build = $self->build)
   {
     foreach my $alien (@{ $build->alien })
