@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - sticky/unstick functions can safely be called multiple times
+  - Removed some extra lookups from closure calls, should be faster now.
 
 0.59      2018-12-16 16:33:37 -0700
   - Workaround for possibly buggy pack/unpack on Perl 5.8.8 gh#91
