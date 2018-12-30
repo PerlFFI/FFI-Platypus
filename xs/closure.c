@@ -65,7 +65,6 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
   int i;
   int count;
   SV *sv;
-  SV **svp;
 
   if(!(flags & G_NOARGS))
   {
@@ -182,11 +181,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
     PUTBACK;
   }
 
-  svp = hv_fetch((HV *)SvRV((SV *)closure->coderef), "code", 4, 0);
-  if (svp)
-    count = call_sv(*svp, flags | G_EVAL);
-  else
-    count = 0;
+  count = call_sv(closure->coderef, flags | G_EVAL);
 
   if(SvTRUE(ERRSV))
   {

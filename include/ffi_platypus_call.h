@@ -194,9 +194,22 @@
                   }
                   else
                   {
-                    closure->coderef = arg;
-                    ffi_pl_closure_add_data(arg, closure);
-                    ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+                    SV **svp;
+                    svp = hv_fetch((HV *)SvRV(arg), "code", 4, 0);
+                    if(svp != NULL)
+                    {
+                      closure->coderef = *svp;
+                      SvREFCNT_inc(closure->coderef);
+                      ffi_pl_closure_add_data(arg, closure);
+                      ffi_pl_arguments_set_pointer(arguments, i, closure->function_pointer);
+                    }
+                    else
+                    {
+                      ffi_closure_free(closure->ffi_closure);
+                      Safefree(closure);
+                      ffi_pl_arguments_set_pointer(arguments, i, NULL);
+                      warn("closure has no coderef");
+                    }
                   }
                 }
               }
