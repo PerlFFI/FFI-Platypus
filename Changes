@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.60_01   2018-12-30 14:55:15 -0500
   - sticky/unstick functions can safely be called multiple times
   - Removed some extra lookups from closure calls, should be faster now.
 
