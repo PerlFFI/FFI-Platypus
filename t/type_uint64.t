@@ -1,6 +1,6 @@
 #
 # DO NOT MODIFY THIS FILE.
-# Thisfile generated from similar file t/type_uint8.t
+# This file generated from similar file t/type_uint8.t
 # all instances of "int8" have been changed to "int64"
 #
 use strict;

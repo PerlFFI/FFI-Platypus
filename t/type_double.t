@@ -1,6 +1,6 @@
 #
 # DO NOT MODIFY THIS FILE.
-# Thisfile generated from similar file t/type_float.t
+# This file generated from similar file t/type_float.t
 # all instances of "float" have been changed to "double"
 #
 use strict;

@@ -54,7 +54,7 @@ my %module_build_args = (
     "Alien::FFI" => "0.012",
     "Capture::Tiny" => 0,
     "IPC::Cmd" => 0,
-    "Test::More" => "0.94",
+    "Test::More" => "0.98",
     "perl" => "5.008001"
   }
 );
@@ -65,7 +65,7 @@ my %fallback_build_requires = (
   "Capture::Tiny" => 0,
   "IPC::Cmd" => 0,
   "Module::Build" => "0.3601",
-  "Test::More" => "0.94",
+  "Test::More" => "0.98",
   "perl" => "5.008001"
 );
 

@@ -1,6 +1,6 @@
 /*
  * DO NOT MODIFY THIS FILE.
- * Thisfile generated from similar file t/ffi/sint8.c
+ * This file generated from similar file t/ffi/sint8.c
  * all instances of "int8" have been changed to "int32"
  */
 #include "libtest.h"

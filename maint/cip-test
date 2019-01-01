@@ -12,21 +12,21 @@ if perl -e 'exit ! ($] > 5.010)'; then
 
   cpanm -n local::lib
 
-  perl inc/run/travis_cpan.pl FFI::Util
-  perl inc/run/travis_cpan.pl FFI::TinyCC
-  perl inc/run/travis_cpan.pl FFI::TinyCC::Inline
-  perl inc/run/travis_cpan.pl FFI::ExtractSymbols
+  maint/cip-test-cpan FFI::Util
+  maint/cip-test-cpan FFI::TinyCC
+  maint/cip-test-cpan FFI::TinyCC::Inline
+  maint/cip-test-cpan FFI::ExtractSymbols
   
-  perl inc/run/travis_cpan.pl UUID::FFI
-  perl inc/run/travis_cpan.pl Acme::Ford::Prefect::FFI
-  perl inc/run/travis_cpan.pl File::LibMagic::FFI
+  maint/cip-test-cpan UUID::FFI
+  maint/cip-test-cpan Acme::Ford::Prefect::FFI
+  maint/cip-test-cpan File::LibMagic::FFI
   cpanm -n Math::BigInt
 
-  perl inc/run/travis_cpan.pl FFI::Platypus::Lang::CPP
-  perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Fortran
-  perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Pascal
+  maint/cip-test-cpan FFI::Platypus::Lang::CPP
+  maint/cip-test-cpan FFI::Platypus::Lang::Fortran
+  maint/cip-test-cpan FFI::Platypus::Lang::Pascal
   cpanm -n Test::Script IPC::Run3
-  perl inc/run/travis_cpan.pl FFI::Platypus::Lang::Rust
+  maint/cip-test-cpan FFI::Platypus::Lang::Rust
 
   ##cpanm -n Convert::Binary::C
   ##perl inc/run/test_examples.pl
