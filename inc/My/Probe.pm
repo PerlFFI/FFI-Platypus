@@ -20,8 +20,9 @@ sub probe
 
   return if -e $probe_include && My::ShareConfig->new->get('probe');
   
-  __PACKAGE__->cleanup($probe_include);
-  do {
+  #__PACKAGE__->cleanup($probe_include);
+  {
+    print "writing empty $probe_include\n";
     my $fh;
     open $fh, '>', $probe_include;
     close $fh;
@@ -52,7 +53,8 @@ sub probe
     $probe{$name} = 1 if $ret == 0;
   }
   
-  do {
+  {
+    print "writing completed $probe_include\n";
     my $fh;
     open $fh, '>', $probe_include;
     print $fh "#ifndef FFI_PLATYPUS_PROBE_H\n";
@@ -200,7 +202,13 @@ sub probe_abi
       close $out;
       close $in;
     };
-    
+
+    use YAML ();    
+    print YAML::Dump(
+      source               => $file_c,
+      include_dirs         => [ 'include' ],
+      extra_compiler_flags => [ @{ $extra_compiler_flags }, '-DTRY_FFI_ABI=FFI_'.uc $abi ],
+    );
     my $obj = eval { $b->compile(
       source               => $file_c,
       include_dirs         => [ 'include' ],
