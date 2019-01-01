@@ -64,14 +64,25 @@ is $save, "zero ", "save=zero ";
 
 $ffi->attach( string_test_pointer_arg => [ 'string*' ] => 'string' );
 
-my $arg = "foo";
-is( string_test_pointer_arg(\$arg), "*arg==foo");
-is( $arg, "out" );
+{
+  my $arg = "foo";
+  is( string_test_pointer_arg(\$arg), "*arg==foo");
+  is( $arg, "out" );
+}
 
-undef $arg;
-is( string_test_pointer_arg(\$arg), "*arg==NULL");
-is( $arg, "out" );
+{
+  my $arg;
+  is( string_test_pointer_arg(\$arg), "*arg==NULL");
+  is( $arg, "out" );
+}
 
 is( string_test_pointer_arg(undef), "arg==NULL");
+
+$ffi->attach( string_test_pointer_ret => [ 'string' ] => 'string*' );
+$ffi->attach( [ pointer_null => 'string_test_pointer_ret_null' ] => [] => 'string*' );
+
+is_deeply( string_test_pointer_ret("foo"), \"foo" );
+is_deeply( string_test_pointer_ret(undef), \undef );
+is_deeply( [string_test_pointer_ret_null()], [] );
 
 done_testing;

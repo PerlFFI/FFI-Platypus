@@ -1093,6 +1093,13 @@
                     ffi_pl_long_double_to_perl(value, (long double*)result.pointer);
                     break;
 #endif
+                  case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    if( *((void**)result.pointer) == NULL )
+                      value = &PL_sv_undef;
+                    else
+                      sv_setpv(value, (char*) result.pointer);
+                    break;
                   default:
                     warn("return type not supported");
                     XSRETURN_EMPTY;

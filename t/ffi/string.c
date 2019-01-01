@@ -81,3 +81,15 @@ string_test_pointer_arg(char **arg)
   
   return buffer;
 }
+
+EXTERN char **
+string_test_pointer_ret(char *arg)
+{
+  static char buffer[512];
+  static char *null = NULL;
+  if(arg == NULL)
+    return &null;
+  else
+    sprintf(buffer, "%s", arg);
+  return (char**) &buffer;
+}
