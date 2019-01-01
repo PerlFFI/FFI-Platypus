@@ -95,6 +95,8 @@ ffi_pl_name_to_code(const char *name)
   else if(!strcmp(name, "complex_double"))
   { return FFI_PL_TYPE_COMPLEX_DOUBLE; }
 #endif
+  else if(!strcmp(name, "string"))
+  { return FFI_PL_TYPE_STRING; }
   else
   { return -1; }
 }

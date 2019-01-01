@@ -44,6 +44,10 @@ In your Platypus::FFI code:
 
 =head1 DESCRIPTION
 
+B<NOTE>: As of version 0.61, this custom type is now deprecated since
+pointers to strings are supported in the L<FFI::Platypus> directly
+without custom types.
+
 This module provides a L<FFI::Platypus> custom type for pointers to
 strings.
 

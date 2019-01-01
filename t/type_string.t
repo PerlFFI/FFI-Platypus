@@ -62,4 +62,16 @@ set_closure_fixed($closure_fixed);
 call_closure("zero one  two  three");
 is $save, "zero ", "save=zero ";
 
+$ffi->attach( string_test_pointer_arg => [ 'string*' ] => 'string' );
+
+my $arg = "foo";
+is( string_test_pointer_arg(\$arg), "*arg==foo");
+is( $arg, "out" );
+
+undef $arg;
+is( string_test_pointer_arg(\$arg), "*arg==NULL");
+is( $arg, "out" );
+
+is( string_test_pointer_arg(undef), "arg==NULL");
+
 done_testing;

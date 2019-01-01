@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - New type: pointers to string "string *" are supported.
+  - FFI::Platypus::Type::StringPointer is now deprecated.
 
 0.60_01   2018-12-30 14:55:15 -0500
   - sticky/unstick functions can safely be called multiple times

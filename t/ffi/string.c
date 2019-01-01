@@ -64,3 +64,20 @@ string_fixed_test(int i)
   return &buffer[i*5];
 }
 
+EXTERN const char *
+string_test_pointer_arg(char **arg)
+{
+  static char buffer[512];
+
+  if(arg == NULL)
+    return  "arg==NULL";
+
+  if(*arg == NULL)
+    sprintf(buffer, "*arg==NULL");
+  else
+    sprintf(buffer, "*arg==%s", *arg);
+
+  *arg = "out";
+  
+  return buffer;
+}

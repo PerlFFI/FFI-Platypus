@@ -297,6 +297,24 @@
                         ffi_pl_perl_to_long_double(arg2, (long double*)ptr);
                         break;
 #endif
+                      case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
+                        Newx_or_alloca(ptr, 1, char *);
+                        if(SvOK(arg2))
+                        {
+                          char *pv;
+                          STRLEN len;
+                          char *str;
+                          pv = SvPV(arg2, len);
+                          /* TODO: this should probably be a malloc since it could be arbitrarily large */
+                          Newx_or_alloca(str, len+1, char);
+                          memcpy(str, pv, len+1);
+                          *((char**)ptr) = str;
+                        }
+                        else
+                        {
+                          *((char**)ptr) = NULL;
+                        }
+                        break;
                       default:
                         warn("argument type not supported (%d)", i);
                         *((void**)ptr) = NULL;
@@ -677,6 +695,19 @@
                         }
                         break;
 #endif
+                      case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
+                        {
+                          char **pv = ptr;
+                          if(*pv == NULL)
+                          {
+                            sv_setsv(SvRV(arg), &PL_sv_undef);
+                          }
+                          else
+                          {
+                            sv_setpv(SvRV(arg), *pv);
+                          }
+                        }
+                        break;
                     }
                   }
                 }
