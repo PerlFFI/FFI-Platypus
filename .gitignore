@@ -31,4 +31,3 @@ core
 *.lib
 *.pdb
 *.swp
-/share/config.pl

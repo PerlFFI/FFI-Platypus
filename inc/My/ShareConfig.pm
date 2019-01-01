@@ -3,13 +3,18 @@ package My::ShareConfig;
 use strict;
 use warnings;
 use Data::Dumper ();
+use File::Spec;
+use File::Path qw( mkpath );
+
+my $dir  = File::Spec->catdir( qw( blib lib auto share dist FFI-Platypus ));
+my $file = File::Spec->catfile( $dir, qw( config.pl ));
 
 sub new
 {
   my $data;
-  if(-e 'share/config.pl')
+  if(-e $file)
   {
-    $data = do "./share/config.pl";
+    $data = do "./$file";
   }
   else
   {
@@ -36,8 +41,10 @@ sub set
     ->Sortkeys(1)
     ->Dump;
 
+  mkpath( $dir, 0, 0755 ) unless -d $dir;
+
   my $fh;
-  open($fh, '>', 'share/config.pl') || die "error writing share/config.pl";
+  open($fh, '>', $file) || die "error writing $file";
   print $fh 'do { my ';
   print $fh $dd;
   print $fh '$x;}';

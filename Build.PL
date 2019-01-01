@@ -18,19 +18,19 @@ BEGIN {
 use strict;
 use warnings;
 
-use Module::Build 0.3601;
+use Module::Build 0.28;
 use lib qw{inc}; use My::ModuleBuild;
 
 my %module_build_args = (
   "build_requires" => {
-    "Module::Build" => "0.3601"
+    "Module::Build" => "0.28"
   },
   "configure_requires" => {
     "Alien::FFI" => "0.20",
     "Config::AutoConf" => "0.309",
     "ExtUtils::CBuilder" => 0,
     "FFI::CheckLib" => "0.05",
-    "Module::Build" => "0.3601",
+    "Module::Build" => "0.28",
     "perl" => "5.008001"
   },
   "dist_abstract" => "Write Perl bindings to non-Perl libraries with FFI. No XS required.",
@@ -47,9 +47,6 @@ my %module_build_args = (
     "constant" => "1.32",
     "perl" => "5.008001"
   },
-  "share_dir" => {
-    "dist" => "share"
-  },
   "test_requires" => {
     "Alien::FFI" => "0.012",
     "Capture::Tiny" => 0,
@@ -64,7 +61,7 @@ my %fallback_build_requires = (
   "Alien::FFI" => "0.012",
   "Capture::Tiny" => 0,
   "IPC::Cmd" => 0,
-  "Module::Build" => "0.3601",
+  "Module::Build" => "0.28",
   "Test::More" => "0.98",
   "perl" => "5.008001"
 );
