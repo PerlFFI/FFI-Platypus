@@ -44,7 +44,6 @@ my %module_build_args = (
   "recursive_test_files" => 1,
   "requires" => {
     "FFI::CheckLib" => 0,
-    "File::ShareDir" => 0,
     "constant" => "1.32",
     "perl" => "5.008001"
   },

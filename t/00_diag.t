@@ -16,7 +16,6 @@ $modules{$_} = $_ for qw(
   Config::AutoConf
   ExtUtils::CBuilder
   FFI::CheckLib
-  File::ShareDir
   IPC::Cmd
   Module::Build
   PkgConfig

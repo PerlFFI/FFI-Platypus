@@ -2,10 +2,31 @@ package FFI::Platypus::ShareConfig;
 
 use strict;
 use warnings;
-use File::ShareDir qw( dist_dir );
 use File::Spec;
 
 # VERSION
+
+sub dist_dir ($)
+{
+  my($dist_name) = @_;
+  
+  my @pm = split /-/, $dist_name;
+  $pm[-1] .= ".pm";
+  
+  foreach my $inc (@INC)
+  {
+    if(-f File::Spec->catfile($inc, @pm))
+    {
+      my $share = File::Spec->catdir($inc, qw( auto share dist ), $dist_name );
+      if(-d $share)
+      {
+        return File::Spec->rel2abs($share);
+      }
+      last;
+    }
+  }
+  Carp::croak("unable to find dist share directory for $dist_name");
+}
 
 sub get
 {
