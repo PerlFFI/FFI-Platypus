@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.61_01   2018-12-31 19:56:20 -0500
   - New type: pointers to string "string *" are supported.
   - FFI::Platypus::Type::StringPointer is now deprecated.
 
