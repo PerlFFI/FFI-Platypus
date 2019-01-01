@@ -74,6 +74,13 @@ pointer_ret_array_out(void)
 }
 
 EXTERN char **
+pointer_ret_array_out_null_terminated(void)
+{
+  static char *array[4] = { "seven", "eight", "nine", NULL };
+  return array;
+}
+
+EXTERN char **
 pointer_ret_array_null_out(void)
 {
   static char *array[3] = { NULL, NULL, NULL };

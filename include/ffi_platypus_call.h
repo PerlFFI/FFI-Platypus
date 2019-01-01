@@ -446,6 +446,28 @@
                       }
                       break;
 #endif
+                    case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_ARRAY:
+                      Newx(ptr, count, char *);
+                      for(n=0; n<count; n++)
+                      {
+                        SV *sv = *av_fetch(av, n, 1);
+                        if(SvOK(sv))
+                        {
+                          char *str;
+                          char *pv;
+                          STRLEN len;
+                          pv = SvPV(sv, len);
+                          /* TODO: this should probably be a malloc since it could be arbitrarily large */
+                          Newx_or_alloca(str, len+1, char);
+                          memcpy(str, pv, len+1);
+                          ((char**)ptr)[n] = str;
+                        }
+                        else
+                        {
+                          ((char**)ptr)[n] = NULL;
+                        }
+                      }
+                      break;
                     default:
                       Newxz(ptr, count*(1 << ((type_code & FFI_PL_SIZE_MASK)-1)), char);
                       warn("argument type not supported (%d)", i);
@@ -1121,6 +1143,11 @@
               else
               {
                 int count = self->return_type->extra[0].array.element_count;
+                if(count == 0 && type_code & FFI_PL_TYPE_OPAQUE)
+                {
+                  while(((void**)result.pointer)[count] != NULL)
+                    count++;
+                }
                 AV *av;
                 SV **sv;
                 Newx(sv, count, SV*);
@@ -1194,6 +1221,7 @@
                       sv[i] = newSVnv( ((double*)result.pointer)[i] );
                     }
                     break;
+                  case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_ARRAY:
                   case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
@@ -1203,7 +1231,14 @@
                       }
                       else
                       {
-                        sv[i] = newSViv( PTR2IV( ((void**)result.pointer)[i] ));
+                        switch(type_code) {
+                          case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_ARRAY:
+                            sv[i] = newSVpv( ((char**)result.pointer)[i], 0 );
+                            break;
+                          case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
+                            sv[i] = newSViv( PTR2IV( ((void**)result.pointer)[i] ));
+                            break;
+                        }
                       }
                     }
                     break;

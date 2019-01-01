@@ -69,9 +69,11 @@ do {
 };
 
 $ffi->attach( [pointer_ret_array_out => 'ra_out'] => [] => 'opaque[3]');
+$ffi->attach( [pointer_ret_array_out_null_terminated => 'ra_out_nt'] => [] => 'opaque[]');
 $ffi->attach( [pointer_ret_array_null_out => 'ra_null_out'] => [] => 'opaque[3]');
 
 is_deeply [map { $ffi->cast('opaque' => 'string', $_) } @{ ra_out() } ], [qw( seven eight nine )], "ra_out()";
+is_deeply [map { $ffi->cast('opaque' => 'string', $_) } @{ ra_out_nt() } ], [qw( seven eight nine )], "ra_out_nt()";
 is_deeply ra_null_out(), [undef,undef,undef], 'ra_null_out';
 
 
