@@ -41,6 +41,13 @@ In your L<Platypus::FFI> code:
 
 =head1 DESCRIPTION
 
+B<NOTE>: The primary motivation for this custom type was originally to
+fill the void left by the fact that L<FFI::Platypus> did not support arrays
+of strings by itself.  Since 0.62 this support has been added, and that is
+probably what you want to use, but the semantics and feature set are
+slightly different, so there are cases where you might want to use this
+custom type.
+
 This module provides a L<FFI::Platypus> custom type for arrays of
 strings. The array is always NULL terminated.  Return types are supported!
 
