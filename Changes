@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.62_01   2019-01-01 04:23:23 -0500
   - New type: array of string "string [x]" and "string []" are supported
   - NULL terminated arrays are supported as return types for string and opaque arrays
     "opaque []" and "string []"
