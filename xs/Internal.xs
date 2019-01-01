@@ -62,7 +62,6 @@ _init()
     newCONSTSUB(stash, "FFI_PL_SHAPE_POINTER",       newSViv(FFI_PL_SHAPE_POINTER));
     newCONSTSUB(stash, "FFI_PL_SHAPE_ARRAY",         newSViv(FFI_PL_SHAPE_ARRAY));
     newCONSTSUB(stash, "FFI_PL_SHAPE_CUSTOM_PERL",   newSViv(FFI_PL_SHAPE_CUSTOM_PERL));
-    newCONSTSUB(stash, "FFI_PL_SHAPE_CUSTOM_NATIVE", newSViv(FFI_PL_SHAPE_CUSTOM_NATIVE));
     newCONSTSUB(stash, "FFI_PL_SHAPE_CUSTOM_MASK",   newSViv(FFI_PL_SHAPE_MASK));
     
     newCONSTSUB(stash, "FFI_PL_TYPE_VOID",             newSViv(FFI_PL_TYPE_VOID));

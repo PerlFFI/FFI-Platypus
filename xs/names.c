@@ -5,7 +5,7 @@ ffi_type *
 ffi_pl_type_to_libffi_type(ffi_pl_type *type)
 {
   int type_code = type->type_code;
-  type_code = type_code & ~(FFI_PL_SHAPE_CUSTOM_PERL | FFI_PL_SHAPE_CUSTOM_NATIVE);
+  type_code = type_code & ~(FFI_PL_SHAPE_CUSTOM_PERL);
   switch(type_code)
   {
     case FFI_PL_TYPE_VOID:
