@@ -815,6 +815,7 @@
                       }
                       break;
                     case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
+                    case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_ARRAY:
                       for(n=0; n<count; n++)
                       {
                         if( ((void**)ptr)[n] == NULL)
@@ -823,7 +824,14 @@
                         }
                         else
                         {
-                          sv_setnv(*av_fetch(av,n,1), PTR2IV( ((void**)ptr)[n]) );
+                          switch(type_code) {
+                            case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
+                              sv_setnv(*av_fetch(av,n,1), PTR2IV( ((void**)ptr)[n]) );
+                              break;
+                            case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_ARRAY:
+                              sv_setpv(*av_fetch(av,n,1), ((char**)ptr)[n] );
+                              break;
+                          }
                         }
                       }
                       break;

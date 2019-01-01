@@ -53,3 +53,10 @@ ptrnull()
   };
   return (const char **) buffer;
 }
+
+EXTERN void
+string_array_arg_update(char **arg)
+{
+  arg[0] = "one";
+  arg[1] = "two";
+}

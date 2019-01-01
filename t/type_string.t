@@ -168,4 +168,15 @@ subtest 'null terminated return' => sub {
 
 };
 
+subtest 'argument update' => sub {
+
+  my @args = ( undef, 'six', 'xx' );
+  $ffi->function( string_array_arg_update => [ 'string[3]' ] => 'void' )->call(\@args);
+  is_deeply(
+    \@args,
+    [ "one", "two", "xx" ],
+  );
+
+};
+
 done_testing;
