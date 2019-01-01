@@ -15,9 +15,9 @@ $modules{$_} = $_ for qw(
   Capture::Tiny
   Config::AutoConf
   ExtUtils::CBuilder
+  ExtUtils::MakeMaker
   FFI::CheckLib
   IPC::Cmd
-  Module::Build
   PkgConfig
   Test::More
   constant

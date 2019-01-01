@@ -1,9 +1,6 @@
-/Build
-/Build.bat
 /META.yml
 /META.json
 /MYMETA.*
-/_build
 /blib
 /FFI-Platypus-*
 /.build
@@ -31,3 +28,7 @@ core
 *.lib
 *.pdb
 *.swp
+/_mm
+/pm_to_blib
+/Makefile
+*.bs
