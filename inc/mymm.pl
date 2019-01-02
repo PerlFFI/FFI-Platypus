@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Config;
 use File::Glob qw( bsd_glob );
-use ExtUtils::MakeMaker ();
+use ExtUtils::MakeMaker 7.12 ();
 use Alien::Base::Wrapper qw( Alien::FFI !export );
 use Text::ParseWords qw( shellwords );
 use lib 'inc';

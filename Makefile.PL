@@ -19,7 +19,7 @@ my %WriteMakefileArgs = (
     "Alien::FFI"          => "0.20",
     "Config::AutoConf"    => "0.309",
     "ExtUtils::CBuilder"  => 0,
-    "ExtUtils::MakeMaker" => "7.1001",
+    "ExtUtils::MakeMaker" => "7.12",
     "FFI::CheckLib"       => "0.05"
   },
   "DISTNAME"         => "FFI-Platypus",
