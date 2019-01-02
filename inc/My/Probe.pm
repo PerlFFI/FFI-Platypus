@@ -9,12 +9,13 @@ use Config;
 use File::Temp qw( tempdir );
 use File::Copy qw( copy );
 use File::Path qw( rmtree );
+use Text::ParseWords qw( shellwords );
 use My::ShareConfig;
 
 sub probe
 {
   # $b isa ExtUtils::CBuilder
-  my(undef, $b, $extra_compiler_flags, $extra_linker_flags) = @_;
+  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags) = @_;
 
   my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
 
@@ -69,7 +70,7 @@ sub probe
     close $fh;
   };
   
-  __PACKAGE__->probe_abi($b, $extra_compiler_flags, $extra_linker_flags);
+  __PACKAGE__->probe_abi($b, $ccflags, $extra_compiler_flags, $extra_linker_flags);
   
   My::ShareConfig->new->set( probe => \%probe );
   
@@ -130,7 +131,7 @@ sub run
 sub probe_abi
 {
   # $b isa ExtUtils::CBuilder
-  my(undef, $b, $extra_compiler_flags, $extra_linker_flags) = @_;
+  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags) = @_;
   
   print "probing for ABIs...\n";
 
@@ -150,7 +151,7 @@ sub probe_abi
     close $fh;
   };
 
-  my @cpp_flags = grep /^-[DI]/, @{ $extra_compiler_flags };
+  my @cpp_flags = grep /^-[DI]/, shellwords $ccflags;
   
   print "$Config{cpprun} @cpp_flags $file_c\n";
   my $text = join '', grep !/^#/, `$Config{cpprun} @cpp_flags $file_c`;
@@ -203,12 +204,6 @@ sub probe_abi
       close $in;
     };
 
-    use YAML ();    
-    print YAML::Dump(
-      source               => $file_c,
-      include_dirs         => [ 'include' ],
-      extra_compiler_flags => [ @{ $extra_compiler_flags }, '-DTRY_FFI_ABI=FFI_'.uc $abi ],
-    );
     my $obj = eval { $b->compile(
       source               => $file_c,
       include_dirs         => [ 'include' ],

@@ -15,7 +15,7 @@ my $root = $FindBin::Bin;
 sub build
 {
   # $b isa ExtUtils::CBuilder
-  my(undef, $b, $extra_compiler_flags, $extra_linker_flags) = @_;
+  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags) = @_;
 
   my($header_time) = reverse sort map { (stat $_)[9] } bsd_glob "include/*.h";
   my $compile_count = 0;

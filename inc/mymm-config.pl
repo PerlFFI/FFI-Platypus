@@ -18,6 +18,7 @@ my $share_config = My::ShareConfig->new;
 
 My::Probe->probe(
   ExtUtils::CBuilder->new( config => { ccflags => $share_config->get('ccflags') }),
+  $share_config->get('ccflags'),
   [],
   $share_config->get('extra_linker_flags'),
 );
