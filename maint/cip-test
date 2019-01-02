@@ -2,8 +2,6 @@
 
 set -ex
 
-perl Makefile.PL
-cpanm --installdeps .
 make
 make test TEST_VERBOSE=1
 make install
