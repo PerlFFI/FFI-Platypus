@@ -10,8 +10,6 @@ use File::Glob qw( bsd_glob );
 use Config;
 use Text::ParseWords qw( shellwords );
 
-my $root = $FindBin::Bin;
-
 sub build
 {
   # $b isa ExtUtils::CBuilder
@@ -30,7 +28,7 @@ sub build
       $b->compile(
         source => $filename,
         include_dirs => [
-          File::Spec->catdir($root, 'include'),
+          'include',
         ],
         extra_compiler_flags => $extra_compiler_flags,
       );
@@ -44,7 +42,7 @@ sub build
   if($^O ne 'MSWin32')
   {
     my $dll = $b->link(
-      lib_file           => $b->lib_file(File::Spec->catfile($root, 't/ffi', $b->object_file('libtest.c'))),
+      lib_file           => $b->lib_file(File::Spec->catfile('t/ffi', $b->object_file('libtest.c'))),
       objects            => \@obj,
       extra_linker_flags => $extra_linker_flags,
     );
