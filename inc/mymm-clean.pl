@@ -11,6 +11,8 @@ unlink $_ for map { bsd_glob($_) } (
   't/ffi/*.so',
   't/ffi/*.dll',
   't/ffi/*.bundle',
+  'xs/*.o',
+  'xs/*.obj',
   '_mm/*',
   'examples/*.o',
   'examples/*.so',
@@ -25,6 +27,7 @@ unlink $_ for map { bsd_glob($_) } (
   'core',
   'include/ffi_platypus_config.h',
   'include/ffi_platypus_probe.h',
+  'FFI-Platypus-*.tar.gz',
 );
 
 rmdir '_mm' if -d '_mm';
