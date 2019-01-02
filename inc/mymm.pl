@@ -48,8 +48,21 @@ sub myWriteMakefile
   $share_config->set(extra_linker_flags   => [ shellwords(Alien::FFI->libs) ]);  
   $share_config->set(ccflags => Alien::FFI->cflags);
 
-  use YAML ();
-  print YAML::Dump(\%args);
+  # dlext as understood by MB and MM
+  my @dlext = ($Config{dlext});
+
+  # extra dlext as understood by the OS
+  push @dlext, 'dll'             if $^O =~ /^(cygwin|MSWin32|msys)$/;
+  push @dlext, 'xs.dll'          if $^O =~ /^(MSWin32)$/;
+  push @dlext, 'so'              if $^O =~ /^(cygwin|darwin)$/;
+  push @dlext, 'bundle', 'dylib' if $^O =~ /^(darwin)$/;
+
+  # uniq'ify it
+  @dlext = do { my %seen; grep { !$seen{$_}++ } @dlext };
+
+  #print "dlext[]=$_\n" for @dlext;
+
+  $share_config->set(config_dlext => \@dlext);
 
   ExtUtils::MakeMaker::WriteMakefile(%args);
 }
