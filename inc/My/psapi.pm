@@ -6,14 +6,14 @@ sub libs
 {
   if($^O eq 'MSWin32')
   {
-	if($Config{ccname} eq 'cl')
-	{
-	  return "psapi.lib ";
-	}
-	else
-	{
-	  return "-lpsapi";
-	}
+    if($Config{ccname} eq 'cl')
+    {
+      return "psapi.lib ";
+    }
+    else
+    {
+      return "-lpsapi";
+    }
   }
   elsif($^O eq 'cygwin' || $^O eq 'msys')
   {
@@ -25,3 +25,4 @@ sub libs
 sub install_type {'system'}
 
 1;
+
