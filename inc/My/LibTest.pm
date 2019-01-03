@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use File::Spec;
 use ExtUtils::CBuilder;
-use FindBin ();
 use File::Copy qw( move );
 use File::Glob qw( bsd_glob );
 use Config;
@@ -70,7 +69,7 @@ sub build
   {
     # On windows we can't depend on MM::CBuilder to make the .dll file because it creates dlls
     # that export only one symbol (which is used for bootstrapping XS modules).
-    my $dll = File::Spec->catfile($FindBin::Bin, 't/ffi', 'libtest.dll');
+    my $dll = File::Spec->catfile('t/ffi', 'libtest.dll');
     $dll =~ s{\\}{/}g;
     my @cmd;
     my $cc = $Config{cc};
