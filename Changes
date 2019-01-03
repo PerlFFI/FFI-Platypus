@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - EXPERIMENTAL ExtUtils::MakeMaker fixes for MSWin32 / cygwin
 
 0.63_01   2019-01-02 11:23:48 -0500
   - EXPERIMENTAL ExtUtils::MakeMaker release
