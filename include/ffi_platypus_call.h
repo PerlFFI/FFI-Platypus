@@ -297,6 +297,16 @@
                         ffi_pl_perl_to_long_double(arg2, (long double*)ptr);
                         break;
 #endif
+#ifdef FFI_PL_PROBE_COMPLEX
+                      case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
+                        Newx_or_alloca(ptr, 1, float complex);
+                        ffi_pl_perl_complex_float(arg2, (float *)ptr);
+                        break;
+                      case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
+                        Newx_or_alloca(ptr, 1, double complex);
+                        ffi_pl_perl_complex_double(arg2, (double *)ptr);
+                        break;
+#endif
                       case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
                         Newx_or_alloca(ptr, 1, char *);
                         if(SvOK(arg2))
