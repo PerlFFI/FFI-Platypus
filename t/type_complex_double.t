@@ -65,6 +65,27 @@ subtest 'pointer argument' => sub {
     is cimag_ptr(\$c), 20.5, "cimag_ptr(\\$c) = 20.5";
   };
 
+  subtest 'values set on out (array)' => sub {
+    my @c;
+    complex_set(\\@c, 1.0, 2.0);
+    note "to_string(\\\@c) = ", to_string(\@c);
+    is_deeply \@c, [ 1.0, 2.0 ];
+  };
+
+  subtest 'values set on out (object)' => sub {
+    plan skip_all => 'test requires Math::Complex'
+      unless eval q{ use Math::Complex (); 1 };
+    my $c = Math::Complex->make(0.0, 0.0);
+    complex_set(\$c, 1.0, 2.0);
+    is_deeply( [ $c->Re, $c->Im ], [1.0,2.0] );
+  };
+
+  subtest 'values set on out (other)' => sub {
+    my $c;
+    complex_set(\$c, 1.0, 2.0);
+    is_deeply( $c, [1.0, 2.0]);
+  };
+
 };
 
 done_testing;

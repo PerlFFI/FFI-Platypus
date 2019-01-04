@@ -721,18 +721,15 @@
                         break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
                       case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
-                        {
-                          SV *arg2 = SvRV(arg);
-                          ffi_pl_long_double_to_perl(arg2,(long double*)ptr);
-                        }
+                        ffi_pl_long_double_to_perl(SvRV(arg),(long double*)ptr);
                         break;
 #endif
 #ifdef FFI_PL_PROBE_COMPLEX
                       case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
-                        {
-                          SV *arg2 = SvRV(arg);
-                          ffi_pl_complex_float_to_perl(arg2, (float *)ptr);
-                        }
+                        ffi_pl_complex_float_to_perl(SvRV(arg), (float *)ptr);
+                        break;
+                      case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
+                        ffi_pl_complex_double_to_perl(SvRV(arg), (double *)ptr);
                         break;
 #endif
                       case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:

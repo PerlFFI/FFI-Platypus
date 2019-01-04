@@ -14,6 +14,7 @@ size_t ffi_pl_sizeof(ffi_pl_type *);
 void ffi_pl_perl_to_complex_float(SV *sv, float *ptr);
 void ffi_pl_complex_float_to_perl(SV *sv, float *ptr);
 void ffi_pl_perl_to_complex_double(SV *sv, double *ptr);
+void ffi_pl_complex_double_to_perl(SV *sv, double *ptr);
 
 #define ffi_pl_perl_to_long_double(sv, ptr)                           \
   if(!SvOK(sv))                                                       \
