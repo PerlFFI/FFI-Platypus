@@ -22,6 +22,11 @@ sub myWriteMakefile
 
   %args = (%args, %alien);
 
+  if($^O eq 'MSWin32')
+  {
+    $args{BUILD_REQUIRES}->{'Win32::ErrorMode'} = 0;
+  }
+
   delete $args{PM};
   $args{XSMULTI} = 1;
   $args{XSBUILD} = {

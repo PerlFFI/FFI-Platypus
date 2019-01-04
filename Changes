@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - EXPERIMENTAL ExtUtils::MakeMaker fixes for dynamic prereqs on windows
 
 0.65_01   2019-01-04 13:38:58 -0500
   - EXPERIMENTAL ExtUtils::MakeMaker fixes for parallel and freebsd build
