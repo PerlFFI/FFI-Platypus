@@ -6,17 +6,17 @@ use File::Spec;
 
 if(@ARGV > 0)
 {
-  if(-e 'Build')
+  if(-e 'Makefile')
   {
     if($^O eq 'MSWin32')
     {
-      print "> Build distclean\n";
-      system 'Build', 'distclean';
+      print "> gmake realclean\n";
+      system 'gmake', 'realclean';
     }
     else
     {
-      print "% ./Build distclean\n";
-      system './Build', 'distclean';
+      print "% make realclean\n";
+      system 'make', 'realclean';
     }
   }
 
