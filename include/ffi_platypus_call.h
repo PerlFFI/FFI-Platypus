@@ -113,7 +113,7 @@
             float *ptr;
             Newx_or_alloca(ptr, 2, float complex);
             argument_pointers[i] = ptr;
-            ffi_pl_perl_complex_float(arg, ptr);
+            ffi_pl_perl_to_complex_float(arg, ptr);
           }
           break;
         case FFI_PL_TYPE_COMPLEX_DOUBLE:
@@ -121,7 +121,7 @@
             double *ptr;
             Newx_or_alloca(ptr, 2, double);
             argument_pointers[i] = ptr;
-            ffi_pl_perl_complex_double(arg, ptr);
+            ffi_pl_perl_to_complex_double(arg, ptr);
           }
           break;
 #endif
@@ -300,11 +300,11 @@
 #ifdef FFI_PL_PROBE_COMPLEX
                       case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
                         Newx_or_alloca(ptr, 1, float complex);
-                        ffi_pl_perl_complex_float(arg2, (float *)ptr);
+                        ffi_pl_perl_to_complex_float(arg2, (float *)ptr);
                         break;
                       case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
                         Newx_or_alloca(ptr, 1, double complex);
-                        ffi_pl_perl_complex_double(arg2, (double *)ptr);
+                        ffi_pl_perl_to_complex_double(arg2, (double *)ptr);
                         break;
 #endif
                       case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
@@ -724,6 +724,14 @@
                         {
                           SV *arg2 = SvRV(arg);
                           ffi_pl_long_double_to_perl(arg2,(long double*)ptr);
+                        }
+                        break;
+#endif
+#ifdef FFI_PL_PROBE_COMPLEX
+                      case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
+                        {
+                          SV *arg2 = SvRV(arg);
+                          ffi_pl_complex_float_to_perl(arg2, (float *)ptr);
                         }
                         break;
 #endif

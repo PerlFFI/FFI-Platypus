@@ -41,7 +41,7 @@ subtest 'standard argument' => sub {
 
 $ffi->attach(['complex_float_ptr_get_real' => 'creal_ptr'] => ['complex_float *'] => 'float');
 $ffi->attach(['complex_float_ptr_get_imag' => 'cimag_ptr'] => ['complex_float *'] => 'float');
-$ffi->attach(['complex_float_ptr_set' => 'complex_set'] => ['complex_float *'] => 'void');
+$ffi->attach(['complex_float_ptr_set' => 'complex_set'] => ['complex_float *','float','float'] => 'void');
 
 subtest 'pointer argument' => sub {
   subtest 'with a real number' => sub {
@@ -63,6 +63,26 @@ subtest 'pointer argument' => sub {
     note "to_string(\$c) = ", to_string($c);
     is creal_ptr(\$c), 10.5, "creal_ptr(\\$c) = 10.5";
     is cimag_ptr(\$c), 20.5, "cimag_ptr(\\$c) = 20.5";
+  };
+
+  subtest 'values set on out (array)' => sub {
+    my @c;
+    complex_set(\\@c, 1.0, 2.0);
+    is_deeply \@c, [ 1.0, 2.0 ];
+  };
+
+  subtest 'values set on out (object)' => sub {
+    plan skip_all => 'test requires Math::Complex'
+      unless eval q{ use Math::Complex (); 1 };
+    my $c = Math::Complex->make(0.0, 0.0);
+    complex_set(\$c, 1.0, 2.0);
+    is_deeply( [ $c->Re, $c->Im ], [1.0,2.0] );
+  };
+
+  subtest 'values set on out (other)' => sub {
+    my $c;
+    complex_set(\$c, 1.0, 2.0);
+    is_deeply( $c, [1.0, 2.0]);
   };
 
 };

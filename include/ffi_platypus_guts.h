@@ -11,8 +11,9 @@ SV*  ffi_pl_custom_perl(SV*,SV*,int);
 void ffi_pl_custom_perl_cb(SV *, SV*, int);
 HV *ffi_pl_get_type_meta(ffi_pl_type *);
 size_t ffi_pl_sizeof(ffi_pl_type *);
-void ffi_pl_perl_complex_float(SV *sv, float *ptr);
-void ffi_pl_perl_complex_double(SV *sv, double *ptr);
+void ffi_pl_perl_to_complex_float(SV *sv, float *ptr);
+void ffi_pl_complex_float_to_perl(SV *sv, float *ptr);
+void ffi_pl_perl_to_complex_double(SV *sv, double *ptr);
 
 #define ffi_pl_perl_to_long_double(sv, ptr)                           \
   if(!SvOK(sv))                                                       \
