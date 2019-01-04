@@ -4,17 +4,19 @@ use strict;
 use warnings;
 use Config;
 use File::Glob qw( bsd_glob );
-use ExtUtils::MakeMaker 7.12 ();
+use ExtUtils::MakeMaker ();
 use Text::ParseWords qw( shellwords );
 use lib 'inc';
 use My::ShareConfig;
-use Alien::Base::Wrapper qw( Alien::FFI My::psapi !export );
 
 sub myWriteMakefile
 {
   my %args = @_;
   my $share_config = My::ShareConfig->new;
 
+  ExtUtils::MakeMaker->VERSION('7.12');
+  require Alien::Base::Wrapper;
+  Alien::Base::Wrapper->import( 'Alien::FFI', 'My::psapi', '!export' );
   my %alien = Alien::Base::Wrapper->mm_args;
   $alien{INC} = defined $alien{INC} ? "-Iinclude $alien{INC}" : "-Iinclude";
 
