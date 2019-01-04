@@ -1,5 +1,9 @@
 package My::psapi;
 
+use strict;
+use warnings;
+use Config;
+
 sub cflags {''}
 
 sub libs

@@ -13,6 +13,7 @@ sub myWriteMakefile
 {
   my %args = @_;
   my $share_config = My::ShareConfig->new;
+  my %diag;
 
   ExtUtils::MakeMaker->VERSION('7.12');
   require Alien::Base::Wrapper;
@@ -25,6 +26,19 @@ sub myWriteMakefile
   if($^O eq 'MSWin32')
   {
     $args{BUILD_REQUIRES}->{'Win32::ErrorMode'} = 0;
+  }
+  if($ENV{FFI_PLATYPUS_DEBUG_FAKE32} || $Config{uvsize} < 8)
+  {
+    $args{BUILD_REQUIRES}->{'Math::Int64'} = '0.34';
+  }
+
+  if($ENV{FFI_PLATYPUS_DEBUG_FAKE32} && $Config{uvsize} == 8)
+  {
+    print "DEBUG_FAKE32:\n";
+    print "  + making Math::Int64 a prereq\n";
+    print "  + Using Math::Int64's C API to manipulate 64 bit values\n";
+    $share_config->set(config_debug_fake32 => 1);
+    $diag{config}->{config_debug_fake32} = 1;
   }
 
   delete $args{PM};
@@ -59,6 +73,7 @@ sub myWriteMakefile
 
   #print "dlext[]=$_\n" for @dlext;
 
+  $share_config->set(diag => \%diag);
   $share_config->set(config_dlext => \@dlext);
 
   ExtUtils::MakeMaker::WriteMakefile(%args);
