@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - EXPERIMENTAL ExtUtils::MakeMaker fixes for parallel and freebsd build
 
 0.64_01   2019-01-03 03:16:57 -0500
   - EXPERIMENTAL ExtUtils::MakeMaker fixes for MSWin32 / cygwin

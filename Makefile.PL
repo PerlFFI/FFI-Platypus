@@ -64,23 +64,31 @@ my %WriteMakefileArgs = (
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);
-sub MY::postamble {
-  my $postamble = '';
+{ package MY;
+  sub postamble {
+    my $postamble = '';
 
-  $postamble .=
-    "config :: mymm_config\n" .
-    "mymm_config :\n" .
-    "\t\$(FULLPERL) inc/mymm-config.pl\n\n";
+    $postamble .=
+      "config :: mymm_config\n" .
+      "mymm_config :\n" .
+      "\t\$(FULLPERL) inc/mymm-config.pl\n\n";
 
-  $postamble .=
-    "subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm_test\n" .
-    "mymm_test :\n" .
-    "\t\$(FULLPERL) inc/mymm-test.pl\n\n";
+    $postamble .=
+      "subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm_test\n" .
+      "mymm_test :\n" .
+      "\t\$(FULLPERL) inc/mymm-test.pl\n\n";
 
-  $postamble .=
-    "clean :: mymm_clean\n" .
-    "mymm_clean : \n" . 
-    "\t\$(FULLPERL) inc/mymm-clean.pl\n\n";
+    $postamble .=
+      "clean :: mymm_clean\n" .
+      "mymm_clean : \n" . 
+      "\t\$(FULLPERL) inc/mymm-clean.pl\n\n";
 
-  $postamble;
+    $postamble;
+  }
+  sub special_targets {
+    my($self, @therest) = @_;
+    my $st = $self->SUPER::special_targets(@therest);
+    $st .= "\n.PHONY: mymm_config mymm_test mymm_clean\n";
+    $st;
+  }
 }
