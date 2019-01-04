@@ -57,4 +57,19 @@ sub myWriteMakefile
   ExtUtils::MakeMaker::WriteMakefile(%args);
 }
 
+package MY;
+
+sub dynamic_lib
+{
+  my($self, @therest) = @_;
+  my $dynamic_lib = $self->SUPER::dynamic_lib(@therest);
+  $dynamic_lib .= "\nlib/FFI/Platypus.c : mymm_config\n";
+  my %o = map { $_ => 1 } $dynamic_lib =~ /(\S+\$\(OBJ_EXT\))/g;
+  foreach my $o (sort keys %o)
+  {
+    $dynamic_lib .= "$o : mymm_config\n";
+  }
+  $dynamic_lib;
+}
+
 1;
