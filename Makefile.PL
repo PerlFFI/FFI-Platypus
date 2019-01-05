@@ -57,10 +57,10 @@ my %WriteMakefileArgs = (
     "IPC::Cmd"      => 0,
     "Test::More"    => "0.98"
   },
-  "VERSION" => "0.66_01",
+  "VERSION" => "0.67_01",
   "test"    => {
     "TESTS" => "t/*.t"
-    }
+  }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);

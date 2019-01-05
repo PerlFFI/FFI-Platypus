@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.67_01   2019-01-05 09:16:22 -0500
+  - Better support for complex types: pointers to complex types and complex
+    type and pointers to complex as return value
+
 0.66_01   2019-01-04 20:16:59 -0500
   - EXPERIMENTAL ExtUtils::MakeMaker fixes for dynamic prereqs on windows
   - restore FFI_PLATYPUS_DEBUG_FAKE32
