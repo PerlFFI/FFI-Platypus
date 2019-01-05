@@ -39,4 +39,18 @@ complex_float_ptr_set(float complex *f, float r, float i)
   *f = r + i*I;
 }
 
+EXTERN float complex
+complex_float_ret(float r, float i)
+{
+  return r + i*I;
+}
+
+EXTERN float complex *
+complex_float_ptr_ret(float r, float i)
+{
+  static float complex f;
+  f = r + i*I;
+  return &f;
+}
+
 #endif
