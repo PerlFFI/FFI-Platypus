@@ -13,14 +13,15 @@ use ExtUtils::MakeMaker 7.1001;
 require "./inc/mymm.pl";
 
 my %WriteMakefileArgs = (
-  "ABSTRACT"           => "Write Perl bindings to non-Perl libraries with FFI. No XS required.",
-  "AUTHOR"             => "Graham Ollis <plicease\@cpan.org>",
+  "ABSTRACT"       => "Write Perl bindings to non-Perl libraries with FFI. No XS required.",
+  "AUTHOR"         => "Graham Ollis <plicease\@cpan.org>",
+  "BUILD_REQUIRES" => {
+    "Config::AutoConf"   => "0.309",
+    "ExtUtils::CBuilder" => 0
+  },
   "CONFIGURE_REQUIRES" => {
     "Alien::FFI"          => "0.20",
-    "Config::AutoConf"    => "0.309",
-    "ExtUtils::CBuilder"  => 0,
-    "ExtUtils::MakeMaker" => "7.12",
-    "FFI::CheckLib"       => "0.05"
+    "ExtUtils::MakeMaker" => "7.12"
   },
   "DISTNAME"         => "FFI-Platypus",
   "LICENSE"          => "perl",
@@ -48,7 +49,7 @@ my %WriteMakefileArgs = (
     "lib/FFI/Platypus/Type/StringPointer.pm"     => "\$(INST_LIB)/FFI/Platypus/Type/StringPointer.pm"
   },
   "PREREQ_PM" => {
-    "FFI::CheckLib" => 0,
+    "FFI::CheckLib" => "0.05",
     "constant"      => "1.32"
   },
   "TEST_REQUIRES" => {
