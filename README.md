@@ -1280,7 +1280,7 @@ pull request on this project's GitHub repository:
 [https://github.com/Perl5-FFI/FFI-Platypus/pulls](https://github.com/Perl5-FFI/FFI-Platypus/pulls)
 
 This project is developed using [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  The project's git 
-repository also comes with the `Build.PL` file necessary 
+repository also comes with the `Makefile.PL` file necessary 
 for building, testing (and even installing if necessary) without 
 [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla).  Please keep in mind though that these files are 
 generated so if changes need to be made to those files they should be 
@@ -1313,34 +1313,14 @@ that is normally automatically built by `./Build test`.  If you prefer
 to use `prove` or run tests directly, you can use the `./Build 
 libtest` command to build it.  Example:
 
-    % perl Build.PL
-    % ./Build
-    % ./Build libtest
+    % perl Makefile.PL
+    % make
+    % make mymm_test
     % prove -bv t
     # or an individual test
     % perl -Mblib t/ffi_platypus_memory.t
 
 The build process also respects these environment variables:
-
-- FFI\_PLATYPUS\_DEBUG
-
-    Build the XS code portion of Platypus with -g3 instead of what ever 
-    optimizing flags that your Perl normally uses.  This is useful if you 
-    need to debug the C or XS code that comes with Platypus, but do not have 
-    a debugging Perl.
-
-        % env FFI_PLATYPUS_DEBUG=1 perl Build.PL
-        
-        
-        DEBUG:
-          - $Config{lddlflags} = -shared -O2 -L/usr/local/lib -fstack-protector
-          + $Config{lddlflags} = -shared -g3 -L/usr/local/lib -fstack-protector
-          - $Config{optimize} = -O2
-          + $Config{optimize} = -g3
-        
-        
-        Created MYMETA.yml and MYMETA.json
-        Creating new 'Build' script for 'FFI-Platypus' version '0.10'
 
 - FFI\_PLATYPUS\_DEBUG\_FAKE32
 
@@ -1349,15 +1329,14 @@ The build process also respects these environment variables:
     variable will force Platypus to build with both of those options on a 64 
     bit Perl as well.
 
-        % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Build.PL
-        
-        
+        % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Makefile.PL
         DEBUG_FAKE32:
-          + making Math::Int64 a prerequisite (not normally done on 64 bit Perls)
-          + using Math::Int64's C API to manipulate 64 bit values (not normally done on 64 bit Perls)
-        
-        Created MYMETA.yml and MYMETA.json
-        Creating new 'Build' script for 'FFI-Platypus' version '0.10'
+          + making Math::Int64 a prereq
+          + Using Math::Int64's C API to manipulate 64 bit values
+        Generating a Unix-style Makefile
+        Writing Makefile for FFI::Platypus
+        Writing MYMETA.yml and MYMETA.json
+        %
 
 - FFI\_PLATYPUS\_NO\_ALLOCA
 
@@ -1367,17 +1346,14 @@ The build process also respects these environment variables:
     argument type parameters, and does not use it to allocate large 
     structures like arrays or buffers.  If you prefer not to use `alloca` 
     despite these precautions, then you can turn its use off by setting this 
-    environment variable when you run `Build.PL`:
+    environment variable when you run `Makefile.PL`:
 
-        % env FFI_PLATYPUS_NO_ALLOCA=1 perl Build.PL
-        
-        
+        helix% env FFI_PLATYPUS_NO_ALLOCA=1 perl Makefile.PL 
         NO_ALLOCA:
           + alloca() will not be used, even if your platform supports it.
-        
-        
-         Created MYMETA.yml and MYMETA.json
-         Creating new 'Build' script for 'FFI-Platypus' version '0.10'
+        Generating a Unix-style Makefile
+        Writing Makefile for FFI::Platypus
+        Writing MYMETA.yml and MYMETA.json
 
 ## Coding Guidelines
 
