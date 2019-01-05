@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.66_01   2019-01-04 20:16:59 -0500
   - EXPERIMENTAL ExtUtils::MakeMaker fixes for dynamic prereqs on windows
   - restore FFI_PLATYPUS_DEBUG_FAKE32
   - restore FFI_PLATYPUS_NO_ALLOCA
