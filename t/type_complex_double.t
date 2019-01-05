@@ -41,7 +41,7 @@ subtest 'standard argument' => sub {
 
 $ffi->attach(['complex_double_ptr_get_real' => 'creal_ptr'] => ['complex_double *'] => 'double');
 $ffi->attach(['complex_double_ptr_get_imag' => 'cimag_ptr'] => ['complex_double *'] => 'double');
-$ffi->attach(['complex_double_ptr_set' => 'complex_set'] => ['complex_double *'] => 'void');
+$ffi->attach(['complex_double_ptr_set' => 'complex_set'] => ['complex_double *','double','double'] => 'void');
 
 subtest 'pointer argument' => sub {
   subtest 'with a real number' => sub {
