@@ -39,4 +39,18 @@ complex_double_ptr_set(double complex *f, double r, double i)
   *f = r + i*I;
 }
 
+EXTERN double complex
+complex_double_ret(double r, double i)
+{
+  return r + i*I;
+}
+
+EXTERN double complex *
+complex_double_ptr_ret(double r, double i)
+{
+  static double complex f;
+  f = r + i*I;
+  return &f;
+}
+
 #endif

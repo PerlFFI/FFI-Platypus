@@ -1038,16 +1038,22 @@
         }
 #endif
 #ifdef FFI_PL_PROBE_COMPLEX
-/* this is broken:
         case FFI_PL_TYPE_COMPLEX_FLOAT:
           {
             SV *sv = sv_newmortal();
-            ffi_pl_complex_float_to_perl(sv, (float*)result.pointer);
+            ffi_pl_complex_float_to_perl(sv, (float*)&result.complex_float);
             ST(0) = sv;
             XSRETURN(1);
           }
           break;
-*/
+        case FFI_PL_TYPE_COMPLEX_DOUBLE:
+          {
+            SV *sv = sv_newmortal();
+            ffi_pl_complex_double_to_perl(sv, (double*)&result.complex_double);
+            ST(0) = sv;
+            XSRETURN(1);
+          }
+          break;
 #endif
         case FFI_PL_TYPE_RECORD:
           if(result.pointer == NULL)
@@ -1154,6 +1160,10 @@
                   case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
                     ffi_pl_complex_float_to_perl(value, (float*)result.pointer);
+                    break;
+                  case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
+                    value = sv_newmortal();
+                    ffi_pl_complex_double_to_perl(value, (double*)result.pointer);
                     break;
 #endif
                   case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:

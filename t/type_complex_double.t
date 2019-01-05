@@ -88,4 +88,16 @@ subtest 'pointer argument' => sub {
 
 };
 
+$ffi->attach(['pointer_null' => 'complex_null'] => [] => 'complex_double*');
+$ffi->attach(['complex_double_ret' => 'complex_ret'] => ['double','double'] => 'complex_double');
+$ffi->attach(['complex_double_ptr_ret' => 'complex_ptr_ret'] => ['double','double'] => 'complex_double*');
+
+subtest 'return value' => sub {
+
+  is_deeply(complex_ret(1.0,2.0),       [1.0,2.0], 'standard');
+  is_deeply(complex_ptr_ret(1.0,2.0),  \[1.0,2.0], 'pointer');
+  is_deeply([complex_null()],             [],     'null');
+
+};
+
 done_testing;
