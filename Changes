@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Improve platform probing of complex type
+  - Allow override of platform probing using FFI_PLATYPUS_PROBE_OVERRIDE
 
 0.67_01   2019-01-05 09:16:22 -0500
   - Better support for complex types: pointers to complex types and complex
