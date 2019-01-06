@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.68_01   2019-01-05 21:12:47 -0500
   - Improve platform probing of complex type
   - Allow override of platform probing using FFI_PLATYPUS_PROBE_OVERRIDE
 
