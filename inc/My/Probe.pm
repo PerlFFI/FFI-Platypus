@@ -30,11 +30,26 @@ sub probe
   };
   
   my %probe;
+  if(defined $ENV{FFI_PLATYPUS_PROBE_OVERRIDE})
+  {
+    foreach my $kv (split /:/, $ENV{FFI_PLATYPUS_PROBE_OVERRIDE})
+    {
+      my($k,$v) = split /=/, $kv, 2;
+      $probe{$k} = $v;
+    }
+  }
   
   foreach my $cfile (bsd_glob 'inc/probe/*.c')
   {
     my $name = (File::Spec->splitpath($cfile))[2];
     $name =~ s{\.c$}{};
+
+    if(defined $probe{$name})
+    {
+      print "!!! WARNING !!! overriding $name=$probe{$name}\n";
+      delete $probe{$name} unless $probe{$name};
+      next;
+    }
     
     my $obj = eval { $b->compile(
       source               => $cfile,
