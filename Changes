@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.12      2019-01-06 10:23:17 -0500
   - Make FFI::Platypus an optional testing dependency
     (previously it was a required dependency for testing
     only).
