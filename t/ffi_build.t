@@ -3,13 +3,13 @@ use warnings;
 use Test::More;
 use lib 't/lib';
 use Test::Cleanup;
+use Test::Platypus;
 use FFI::Build;
 use FFI::Build::Platform;
 use File::Temp qw( tempdir );
 use Capture::Tiny qw( capture_merged );
 use File::Spec;
 use File::Path qw( rmtree );
-use FFI::Platypus 0.51;
 use File::Glob qw( bsd_glob );
 
 subtest 'basic' => sub {
@@ -81,19 +81,21 @@ subtest 'build' => sub {
       {
         note $out;
       }
-    
-      my $ffi = FFI::Platypus->new;
-      $ffi->lib($dll);
-  
-      is(
-        $ffi->function(foo1 => [] => 'int')->call,
-        42,
-      );
 
-      is(
-        $ffi->function(foo2 => [] => 'string')->call,
-        "42",
-      );
+      platypus 2 => sub {
+        my $ffi = shift;
+        $ffi->lib($dll);
+  
+        is(
+          $ffi->function(foo1 => [] => 'int')->call,
+          42,
+        );
+ 
+        is(
+          $ffi->function(foo2 => [] => 'string')->call,
+          "42",
+        );
+      };
   
       $build->clean;
 
@@ -137,21 +139,22 @@ subtest 'build c++' => sub {
   {
     note $out;
   }
-  
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($dll);
-  
-  is(
-    $ffi->function(foo1 => [] => 'int')->call,
-    42,
-  );
 
-  is(
-    $ffi->function(foo2 => [] => 'string')->call,
-    "42",
-  );
+  platypus 2 => sub {
+    my $ffi = shift;
+    $ffi->lib($dll);
+  
+    is(
+      $ffi->function(foo1 => [] => 'int')->call,
+      42,
+    );
 
-  undef $ffi;
+    is(
+      $ffi->function(foo2 => [] => 'string')->call,
+      "42",
+    );
+  };
+
   $build->clean;
 
   cleanup(
@@ -193,14 +196,16 @@ subtest 'alien' => sub {
   {
     note $out;
   }
-  
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($dll);
 
-  is(
-    $ffi->function(myanswer => [] => 'int')->call,
-    42,
-  );
+  platypus 1 => sub {
+    my $ffi = shift;
+    $ffi->lib($dll);
+
+    is(
+      $ffi->function(myanswer => [] => 'int')->call,
+      42,
+    );
+  };
 
   cleanup(
     $build->file->dirname,

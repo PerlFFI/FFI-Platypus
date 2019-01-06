@@ -3,8 +3,9 @@ use warnings;
 use Test::More;
 use FFI::Build::MM;
 use Capture::Tiny qw( capture_merged );
-use FFI::Platypus 0.51;
 use File::Glob qw( bsd_glob );
+use lib 't/lib';
+use Test::Platypus;
 
 sub dont_save_prop (&)
 {
@@ -101,13 +102,15 @@ subtest 'with a build!' => sub {
     is $err, '';
     
     is slurp 'blib/arch/auto/Crock/O/Stimpy/Stimpy.txt', "FFI::Build\@auto/share/dist/Crock-O-Stimpy/lib/@{[ FFI::Build::Platform->library_prefix ]}Crock-O-Stimpy@{[ scalar FFI::Build::Platform->library_suffix]}\n";
-    
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib(bsd_glob 'blib/lib/auto/share/dist/Crock-O-Stimpy/lib/*');
-    is(
-      $ffi->function('frooble_runtime' => [] => 'int')->call,
-      47,
-    );
+
+    platypus 1 => sub {
+      my $ffi = shift;
+      $ffi->lib(bsd_glob 'blib/lib/auto/share/dist/Crock-O-Stimpy/lib/*');
+      is(
+        $ffi->function('frooble_runtime' => [] => 'int')->call,
+        47,
+      );
+    };
   };
   
   subtest 'make test' => sub {

@@ -11,7 +11,7 @@ use List::Util 1.45 ();
 use Capture::Tiny ();
 use File::Path ();
 
-# ABSTRACT: Build shared libraries for use with FFI::Platypus
+# ABSTRACT: Build shared libraries for use with FFI
 # VERSION
 
 =head1 SYNOPSIS

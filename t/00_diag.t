@@ -12,7 +12,6 @@ my $post_diag;
 $modules{$_} = $_ for qw(
   Capture::Tiny
   ExtUtils::MakeMaker
-  FFI::Platypus
   IPC::Cmd
   JSON::PP
   List::Util
