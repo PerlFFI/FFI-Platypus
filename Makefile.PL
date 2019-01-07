@@ -53,17 +53,17 @@ my %WriteMakefileArgs = (
     "lib/FFI/Probe/Runner/Result.pm"             => "\$(INST_LIB)/FFI/Probe/Runner/Result.pm"
   },
   "PREREQ_PM" => {
-    "Capture::Tiny" => 0,
-    "FFI::CheckLib" => "0.05",
-    "constant"      => "1.32"
-  },
-  "TEST_REQUIRES" => {
-    "Alien::FFI"          => "0.012",
     "Capture::Tiny"       => 0,
     "FFI::Build"          => 0,
     "FFI::Build::File::C" => 0,
-    "IPC::Cmd"            => 0,
-    "Test::More"          => "0.98"
+    "FFI::CheckLib"       => "0.05",
+    "constant"            => "1.32"
+  },
+  "TEST_REQUIRES" => {
+    "Alien::FFI"    => "0.012",
+    "Capture::Tiny" => 0,
+    "IPC::Cmd"      => 0,
+    "Test::More"    => "0.98"
   },
   "VERSION" => "0.68_01",
   "test"    => {

@@ -111,4 +111,4 @@ pod_coverage:
     - FFI::Platypus::Internal
     - FFI::Platypus::Closure#get_data
     - FFI::Platypus::Closure#add_data
-
+    - FFI::Probe
