@@ -1,4 +1,4 @@
-#include <ffi_platypus.h>
+#include "ffi_platypus.h"
 
 #ifdef PERL_OS_WINDOWS
 
