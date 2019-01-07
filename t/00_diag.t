@@ -16,6 +16,8 @@ $modules{$_} = $_ for qw(
   Config::AutoConf
   ExtUtils::CBuilder
   ExtUtils::MakeMaker
+  FFI::Build
+  FFI::Build::File::C
   FFI::CheckLib
   IPC::Cmd
   PkgConfig

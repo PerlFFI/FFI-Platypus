@@ -33,3 +33,4 @@ core
 /Makefile
 *.bs
 *.def
+/test-*

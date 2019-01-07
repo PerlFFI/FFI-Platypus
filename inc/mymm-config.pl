@@ -10,6 +10,13 @@ use My::ShareConfig;
 
 My::Once->check('config');
 
+{
+  require './lib/FFI/Probe/Runner/Builder.pm';
+  print "building probe runner...\n";
+  my $builder = FFI::Probe::Runner::Builder->new;
+  $builder->build;
+}
+
 My::Dev->generate;
 
 My::AutoConf->configure;

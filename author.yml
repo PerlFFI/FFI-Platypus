@@ -97,6 +97,9 @@ pod_spelling_system:
     - customizations
     - unmark
     - unstick
+    - dlrun
+    - exe
+    - rv
 
 pod_coverage:
   skip: 0

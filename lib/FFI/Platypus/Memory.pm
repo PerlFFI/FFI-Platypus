@@ -98,7 +98,6 @@ our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup );
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
-$ffi->type($_) foreach qw( opaque size_t void int );
 
 $ffi->attach(malloc  => ['size_t']                     => 'opaque' => '$');
 $ffi->attach(free    => ['opaque']                     => 'void'   => '$');
@@ -107,9 +106,6 @@ $ffi->attach(realloc => ['opaque', 'size_t']           => 'opaque' => '$$');
 $ffi->attach(memcpy  => ['opaque', 'opaque', 'size_t'] => 'opaque' => '$$$');
 $ffi->attach(memset  => ['opaque', 'int', 'size_t']    => 'opaque' => '$$$');
 
-# This global may be removed at any time, do not use it
-# externally.  It is used by t/ffi_platypus_memory__strdup.t
-# for a diagnostic.
 our $_strdup_impl = 'not-loaded';
 
 eval {

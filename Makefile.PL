@@ -46,17 +46,24 @@ my %WriteMakefileArgs = (
     "lib/FFI/Platypus/Type.pod"                  => "\$(INST_LIB)/FFI/Platypus/Type.pod",
     "lib/FFI/Platypus/Type/PointerSizeBuffer.pm" => "\$(INST_LIB)/FFI/Platypus/Type/PointerSizeBuffer.pm",
     "lib/FFI/Platypus/Type/StringArray.pm"       => "\$(INST_LIB)/FFI/Platypus/Type/StringArray.pm",
-    "lib/FFI/Platypus/Type/StringPointer.pm"     => "\$(INST_LIB)/FFI/Platypus/Type/StringPointer.pm"
+    "lib/FFI/Platypus/Type/StringPointer.pm"     => "\$(INST_LIB)/FFI/Platypus/Type/StringPointer.pm",
+    "lib/FFI/Probe.pm"                           => "\$(INST_LIB)/FFI/Probe.pm",
+    "lib/FFI/Probe/Runner.pm"                    => "\$(INST_LIB)/FFI/Probe/Runner.pm",
+    "lib/FFI/Probe/Runner/Builder.pm"            => "\$(INST_LIB)/FFI/Probe/Runner/Builder.pm",
+    "lib/FFI/Probe/Runner/Result.pm"             => "\$(INST_LIB)/FFI/Probe/Runner/Result.pm"
   },
   "PREREQ_PM" => {
+    "Capture::Tiny" => 0,
     "FFI::CheckLib" => "0.05",
     "constant"      => "1.32"
   },
   "TEST_REQUIRES" => {
-    "Alien::FFI"    => "0.012",
-    "Capture::Tiny" => 0,
-    "IPC::Cmd"      => 0,
-    "Test::More"    => "0.98"
+    "Alien::FFI"          => "0.012",
+    "Capture::Tiny"       => 0,
+    "FFI::Build"          => 0,
+    "FFI::Build::File::C" => 0,
+    "IPC::Cmd"            => 0,
+    "Test::More"          => "0.98"
   },
   "VERSION" => "0.68_01",
   "test"    => {
