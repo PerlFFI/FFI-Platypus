@@ -236,7 +236,9 @@ sub build
 
 __DATA__
 
-#ifdef _WIN32
+#if defined __CYGWIN__
+#include <dlfcn.h>
+#elif defined _WIN32
 #include <windows.h>
 #else
 #include <dlfcn.h>
@@ -245,7 +247,9 @@ __DATA__
 #include <string.h>
 #include <stdio.h>
 
-#ifdef _WIN32
+#if defined __CYGWIN__
+typedef void * dlib;
+#elif defined _WIN32
 
 #define RTLD_LAZY 0
 typedef HMODULE dlib;
