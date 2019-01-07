@@ -236,10 +236,49 @@ sub build
 
 __DATA__
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#ifdef _WIN32
+
+#define RTLD_LAZY 0
+typedef HMODULE dlib;
+
+dlib
+dlopen(const char *filename, int flags)
+{
+  (void)flags;
+  return LoadLibrary(filename);
+}
+
+void *
+dlsym(dlib handle, const char *symbol_name)
+{
+  return GetProcAddress(handle, symbol_name);
+}
+
+int
+dlclose(dlib handle)
+{
+  FreeLibrary(handle);
+  return 0;
+}
+
+const char *
+dlerror()
+{
+  return "an error";
+}
+
+#else
+typedef void * dlib;
+#endif
 
 int
 main(int argc, char **argv)
@@ -248,7 +287,7 @@ main(int argc, char **argv)
   int flags;
   int (*dlmain)(int, char **);
   char **dlargv;
-  void *handle;
+  dlib handle;
   int n;
   int ret;
   
