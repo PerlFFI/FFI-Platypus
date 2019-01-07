@@ -8,7 +8,7 @@ use My::Probe;
 use My::Dev;
 use My::ShareConfig;
 
-My::Once->check('build');
+My::Once->check('config');
 
 My::Dev->generate;
 
