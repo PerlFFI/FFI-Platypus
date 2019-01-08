@@ -18,3 +18,11 @@ FFI::Build->new(
   platform => $config->platform,
 )->build;
 
+if($config->platform->which('cargo'))
+{
+  chdir 't/ffi/rusty';
+  print "+ cargo build\n";
+  system 'cargo', 'build';
+  chdir '../../..';
+}
+        
