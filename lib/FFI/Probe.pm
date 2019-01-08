@@ -58,7 +58,8 @@ sub check_header
 
   return if defined $self->{data}->{header}->{$header};
 
-  my $code = "#include <$header>";
+  my $code = '';
+  $code .= "#include <$_>\n" for @{ $self->{headers} }, $header;
 
   my $build = FFI::Build->new('frooble', verbose => 1 );
   my $file = FFI::Build::File::C->new(
@@ -69,11 +70,12 @@ sub check_header
   my($out, $o) = capture_merged {
     eval { $file->build_item };
   };
-  $self->log("code: $code");
+  $self->log_code($code);
   $self->log($out);
   if($o)
   {
     $self->set('header', $header => 1);
+    push @{ $self->{headers} }, $header;
   }
   else
   {
@@ -137,6 +139,14 @@ sub log
   my($self, $string) = @_;
   my $fh = $self->{log};
   print $fh $string, "\n";
+}
+
+sub log_code
+{
+  my($self, $code) = @_;
+  my @code = split /\n/, $code;
+  chomp for @code;
+  $self->log("code: $_") for @code;
 }
 
 sub DESTROY
