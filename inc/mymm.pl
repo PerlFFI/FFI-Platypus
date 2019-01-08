@@ -98,6 +98,9 @@ sub dynamic_lib
 
   my %targets = (
     '_mm/config' => ['mymm_config'],
+    'include/ffi_platypus_config.h' => ['_mm/config'],
+    'include/ffi_platypus_probe.h' => ['_mm/config'],
+    'lib/FFI/Platypus.c' => [File::Glob::bsd_glob('xs/*.xs'), 'lib/FFI/Platypus.xs', 'lib/FFI/typemap'],
   );
 
   foreach my $cfile (File::Glob::bsd_glob('xs/*.c'), 'lib/FFI/Platypus.c')
