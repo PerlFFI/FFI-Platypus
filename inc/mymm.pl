@@ -92,13 +92,49 @@ sub dynamic_lib
 {
   my($self, @therest) = @_;
   my $dynamic_lib = $self->SUPER::dynamic_lib(@therest);
-  $dynamic_lib .= "\nlib/FFI/Platypus.c : _mm/config\n";
-  my %o = map { $_ => 1 } $dynamic_lib =~ /(\S+\$\(OBJ_EXT\))/g;
-  foreach my $o (sort keys %o)
+
+  my %h = map { m!include/(.*?)$! && $1 => [$_] } File::Glob::bsd_glob('include/*.h');
+  push @{ $h{"ffi_platypus.h"} }, map { "include/ffi_platypus_$_.h" } qw( config probe );
+
+  my %targets = (
+    '_mm/config' => ['mymm_config'],
+  );
+
+  foreach my $cfile (File::Glob::bsd_glob('xs/*.c'), 'lib/FFI/Platypus.c')
   {
-    $dynamic_lib .= "$o : _mm/config\n";
+    my $ofile = $cfile;
+    $ofile =~ s/\.c$/\$(OBJ_EXT)/;
+
+    my @deps = ($cfile, '_mm/config');
+
+    if(-d ".git")
+    {
+      # for a development build, lets go ahead and compute the .h
+      # dependencies to make it easier to do a partial rebuild.
+      my $source_file = $cfile;
+      $source_file = 'lib/FFI/Platypus.xs' if $source_file =~ /^lib\/FFI/;
+      my $fh;
+      open $fh, '<', $source_file;
+      while(<$fh>)
+      {
+        if(/^#include [<"](.*?)[>"]/ && $h{$1})
+        {
+          push @deps, @{$h{$1}};
+        }
+      }
+      close $fh;
+    }
+
+    $targets{$ofile} = \@deps;
   }
-  $dynamic_lib .= "_mm/config : mymm_config\n";
+
+  $dynamic_lib .= "\n";
+
+  foreach my $target (sort keys %targets)
+  {
+    $dynamic_lib .= "$target : @{$targets{$target}}\n";
+  }
+
   $dynamic_lib;
 }
 
