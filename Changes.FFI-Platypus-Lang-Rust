@@ -1,0 +1,22 @@
+Revision history for Perl module FFI::Platypus::Lang::Rust
+
+After 0.05 FFI-Platypus-Lang-Rust was merged with FFI-Platypus
+
+0.05 2018-12-19 14:40:25 -0700
+  - Explicitly make File::chdir a configure and runtime prereq
+
+0.04  Oct 14, 2015
+  - Fixes for Mac OS X
+
+0.03  Oct 13, 2015
+  - If there is a Cargo.toml file in the ffi project directory, use
+    cargo to build and test the project.
+  - The old method of populating ffi and libtest with rust files
+    (not widely used) will be deprecated and removed at the end
+    of the year.
+
+0.02  Feb 2, 2015
+  - Fix synopsis to use "lang" instead of "with"
+
+0.01  Jan 30, 2015
+  - Initial release
