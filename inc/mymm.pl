@@ -6,19 +6,73 @@ use Config;
 use File::Glob qw( bsd_glob );
 use ExtUtils::MakeMaker ();
 use Text::ParseWords qw( shellwords );
+use IPC::Cmd qw( can_run );
 use lib 'inc';
 use My::ShareConfig;
+
+sub _pkg_config_exe
+{
+  foreach my $cmd ($ENV{PKG_CONFIG}, qw( pkgconf pkg-config ))
+  {
+    next unless defined $cmd;
+    return $cmd if can_run($cmd);
+  }
+  return;
+}
+
+sub _pkg_config
+{
+  my(@args) = @_;
+  my $cmd = _pkg_config_exe;
+  if(defined $cmd)
+  {
+    my @cmd = ($cmd, @args);
+    print "+@cmd\n";
+    system @cmd;
+    return $? == 0;
+  }
+  else
+  {
+    print "no pkg-config.\n";
+    return;
+  }
+}
 
 sub myWriteMakefile
 {
   my %args = @_;
   my $share_config = My::ShareConfig->new;
   my %diag;
+  my %alien;
 
   ExtUtils::MakeMaker->VERSION('7.12');
-  require Alien::Base::Wrapper;
-  Alien::Base::Wrapper->import( 'Alien::FFI', 'My::psapi', '!export' );
-  my %alien = Alien::Base::Wrapper->mm_args;
+
+  if(eval { require Alien::FFI; Alien::FFI->VERSION('0.20'); 1 })
+  {
+    print "using already installed Alien::FFI (version @{[ Alien::FFI->VERSION ]})\n";
+    require Alien::Base::Wrapper;
+    Alien::Base::Wrapper->import( 'Alien::FFI', 'My::psapi', '!export' );
+    %alien = Alien::Base::Wrapper->mm_args;
+  }
+  else
+  {
+    if(_pkg_config('--exists', 'libffi'))
+    {
+      print "using system libffi via @{[ _pkg_config_exe ]}\n";
+      require Alien::Base::Wrapper;
+      Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'My::psapi', '!export' );
+      %alien = Alien::Base::Wrapper->mm_args;
+    }
+    else
+    {
+      print "requiring Alien::FFI in fallback mode.\n";
+      %alien = (
+        CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,My::psapi -e cc --',
+        LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,My::psapi -e ld --',
+      );
+      $args{BUILD_REQUIRES}->{'Alien::FFI'} = '0.20';
+    }
+  }
   $alien{INC} = defined $alien{INC} ? "-Iinclude $alien{INC}" : "-Iinclude";
 
   %args = (%args, %alien);

@@ -11,7 +11,6 @@ my $post_diag;
 
 $modules{$_} = $_ for qw(
   Alien::Base
-  Alien::FFI
   Capture::Tiny
   Config::AutoConf
   ExtUtils::CBuilder
@@ -25,16 +24,19 @@ $modules{$_} = $_ for qw(
 
 $post_diag = sub {
   eval {
-    use Alien::FFI;
+    my $class = eval { require Alien::FFI; 1 }
+                ? 'Alien::FFI'
+                : do { require Alien::FFI::pkgconfig;
+                       'Alien::FFI::pkgconfig' };
     use FFI::Platypus;
     use FFI::Platypus::Memory;
-    diag "Alien::FFI version       = ", $Alien::FFI::VERSION;
-    diag "Alien::FFI->install_type = ", Alien::FFI->install_type;
-    diag "Alien::FFI->cflags       = ", Alien::FFI->cflags;
-    diag "Alien::FFI->libs         = ", Alien::FFI->libs;
-    diag "Alien::FFI->dist_dir     = ", eval { Alien::FFI->dist_dir } || 'undef';
-    diag "Alien::FFI->version      = ", eval { Alien::FFI->config('version') } || 'unknown';
-    diag "my_configure             = ", Alien::FFI->runtime_prop->{my_configure} if defined Alien::FFI->runtime_prop->{my_configure};
+    diag "$class version       = ", $class->VERSION;
+    diag "$class->install_type = ", $class->install_type;
+    diag "$class->cflags       = ", $class->cflags;
+    diag "$class->libs         = ", $class->libs;
+    diag "$class->dist_dir     = ", eval { $class->dist_dir } || 'undef';
+    diag "$class->version      = ", eval { $class->config('version') } || 'unknown';
+    diag "my_configure             = ", $class->runtime_prop->{my_configure} if defined $class->runtime_prop->{my_configure};
     spacer();
     require FFI::Platypus::ShareConfig;
     my $share_config = 'FFI::Platypus::ShareConfig';

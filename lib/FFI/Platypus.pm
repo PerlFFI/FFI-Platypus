@@ -1636,16 +1636,12 @@ making significant changes to the Platypus Core.  For that I use
 
 =head2 System integrators
 
-If you are including Platypus in a larger system (for example a Linux 
-distribution), and you already have libffi as part of your system, you 
-may be interested in L<Alt::Alien::FFI::System>.  This is an alternative 
-to L<Alien::FFI> that does not require L<Alien::Base>.  In fact it has 
-zero non-Core dependencies, and doesn't even need to be installed.  
-Simply include L<Alt::Alien::FFI::System>'s C<lib> directory in your 
-C<PERL5LIB> path when you build Platypus.  For example:
-
- % export PERL5LIB=/path/to/Alt-Alien-FFI-System/lib
- % cpanm FFI::Platypus
+This distribution uses L<Alien::FFI> in fallback mode, meaning if
+the system doesn't provide C<pkg-config> and C<libffi> it will attmpt
+to download C<libffi> and build it from source.  If you are including
+Platypus in a larger system (for example a Linux distribution) you
+only need to make sure to declare C<pkg-config> or C<pkgconf> and
+the development package for C<libffi> as prereqs for this module.
 
 =head1 SEE ALSO
 
@@ -1753,10 +1749,6 @@ Embed a tiny C compiler into your Perl scripts.
 =item L<Alien::FFI>
 
 Provides libffi for Platypus during its configuration and build stages.
-
-=item L<Alt::Alien::FFI::System>
-
-An alternative for L<Alien::FFI> intended mainly for system integrators.
 
 =item L<P5NCI>
 

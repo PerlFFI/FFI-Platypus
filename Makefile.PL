@@ -20,7 +20,6 @@ my %WriteMakefileArgs = (
     "ExtUtils::CBuilder" => 0
   },
   "CONFIGURE_REQUIRES" => {
-    "Alien::FFI"          => "0.20",
     "ExtUtils::MakeMaker" => "7.12"
   },
   "DISTNAME"         => "FFI-Platypus",
@@ -53,7 +52,6 @@ my %WriteMakefileArgs = (
     "constant"      => "1.32"
   },
   "TEST_REQUIRES" => {
-    "Alien::FFI"    => "0.012",
     "Capture::Tiny" => 0,
     "IPC::Cmd"      => 0,
     "Test::More"    => "0.98"
@@ -61,7 +59,7 @@ my %WriteMakefileArgs = (
   "VERSION" => "0.68_01",
   "test"    => {
     "TESTS" => "t/*.t"
-  }
+    }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);

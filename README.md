@@ -1378,16 +1378,12 @@ making significant changes to the Platypus Core.  For that I use
 
 ## System integrators
 
-If you are including Platypus in a larger system (for example a Linux 
-distribution), and you already have libffi as part of your system, you 
-may be interested in [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System).  This is an alternative 
-to [Alien::FFI](https://metacpan.org/pod/Alien::FFI) that does not require [Alien::Base](https://metacpan.org/pod/Alien::Base).  In fact it has 
-zero non-Core dependencies, and doesn't even need to be installed.  
-Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System)'s `lib` directory in your 
-`PERL5LIB` path when you build Platypus.  For example:
-
-    % export PERL5LIB=/path/to/Alt-Alien-FFI-System/lib
-    % cpanm FFI::Platypus
+This distribution uses [Alien::FFI](https://metacpan.org/pod/Alien::FFI) in fallback mode, meaning if
+the system doesn't provide `pkg-config` and `libffi` it will attmpt
+to download `libffi` and build it from source.  If you are including
+Platypus in a larger system (for example a Linux distribution) you
+only need to make sure to declare `pkg-config` or `pkgconf` and
+the development package for `libffi` as prereqs for this module.
 
 # SEE ALSO
 
@@ -1493,10 +1489,6 @@ Simply include [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FF
 - [Alien::FFI](https://metacpan.org/pod/Alien::FFI)
 
     Provides libffi for Platypus during its configuration and build stages.
-
-- [Alt::Alien::FFI::System](https://metacpan.org/pod/Alt::Alien::FFI::System)
-
-    An alternative for [Alien::FFI](https://metacpan.org/pod/Alien::FFI) intended mainly for system integrators.
 
 - [P5NCI](https://metacpan.org/pod/P5NCI)
 

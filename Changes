@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - require Alien::FFI in fallback mode
 
 0.68_01   2019-01-05 21:12:47 -0500
   - Improve platform probing of complex type
