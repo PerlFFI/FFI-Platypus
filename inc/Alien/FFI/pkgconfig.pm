@@ -5,6 +5,8 @@ use warnings;
 use Config;
 use IPC::Cmd ();
 
+our $VERBOSE = 1;
+
 sub _pkg_config_exe
 {
   foreach my $cmd ($ENV{PKG_CONFIG}, qw( pkgconf pkg-config ))
@@ -22,7 +24,7 @@ sub _pkg_config
   if(defined $cmd)
   {
     my @cmd = ($cmd, @args);
-    print "+@cmd\n";
+    print "+@cmd\n" if $VERBOSE;
     my $value = `@cmd`;
     die "command failed" if $?;
     chomp $value;
@@ -30,7 +32,7 @@ sub _pkg_config
   }
   else
   {
-    print "no pkg-config.\n";
+    print "no pkg-config.\n" if $VERBOSE;
     return;
   }
 }
