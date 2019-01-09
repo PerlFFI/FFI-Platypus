@@ -20,7 +20,8 @@ my %WriteMakefileArgs = (
     "ExtUtils::CBuilder" => 0
   },
   "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => "7.12"
+    "ExtUtils::MakeMaker" => "7.12",
+    "IPC::Cmd"            => 0
   },
   "DISTNAME"         => "FFI-Platypus",
   "LICENSE"          => "perl",
@@ -59,7 +60,7 @@ my %WriteMakefileArgs = (
   "VERSION" => "0.69_01",
   "test"    => {
     "TESTS" => "t/*.t"
-    }
+  }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);
