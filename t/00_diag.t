@@ -33,7 +33,7 @@ $post_diag = sub {
     require $pm;
     use FFI::Platypus;
     use FFI::Platypus::Memory;
-    diag "mode                 = ", $share_config->get('alien')->{mode};
+    diag "mode : ", $share_config->get('alien')->{mode};
     diag "$class->VERSION      = ", $class->VERSION;
     diag "$class->install_type = ", $class->install_type;
     diag "$class->cflags       = ", $class->cflags;
