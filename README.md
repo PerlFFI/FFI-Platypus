@@ -1379,7 +1379,7 @@ making significant changes to the Platypus Core.  For that I use
 ## System integrators
 
 This distribution uses [Alien::FFI](https://metacpan.org/pod/Alien::FFI) in fallback mode, meaning if
-the system doesn't provide `pkg-config` and `libffi` it will attmpt
+the system doesn't provide `pkg-config` and `libffi` it will attempt
 to download `libffi` and build it from source.  If you are including
 Platypus in a larger system (for example a Linux distribution) you
 only need to make sure to declare `pkg-config` or `pkgconf` and

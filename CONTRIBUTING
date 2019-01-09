@@ -106,9 +106,9 @@ CONTRIBUTING
  System integrators
 
     This distribution uses Alien::FFI in fallback mode, meaning if the
-    system doesn't provide pkg-config and libffi it will attmpt to download
-    libffi and build it from source. If you are including Platypus in a
-    larger system (for example a Linux distribution) you only need to make
-    sure to declare pkg-config or pkgconf and the development package for
-    libffi as prereqs for this module.
+    system doesn't provide pkg-config and libffi it will attempt to
+    download libffi and build it from source. If you are including Platypus
+    in a larger system (for example a Linux distribution) you only need to
+    make sure to declare pkg-config or pkgconf and the development package
+    for libffi as prereqs for this module.
 

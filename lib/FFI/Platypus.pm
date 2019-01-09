@@ -1637,7 +1637,7 @@ making significant changes to the Platypus Core.  For that I use
 =head2 System integrators
 
 This distribution uses L<Alien::FFI> in fallback mode, meaning if
-the system doesn't provide C<pkg-config> and C<libffi> it will attmpt
+the system doesn't provide C<pkg-config> and C<libffi> it will attempt
 to download C<libffi> and build it from source.  If you are including
 Platypus in a larger system (for example a Linux distribution) you
 only need to make sure to declare C<pkg-config> or C<pkgconf> and
