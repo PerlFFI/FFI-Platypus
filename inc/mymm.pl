@@ -5,7 +5,6 @@ use warnings;
 use Config;
 use File::Glob qw( bsd_glob );
 use ExtUtils::MakeMaker ();
-use Text::ParseWords qw( shellwords );
 use IPC::Cmd qw( can_run );
 use lib 'inc';
 use My::ShareConfig;
@@ -50,6 +49,7 @@ sub myWriteMakefile
   if(eval { require Alien::FFI; Alien::FFI->VERSION('0.20'); 1 })
   {
     print "using already installed Alien::FFI (version @{[ Alien::FFI->VERSION ]})\n";
+    $share_config->set(alien => { class => 'Alien::FFI', mode => 'already-installed' });
     require Alien::Base::Wrapper;
     Alien::Base::Wrapper->import( 'Alien::FFI', 'My::psapi', '!export' );
     %alien = Alien::Base::Wrapper->mm_args;
@@ -59,6 +59,7 @@ sub myWriteMakefile
     if(_pkg_config('--exists', 'libffi'))
     {
       print "using system libffi via @{[ _pkg_config_exe ]}\n";
+      $share_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
       require Alien::Base::Wrapper;
       Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'My::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
@@ -66,6 +67,7 @@ sub myWriteMakefile
     else
     {
       print "requiring Alien::FFI in fallback mode.\n";
+    $share_config->set(alien => { class => 'Alien::FFI', mode => 'fallback' });
       %alien = (
         CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,My::psapi -e cc --',
         LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,My::psapi -e ld --',
@@ -115,10 +117,6 @@ sub myWriteMakefile
 
   $args{PREREQ_PM}->{'Math::Int64'} = '0.34'
     if $ENV{FFI_PLATYPUS_DEBUG_FAKE32} || $Config{uvsize} < 8;
-
-  $share_config->set(extra_compiler_flags => [ shellwords(Alien::FFI->cflags) ]);
-  $share_config->set(extra_linker_flags   => [ shellwords(Alien::FFI->libs) ]);  
-  $share_config->set(ccflags => Alien::FFI->cflags);
 
   # dlext as understood by MB and MM
   my @dlext = ($Config{dlext});

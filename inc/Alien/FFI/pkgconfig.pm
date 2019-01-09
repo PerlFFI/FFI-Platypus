@@ -60,5 +60,7 @@ sub libs
 
 sub install_type {'system'}
 
+sub runtime_prop { return {} }
+
 1;
 

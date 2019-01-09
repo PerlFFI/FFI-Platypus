@@ -59,7 +59,7 @@ my %WriteMakefileArgs = (
   "VERSION" => "0.68_01",
   "test"    => {
     "TESTS" => "t/*.t"
-    }
+  }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);

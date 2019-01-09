@@ -24,13 +24,17 @@ $modules{$_} = $_ for qw(
 
 $post_diag = sub {
   eval {
-    my $class = eval { require Alien::FFI; 1 }
-                ? 'Alien::FFI'
-                : do { require Alien::FFI::pkgconfig;
-                       'Alien::FFI::pkgconfig' };
+    use lib 'inc';
+    require FFI::Platypus::ShareConfig;
+    my $share_config = 'FFI::Platypus::ShareConfig';
+    my $class = $share_config->get('alien')->{class};
+    my $pm = "$class.pm";
+    $pm =~ s/::/\//g;
+    require $pm;
     use FFI::Platypus;
     use FFI::Platypus::Memory;
-    diag "$class version       = ", $class->VERSION;
+    diag "mode                 = ", $share_config->get('alien')->{mode};
+    diag "$class->VERSION      = ", $class->VERSION;
     diag "$class->install_type = ", $class->install_type;
     diag "$class->cflags       = ", $class->cflags;
     diag "$class->libs         = ", $class->libs;
@@ -38,8 +42,6 @@ $post_diag = sub {
     diag "$class->version      = ", eval { $class->config('version') } || 'unknown';
     diag "my_configure             = ", $class->runtime_prop->{my_configure} if defined $class->runtime_prop->{my_configure};
     spacer();
-    require FFI::Platypus::ShareConfig;
-    my $share_config = 'FFI::Platypus::ShareConfig';
     my %type_map = %{ $share_config->get('type_map') };
     my $diag = $share_config->get('diag');
     foreach my $key (sort keys %{ $diag->{args} })
