@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.70_01   2019-01-10 15:34:57 -0500
+  - prereq fix: IPC::Cmd as a configure requires
+    since it doesn't come with Perl 5.8.x
+
 0.69_01   2019-01-09 15:59:43 -0500
   - require Alien::FFI in fallback mode
 
