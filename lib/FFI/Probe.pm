@@ -324,10 +324,10 @@ sub check_type_float
   { $t = 'float' }
   elsif($size == 8)
   { $t = 'double' }
-  elsif($size == 10)
-  { $t = 'long double' }
+  elsif($size > 9)
+  { $t = 'longdouble' }
 
-  $t .= ' complex' if $complex;
+  $t = "complex_$t" if $complex;
 
   $t;
 }

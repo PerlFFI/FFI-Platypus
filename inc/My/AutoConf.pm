@@ -7,6 +7,9 @@ use Config;
 use File::Spec;
 use FindBin;
 use My::ShareConfig;
+use lib 'lib';
+use FFI::Probe;
+use FFI::Probe::Runner;
 
 my $root = $FindBin::Bin;
 
@@ -48,11 +51,16 @@ int32_t
 uint64_t
 int64_t
 size_t
+ssize_t
 float
 double
+long double
+float complex
+double complex
+long double complex
 bool
 _Bool
-void*
+pointer
 EOF
 
 my @extra_probe_types = split /\n/, <<EOF;
@@ -89,36 +97,39 @@ my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypu
 sub configure
 {
   my($self) = @_;
-  
+
   my $share_config = My::ShareConfig->new;
-  
+  my $probe = FFI::Probe->new(
+    runner => FFI::Probe::Runner->new(
+      exe => "blib/lib/auto/share/dist/FFI-Platypus/probe/bin/dlrun$Config{exe_ext}",
+    ),
+    log => "blib/lib/auto/share/dist/FFI-Platypus/probe/probe.log",
+    data_filename => "blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
+  );
+
   return if -r $config_h && ref($share_config->get( 'type_map' )) eq 'HASH';
 
   my $ac = Config::AutoConf->new;
-  
+
   $ac->check_prog_cc;
 
-  $ac->define_var( do { 
+  $ac->define_var( do {
     my $os = uc $^O;
     $os =~ s/-/_/;
     $os =~ s/[^A-Z0-9_]//g;
     "PERL_OS_$os";
   } => 1 );
-  
+
   $ac->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin|msys)$/;
-  
+
   foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool complex ))
   {
     $ac->check_header("$header.h");
+    $probe->check_header("$header.h");
   }
 
   $ac->check_stdc_headers;
 
-  if($ac->check_decl('RTLD_LAZY', { prologue => $prologue }))
-  {
-    $ac->define_var( HAVE_RTLD_LAZY => 1 );
-  }
-  
   unless($share_config->get('config_no_alloca'))
   {
     if($ac->check_decl('alloca', { prologue => $prologue }))
@@ -126,7 +137,7 @@ sub configure
       $ac->define_var( HAVE_ALLOCA => 1 );
     }
   }
-  
+
   if(!$share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
   {
     $ac->define_var( HAVE_IV_IS_64 => 1 );
@@ -135,49 +146,46 @@ sub configure
   {
     $ac->define_var( HAVE_IV_IS_64 => 0 );
   }
-  
-  foreach my $lib (map { s/^-l//; $_ } split /\s+/, $Config{perllibs})
-  {
-    if($ac->check_lib($lib, 'dlopen'))
-    {
-      $ac->define_var( 'HAVE_dlopen' => 1 );
-      last;
-    }
-  }
 
   my %type_map;
+  my %align;
 
   foreach my $type (@probe_types)
   {
-    my $size;
-    if($type =~ /^u?int(8|16|32|64)_t$/)
+    my $ok;
+
+    if($type =~ /^(float|double|long double)/)
     {
-      $size = $1 / 8;
+      if(my $basic = $probe->check_type_float($type))
+      {
+        $type_map{$type} = $basic;
+        $align{$type} = $probe->data->{type}->{$type}->{align};
+      }
+    }
+    elsif($type eq 'pointer')
+    {
+      $probe->check_type_pointer;
+      $align{pointer} = $probe->data->{type}->{pointer}->{align};
     }
     else
     {
-      $size = $ac->check_sizeof_type($type);
-    }
-    if($size)
-    {
-      if($type !~ /^(float|double|long double)$/)
+      if(my $basic = $probe->check_type_int($type))
       {
-        my $signed;
-        if($type =~ /^signed / || $type =~ /^(int[0-9]+_t|int_least[0-9]+_t)$/)
-        {
-          $signed = 1;
-        }
-        elsif($type =~ /^unsigned / || $type =~ /^(uint[0-9]+_t|uint_least[0-9]+_t)$/)
-        {
-          $signed = 0;
-        }
-        $signed = $ac->compute_int("signed($type)", { prologue => $prologue })
-          unless defined $signed;
-        $type_map{$type} = sprintf "%sint%d", ($signed ? 's' : 'u'), $size*8;
+        $type_map{$type} = $basic;
+        $align{$basic} ||= $probe->data->{type}->{$type}->{align};
       }
     }
   }
 
+  $ac->define_var( SIZEOF_VOIDP => $probe->data->{type}->{pointer}->{size} );
+  if(my $size = $probe->data->{type}->{'float complex'}->{size})
+  { $ac->define_var( SIZEOF_FLOAT_COMPLEX => $size ) }
+  if(my $size = $probe->data->{type}->{'double complex'}->{size})
+  { $ac->define_var( SIZEOF_DOUBLE_COMPLEX => $size ) }
+  if(my $size = $probe->data->{type}->{'long double complex'}->{size})
+  { $ac->define_var( SIZEOF_LONG_DOUBLE_COMPLEX => $size ) }
+
+  # short aliases
   $type_map{uchar}  = $type_map{'unsigned char'};
   $type_map{ushort} = $type_map{'unsigned short'};
   $type_map{uint}   = $type_map{'unsigned int'};
@@ -190,49 +198,6 @@ sub configure
   $type_map{bool} ||= delete $type_map{_Bool};
   delete $type_map{_Bool};
 
-  $ac->check_default_headers;
-
-  my %align = (
-    pointer          => _alignment($ac, 'void*'),
-    float            => _alignment($ac, 'float'),
-    double           => _alignment($ac, 'double'),
-    'long double'    => _alignment($ac, 'long double'),
-    'float complex'  => _alignment($ac, 'float complex'),
-    'double complex' => _alignment($ac, 'double complex'),
-  );
-
-  foreach my $bits (qw( 8 16 32 64 ))
-  {
-    $align{'sint'.$bits} = $align{'uint'.$bits} = _alignment($ac, "int${bits}_t");
-  }
-  
-  if($ac->check_sizeof_type('long double',    { prologue => $prologue }))
-  {
-    $type_map{'long double'} = 'longdouble';
-  }
-  
-  if($ac->check_sizeof_type('float complex',  { prologue => $prologue }))
-  {
-    $type_map{'float complex'} = 'complex_float';
-  }
-
-  if($ac->check_sizeof_type('double complex', { prologue => $prologue }))
-  {
-    $type_map{'double complex'} = 'complex_double';
-  }
-
-  if(my $size = $ac->check_sizeof_type('complex', { prologue => $prologue }))
-  {
-    if($size == 8)
-    {
-      $type_map{'complex'} = 'complex_float';
-    }
-    elsif($size == 16)
-    {
-      $type_map{'complex'} = 'complex_double';
-    }
-  }
-  
   $ac->write_config_h( $config_h );
   $share_config->set( type_map => \%type_map );
   $share_config->set( align    => \%align    );
@@ -243,7 +208,7 @@ sub _alignment
   my($ac, $type) = @_;
   my $align = $ac->check_alignof_type($type);
   return $align if $align;
-  
+
   # This no longer seems necessary now that we do a
   # check_default_headers above.  See:
   # # https://github.com/ambs/Config-AutoConf/issues/7
