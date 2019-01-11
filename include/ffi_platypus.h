@@ -335,8 +335,7 @@ typedef struct _ffi_pl_heap {
 
 #if defined(_MSC_VER)
 #define Newx_or_alloca(ptr, count, type) ptr = _alloca(sizeof(type)*count)
-#define HAVE_ALLOCA 1
-#elif defined(HAVE_ALLOCA)
+#elif defined(FFI_PL_PROBE_ALLOCA)
 #define Newx_or_alloca(ptr, count, type) ptr = alloca(sizeof(type)*count)
 #else
 #define Newx_or_alloca(ptr, count, type) ffi_pl_heap_add(ptr, count, type)

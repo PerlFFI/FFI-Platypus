@@ -10,16 +10,15 @@ use File::Temp qw( tempdir );
 use File::Copy qw( copy );
 use File::Path qw( rmtree );
 use Text::ParseWords qw( shellwords );
-use My::ShareConfig;
 
 sub probe
 {
   # $b isa ExtUtils::CBuilder
-  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags) = @_;
+  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags, $share_config) = @_;
 
   my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
 
-  return if -e $probe_include && My::ShareConfig->new->get('probe');
+  return if -e $probe_include && $share_config->get('probe');
   
   #__PACKAGE__->cleanup($probe_include);
   {
@@ -43,6 +42,8 @@ sub probe
   {
     my $name = (File::Spec->splitpath($cfile))[2];
     $name =~ s{\.c$}{};
+
+    next if $name eq 'alloca' && $share_config->get('config_no_alloca');
 
     if(defined $probe{$name})
     {
@@ -85,9 +86,9 @@ sub probe
     close $fh;
   };
   
-  __PACKAGE__->probe_abi($b, $ccflags, $extra_compiler_flags, $extra_linker_flags);
+  __PACKAGE__->probe_abi($b, $ccflags, $extra_compiler_flags, $extra_linker_flags, $share_config);
   
-  My::ShareConfig->new->set( probe => \%probe );
+  $share_config->set( probe => \%probe );
   
   return;
 }
@@ -146,7 +147,7 @@ sub run
 sub probe_abi
 {
   # $b isa ExtUtils::CBuilder
-  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags) = @_;
+  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags, $share_config) = @_;
   
   print "probing for ABIs...\n";
 
@@ -260,7 +261,7 @@ sub probe_abi
     print "  found abi: $abi = $abi{$abi}\n";
   }
 
-  My::ShareConfig->new->set( abi => \%abi );
+  $share_config->set( abi => \%abi );
 
   rmtree('.abi-probe-test', { verbose => 0 });
   return;

@@ -130,14 +130,6 @@ sub configure
 
   $ac->check_stdc_headers;
 
-  unless($share_config->get('config_no_alloca'))
-  {
-    if($ac->check_decl('alloca', { prologue => $prologue }))
-    {
-      $ac->define_var( HAVE_ALLOCA => 1 );
-    }
-  }
-
   if(!$share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
   {
     $ac->define_var( HAVE_IV_IS_64 => 1 );

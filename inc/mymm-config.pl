@@ -39,6 +39,7 @@ My::Probe->probe(
   $share_config->get('ccflags'),
   [],
   $share_config->get('extra_linker_flags'),
+  $share_config,
 );
 unlink $_ for My::Probe->cleanup;
 
