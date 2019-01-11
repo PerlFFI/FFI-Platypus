@@ -259,7 +259,7 @@ sub check_eval
   else
   {
     return;
-  }  
+  }
 }
 
 =head2 check_type_int
@@ -271,15 +271,18 @@ sub check_eval
 sub check_type_int
 {
   my($self, $type) = @_;
+
+  $self->check_header('stddef.h');
+
   my $ret = $self->check_eval(
     decl => [
       '#define signed(type)  (((type)-1) < 0) ? "signed" : "unsigned"',
       "struct align { char a; $type b; };",
     ],
     eval => {
-      "type.$type.size"  => [ '%d' => "sizeof($type)" ],
+      "type.$type.size"  => [ '%d' => "(int)sizeof($type)" ],
       "type.$type.sign"  => [ '%s' => "signed($type)" ],
-      "type.$type.align" => [ '%d' => "(int)__builtin_offsetof(struct align, b)" ],
+      "type.$type.align" => [ '%d' => "(int)offsetof(struct align, b)" ],
     },
   );
 
@@ -300,13 +303,16 @@ sub check_type_int
 sub check_type_float
 {
   my($self, $type) = @_;
+
+  $self->check_header('stddef.h');
+
   my $ret = $self->check_eval(
     decl => [
       "struct align { char a; $type b; };",
     ],
     eval => {
-      "type.$type.size"  => [ '%d' => "sizeof($type)" ],
-      "type.$type.align" => [ '%d' => "(int)__builtin_offsetof(struct align, b)" ],
+      "type.$type.size"  => [ '%d' => "(int)sizeof($type)" ],
+      "type.$type.align" => [ '%d' => "(int)offsetof(struct align, b)" ],
     },
   );
 
@@ -341,13 +347,16 @@ sub check_type_float
 sub check_type_pointer
 {
   my($self) = @_;
+
+  $self->check_header('stddef.h');
+
   my $ret = $self->check_eval(
     decl => [
       "struct align { char a; void* b; };",
     ],
     eval => {
-      "type.pointer.size"  => [ '%d' => "sizeof(void *)" ],
-      "type.pointer.align" => [ '%d' => "(int)__builtin_offsetof(struct align, b)" ],
+      "type.pointer.size"  => [ '%d' => "(int)sizeof(void *)" ],
+      "type.pointer.align" => [ '%d' => "(int)offsetof(struct align, b)" ],
     },
   );
 
@@ -402,7 +411,7 @@ sub save
   my($self) = @_;
 
   my $dir = dirname($self->{data_filename});
-  
+
   my $dd = Data::Dumper->new([$self->{data}],['x'])
     ->Indent(1)
     ->Terse(0)
