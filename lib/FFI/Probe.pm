@@ -88,6 +88,7 @@ sub new
     dir           => tempdir( CLEANUP => 1, TEMPLATE => 'ffi-probe-XXXXXX', DIR => '.' ),
     counter       => 0,
     runner        => $args{runner} || FFI::Probe::Runner->new,
+    alien         => $args{alien} || [],
   }, $class;
 
   $self;
@@ -116,6 +117,7 @@ sub check_header
   my $build = FFI::Build->new("hcheck@{[ ++$self->{counter} ]}",
     verbose => 1,
     dir => $self->{dir},
+    alien  => $self->{alien},
   );
   my $file = FFI::Build::File::C->new(
     \$code,
@@ -172,7 +174,7 @@ sub check_eval
 
   my $headers = join "\n", map { "#include <$_>\n" } (@{ $self->{headers} }, @{ $args{headers} || [] });
   my @decl    = @{ $args{decl} || [] };
-  my @stmt    = @{ $args{eval} || [] };
+  my @stmt    = @{ $args{stmt} || [] };
   my %eval    = %{ $args{eval} || {} };
 
   my $code = $self->template;
@@ -189,14 +191,15 @@ sub check_eval
     $i++;
     $map{$key} = "eval$i";
     my($format,$expression) = @{ $eval{$key} };
-    eval .= "  printf(\"eval$i=<<<$format>>>\\n\", $expression);\n";
+    $eval .= "  printf(\"eval$i=<<<$format>>>\\n\", $expression);\n";
   }
 
   $code =~ s/##EVAL##/$eval/;
 
   my $build = FFI::Build->new("eval@{[ ++$self->{counter} ]}",
     verbose => 1,
-    dir => $self->{dir},
+    dir     => $self->{dir},
+    alien   => $self->{alien},
   );
   $build->source(
     FFI::Build::File::C->new(
@@ -207,7 +210,7 @@ sub check_eval
   );
 
   my $lib = do {
-    my($out, $lib, $error) = capture {
+    my($out, $lib, $error) = capture_merged {
       my $lib = eval {
         $build->build;
       };
@@ -215,6 +218,7 @@ sub check_eval
     };
 
     $self->log_code($code);
+    $self->log("[build]");
     $self->log($out);
     if($error)
     {
@@ -240,7 +244,17 @@ sub check_eval
 
   if($result->pass)
   {
-    
+    foreach my $key (sort keys %eval)
+    {
+      my $eval = $map{$key};
+      if($result->stdout =~ /$eval=<<<(.*?)>>>/)
+      {
+        my $value = $1;
+        my @key = split /\./, $key;
+        $self->set(@key, $value);
+      }
+    }
+    return 1;
   }
   else
   {
@@ -254,7 +268,7 @@ sub _set
   my $key = shift @key;
   if(@key > 0)
   {
-    _set($data->{$key}, $value, @key);
+    _set($data->{$key} ||= {}, $value, @key);
   }
   else
   {
@@ -335,6 +349,7 @@ sub log
 {
   my($self, $string) = @_;
   my $fh = $self->{log};
+  chomp $string;
   print $fh $string, "\n";
 }
 
