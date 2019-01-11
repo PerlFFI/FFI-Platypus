@@ -203,29 +203,6 @@ sub configure
   $share_config->set( align    => \%align    );
 }
 
-sub _alignment
-{
-  my($ac, $type) = @_;
-  my $align = $ac->check_alignof_type($type);
-  return $align if $align;
-
-  # This no longer seems necessary now that we do a
-  # check_default_headers above.  See:
-  # # https://github.com/ambs/Config-AutoConf/issues/7
-  my $btype = $type eq 'void*' ? 'vpointer' : "b$type";
-  $btype =~ s/\s+/_/g;
-  my $prologue2 = $prologue . <<EOF;
-#ifdef HAVE_COMPLEX_H
-#include <complex.h>
-#endif
-struct align {
-  char a;
-    $type $btype;
-  };
-EOF
-  return $ac->compute_int("__builtin_offsetof(struct align, $btype)", { prologue => $prologue2 });
-}
-
 sub clean
 {
   unlink $config_h;
