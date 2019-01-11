@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove dependency on Config::AutoConf
 
 0.71_01   2019-01-10 23:29:06 -0500
   - Merge FFI-Build into this distribution

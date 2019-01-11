@@ -2,32 +2,14 @@ package My::AutoConf;
 
 use strict;
 use warnings;
-use Config::AutoConf;
 use Config;
 use File::Spec;
 use FindBin;
 use My::ShareConfig;
+use My::ConfigH;
 use lib 'lib';
 use FFI::Probe;
 use FFI::Probe::Runner;
-
-my $root = $FindBin::Bin;
-
-my $prologue = <<EOF;
-#ifdef HAVE_DLFCN_H
-#include <dlfcn.h>
-#endif
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif
-#ifdef HAVE_COMPLEX_H
-#include <complex.h>
-#endif
-#define signed(type)  (((type)-1) < 0) ? 1 : 0
-EOF
 
 my @probe_types = split /\n/, <<EOF;
 char
@@ -109,7 +91,7 @@ sub configure
 
   return if -r $config_h && ref($share_config->get( 'type_map' )) eq 'HASH';
 
-  my $ac = Config::AutoConf->new;
+  my $ac = My::ConfigH->new;
 
   $ac->define_var( do {
     my $os = uc $^O;
@@ -191,7 +173,7 @@ sub configure
   $type_map{bool} ||= delete $type_map{_Bool};
   delete $type_map{_Bool};
 
-  $ac->write_config_h( $config_h );
+  $ac->write_config_h;
   $share_config->set( type_map => \%type_map );
   $share_config->set( align    => \%align    );
 }

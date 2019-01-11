@@ -16,7 +16,6 @@ my %WriteMakefileArgs = (
   "ABSTRACT"       => "Write Perl bindings to non-Perl libraries with FFI. No XS required.",
   "AUTHOR"         => "Graham Ollis <plicease\@cpan.org>",
   "BUILD_REQUIRES" => {
-    "Config::AutoConf"   => "0.309",
     "ExtUtils::CBuilder" => 0
   },
   "CONFIGURE_REQUIRES" => {

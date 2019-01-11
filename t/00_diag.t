@@ -12,7 +12,6 @@ my $post_diag;
 $modules{$_} = $_ for qw(
   Alien::Base
   Capture::Tiny
-  Config::AutoConf
   ExtUtils::CBuilder
   ExtUtils::MakeMaker
   FFI::CheckLib
