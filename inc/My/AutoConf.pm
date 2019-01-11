@@ -111,8 +111,6 @@ sub configure
 
   my $ac = Config::AutoConf->new;
 
-  $ac->check_prog_cc;
-
   $ac->define_var( do {
     my $os = uc $^O;
     $os =~ s/-/_/;
@@ -124,11 +122,14 @@ sub configure
 
   foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool complex ))
   {
-    $ac->check_header("$header.h");
-    $probe->check_header("$header.h");
+    if($probe->check_header("$header.h"))
+    {
+      my $var = uc $header;
+      $var =~ s{/}{_}g;
+      $var = "HAVE_${var}_H";
+      $ac->define_var( $var => 1 );
+    }
   }
-
-  $ac->check_stdc_headers;
 
   if(!$share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
   {
