@@ -27,7 +27,6 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.008001",
   "NAME"             => "FFI::Platypus",
   "PM"               => {
-    "lib/App/fbx.pm"                             => "\$(INST_LIB)/App/fbx.pm",
     "lib/FFI/Build.pm"                           => "\$(INST_LIB)/FFI/Build.pm",
     "lib/FFI/Build/File/Base.pm"                 => "\$(INST_LIB)/FFI/Build/File/Base.pm",
     "lib/FFI/Build/File/C.pm"                    => "\$(INST_LIB)/FFI/Build/File/C.pm",

@@ -2,7 +2,6 @@ use strict;
 use warnings;
 use Test::More;
 
-require_ok 'App::fbx';
 require_ok 'FFI::Build';
 require_ok 'FFI::Build::File::Base';
 require_ok 'FFI::Build::File::C';
@@ -33,7 +32,6 @@ require_ok 'FFI::Probe';
 require_ok 'FFI::Probe::Runner';
 require_ok 'FFI::Probe::Runner::Builder';
 require_ok 'FFI::Probe::Runner::Result';
-ok -f 't/app_fbx.t',                                          'test for App::fbx';
 ok -f 't/ffi_build.t',                                        'test for FFI::Build';
 ok -f 't/ffi_build_file_base.t',                              'test for FFI::Build::File::Base';
 ok -f 't/ffi_build_file_c.t',                                 'test for FFI::Build::File::C';
