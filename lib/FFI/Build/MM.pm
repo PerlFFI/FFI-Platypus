@@ -10,7 +10,7 @@ use File::Glob ();
 use File::Basename ();
 use File::Path ();
 use File::Copy ();
-use ExtUtils::MakeMaker 7.24;
+use ExtUtils::MakeMaker 7.12;
 
 # ABSTRACT: FFI::Build installer code for ExtUtils::MakeMaker
 # VERSION

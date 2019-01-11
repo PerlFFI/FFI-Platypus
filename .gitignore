@@ -13,6 +13,7 @@
 *.o
 *.obj
 *.dll
+*.dylib
 *.so
 *.bundle
 *.tmp
@@ -34,3 +35,4 @@ core
 *.bs
 *.def
 /test-*
+tmpbuild.*

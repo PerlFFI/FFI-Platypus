@@ -28,6 +28,15 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.008001",
   "NAME"             => "FFI::Platypus",
   "PM"               => {
+    "lib/App/fbx.pm"                             => "\$(INST_LIB)/App/fbx.pm",
+    "lib/FFI/Build.pm"                           => "\$(INST_LIB)/FFI/Build.pm",
+    "lib/FFI/Build/File/Base.pm"                 => "\$(INST_LIB)/FFI/Build/File/Base.pm",
+    "lib/FFI/Build/File/C.pm"                    => "\$(INST_LIB)/FFI/Build/File/C.pm",
+    "lib/FFI/Build/File/CXX.pm"                  => "\$(INST_LIB)/FFI/Build/File/CXX.pm",
+    "lib/FFI/Build/File/Library.pm"              => "\$(INST_LIB)/FFI/Build/File/Library.pm",
+    "lib/FFI/Build/File/Object.pm"               => "\$(INST_LIB)/FFI/Build/File/Object.pm",
+    "lib/FFI/Build/MM.pm"                        => "\$(INST_LIB)/FFI/Build/MM.pm",
+    "lib/FFI/Build/Platform.pm"                  => "\$(INST_LIB)/FFI/Build/Platform.pm",
     "lib/FFI/Platypus.pm"                        => "\$(INST_LIB)/FFI/Platypus.pm",
     "lib/FFI/Platypus/API.pm"                    => "\$(INST_LIB)/FFI/Platypus/API.pm",
     "lib/FFI/Platypus/Buffer.pm"                 => "\$(INST_LIB)/FFI/Platypus/Buffer.pm",
@@ -54,21 +63,21 @@ my %WriteMakefileArgs = (
   },
   "PREREQ_PM" => {
     "Capture::Tiny"       => 0,
-    "FFI::Build"          => 0,
-    "FFI::Build::File::C" => 0,
+    "ExtUtils::MakeMaker" => "7.12",
     "FFI::CheckLib"       => "0.05",
+    "IPC::Cmd"            => 0,
+    "JSON::PP"            => 0,
     "constant"            => "1.32"
   },
   "TEST_REQUIRES" => {
     "Alien::FFI"    => "0.012",
     "Capture::Tiny" => 0,
-    "IPC::Cmd"      => 0,
     "Test::More"    => "0.98"
   },
   "VERSION" => "0.68_01",
   "test"    => {
     "TESTS" => "t/*.t"
-  }
+    }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);

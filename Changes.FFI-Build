@@ -1,6 +1,6 @@
 Revision history for {{$dist->name}}
 
-{{$NEXT}}
+After 0.12 FFI-Build was merged with FFI-Platypus
 
 0.12      2019-01-06 10:23:17 -0500
   - Make FFI::Platypus an optional testing dependency
