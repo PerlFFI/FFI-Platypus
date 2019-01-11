@@ -22,8 +22,6 @@ sub f (@)
 {
   foreach my $filename (@_)
   {
-    my($filename) = @_;
-
     note "==@{[ basename $filename ]}==";
     my $fh;
     open $fh, '<', $filename;
