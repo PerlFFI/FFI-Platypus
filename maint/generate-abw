@@ -1,0 +1,14 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Alien::Base::Wrapper 1.49;
+use File::Path qw( mkpath );
+use File::Copy qw( copy );
+
+mkpath 'inc/Alien/Base', 0, 0755;
+my $from = $INC{'Alien/Base/Wrapper.pm'};
+my $to   = 'inc/Alien/Base/Wrapper.pm';
+
+print "+cp $from $to\n";
+copy $from, $to or die "copy failed: $!";

@@ -4,6 +4,13 @@ Revision history for {{$dist->name}}
   - Merge FFI-Build into this distribution
   - Add FFI::Probe
 
+0.70_01   2019-01-10 15:34:57 -0500
+  - prereq fix: IPC::Cmd as a configure requires
+    since it doesn't come with Perl 5.8.x
+
+0.69_01   2019-01-09 15:59:43 -0500
+  - require Alien::FFI in fallback mode
+
 0.68_01   2019-01-05 21:12:47 -0500
   - Improve platform probing of complex type
   - Allow override of platform probing using FFI_PLATYPUS_PROBE_OVERRIDE

@@ -105,14 +105,10 @@ CONTRIBUTING
 
  System integrators
 
-    If you are including Platypus in a larger system (for example a Linux
-    distribution), and you already have libffi as part of your system, you
-    may be interested in Alt::Alien::FFI::System. This is an alternative to
-    Alien::FFI that does not require Alien::Base. In fact it has zero
-    non-Core dependencies, and doesn't even need to be installed. Simply
-    include Alt::Alien::FFI::System's lib directory in your PERL5LIB path
-    when you build Platypus. For example:
-
-     % export PERL5LIB=/path/to/Alt-Alien-FFI-System/lib
-     % cpanm FFI::Platypus
+    This distribution uses Alien::FFI in fallback mode, meaning if the
+    system doesn't provide pkg-config and libffi it will attempt to
+    download libffi and build it from source. If you are including Platypus
+    in a larger system (for example a Linux distribution) you only need to
+    make sure to declare pkg-config or pkgconf and the development package
+    for libffi as prereqs for this module.
 

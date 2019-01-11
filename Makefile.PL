@@ -20,8 +20,8 @@ my %WriteMakefileArgs = (
     "ExtUtils::CBuilder" => 0
   },
   "CONFIGURE_REQUIRES" => {
-    "Alien::FFI"          => "0.20",
-    "ExtUtils::MakeMaker" => "7.12"
+    "ExtUtils::MakeMaker" => "7.12",
+    "IPC::Cmd"            => 0
   },
   "DISTNAME"         => "FFI-Platypus",
   "LICENSE"          => "perl",
@@ -70,11 +70,10 @@ my %WriteMakefileArgs = (
     "constant"            => "1.32"
   },
   "TEST_REQUIRES" => {
-    "Alien::FFI"    => "0.012",
     "Capture::Tiny" => 0,
     "Test::More"    => "0.98"
   },
-  "VERSION" => "0.68_01",
+  "VERSION" => "0.70_01",
   "test"    => {
     "TESTS" => "t/*.t"
     }
