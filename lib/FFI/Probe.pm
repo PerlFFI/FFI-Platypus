@@ -144,7 +144,7 @@ sub check_header
 
 =head2 check_eval
 
- my %values = $probe>check_eval(%args);
+ my $bool = $probe>check_eval(%args);
 
 =over 4
 
@@ -260,6 +260,99 @@ sub check_eval
   {
     return;
   }  
+}
+
+=head2 check_type_int
+
+ my $type = $probe->check_type_int($type);
+
+=cut
+
+sub check_type_int
+{
+  my($self, $type) = @_;
+  my $ret = $self->check_eval(
+    decl => [
+      '#define signed(type)  (((type)-1) < 0) ? "signed" : "unsigned"',
+      "struct align { char a; $type b; };",
+    ],
+    eval => {
+      "type.$type.size"  => [ '%d' => "sizeof($type)" ],
+      "type.$type.sign"  => [ '%s' => "signed($type)" ],
+      "type.$type.align" => [ '%d' => "(int)__builtin_offsetof(struct align, b)" ],
+    },
+  );
+
+  return unless $ret;
+
+  my $size = $self->data->{type}->{$type}->{size};
+  my $sign = $self->data->{type}->{$type}->{sign};
+
+  sprintf("%sint%d", $sign eq 'signed' ? 's' : 'u', $size*8);
+}
+
+=head2 check_type_float
+
+ my $type = $probe->check_type_float($type);
+
+=cut
+
+sub check_type_float
+{
+  my($self, $type) = @_;
+  my $ret = $self->check_eval(
+    decl => [
+      "struct align { char a; $type b; };",
+    ],
+    eval => {
+      "type.$type.size"  => [ '%d' => "sizeof($type)" ],
+      "type.$type.align" => [ '%d' => "(int)__builtin_offsetof(struct align, b)" ],
+    },
+  );
+
+  return unless $ret;
+
+  my $size    = $self->data->{type}->{$type}->{size};
+  my $complex = !!$type =~ /complex/;
+
+  if($complex) {
+    $size /= 2;
+  }
+
+  my $t;
+  if($size == 4)
+  { $t = 'float' }
+  elsif($size == 8)
+  { $t = 'double' }
+  elsif($size == 10)
+  { $t = 'long double' }
+
+  $t .= ' complex' if $complex;
+
+  $t;
+}
+
+=head2 check_type_pointer
+
+ my $type = $probe->check_type_pointer;
+
+=cut
+
+sub check_type_pointer
+{
+  my($self) = @_;
+  my $ret = $self->check_eval(
+    decl => [
+      "struct align { char a; void* b; };",
+    ],
+    eval => {
+      "type.pointer.size"  => [ '%d' => "sizeof(void *)" ],
+      "type.pointer.align" => [ '%d' => "(int)__builtin_offsetof(struct align, b)" ],
+    },
+  );
+
+  return unless $ret;
+  'pointer';
 }
 
 sub _set

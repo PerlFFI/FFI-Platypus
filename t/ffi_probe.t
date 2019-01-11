@@ -139,6 +139,31 @@ subtest check_eval => sub {
   ok $ret, 'foo.bar.string';
   is_deeply $probe->data, { foo => { bar => { baz => 3, string => 'hello world 7' } } };
 
+  n {
+    $ret = $probe->check_type_int('unsigned char');
+  };
+
+  is $ret, 'uint8';
+  is $probe->data->{type}->{'unsigned char'}->{size}, 1;
+  is $probe->data->{type}->{'unsigned char'}->{sign}, 'unsigned';
+  like $probe->data->{type}->{'unsigned char'}->{align}, qr/^[0-9]+$/;
+
+  n {
+    $ret = $probe->check_type_float('float');
+  };
+
+  is $ret, 'float';
+  is $probe->data->{type}->{'float'}->{size}, 4;
+  like $probe->data->{type}->{'float'}->{align}, qr/^[0-9]+$/;
+
+  n {
+    $ret = $probe->check_type_pointer;
+  };
+
+  is $ret, 'pointer';
+  like $probe->data->{type}->{pointer}->{size}, qr/^[0-9]+$/;
+  like $probe->data->{type}->{pointer}->{align}, qr/^[0-9]+$/;
+
   $probe->save;
   undef $probe;
 
