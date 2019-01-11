@@ -196,7 +196,9 @@ Builds the probe runner.  Returns the path to the executable.
 
 sub _shellwords
 {
-  grep { defined $_ } Text::ParseWords::shellwords(@_);
+  my($string) = @_;
+  $string =~ s/^\s+//;
+  grep { defined $_ } Text::ParseWords::shellwords($string);
 }
 
 sub build
