@@ -18,6 +18,7 @@ $modules{$_} = $_ for qw(
   FFI::CheckLib
   IPC::Cmd
   JSON::PP
+  List::Util
   PkgConfig
   Test::More
   constant

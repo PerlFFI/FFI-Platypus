@@ -67,6 +67,7 @@ my %WriteMakefileArgs = (
     "FFI::CheckLib"       => "0.05",
     "IPC::Cmd"            => 0,
     "JSON::PP"            => 0,
+    "List::Util"          => "1.45",
     "constant"            => "1.32"
   },
   "TEST_REQUIRES" => {
