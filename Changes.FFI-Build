@@ -1,0 +1,42 @@
+Revision history for {{$dist->name}}
+
+{{$NEXT}}
+
+0.12      2019-01-06 10:23:17 -0500
+  - Make FFI::Platypus an optional testing dependency
+    (previously it was a required dependency for testing
+    only).
+
+0.11      2018-12-20 21:55:50 -0700
+  - Require EUMM 7.24 for fixes in testing
+
+0.10      2018-12-20 17:51:17 -0700
+  - Fix bug where build aliens were used
+    for test only build
+
+0.09      2018-08-28 10:50:27 -0400
+  - Additional test diagnostics
+
+0.08      2018-08-28 09:58:19 -0400
+  - Same workaroudn for linkers with space
+
+0.07      2018-08-20 10:52:27 -0400
+  - Workaround for compilers with space
+
+0.06      2018-08-20 08:57:30 -0400
+  - Fix test
+
+0.05      2018-08-20 05:17:36 -0400
+  - Removed FFI::Build::File::Fortran, which is now part of the
+    FFI-Platypus-Lang-Fortran dist
+
+0.04      2018-08-19 12:56:54 -0400
+  - When `cc -MM` or `c++ -MM` fails for computing dependencies, fall back
+    on just the .c file being the dependency.
+
+0.03      2018-08-16 04:03:09 -0400
+  - Fix for test failure on cygwin + MSWin32
+  - Additional diagnostics for Fortran build test
+
+0.02      2018-08-09 04:54:30 -0400
+  - initial version
