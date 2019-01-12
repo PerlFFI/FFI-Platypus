@@ -77,7 +77,7 @@ sub configure
     runner => FFI::Probe::Runner->new(
       exe => "blib/lib/auto/share/dist/FFI-Platypus/probe/bin/dlrun$Config{exe_ext}",
     ),
-    log => "blib/lib/auto/share/dist/FFI-Platypus/probe/probe.log",
+    log => "config.log",
     data_filename => "blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
   );
 
