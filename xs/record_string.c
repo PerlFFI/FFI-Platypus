@@ -10,7 +10,6 @@ XS(ffi_pl_record_accessor_string_ro)
 {
   ffi_pl_record_member *member;
   SV *self;
-  SV *arg;
   char *ptr1;
   char **ptr2;
 

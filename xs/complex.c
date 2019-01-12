@@ -40,9 +40,6 @@ set(SV *sv, SV *new_value, int imag)
 {
   dSP;
   
-  int count;
-  double result = 0.0;
-
   ENTER;
   SAVETMPS;
   PUSHMARK(SP);
@@ -50,7 +47,7 @@ set(SV *sv, SV *new_value, int imag)
   XPUSHs(new_value);
   PUTBACK;
   
-  count = call_pv(imag ? "Math::Complex::Im" : "Math::Complex::Re", G_DISCARD);
+  call_pv(imag ? "Math::Complex::Im" : "Math::Complex::Re", G_DISCARD);
   
   FREETMPS;
   LEAVE;
