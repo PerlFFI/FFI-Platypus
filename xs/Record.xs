@@ -22,7 +22,7 @@ _accessor(perl_name, path_name, type, offset)
   PREINIT:
     ffi_pl_record_member *member;
     CV *cv;
-    void *function;
+    void *function=NULL;
     /* not the correct prototype */
     extern void ffi_pl_record_accessor_uint8();
     extern void ffi_pl_record_accessor_uint16();

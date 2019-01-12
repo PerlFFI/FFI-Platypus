@@ -10,9 +10,9 @@ _new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw
     int rw
   PREINIT:
     ffi_pl_type *self;
-    char *buffer;
     dMY_CXT;
   CODE:
+    (void)class;
     self = NULL;
     if(!strcmp(fuzzy_type, "string"))
     {
@@ -87,11 +87,11 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
     SV *perl_to_native_post
     int argument_count
   PREINIT:
-    char *buffer;
     ffi_pl_type *self;
     ffi_pl_type_extra_custom_perl *custom;
     int type_code;
   CODE:
+    (void)class;
     type_code = ffi_pl_name_to_code(type);
     if(type_code == -1)
       croak("unknown ffi/platypus type: %s/custom", type);
@@ -115,7 +115,6 @@ _new_closure(class, return_type, ...)
     const char *class;
     ffi_pl_type *return_type
   PREINIT:
-    char *buffer;
     ffi_pl_type *self;
     int i;
     SV *arg;
@@ -123,6 +122,7 @@ _new_closure(class, return_type, ...)
     ffi_type **ffi_argument_types;
     ffi_status ffi_status;
   CODE:
+    (void)class;
     switch(return_type->type_code)
     {
       case FFI_PL_TYPE_VOID:
