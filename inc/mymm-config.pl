@@ -29,6 +29,8 @@ my $share_config = My::ShareConfig->new;
   my $pm = "$class.pm";
   $pm =~ s/::/\//g;
   require $pm;
+  print "$class->cflags = @{[ $class->cflags ]}\n";
+  print "$class->libs   = @{[ $class->libs ]}\n";
   $share_config->set(extra_compiler_flags => [ shellwords($class->cflags) ]);
   $share_config->set(extra_linker_flags   => [ shellwords($class->libs) ]);
   $share_config->set(ccflags => $class->cflags);
