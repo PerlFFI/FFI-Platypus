@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.72_01   2019-01-11 22:17:11 -0500
   - Remove dependency on Config::AutoConf
 
 0.71_01   2019-01-10 23:29:06 -0500
