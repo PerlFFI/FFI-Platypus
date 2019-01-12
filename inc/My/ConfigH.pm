@@ -35,7 +35,7 @@ sub write_config_h
   my $fn = $self->{filename};
   open $fh, '>', $fn or die "unable to write to $fn $!";
   print $fh "#ifndef $once\n";
-  print $fh "#define $once\n";
+  print $fh "#define $once\n\n";
   print $fh "@{[ $self->{content} ]}\n";
   print $fh "#endif\n";
   close $fh;

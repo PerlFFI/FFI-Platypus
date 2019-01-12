@@ -172,7 +172,7 @@ sub check_eval
 {
   my($self, %args) = @_;
 
-  my $headers = join "\n", map { "#include <$_>\n" } (@{ $self->{headers} }, @{ $args{headers} || [] });
+  my $headers = join "", map { "#include <$_>\n" } (@{ $self->{headers} }, @{ $args{headers} || [] });
   my @decl    = @{ $args{decl} || [] };
   my @stmt    = @{ $args{stmt} || [] };
   my %eval    = %{ $args{eval} || {} };
