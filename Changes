@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove dependency on Win32::ErrorMode on Windows
 
 0.72_01   2019-01-11 22:17:11 -0500
   - Remove dependency on Config::AutoConf

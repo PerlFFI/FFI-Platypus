@@ -79,10 +79,6 @@ sub myWriteMakefile
 
   %args = (%args, %alien);
 
-  if($^O eq 'MSWin32')
-  {
-    $args{BUILD_REQUIRES}->{'Win32::ErrorMode'} = 0;
-  }
   if($ENV{FFI_PLATYPUS_DEBUG_FAKE32} || $Config{uvsize} < 8)
   {
     $args{BUILD_REQUIRES}->{'Math::Int64'} = '0.34';

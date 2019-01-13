@@ -146,6 +146,42 @@ sub check_header
   }
 }
 
+=head2 check_cpp
+
+=cut
+
+sub check_cpp
+{
+  my($self, $code) = @_;
+
+  my $build = FFI::Build->new("hcheck@{[ ++$self->{counter} ]}",
+    verbose => 1,
+    dir     => $self->{dir},
+    alien   => $self->{alien},
+    cflags  => $self->{cflags},
+    libs    => $self->{libs},
+  );
+  my $file = FFI::Build::File::C->new(
+    \$code,
+    dir => $self->{dir},
+    build => $build,
+  );
+  my($out, $i) = capture_merged {
+    eval { $file->build_item_cpp };
+  };
+  $self->log_code($code);
+  $self->log($out);
+
+  if($i && -f $i->path)
+  {
+    return $i->slurp;
+  }
+  else
+  {
+    return;
+  }
+}
+
 =head2 check_eval
 
  my $bool = $probe>check_eval(%args);

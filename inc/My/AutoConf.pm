@@ -179,7 +179,7 @@ sub configure
       $probe{$k} = $v;
     }
   }
-  
+
   foreach my $cfile (bsd_glob 'inc/probe/*.c')
   {
     my $name = basename $cfile;
@@ -200,15 +200,51 @@ sub configure
     }
   }
 
+  my %abi;
+
+  if(my $cpp_output = $probe->check_cpp("#include <ffi.h>\n"))
+  {
+    if($cpp_output =~ m/typedef\s+enum\s+ffi_abi\s+{(.*?)}/s)
+    {
+      my $enum = $1;
+      while($enum =~ s/FFI_([A-Z_0-9]+)//)
+      {
+        my $abi = $1;
+        next if $abi =~ /^(FIRST|LAST)_ABI$/;
+        $probe->check_eval(
+          decl => [
+            "#include \"ffi_platypus.h\"",
+          ],
+          stmt => [
+            "ffi_cif cif;",
+            "ffi_type *args[1];",
+            "ffi_abi abi;",
+            "if(ffi_prep_cif(&cif, FFI_$abi, 0, &ffi_type_void, args) != FFI_OK) { return 2; }",
+          ],
+          eval => {
+            "abi.@{[ lc $abi ]}" => [ '%d' => "FFI_$abi" ],
+          },
+        );
+      }
+      %abi = %{ $probe->data->{abi} };
+    }
+    else
+    {
+      print "Unable to find ffi_abi enum.\n";
+      print "only default ABI will be available\n";
+    }
+  }
+  else
+  {
+    print "C pre-processor failed...\n";
+    print "only default ABI will be available\n";
+  }
+
   $ac->write_config_h;
   $share_config->set( type_map => \%type_map );
   $share_config->set( align    => \%align    );
-  $share_config->set( probe    => \%probe );  
-}
-
-sub clean
-{
-  unlink $config_h;
+  $share_config->set( probe    => \%probe    );
+  $share_config->set( abi      => \%abi      );
 }
 
 1;

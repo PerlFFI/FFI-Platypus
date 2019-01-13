@@ -4,7 +4,6 @@ use ExtUtils::CBuilder;
 use Text::ParseWords qw( shellwords );
 use lib 'inc';
 use My::AutoConf;
-use My::Probe;
 use My::Dev;
 use My::ShareConfig;
 
@@ -23,7 +22,6 @@ my $share_config = My::ShareConfig->new;
 
 My::AutoConf->configure($share_config);
 
-
 {
   my $class = $share_config->get('alien')->{class};
   my $pm = "$class.pm";
@@ -35,15 +33,6 @@ My::AutoConf->configure($share_config);
   $share_config->set(extra_linker_flags   => [ shellwords($class->libs) ]);
   $share_config->set(ccflags => $class->cflags);
 }
-
-My::Probe->probe(
-  ExtUtils::CBuilder->new( config => { ccflags => $share_config->get('ccflags') }),
-  $share_config->get('ccflags'),
-  [],
-  $share_config->get('extra_linker_flags'),
-  $share_config,
-);
-unlink $_ for My::Probe->cleanup;
 
 mkdir '_mm' unless -d '_mm';
 {

@@ -1,10 +1,7 @@
 use strict;
 use warnings;
 use File::Glob qw( bsd_glob );
-use lib 'inc';
-use My::AutoConf;
 
-My::AutoConf->clean;
 unlink $_ for map { bsd_glob($_) } (
   't/ffi/_build/*.o',
   't/ffi/*.so',

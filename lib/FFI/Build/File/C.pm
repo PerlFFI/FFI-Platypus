@@ -27,7 +27,7 @@ File class for C source files.
 
 sub accept_suffix
 {
-  (qr/\.c$/)
+  (qr/\.(c|i)$/)
 }
 
 sub build_item
@@ -35,7 +35,7 @@ sub build_item
   my($self) = @_;
 
   my $oname = $self->basename;
-  $oname =~ s/\.c(xx|pp)?$//;
+  $oname =~ s/\.(c(xx|pp)|i)?$//;
   $oname .= $self->platform->object_suffix;
 
   my $buildname = '_build';
@@ -91,6 +91,68 @@ sub _base_args
   push @cmd, @{ $self->build->cflags } if $self->build;
   push @cmd, $self->platform->extra_system_inc;
   @cmd;
+}
+
+sub _base_args_cpp
+{
+  my($self) = @_;
+
+  # TODO: move into platform
+  require Config;
+  require Text::ParseWords;
+  my @cmd = (
+    Text::ParseWords::shellwords($Config::Config{cpprun}),
+    grep /^-[DI]/, $self->platform->cflags,
+  );
+  push @cmd, grep /^-[DI]/, @{ $self->build->cflags } if $self->build;
+  push @cmd, grep /^-[DI]/, $self->platform->extra_system_inc;
+  @cmd;
+}
+
+sub build_item_cpp
+{
+  my($self) = @_;
+
+  my $oname = $self->basename;
+  $oname =~ s/\.(c(xx|pp)|i)$?$//;
+  $oname .= '.i';
+
+  my $buildname = '_build';
+  $buildname = $self->build->buildname if $self->build;
+
+  my $ifile = FFI::Build::File::C->new(
+    [ $self->dirname, $buildname, $oname ],
+    platform => $self->platform,
+    build    => $self->build,
+  );
+
+  File::Path::mkpath($ifile->dirname, { verbose => 0, mode => 0700 });
+
+  my @cmd = (
+    $self->_base_args_cpp,
+    $self->path,
+  );
+
+  my($out, $err, $exit) = Capture::Tiny::capture(sub {
+    system @cmd;
+  });
+
+  if($exit)
+  {
+    print "+@cmd\n";
+    print "[out]\n$out\n" if defined $out && $out ne '';
+    print "[err]\n$err\n" if defined $err && $err ne '';
+    die "error building $ifile from $self";
+  }
+  else
+  {
+    my $fh;
+    open($fh, '>', $ifile->path);
+    print $fh $out;
+    close $fh;
+  }
+
+  $ifile;
 }
 
 sub _deps
