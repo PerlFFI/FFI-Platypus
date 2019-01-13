@@ -6,8 +6,7 @@ use My::AutoConf;
 
 My::AutoConf->clean;
 unlink $_ for map { bsd_glob($_) } (
-  't/ffi/*.o',
-  't/ffi/*.obj',
+  't/ffi/_build/*.o',
   't/ffi/*.so',
   't/ffi/*.dll',
   't/ffi/*.bundle',
@@ -31,3 +30,4 @@ unlink $_ for map { bsd_glob($_) } (
 );
 
 rmdir '_mm' if -d '_mm';
+rmdir 't/ffi/_build' if -d 't/ffi/_build';
