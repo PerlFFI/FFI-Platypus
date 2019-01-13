@@ -156,7 +156,15 @@ sub library_prefix
   my $self = _self(shift);
   
   # this almost certainly requires refinement.
-  if($self->osname =~ /^(MSWin32|msys|cygwin)$/)
+  if($self->osname eq 'cygwin')
+  {
+    return 'cyg';
+  }
+  elsif($self->osname eq 'msys')
+  {
+    return 'msys-';
+  }
+  elsif($self->osname eq 'MSWin32')
   {
     return '';
   }

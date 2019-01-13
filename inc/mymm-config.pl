@@ -35,6 +35,6 @@ My::Probe->configure($share_config);
 mkdir '_mm' unless -d '_mm';
 {
   my $fh;
-  open my $fh, '>', '_mm/config';
+  open $fh, '>', '_mm/config';
   close $fh;
 }
