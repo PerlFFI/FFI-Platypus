@@ -3,13 +3,12 @@ use warnings;
 use ExtUtils::CBuilder;
 use Text::ParseWords qw( shellwords );
 use lib 'inc';
-use My::Once;
 use My::AutoConf;
 use My::Probe;
 use My::Dev;
 use My::ShareConfig;
 
-My::Once->check('config');
+exit if -f '_mm/config';
 
 {
   require './lib/FFI/Probe/Runner/Builder.pm';
@@ -45,4 +44,9 @@ My::Probe->probe(
 );
 unlink $_ for My::Probe->cleanup;
 
-My::Once->done;
+mkdir '_mm' unless -d '_mm';
+{
+  my $fh;
+  open my $fh, '>', '_mm/config';
+  close $fh;
+}
