@@ -25,7 +25,6 @@ unlink $_ for map { bsd_glob($_) } (
   '*.core',
   'core',
   'include/ffi_platypus_config.h',
-  'include/ffi_platypus_probe.h',
   'FFI-Platypus-*.tar.gz',
 );
 

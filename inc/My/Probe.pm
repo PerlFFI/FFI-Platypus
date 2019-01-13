@@ -16,79 +16,7 @@ sub probe
   # $b isa ExtUtils::CBuilder
   my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags, $share_config) = @_;
 
-  my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
-
-  return if -e $probe_include && $share_config->get('probe');
-  
-  #__PACKAGE__->cleanup($probe_include);
-  {
-    print "writing empty $probe_include\n";
-    my $fh;
-    open $fh, '>', $probe_include;
-    close $fh;
-  };
-  
-  my %probe;
-  if(defined $ENV{FFI_PLATYPUS_PROBE_OVERRIDE})
-  {
-    foreach my $kv (split /:/, $ENV{FFI_PLATYPUS_PROBE_OVERRIDE})
-    {
-      my($k,$v) = split /=/, $kv, 2;
-      $probe{$k} = $v;
-    }
-  }
-  
-  foreach my $cfile (bsd_glob 'inc/probe/*.c')
-  {
-    my $name = (File::Spec->splitpath($cfile))[2];
-    $name =~ s{\.c$}{};
-
-    next if $name eq 'alloca' && $share_config->get('config_no_alloca');
-
-    if(defined $probe{$name})
-    {
-      print "!!! WARNING !!! overriding $name=$probe{$name}\n";
-      delete $probe{$name} unless $probe{$name};
-      next;
-    }
-    
-    my $obj = eval { $b->compile(
-      source               => $cfile,
-      include_dirs         => [ 'include' ],
-      extra_compiler_flags => $extra_compiler_flags,
-    ) };
-    next if $@;
-    __PACKAGE__->cleanup($obj);
-    
-    my($exe,@rest) = eval { $b->link_executable(
-      objects            => $obj,
-      extra_linker_flags => $extra_linker_flags,
-    ) };
-    next if $@;
-    __PACKAGE__->cleanup($exe,@rest);
-    my $ret = run($exe, '--test');
-    $probe{$name} = 1 if $ret == 0;
-  }
-  
-  {
-    print "writing completed $probe_include\n";
-    my $fh;
-    open $fh, '>', $probe_include;
-    print $fh "#ifndef FFI_PLATYPUS_PROBE_H\n";
-    print $fh "#define FFI_PLATYPUS_PROBE_H\n";
-    
-    foreach my $key (sort keys %probe)
-    {
-      print $fh "#define FFI_PL_PROBE_", uc($key), " 1\n";
-    }
-    
-    print $fh "#endif\n";
-    close $fh;
-  };
-  
   __PACKAGE__->probe_abi($b, $ccflags, $extra_compiler_flags, $extra_linker_flags, $share_config);
-  
-  $share_config->set( probe => \%probe );
   
   return;
 }

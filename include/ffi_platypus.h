@@ -3,7 +3,6 @@
 
 #include <ffi.h>
 #include "ffi_platypus_config.h"
-#include "ffi_platypus_probe.h"
 
 #ifdef HAVE_DLFCN_H
 #ifndef PERL_OS_WINDOWS

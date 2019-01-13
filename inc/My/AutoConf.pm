@@ -10,6 +10,8 @@ use My::ConfigH;
 use lib 'lib';
 use FFI::Probe;
 use FFI::Probe::Runner;
+use File::Glob qw( bsd_glob );
+use File::Basename qw( basename );
 
 my @probe_types = split /\n/, <<EOF;
 char
@@ -70,15 +72,16 @@ my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypu
 
 sub configure
 {
-  my($self) = @_;
+  my($self, $share_config) = @_;
 
-  my $share_config = My::ShareConfig->new;
   my $probe = FFI::Probe->new(
     runner => FFI::Probe::Runner->new(
       exe => "blib/lib/auto/share/dist/FFI-Platypus/probe/bin/dlrun$Config{exe_ext}",
     ),
     log => "config.log",
     data_filename => "blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
+    alien => [$share_config->get('alien')->{class}],
+    cflags => ['-Iinclude'],
   );
 
   return if -r $config_h && ref($share_config->get( 'type_map' )) eq 'HASH';
@@ -166,8 +169,41 @@ sub configure
   delete $type_map{_Bool};
 
   $ac->write_config_h;
+
+  my %probe;
+  if(defined $ENV{FFI_PLATYPUS_PROBE_OVERRIDE})
+  {
+    foreach my $kv (split /:/, $ENV{FFI_PLATYPUS_PROBE_OVERRIDE})
+    {
+      my($k,$v) = split /=/, $kv, 2;
+      $probe{$k} = $v;
+    }
+  }
+  
+  foreach my $cfile (bsd_glob 'inc/probe/*.c')
+  {
+    my $name = basename $cfile;
+    $name =~ s/\.c$//;
+    unless(defined $probe{$name})
+    {
+      my $code = do {
+        my $fh;
+        open $fh, '<', $cfile;
+        local $/;
+        <$fh>;
+      };
+      $probe{$name} = $probe->check($name, $code);
+    }
+    if($probe{$name})
+    {
+      $ac->define_var( "FFI_PL_PROBE_" . uc($name) => 1 );
+    }
+  }
+
+  $ac->write_config_h;
   $share_config->set( type_map => \%type_map );
   $share_config->set( align    => \%align    );
+  $share_config->set( probe    => \%probe );  
 }
 
 sub clean

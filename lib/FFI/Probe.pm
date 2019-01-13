@@ -89,6 +89,8 @@ sub new
     counter       => 0,
     runner        => $args{runner} || FFI::Probe::Runner->new,
     alien         => $args{alien} || [],
+    cflags        => $args{cflags},
+    libs          => $args{libs},
   }, $class;
 
   $self;
@@ -116,8 +118,10 @@ sub check_header
 
   my $build = FFI::Build->new("hcheck@{[ ++$self->{counter} ]}",
     verbose => 1,
-    dir => $self->{dir},
-    alien  => $self->{alien},
+    dir     => $self->{dir},
+    alien   => $self->{alien},
+    cflags  => $self->{cflags},
+    libs    => $self->{libs},
   );
   my $file = FFI::Build::File::C->new(
     \$code,
@@ -172,12 +176,12 @@ sub check_eval
 {
   my($self, %args) = @_;
 
+  my $code = $args{_template} || $self->template;
+
   my $headers = join "", map { "#include <$_>\n" } (@{ $self->{headers} }, @{ $args{headers} || [] });
   my @decl    = @{ $args{decl} || [] };
   my @stmt    = @{ $args{stmt} || [] };
   my %eval    = %{ $args{eval} || {} };
-
-  my $code = $self->template;
 
   $code =~ s/##HEADERS##/$headers/;
   $code =~ s/##DECL##/join "\n", @decl/e;
@@ -200,6 +204,8 @@ sub check_eval
     verbose => 1,
     dir     => $self->{dir},
     alien   => $self->{alien},
+    cflags  => $self->{cflags},
+    libs    => $self->{libs},
   );
   $build->source(
     FFI::Build::File::C->new(
@@ -258,6 +264,25 @@ sub check_eval
   }
   else
   {
+    return;
+  }
+}
+
+=head2 check
+
+=cut
+
+sub check
+{
+  my($self, $name, $code) = @_;
+  if($self->check_eval(_template => $code))
+  {
+    $self->set('probe', $name, 1);
+    return 1;
+  }
+  else
+  {
+    $self->set('probe', $name, 0);
     return;
   }
 }

@@ -19,9 +19,10 @@ exit if -f '_mm/config';
 
 My::Dev->generate;
 
-My::AutoConf->configure;
-
 my $share_config = My::ShareConfig->new;
+
+My::AutoConf->configure($share_config);
+
 
 {
   my $class = $share_config->get('alien')->{class};

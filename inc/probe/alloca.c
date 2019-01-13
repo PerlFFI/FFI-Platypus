@@ -1,7 +1,7 @@
 #include "ffi_platypus.h"
 
 int
-main(int argc, char *argv[])
+dlmain(int argc, char *argv[])
 {
   void *ptr = alloca(100);
 
