@@ -51,7 +51,7 @@ sub myWriteMakefile
     print "using already installed Alien::FFI (version @{[ Alien::FFI->VERSION ]})\n";
     $share_config->set(alien => { class => 'Alien::FFI', mode => 'already-installed' });
     require Alien::Base::Wrapper;
-    Alien::Base::Wrapper->import( 'Alien::FFI', 'My::psapi', '!export' );
+    Alien::Base::Wrapper->import( 'Alien::FFI', 'Alien::psapi', '!export' );
     %alien = Alien::Base::Wrapper->mm_args;
   }
   else
@@ -61,7 +61,7 @@ sub myWriteMakefile
       print "using system libffi via @{[ _pkg_config_exe ]}\n";
       $share_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
       require Alien::Base::Wrapper;
-      Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'My::psapi', '!export' );
+      Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'Alien::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
     }
     else
@@ -69,8 +69,8 @@ sub myWriteMakefile
       print "requiring Alien::FFI in fallback mode.\n";
     $share_config->set(alien => { class => 'Alien::FFI', mode => 'fallback' });
       %alien = (
-        CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,My::psapi -e cc --',
-        LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,My::psapi -e ld --',
+        CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e cc --',
+        LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e ld --',
       );
       $args{BUILD_REQUIRES}->{'Alien::FFI'} = '0.20';
     }
