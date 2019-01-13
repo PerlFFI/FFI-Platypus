@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.73_01   2019-01-13 18:31:33 -0500
   - Remove dependency on Win32::ErrorMode on Windows
 
 0.72_01   2019-01-11 22:17:11 -0500
