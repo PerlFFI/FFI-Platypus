@@ -1,4 +1,4 @@
-package My::AutoConf;
+package My::Probe;
 
 use strict;
 use warnings;
@@ -86,16 +86,16 @@ sub configure
 
   return if -r $config_h && ref($share_config->get( 'type_map' )) eq 'HASH';
 
-  my $ac = My::ConfigH->new;
+  my $ch = My::ConfigH->new;
 
-  $ac->define_var( do {
+  $ch->define_var( do {
     my $os = uc $^O;
     $os =~ s/-/_/;
     $os =~ s/[^A-Z0-9_]//g;
     "PERL_OS_$os";
   } => 1 );
 
-  $ac->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin|msys)$/;
+  $ch->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin|msys)$/;
 
   foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool complex ))
   {
@@ -104,17 +104,17 @@ sub configure
       my $var = uc $header;
       $var =~ s{/}{_}g;
       $var = "HAVE_${var}_H";
-      $ac->define_var( $var => 1 );
+      $ch->define_var( $var => 1 );
     }
   }
 
   if(!$share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
   {
-    $ac->define_var( HAVE_IV_IS_64 => 1 );
+    $ch->define_var( HAVE_IV_IS_64 => 1 );
   }
   else
   {
-    $ac->define_var( HAVE_IV_IS_64 => 0 );
+    $ch->define_var( HAVE_IV_IS_64 => 0 );
   }
 
   my %type_map;
@@ -147,13 +147,13 @@ sub configure
     }
   }
 
-  $ac->define_var( SIZEOF_VOIDP => $probe->data->{type}->{pointer}->{size} );
+  $ch->define_var( SIZEOF_VOIDP => $probe->data->{type}->{pointer}->{size} );
   if(my $size = $probe->data->{type}->{'float complex'}->{size})
-  { $ac->define_var( SIZEOF_FLOAT_COMPLEX => $size ) }
+  { $ch->define_var( SIZEOF_FLOAT_COMPLEX => $size ) }
   if(my $size = $probe->data->{type}->{'double complex'}->{size})
-  { $ac->define_var( SIZEOF_DOUBLE_COMPLEX => $size ) }
+  { $ch->define_var( SIZEOF_DOUBLE_COMPLEX => $size ) }
   if(my $size = $probe->data->{type}->{'long double complex'}->{size})
-  { $ac->define_var( SIZEOF_LONG_DOUBLE_COMPLEX => $size ) }
+  { $ch->define_var( SIZEOF_LONG_DOUBLE_COMPLEX => $size ) }
 
   # short aliases
   $type_map{uchar}  = $type_map{'unsigned char'};
@@ -168,7 +168,7 @@ sub configure
   $type_map{bool} ||= delete $type_map{_Bool};
   delete $type_map{_Bool};
 
-  $ac->write_config_h;
+  $ch->write_config_h;
 
   my %probe;
   if(defined $ENV{FFI_PLATYPUS_PROBE_OVERRIDE})
@@ -196,7 +196,7 @@ sub configure
     }
     if($probe{$name})
     {
-      $ac->define_var( "FFI_PL_PROBE_" . uc($name) => 1 );
+      $ch->define_var( "FFI_PL_PROBE_" . uc($name) => 1 );
     }
   }
 
@@ -240,7 +240,7 @@ sub configure
     print "only default ABI will be available\n";
   }
 
-  $ac->write_config_h;
+  $ch->write_config_h;
   $share_config->set( type_map => \%type_map );
   $share_config->set( align    => \%align    );
   $share_config->set( probe    => \%probe    );
