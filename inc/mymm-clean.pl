@@ -16,6 +16,7 @@ unlink $_ for map { bsd_glob($_) } (
   'examples/*.bundle',
   'examples/java/*.so',
   'examples/java/*.o',
+  'corpus/ffi_build/project1/_build/*',
   'config.log',
   'test*.o',
   'test*.c',
@@ -27,3 +28,4 @@ unlink $_ for map { bsd_glob($_) } (
 
 rmdir '_mm' if -d '_mm';
 rmdir 't/ffi/_build' if -d 't/ffi/_build';
+rmdir 'corpus/ffi_build/project1/_build' if -d 'corpus/ffi_build/project1/_build';
