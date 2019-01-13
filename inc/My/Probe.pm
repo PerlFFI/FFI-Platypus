@@ -192,7 +192,8 @@ sub configure
         local $/;
         <$fh>;
       };
-      $probe{$name} = $probe->check($name, $code);
+      my $value = $probe->check($name, $code);
+      $probe{$name} = $value if defined $value;
     }
     if($probe{$name})
     {
