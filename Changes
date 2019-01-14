@@ -2,6 +2,16 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.73_01   2019-01-13 18:31:33 -0500
+  - Remove dependency on Win32::ErrorMode on Windows
+
+0.72_01   2019-01-11 22:17:11 -0500
+  - Remove dependency on Config::AutoConf
+
+0.71_01   2019-01-10 23:29:06 -0500
+  - Merge FFI-Build into this distribution
+  - Add FFI::Probe
+
 0.70_01   2019-01-10 15:34:57 -0500
   - prereq fix: IPC::Cmd as a configure requires
     since it doesn't come with Perl 5.8.x

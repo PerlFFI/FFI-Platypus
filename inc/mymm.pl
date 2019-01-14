@@ -51,7 +51,7 @@ sub myWriteMakefile
     print "using already installed Alien::FFI (version @{[ Alien::FFI->VERSION ]})\n";
     $share_config->set(alien => { class => 'Alien::FFI', mode => 'already-installed' });
     require Alien::Base::Wrapper;
-    Alien::Base::Wrapper->import( 'Alien::FFI', 'My::psapi', '!export' );
+    Alien::Base::Wrapper->import( 'Alien::FFI', 'Alien::psapi', '!export' );
     %alien = Alien::Base::Wrapper->mm_args;
   }
   else
@@ -61,7 +61,7 @@ sub myWriteMakefile
       print "using system libffi via @{[ _pkg_config_exe ]}\n";
       $share_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
       require Alien::Base::Wrapper;
-      Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'My::psapi', '!export' );
+      Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'Alien::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
     }
     else
@@ -69,8 +69,8 @@ sub myWriteMakefile
       print "requiring Alien::FFI in fallback mode.\n";
     $share_config->set(alien => { class => 'Alien::FFI', mode => 'fallback' });
       %alien = (
-        CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,My::psapi -e cc --',
-        LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,My::psapi -e ld --',
+        CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e cc --',
+        LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e ld --',
       );
       $args{BUILD_REQUIRES}->{'Alien::FFI'} = '0.20';
     }
@@ -79,10 +79,6 @@ sub myWriteMakefile
 
   %args = (%args, %alien);
 
-  if($^O eq 'MSWin32')
-  {
-    $args{BUILD_REQUIRES}->{'Win32::ErrorMode'} = 0;
-  }
   if($ENV{FFI_PLATYPUS_DEBUG_FAKE32} || $Config{uvsize} < 8)
   {
     $args{BUILD_REQUIRES}->{'Math::Int64'} = '0.34';
@@ -146,12 +142,11 @@ sub dynamic_lib
   my $dynamic_lib = $self->SUPER::dynamic_lib(@therest);
 
   my %h = map { m!include/(.*?)$! && $1 => [$_] } File::Glob::bsd_glob('include/*.h');
-  push @{ $h{"ffi_platypus.h"} }, map { "include/ffi_platypus_$_.h" } qw( config probe );
+  push @{ $h{"ffi_platypus.h"} }, map { "include/ffi_platypus_$_.h" } qw( config );
 
   my %targets = (
     '_mm/config' => ['mymm_config'],
     'include/ffi_platypus_config.h' => ['_mm/config'],
-    'include/ffi_platypus_probe.h' => ['_mm/config'],
     'lib/FFI/Platypus.c' => [File::Glob::bsd_glob('xs/*.xs'), 'lib/FFI/Platypus.xs', 'lib/FFI/typemap'],
   );
 

@@ -3,19 +3,24 @@ use warnings;
 use ExtUtils::CBuilder;
 use Text::ParseWords qw( shellwords );
 use lib 'inc';
-use My::Once;
-use My::AutoConf;
 use My::Probe;
 use My::Dev;
 use My::ShareConfig;
 
-My::Once->check('config');
+exit if -f '_mm/config';
+
+{
+  require './lib/FFI/Probe/Runner/Builder.pm';
+  print "building probe runner...\n";
+  my $builder = FFI::Probe::Runner::Builder->new;
+  $builder->build;
+}
 
 My::Dev->generate;
 
-My::AutoConf->configure;
-
 my $share_config = My::ShareConfig->new;
+
+My::Probe->configure($share_config);
 
 {
   my $class = $share_config->get('alien')->{class};
@@ -27,12 +32,9 @@ my $share_config = My::ShareConfig->new;
   $share_config->set(ccflags => $class->cflags);
 }
 
-My::Probe->probe(
-  ExtUtils::CBuilder->new( config => { ccflags => $share_config->get('ccflags') }),
-  $share_config->get('ccflags'),
-  [],
-  $share_config->get('extra_linker_flags'),
-);
-unlink $_ for My::Probe->cleanup;
-
-My::Once->done;
+mkdir '_mm' unless -d '_mm';
+{
+  my $fh;
+  open $fh, '>', '_mm/config';
+  close $fh;
+}

@@ -12,11 +12,12 @@ my $post_diag;
 $modules{$_} = $_ for qw(
   Alien::Base
   Capture::Tiny
-  Config::AutoConf
   ExtUtils::CBuilder
   ExtUtils::MakeMaker
   FFI::CheckLib
   IPC::Cmd
+  JSON::PP
+  List::Util
   PkgConfig
   Test::More
   constant
@@ -93,6 +94,7 @@ $post_diag = sub {
     diag "  $address_sizes" if $address_sizes;
   }
   require IPC::Cmd;
+  require Capture::Tiny;
   if(IPC::Cmd::can_run('lsb_release'))
   {
     spacer();
@@ -101,6 +103,10 @@ $post_diag = sub {
       ();
     });
   }
+  require FFI::Build::Platform;
+  spacer();
+  diag "[PLATFORM]\n";
+  diag(FFI::Build::Platform->diag);
 };
 
 my @modules = sort keys %modules;

@@ -18,7 +18,7 @@ new(class, platypus, address, abi, return_type, ...)
     ffi_abi ffi_abi;
     int extra_arguments;
   CODE:
-  
+    (void)class;
     ffi_abi = abi == -1 ? FFI_DEFAULT_ABI : abi;
     
     for(i=0,extra_arguments=0; i<(items-5); i++)

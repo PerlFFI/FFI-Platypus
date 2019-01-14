@@ -7,12 +7,12 @@
 /config.log
 /lib/FFI/Platypus.c
 /include/ffi_platypus_config.h
-/include/ffi_platypus_probe.h
 /include/ppport.h
 /test*.c
 *.o
 *.obj
 *.dll
+*.dylib
 *.so
 *.bundle
 *.tmp
@@ -33,3 +33,5 @@ core
 /Makefile
 *.bs
 *.def
+/test-*
+tmpbuild.*

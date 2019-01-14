@@ -327,6 +327,7 @@
                         break;
                       default:
                         warn("argument type not supported (%d)", i);
+                        Newx_or_alloca(ptr, 1, void*);
                         *((void**)ptr) = NULL;
                         break;
                     }

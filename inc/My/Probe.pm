@@ -2,33 +2,174 @@ package My::Probe;
 
 use strict;
 use warnings;
-use if $^O eq 'MSWin32', 'Win32::ErrorMode';
-use File::Glob qw( bsd_glob );
-use File::Spec;
 use Config;
-use File::Temp qw( tempdir );
-use File::Copy qw( copy );
-use File::Path qw( rmtree );
-use Text::ParseWords qw( shellwords );
+use File::Spec;
+use FindBin;
 use My::ShareConfig;
+use My::ConfigH;
+use lib 'lib';
+use FFI::Probe;
+use FFI::Probe::Runner;
+use File::Glob qw( bsd_glob );
+use File::Basename qw( basename );
 
-sub probe
+my @probe_types = split /\n/, <<EOF;
+char
+signed char
+unsigned char
+short
+signed short
+unsigned short
+int
+signed int
+unsigned int
+long
+signed long
+unsigned long
+uint8_t
+int8_t
+uint16_t
+int16_t
+uint32_t
+int32_t
+uint64_t
+int64_t
+size_t
+ssize_t
+float
+double
+long double
+float complex
+double complex
+long double complex
+bool
+_Bool
+pointer
+EOF
+
+my @extra_probe_types = split /\n/, <<EOF;
+long long
+signed long long
+unsigned long long
+dev_t
+ino_t
+mode_t
+nlink_t
+uid_t
+gid_t
+off_t
+blksize_t
+blkcnt_t
+time_t
+ptrdiff_t
+wchar_t
+wint_t
+EOF
+
+push @probe_types, @extra_probe_types unless $ENV{FFI_PLATYPUS_NO_EXTRA_TYPES};
+
+my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypus_config.h' ) );
+
+sub configure
 {
-  # $b isa ExtUtils::CBuilder
-  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags) = @_;
+  my($self, $share_config) = @_;
 
-  my $probe_include = File::Spec->catfile('include', 'ffi_platypus_probe.h');
+  my $probe = FFI::Probe->new(
+    runner => FFI::Probe::Runner->new(
+      exe => "blib/lib/auto/share/dist/FFI-Platypus/probe/bin/dlrun$Config{exe_ext}",
+    ),
+    log => "config.log",
+    data_filename => "blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
+    alien => [$share_config->get('alien')->{class}],
+    cflags => ['-Iinclude'],
+  );
 
-  return if -e $probe_include && My::ShareConfig->new->get('probe');
-  
-  #__PACKAGE__->cleanup($probe_include);
+  return if -r $config_h && ref($share_config->get( 'type_map' )) eq 'HASH';
+
+  my $ch = My::ConfigH->new;
+
+  $ch->define_var( do {
+    my $os = uc $^O;
+    $os =~ s/-/_/;
+    $os =~ s/[^A-Z0-9_]//g;
+    "PERL_OS_$os";
+  } => 1 );
+
+  $ch->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin|msys)$/;
+
+  foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool complex ))
   {
-    print "writing empty $probe_include\n";
-    my $fh;
-    open $fh, '>', $probe_include;
-    close $fh;
-  };
-  
+    if($probe->check_header("$header.h"))
+    {
+      my $var = uc $header;
+      $var =~ s{/}{_}g;
+      $var = "HAVE_${var}_H";
+      $ch->define_var( $var => 1 );
+    }
+  }
+
+  if(!$share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
+  {
+    $ch->define_var( HAVE_IV_IS_64 => 1 );
+  }
+  else
+  {
+    $ch->define_var( HAVE_IV_IS_64 => 0 );
+  }
+
+  my %type_map;
+  my %align;
+
+  foreach my $type (@probe_types)
+  {
+    my $ok;
+
+    if($type =~ /^(float|double|long double)/)
+    {
+      if(my $basic = $probe->check_type_float($type))
+      {
+        $type_map{$type} = $basic;
+        $align{$type} = $probe->data->{type}->{$type}->{align};
+      }
+    }
+    elsif($type eq 'pointer')
+    {
+      $probe->check_type_pointer;
+      $align{pointer} = $probe->data->{type}->{pointer}->{align};
+    }
+    else
+    {
+      if(my $basic = $probe->check_type_int($type))
+      {
+        $type_map{$type} = $basic;
+        $align{$basic} ||= $probe->data->{type}->{$type}->{align};
+      }
+    }
+  }
+
+  $ch->define_var( SIZEOF_VOIDP => $probe->data->{type}->{pointer}->{size} );
+  if(my $size = $probe->data->{type}->{'float complex'}->{size})
+  { $ch->define_var( SIZEOF_FLOAT_COMPLEX => $size ) }
+  if(my $size = $probe->data->{type}->{'double complex'}->{size})
+  { $ch->define_var( SIZEOF_DOUBLE_COMPLEX => $size ) }
+  if(my $size = $probe->data->{type}->{'long double complex'}->{size})
+  { $ch->define_var( SIZEOF_LONG_DOUBLE_COMPLEX => $size ) }
+
+  # short aliases
+  $type_map{uchar}  = $type_map{'unsigned char'};
+  $type_map{ushort} = $type_map{'unsigned short'};
+  $type_map{uint}   = $type_map{'unsigned int'};
+  $type_map{ulong}  = $type_map{'unsigned long'};
+
+  # on Linux and OS X at least the test for bool fails
+  # but _Bool works (even though code using bool seems
+  # to work for both).  May be because bool is a macro
+  # for _Bool or something.
+  $type_map{bool} ||= delete $type_map{_Bool};
+  delete $type_map{_Bool};
+
+  $ch->write_config_h;
+
   my %probe;
   if(defined $ENV{FFI_PLATYPUS_PROBE_OVERRIDE})
   {
@@ -38,244 +179,73 @@ sub probe
       $probe{$k} = $v;
     }
   }
-  
+
   foreach my $cfile (bsd_glob 'inc/probe/*.c')
   {
-    my $name = (File::Spec->splitpath($cfile))[2];
-    $name =~ s{\.c$}{};
-
-    if(defined $probe{$name})
+    my $name = basename $cfile;
+    $name =~ s/\.c$//;
+    unless(defined $probe{$name})
     {
-      print "!!! WARNING !!! overriding $name=$probe{$name}\n";
-      delete $probe{$name} unless $probe{$name};
-      next;
+      my $code = do {
+        my $fh;
+        open $fh, '<', $cfile;
+        local $/;
+        <$fh>;
+      };
+      my $value = $probe->check($name, $code);
+      $probe{$name} = $value if defined $value;
     }
-    
-    my $obj = eval { $b->compile(
-      source               => $cfile,
-      include_dirs         => [ 'include' ],
-      extra_compiler_flags => $extra_compiler_flags,
-    ) };
-    next if $@;
-    __PACKAGE__->cleanup($obj);
-    
-    my($exe,@rest) = eval { $b->link_executable(
-      objects            => $obj,
-      extra_linker_flags => $extra_linker_flags,
-    ) };
-    next if $@;
-    __PACKAGE__->cleanup($exe,@rest);
-    my $ret = run($exe, '--test');
-    $probe{$name} = 1 if $ret == 0;
-  }
-  
-  {
-    print "writing completed $probe_include\n";
-    my $fh;
-    open $fh, '>', $probe_include;
-    print $fh "#ifndef FFI_PLATYPUS_PROBE_H\n";
-    print $fh "#define FFI_PLATYPUS_PROBE_H\n";
-    
-    foreach my $key (sort keys %probe)
+    if($probe{$name})
     {
-      print $fh "#define FFI_PL_PROBE_", uc($key), " 1\n";
-    }
-    
-    print $fh "#endif\n";
-    close $fh;
-  };
-  
-  __PACKAGE__->probe_abi($b, $ccflags, $extra_compiler_flags, $extra_linker_flags);
-  
-  My::ShareConfig->new->set( probe => \%probe );
-  
-  return;
-}
-
-sub run
-{
-  my @cmd = @_;
-  
-  # 1. annoyance the first:
-  # Strawberry Perl 5.20.0 and better comes with libffi
-  # unfortunately it is distributed as a .dll and to make
-  # things a little worse the .exe files generated for some
-  # reason link to a .dll with a different name.
-    
-  if($^O eq 'MSWin32' && $Config{myuname} =~ /strawberry-perl/ && $] >= 5.020)
-  {
-    my($vol, $dir, $file) = File::Spec->splitpath($^X);
-    my @dirs = File::Spec->splitdir($dir);
-    splice @dirs, -3;
-    my $path = (File::Spec->catdir($vol, @dirs, qw( c bin )));
-    $path =~ s{\\}{/}g;
-      
-    my($dll) = bsd_glob("$path/libffi*.dll");
-      
-    my @cleanup;
-    foreach my $line (`objdump -p $cmd[0]`)
-    {
-      next unless $line =~ /^\s+DLL Name: (libffi.*\.dll)/;
-      my $want = $1;
-      next if $dll eq $want;
-      copy($dll, $want);
-      push @cleanup, $want;
+      $ch->define_var( "FFI_PL_PROBE_" . uc($name) => 1 );
     }
   }
-  
-  # 2. annoyance the second
-  # If there isa problem with the .exe generated it may pop up a
-  # dialog, but we don't want to stop the build, as this may be
-  # normal if the probe is supposed to fail.
-  
-  local $Win32::ErrorMode::ErrorMode = 0x3;
-  
-  print "@cmd\n";
-  system @cmd;
-  my $ret = $?;
-  if($ret == -1)
-  { print "FAILED TO EXECUTE $!\n" }
-  elsif($ret & 127)
-  { print "DIED with signal ", ($ret & 127), "\n" }
-  else
-  { print "exit = ", $ret >> 8, "\n" }
-  
-  $ret;
-}
 
-sub probe_abi
-{
-  # $b isa ExtUtils::CBuilder
-  my(undef, $b, $ccflags, $extra_compiler_flags, $extra_linker_flags) = @_;
-  
-  print "probing for ABIs...\n";
-
-  mkdir '.abi-probe-test';
-  my $dir = tempdir( CLEANUP => 1, DIR => '.abi-probe-test' );
-  my $file_c = File::Spec->catfile($dir, "ffitest.c");
-
-  if($^O eq 'MSWin32' && $file_c =~ /\s/)
-  {
-    $file_c = Win32::GetShortPathName($file_c);
-  }
-  
-  do {
-    my $fh;
-    open $fh, '>', $file_c;
-    print $fh "#include <ffi.h>\n";
-    close $fh;
-  };
-
-  my @cpp_flags = grep /^-[DI]/, shellwords $ccflags;
-  
-  print "$Config{cpprun} @cpp_flags $file_c\n";
-  my $text = join '', grep !/^#/, `$Config{cpprun} @cpp_flags $file_c`;
-  if($?)
-  {
-    print "C pre-processor failed...\n";
-    print "only default will be available.\n";
-    return;
-  }
-  
   my %abi;
 
-  if($text =~ m/typedef\s+enum\s+ffi_abi\s+{(.*?)}/s)
+  if(my $cpp_output = $probe->check_cpp("#include <ffi.h>\n"))
   {
-    my $enum = $1;
-    
-    #print "[enum]\n";
-    #print "$enum\n";
-    
-    while($enum =~ s/FFI_([A-Z_0-9]+)//)
+    if($cpp_output =~ m/typedef\s+enum\s+ffi_abi\s+{(.*?)}/s)
     {
-      my $abi = $1;
-      next if $abi =~ /^(FIRST|LAST)_ABI$/;
-      $abi{lc $abi} = -1;
-    }
-  }
-  
-  my $template_c = File::Spec->catfile(qw( inc template abi.c ));
-  
-  foreach my $abi (sort keys %abi)
-  {
-    my $file_c = File::Spec->catfile($dir, "$abi.c");
-    
-    do {
-      my $in;
-      my $out;
-      open $in, '<', $template_c;
-      open $out, '>', $file_c;
-
-      my $line;    
-      while(1)
+      my $enum = $1;
+      while($enum =~ s/FFI_([A-Z_0-9]+)//)
       {
-        $line = <$in>;
-        last unless defined $line;
-        $line =~ s/##ARG##/"FFI_".uc($abi)/eg;
-        print $out $line;
+        my $abi = $1;
+        next if $abi =~ /^(FIRST|LAST)_ABI$/;
+        $probe->check_eval(
+          decl => [
+            "#include \"ffi_platypus.h\"",
+          ],
+          stmt => [
+            "ffi_cif cif;",
+            "ffi_type *args[1];",
+            "ffi_abi abi;",
+            "if(ffi_prep_cif(&cif, FFI_$abi, 0, &ffi_type_void, args) != FFI_OK) { return 2; }",
+          ],
+          eval => {
+            "abi.@{[ lc $abi ]}" => [ '%d' => "FFI_$abi" ],
+          },
+        );
       }
-      
-      close $out;
-      close $in;
-    };
-
-    my $obj = eval { $b->compile(
-      source               => $file_c,
-      include_dirs         => [ 'include' ],
-      extra_compiler_flags => [ @{ $extra_compiler_flags }, '-DTRY_FFI_ABI=FFI_'.uc $abi ],
-    ) };
-    next if $@;
-    
-    my $exe = eval { $b->link_executable(
-      objects            => $obj,
-      extra_linker_flags => $extra_linker_flags,
-    ) };
-    next if $@;
-    
-    local $Win32::ErrorMode::ErrorMode = 0x3;
-
-    if($^O eq 'MSWin32' && $file_c =~ /\s/)
-    {
-      $exe = Win32::GetShortPathName($exe);
+      %abi = %{ $probe->data->{abi} };
     }
-
-    my $out = `$exe`;
-    if($? == -1)
+    else
     {
-      die "unable to execute: $exe";
-    }
-    elsif($? == 0 && $out =~ /\|value=([0-9]+)\|/)
-    {
-      $abi{$abi} = $1;
+      print "Unable to find ffi_abi enum.\n";
+      print "only default ABI will be available\n";
     }
   }
-  
-  foreach my $abi (sort keys %abi)
+  else
   {
-    if($abi{$abi} == -1)
-    {
-      delete $abi{$abi};
-      next;
-    }
-    print "  found abi: $abi = $abi{$abi}\n";
+    print "C pre-processor failed...\n";
+    print "only default ABI will be available\n";
   }
 
-  My::ShareConfig->new->set( abi => \%abi );
-
-  rmtree('.abi-probe-test', { verbose => 0 });
-  return;
-}
-
-
-{
-  my %cleanup;
-
-  sub cleanup
-  {
-    my(undef, @add) = @_;
-    $cleanup{$_} = 1 for @add;
-    sort keys %cleanup;
-  }
+  $ch->write_config_h;
+  $share_config->set( type_map => \%type_map );
+  $share_config->set( align    => \%align    );
+  $share_config->set( probe    => \%probe    );
+  $share_config->set( abi      => \%abi      );
 }
 
 1;

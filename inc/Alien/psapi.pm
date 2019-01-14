@@ -1,4 +1,4 @@
-package My::psapi;
+package Alien::psapi;
 
 use strict;
 use warnings;

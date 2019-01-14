@@ -16,7 +16,6 @@ my %WriteMakefileArgs = (
   "ABSTRACT"       => "Write Perl bindings to non-Perl libraries with FFI. No XS required.",
   "AUTHOR"         => "Graham Ollis <plicease\@cpan.org>",
   "BUILD_REQUIRES" => {
-    "Config::AutoConf"   => "0.309",
     "ExtUtils::CBuilder" => 0
   },
   "CONFIGURE_REQUIRES" => {
@@ -28,6 +27,14 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.008001",
   "NAME"             => "FFI::Platypus",
   "PM"               => {
+    "lib/FFI/Build.pm"                           => "\$(INST_LIB)/FFI/Build.pm",
+    "lib/FFI/Build/File/Base.pm"                 => "\$(INST_LIB)/FFI/Build/File/Base.pm",
+    "lib/FFI/Build/File/C.pm"                    => "\$(INST_LIB)/FFI/Build/File/C.pm",
+    "lib/FFI/Build/File/CXX.pm"                  => "\$(INST_LIB)/FFI/Build/File/CXX.pm",
+    "lib/FFI/Build/File/Library.pm"              => "\$(INST_LIB)/FFI/Build/File/Library.pm",
+    "lib/FFI/Build/File/Object.pm"               => "\$(INST_LIB)/FFI/Build/File/Object.pm",
+    "lib/FFI/Build/MM.pm"                        => "\$(INST_LIB)/FFI/Build/MM.pm",
+    "lib/FFI/Build/Platform.pm"                  => "\$(INST_LIB)/FFI/Build/Platform.pm",
     "lib/FFI/Platypus.pm"                        => "\$(INST_LIB)/FFI/Platypus.pm",
     "lib/FFI/Platypus/API.pm"                    => "\$(INST_LIB)/FFI/Platypus/API.pm",
     "lib/FFI/Platypus/Buffer.pm"                 => "\$(INST_LIB)/FFI/Platypus/Buffer.pm",
@@ -46,21 +53,29 @@ my %WriteMakefileArgs = (
     "lib/FFI/Platypus/Type.pod"                  => "\$(INST_LIB)/FFI/Platypus/Type.pod",
     "lib/FFI/Platypus/Type/PointerSizeBuffer.pm" => "\$(INST_LIB)/FFI/Platypus/Type/PointerSizeBuffer.pm",
     "lib/FFI/Platypus/Type/StringArray.pm"       => "\$(INST_LIB)/FFI/Platypus/Type/StringArray.pm",
-    "lib/FFI/Platypus/Type/StringPointer.pm"     => "\$(INST_LIB)/FFI/Platypus/Type/StringPointer.pm"
+    "lib/FFI/Platypus/Type/StringPointer.pm"     => "\$(INST_LIB)/FFI/Platypus/Type/StringPointer.pm",
+    "lib/FFI/Probe.pm"                           => "\$(INST_LIB)/FFI/Probe.pm",
+    "lib/FFI/Probe/Runner.pm"                    => "\$(INST_LIB)/FFI/Probe/Runner.pm",
+    "lib/FFI/Probe/Runner/Builder.pm"            => "\$(INST_LIB)/FFI/Probe/Runner/Builder.pm",
+    "lib/FFI/Probe/Runner/Result.pm"             => "\$(INST_LIB)/FFI/Probe/Runner/Result.pm"
   },
   "PREREQ_PM" => {
-    "FFI::CheckLib" => "0.05",
-    "constant"      => "1.32"
+    "Capture::Tiny"       => 0,
+    "ExtUtils::MakeMaker" => "7.12",
+    "FFI::CheckLib"       => "0.05",
+    "IPC::Cmd"            => 0,
+    "JSON::PP"            => 0,
+    "List::Util"          => "1.45",
+    "constant"            => "1.32"
   },
   "TEST_REQUIRES" => {
     "Capture::Tiny" => 0,
-    "IPC::Cmd"      => 0,
     "Test::More"    => "0.98"
   },
-  "VERSION" => "0.70_01",
+  "VERSION" => "0.73_01",
   "test"    => {
     "TESTS" => "t/*.t"
-    }
+  }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);

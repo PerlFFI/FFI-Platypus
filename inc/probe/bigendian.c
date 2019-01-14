@@ -7,7 +7,7 @@ my_foo(void)
 }
 
 int
-main(int argc, char *argv[])
+dlmain(int argc, char *argv[])
 {
   ffi_cif cif;
   ffi_type *args[1];
