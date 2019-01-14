@@ -13,7 +13,7 @@ ffi_platypus_memory__strdup(const char *olds)
 {
   char *news;
   size_t size;
-  
+
   size = strlen(olds)+1;
   news = malloc(size);
   if(news != NULL)
