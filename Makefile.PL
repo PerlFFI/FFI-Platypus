@@ -89,6 +89,11 @@ mymm::myWriteMakefile(%WriteMakefileArgs);
       "\t\$(FULLPERL) inc/mymm-config.pl\n\n";
 
     $postamble .=
+      "pure_all :: mymm_build\n" .
+      "mymm_build :\n" .
+      "\t\$(FULLPERL) inc/mymm-build.pl\n\n";
+
+    $postamble .=
       "subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm_test\n" .
       "mymm_test :\n" .
       "\t\$(FULLPERL) inc/mymm-test.pl\n\n";
@@ -103,7 +108,7 @@ mymm::myWriteMakefile(%WriteMakefileArgs);
   sub special_targets {
     my($self, @therest) = @_;
     my $st = $self->SUPER::special_targets(@therest);
-    $st .= "\n.PHONY: mymm_config mymm_test mymm_clean\n";
+    $st .= "\n.PHONY: mymm_config mymm_build mymm_test mymm_clean\n";
     $st;
   }
 }

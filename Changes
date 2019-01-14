@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add strndup to FFI::Platypus::Memory
 
 0.74      2019-01-19 04:42:22 -0500
   - Production release identical to 0.73_01

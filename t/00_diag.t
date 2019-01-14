@@ -54,7 +54,8 @@ $post_diag = sub {
     {
       diag "config.$key=", $diag->{config}->{$key};
     }
-    diag "ffi.platypus.memory.strdup_impl=$FFI::Platypus::Memory::_strdup_impl";
+    diag "ffi.platypus.memory.strdup_impl =@{[ FFI::Platypus::Memory->_strdup_impl ]}";
+    diag "ffi.platypus.memory.strndup_impl=@{[ FFI::Platypus::Memory->_strndup_impl ]}";
     spacer();
     my %r;
     while(my($k,$v) = each %type_map)

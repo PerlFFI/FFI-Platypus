@@ -3,7 +3,8 @@ use warnings;
 use File::Glob qw( bsd_glob );
 
 unlink $_ for map { bsd_glob($_) } (
-  't/ffi/_build/*.o',
+  'ffi/_build/*',
+  't/ffi/_build/*',
   't/ffi/*.so',
   't/ffi/*.dll',
   't/ffi/*.bundle',
@@ -27,5 +28,6 @@ unlink $_ for map { bsd_glob($_) } (
 );
 
 rmdir '_mm' if -d '_mm';
+rmdir 'ffi/_build' if -d 'ffi/_build';
 rmdir 't/ffi/_build' if -d 't/ffi/_build';
 rmdir 'corpus/ffi_build/project1/_build' if -d 'corpus/ffi_build/project1/_build';

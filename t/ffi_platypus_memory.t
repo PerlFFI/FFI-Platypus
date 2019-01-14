@@ -4,6 +4,8 @@ use Test::More;
 use FFI::Platypus;
 use FFI::Platypus::Memory;
 
+note "lib=@{[ $_ || 'undef' ]}" for FFI::Platypus::Memory->_ffi->lib;
+
 my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
 
@@ -52,7 +54,7 @@ subtest 'realloc' => sub {
 };
 
 subtest 'strdup' => sub {
-  note "strdup implementation = $FFI::Platypus::Memory::_strdup_impl";
+  note "strdup implementation = @{[ FFI::Platypus::Memory->_strdup_impl ]}";
   my $ptr1 = malloc 32;
   my $tmp  = strdup "this and\0";
   memcpy $ptr1, $tmp, 9;
@@ -61,6 +63,22 @@ subtest 'strdup' => sub {
   is $string, 'this and', 'string = this and';
   free $ptr1;
   ok 1, 'free $ptr1';
+};
+
+subtest 'strndup' => sub {
+  note "strndup implementation = @{[ FFI::Platypus::Memory->_strndup_impl ]}";
+
+  subtest 'full string' => sub {
+    my $ptr = strndup "this and\0", 512;
+    is($ffi->cast('opaque' => 'string', $ptr), 'this and');
+    free $ptr;
+  };
+
+  subtest 'partial string' => sub {
+    my $ptr = strndup "1234567890", 5;
+    is($ffi->cast('opaque' => 'string', $ptr), '12345');
+    free $ptr;
+  };
 };
 
 done_testing;

@@ -18,6 +18,7 @@ jobs:
   include:
     - env: CIP_TAG=5.29
     - env: CIP_TAG=5.28
+    - env: CIP_TAG=5.28 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
     - env: CIP_TAG=5.28-threads
     - env: CIP_TAG=5.28-longdouble
     - env: CIP_TAG=5.28-quadmath
