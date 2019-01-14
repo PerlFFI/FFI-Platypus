@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - function method can now take a wrapper code reference as its last
+    argument in the same way as attach.
 
 0.75_01   2019-01-19 04:45:19 -0500
   - Add strndup to FFI::Platypus::Memory

@@ -16,6 +16,7 @@ require_ok 'FFI::Platypus::Buffer';
 require_ok 'FFI::Platypus::Closure';
 require_ok 'FFI::Platypus::DL';
 require_ok 'FFI::Platypus::Declare';
+require_ok 'FFI::Platypus::Function';
 require_ok 'FFI::Platypus::Internal';
 require_ok 'FFI::Platypus::Lang';
 require_ok 'FFI::Platypus::Lang::ASM';
@@ -46,6 +47,7 @@ ok -f 't/ffi_platypus_buffer.t',                              'test for FFI::Pla
 ok -f 't/ffi_platypus_closure.t',                             'test for FFI::Platypus::Closure';
 ok -f 't/ffi_platypus_dl.t',                                  'test for FFI::Platypus::DL';
 ok -f 't/ffi_platypus_declare.t',                             'test for FFI::Platypus::Declare';
+ok -f 't/ffi_platypus_function.t',                            'test for FFI::Platypus::Function';
 ok -f 't/ffi_platypus_internal.t',                            'test for FFI::Platypus::Internal';
 ok -f 't/ffi_platypus_lang.t',                                'test for FFI::Platypus::Lang';
 ok -f 't/ffi_platypus_lang_asm.t',                            'test for FFI::Platypus::Lang::ASM';

@@ -143,3 +143,5 @@ pod_coverage:
     - FFI::Build::File::C#build_item
     - FFI::Build::File::Object#build_item
     - FFI::Build::MM
+    - FFI::Platypus::Function#new
+    - FFI::Platypus::Function#attach

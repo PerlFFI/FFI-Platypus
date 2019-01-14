@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 use Carp qw( croak );
+use FFI::Platypus::Function;
 
 # ABSTRACT: Write Perl bindings to non-Perl libraries with FFI. No XS required.
 # VERSION
@@ -1049,20 +1050,6 @@ sub _have_pm
   $ok = $ok ? $ok : 0;
   $ok;
 }
-
-package FFI::Platypus::Function;
-
-# VERSION
-
-use overload '&{}' => sub {
-  my $ffi = shift;
-  sub { $ffi->call(@_) };
-};
-
-use overload 'bool' => sub {
-  my $ffi = shift;
-  return $ffi;
-};
 
 package FFI::Platypus::Type;
 
