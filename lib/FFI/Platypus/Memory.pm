@@ -115,7 +115,7 @@ my $_strdup_impl = 'not-loaded';
 sub _strdup_impl { $_strdup_impl }
 
 eval {
-  die "do not use c impl" if ($ENV{FFI_PLATYPUS_MEMORY_STRDUP_IMPL}||'c') eq 'ffi';
+  die "do not use c impl" if ($ENV{FFI_PLATYPUS_MEMORY_STRDUP_IMPL}||'libc') eq 'ffi';
   $ffi->attach(strdup  => ['string'] => 'opaque' => '$');
   $_strdup_impl = 'libc';  
 };
@@ -129,7 +129,7 @@ my $_strndup_impl = 'not-loaded';
 sub _strndup_impl { $_strndup_impl }
 
 eval {
-  die "do not use c impl" if ($ENV{FFI_PLATYPUS_MEMORY_STRDUP_IMPL}||'c') eq 'ffi';
+  die "do not use c impl" if ($ENV{FFI_PLATYPUS_MEMORY_STRDUP_IMPL}||'libc') eq 'ffi';
   $ffi->attach(strndup  => ['string','size_t'] => 'opaque' => '$$');
   $_strndup_impl = 'libc';  
 };
