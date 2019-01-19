@@ -33,6 +33,26 @@ subtest normal => sub {
   is Normal::f0_wrap2(22), 25, 'f0_wrap2(22) = 25';
 };
 
+subtest prototype => sub {
+
+  my $value = eval q{
+    package ProtoType;
+
+    use FFI::Platypus::Declare;
+
+    BEGIN {
+      lib $libtest;
+      attach(f0 => ['uint8'] => 'uint8' => '$');
+    }
+
+    f0 22;
+  };
+
+  is $@, '', 'no compile error';
+  is $value, 22, 'f(22) = 22';
+
+};
+
 subtest 'with type aliases' => sub {
 
   { package WithTypeAliases;

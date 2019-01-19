@@ -60,7 +60,7 @@ sub attach
 
   do {
     ($caller, $filename, $line) = caller(++$frame);
-  } while( $caller =~ /^FFI::Platypus(|::Function|::Function::Wrapper)$/ );
+  } while( $caller =~ /^FFI::Platypus(|::Function|::Function::Wrapper|::Declare)$/ );
 
   $perl_name = join '::', $caller, $perl_name
     unless $perl_name =~ /::/;
@@ -96,7 +96,7 @@ sub attach
   {
     my $caller;
     my $frame = -1;
-    do { $caller = caller(++$frame) } while( $caller eq 'FFI::Platypus' );
+    do { $caller = caller(++$frame) } while( $caller =~ /^FFI::Platypus(|::Declare)$/ );
     $perl_name = join '::', $caller, $perl_name
   }
 

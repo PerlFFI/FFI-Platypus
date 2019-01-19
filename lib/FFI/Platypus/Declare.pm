@@ -176,25 +176,13 @@ my $inner_counter = 0;
 
 sub attach ($$$;$$)
 {
-  my($caller, $filename, $line) = caller;
   my $wrapper;
   $wrapper = pop if ref($_[-1]) eq 'CODE';
   my($name, $args, $ret, $proto) = @_;
+
   my($symbol_name, $perl_name) = ref $name ? (@$name) : ($name, $name);
-  my $function = _ffi_object->function($symbol_name, $args, $ret);
-  my $attach_name = $perl_name = join '::', $caller, $perl_name;
-  if($wrapper)
-  {
-    $attach_name = "FFI::Platypus::Declare::Inner::xsub$inner_counter";
-    $inner_counter++;
-  }
-  $function->attach($attach_name, "$filename:$line", $proto);
-  if($wrapper)
-  {
-    my $inner = \&{$attach_name};
-    no strict 'refs';
-    *{$perl_name} = sub { $wrapper->($inner, @_) };
-  }
+  my $function = _ffi_object->function($symbol_name, $args, $ret, $wrapper);
+  $function->attach($perl_name, $proto);
   ();
 }
 
