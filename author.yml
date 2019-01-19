@@ -114,6 +114,7 @@ pod_spelling_system:
     - cxx
     - shellwords
     - fbx
+    - strndup
 
 
 pod_coverage:
