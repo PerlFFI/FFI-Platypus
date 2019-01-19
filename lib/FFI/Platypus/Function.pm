@@ -42,4 +42,28 @@ use overload 'bool' => sub {
   return $ffi;
 };
 
+package FFI::Platypus::Function::Wrapper;
+
+sub new
+{
+  my($class, $function, $wrapper) = @_;
+  bless [ $function, $wrapper ], $class;
+}
+
+use overload '&{}' => sub {
+  my $ffi = shift;
+  sub { $ffi->call(@_) };
+};
+
+use overload 'bool' => sub {
+  my $ffi = shift;
+  return $ffi;
+};
+
+sub call
+{
+  my($function, $wrapper) = @{ shift() };
+  $wrapper->($function, @_);
+}
+
 1;

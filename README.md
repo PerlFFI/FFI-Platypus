@@ -281,6 +281,8 @@ Examples:
 
     my $function = $ffi->function($name => \@argument_types => $return_type);
     my $function = $ffi->function($address => \@argument_types => $return_type);
+    my $function = $ffi->function($name => \@argument_types => $return_type, \&wrapper);
+    my $function = $ffi->function($address => \@argument_types => $return_type, \&wrapper);
 
 Returns an object that is similar to a code reference in that it can be 
 called like one.
@@ -307,6 +309,13 @@ Example: a C function could return the address of another C function
 that you might want to call, or modules such as [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) produce 
 machine code at runtime that you can call from Platypus.
 
+\[version 0.75\]
+
+If the last argument is a code reference, then it will be used as a 
+wrapper around the function when called.  The first argument to the wrapper 
+will be the inner function, or if it is later attached an xsub.  This can be
+used if you need to verify/modify input/output data.
+
 Examples:
 
     my $function = $ffi->function('my_function_name', ['int', 'string'] => 'string');
@@ -317,9 +326,9 @@ Examples:
     $ffi->attach($name => \@argument_types => $return_type);
     $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
     $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
-    $ffi->attach($name => \@argument_types => $return_type, sub { ... });
-    $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type, sub { ... });
-    $ffi->attach([$address => $perl_name] => \@argument_types => $return_type, sub { ... });
+    $ffi->attach($name => \@argument_types => $return_type, \&wrapper);
+    $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type, \&wrapper);
+    $ffi->attach([$address => $perl_name] => \@argument_types => $return_type, \&wrapper);
 
 Find and attach a C function as a real live Perl xsub.  The advantage of 
 attaching a function over using the [function](#function) method is that 
