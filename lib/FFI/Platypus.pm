@@ -619,7 +619,7 @@ sub function
   $wrapper = pop if ref $_[-1] eq 'CODE';
 
   my($self, $name, $args, $ret) = @_;
-  croak "usage \$ffi->function( name, [ arguments ], return_type)" unless @_ == 4;
+  croak "usage \$ffi->function( name, [ arguments ], return_type)" unless (@_ == 4) || (@_ == 5);
   my @args = map { $self->_type_lookup($_) || croak "unknown type: $_" } @$args;
   $ret = $self->_type_lookup($ret) || croak "unknown type: $ret";
   my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
@@ -680,7 +680,7 @@ Examples:
 
 =cut
 
-my $inner_counter=0;
+#my $inner_counter=0;
 
 sub attach
 {
@@ -695,30 +695,11 @@ sub attach
   croak "you tried to provide a perl name that looks like an address"
     if $perl_name =~ /^-?[0-9]+$/;
   
-  my $function = $self->function($c_name, $args, $ret);
+  my $function = $self->function($c_name, $args, $ret, $wrapper);
   
   if(defined $function)
   {
-    my($caller, $filename, $line) = caller;
-    $perl_name = join '::', $caller, $perl_name
-      unless $perl_name =~ /::/;
-    
-    my $attach_name = $perl_name;
-    if($wrapper)
-    {
-      $attach_name = "FFI::Platypus::Inner::xsub$inner_counter";
-      $inner_counter++;
-    }
-    
-    $function->attach($attach_name, "$filename:$line", $proto);
-    
-    if($wrapper)
-    {
-      my $inner_coderef = \&{$attach_name};
-      no strict 'refs';
-      # TODO: Sub::Name ?
-      *{$perl_name} = sub { $wrapper->($inner_coderef, @_) };
-    }
+    $function->attach($perl_name);
   }
   
   $self;

@@ -19,6 +19,9 @@ subtest 'built in type' => sub {
   isa_ok $function, 'FFI::Platypus::Function::Wrapper';
   is $function->call(22), 44, 'function.call(22) = 44';
   is $function->(22), 44, 'function.(22) = 44';
+
+  $function->attach('baboon');
+  is( baboon(11), 22, "baboon(11) = 22" );
 };
 
 done_testing;
