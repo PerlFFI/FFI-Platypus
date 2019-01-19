@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.74      2019-01-19 04:42:22 -0500
+  - Production release identical to 0.73_01
+
 0.73_01   2019-01-13 18:31:33 -0500
   - Remove dependency on Win32::ErrorMode on Windows
 
