@@ -3,8 +3,6 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - function method can now take a wrapper code reference as its last
     argument in the same way as attach.
-  - Allow attach from function objects, ie. $ffi->function(...)->attach
-    is similar to $ffi->attach(...).
 
 0.75_01   2019-01-19 04:45:19 -0500
   - Add strndup to FFI::Platypus::Memory

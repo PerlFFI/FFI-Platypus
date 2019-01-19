@@ -16,6 +16,7 @@ subtest 'built in type' => sub {
   };
   my $function = eval { $ffi->function('f0', [ 'uint8' ] => 'uint8', $wrapper ) };
   is $@, '', 'ffi.function(f0, [uint8] => uint8)';
+  isa_ok $function, 'FFI::Platypus::Function';
   isa_ok $function, 'FFI::Platypus::Function::Wrapper';
   is $function->call(22), 44, 'function.call(22) = 44';
   is $function->(22), 44, 'function.(22) = 44';

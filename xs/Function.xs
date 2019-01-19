@@ -1,4 +1,4 @@
-MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Function
+MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Function::Function
 
 ffi_pl_function *
 new(class, platypus, address, abi, return_type, ...)

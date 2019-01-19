@@ -625,7 +625,7 @@ sub function
   my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
   croak "unable to find $name" unless defined $address || $self->ignore_not_found;
   return unless defined $address;
-  my $function = FFI::Platypus::Function->new($self, $address, $self->{abi}, $ret, @args);
+  my $function = FFI::Platypus::Function::Function->new($self, $address, $self->{abi}, $ret, @args);
   $wrapper
     ? FFI::Platypus::Function::Wrapper->new($function, $wrapper)
     : $function;

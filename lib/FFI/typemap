@@ -12,7 +12,7 @@ T_FFI_PL_TYPE
   sv_setref_pv($arg, \"FFI::Platypus::Type\", (void *) $var);
 
 T_FFI_PL_FUNCTION
-  sv_setref_pv($arg, \"FFI::Platypus::Function\", (void *) $var);
+  sv_setref_pv($arg, \"FFI::Platypus::Function::Function\", (void *) $var);
 
 T_FFI_PL_CLOSURE_DATA
   sv_setref_pv($arg, \"FFI::Platypus::ClosureData\", (void *) $var);
@@ -28,10 +28,10 @@ T_FFI_PL_TYPE
     Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::Type\");
 
 T_FFI_PL_FUNCTION
-  if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::Function\"))
+  if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::Function::Function\"))
     $var = INT2PTR($type, SvIV((SV *) SvRV($arg)));
   else
-    Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::Function\");
+    Perl_croak(aTHX_ \"$var is not of type FFI::Platypus::Function::Function\");
 
 T_FFI_PL_CLOSURE_DATA
   if(sv_isobject($arg) && sv_derived_from($arg, \"FFI::Platypus::ClosureData\"))

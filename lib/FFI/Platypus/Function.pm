@@ -35,16 +35,21 @@ context and better examples see L<FFI::Platypus>.
 Calls the function and returns the result.  You can also use the
 function object like a code reference.
 
-=head2 attach
-
-[version 0.75]
-
- $f->attach($perl_name);
- $f->attach($perl_name, $proto);
-
-Attaches the function as a xsub.
-
 =cut
+
+use overload '&{}' => sub {
+  my $ffi = shift;
+  sub { $ffi->call(@_) };
+};
+
+use overload 'bool' => sub {
+  my $ffi = shift;
+  return $ffi;
+};
+
+package FFI::Platypus::Function::Function;
+
+use base qw( FFI::Platypus::Function );
 
 sub attach
 {
@@ -64,33 +69,15 @@ sub attach
   $self;
 }
 
-use overload '&{}' => sub {
-  my $ffi = shift;
-  sub { $ffi->call(@_) };
-};
-
-use overload 'bool' => sub {
-  my $ffi = shift;
-  return $ffi;
-};
-
 package FFI::Platypus::Function::Wrapper;
+
+use base qw( FFI::Platypus::Function );
 
 sub new
 {
   my($class, $function, $wrapper) = @_;
   bless [ $function, $wrapper ], $class;
 }
-
-use overload '&{}' => sub {
-  my $ffi = shift;
-  sub { $ffi->call(@_) };
-};
-
-use overload 'bool' => sub {
-  my $ffi = shift;
-  return $ffi;
-};
 
 sub call
 {
