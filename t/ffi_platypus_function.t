@@ -50,4 +50,36 @@ subtest 'private' => sub {
 
 };
 
+subtest 'meta' => sub {
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($libtest);
+
+  $ffi->attach(mymeta_new    => [ 'int', 'string' ] => 'opaque');
+  $ffi->attach(mymeta_delete => [ 'opaque' ] => 'void' );
+
+  subtest 'unattached' => sub {
+
+    my $meta = mymeta_new(4, "prime");
+
+    my $f = $ffi->_function_meta('mymeta_test' => $meta => [ 'string' ] => 'string' );
+
+    is($f->call(), "foo = 4, bar = prime, baz = undef, count = 0");
+    is($f->call("just one"), "foo = 4, bar = prime, baz = just one, count = 1");
+
+    mymeta_delete($meta);
+
+  };
+
+  subtest 'attached' => sub {
+
+    my $meta = mymeta_new(6, "magnus");
+
+    $ffi->_function_meta('mymeta_test' => $meta => [ 'string' ] => 'string' )->attach('mymeta_test1');
+
+    is(mymeta_test1(), "foo = 6, bar = magnus, baz = undef, count = 0");
+    is(mymeta_test1("stella"), "foo = 6, bar = magnus, baz = stella, count = 1");
+  };
+
+};
+
 done_testing;

@@ -41,11 +41,11 @@ use FFI::Platypus::Function;
 
 =head1 DESCRIPTION
 
-Platypus is a library for creating interfaces to machine code libraries 
-written in languages like C, L<C++|FFI::Platypus::Lang::CPP>, 
-L<Fortran|FFI::Platypus::Lang::Fortran>, 
-L<Rust|FFI::Platypus::Lang::Rust>, 
-L<Pascal|FFI::Platypus::Lang::Pascal>. Essentially anything that gets 
+Platypus is a library for creating interfaces to machine code libraries
+written in languages like C, L<C++|FFI::Platypus::Lang::CPP>,
+L<Fortran|FFI::Platypus::Lang::Fortran>,
+L<Rust|FFI::Platypus::Lang::Rust>,
+L<Pascal|FFI::Platypus::Lang::Pascal>. Essentially anything that gets
 compiled into machine code.  This implementation uses C<libffi> to 
 accomplish this task.  C<libffi> is battle tested by a number of other 
 scripting and virtual machine languages, such as Python and Ruby to 
@@ -629,6 +629,21 @@ sub function
   $wrapper
     ? FFI::Platypus::Function::Wrapper->new($function, $wrapper)
     : $function;
+}
+
+sub _function_meta
+{
+  # NOTE: may be upgraded to a documented function one day,
+  # but shouldn't be used externally as we will rename it
+  # if that happens.
+  my($self, $name, $meta, $args, $ret) = @_;
+  $args = ['opaque','int',@$args];
+  $self->function(
+    $name, $args, $ret, sub {
+      my $xsub = shift;
+      $xsub->($meta, scalar(@_), @_);
+    },
+  );
 }
 
 =head2 attach
