@@ -227,7 +227,7 @@ sub configure
           },
         );
       }
-      %abi = %{ $probe->data->{abi} };
+      %abi = %{ $probe->data->{abi} || {} };
     }
     else
     {
