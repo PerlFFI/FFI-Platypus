@@ -249,6 +249,15 @@ sub configure
     print "only default ABI will be available\n";
   }
 
+  unless(%abi)
+  {
+    print "No ABIs were detected.  config.log follows:\n";
+    open my $fh, '<', 'config.log';
+    while(<$fh>) { print }
+    close $fh;
+    exit 2;
+  }
+
   $ch->write_config_h;
   $share_config->set( type_map => \%type_map );
   $share_config->set( align    => \%align    );
