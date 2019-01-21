@@ -18,11 +18,11 @@ Write Perl bindings to non-Perl libraries with FFI. No XS required.
 
 # DESCRIPTION
 
-Platypus is a library for creating interfaces to machine code libraries 
-written in languages like C, [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP), 
-[Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran), 
-[Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust), 
-[Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal). Essentially anything that gets 
+Platypus is a library for creating interfaces to machine code libraries
+written in languages like C, [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP),
+[Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran),
+[Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust),
+[Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal). Essentially anything that gets
 compiled into machine code.  This implementation uses `libffi` to 
 accomplish this task.  `libffi` is battle tested by a number of other 
 scripting and virtual machine languages, such as Python and Ruby to 
@@ -309,7 +309,7 @@ Example: a C function could return the address of another C function
 that you might want to call, or modules such as [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) produce 
 machine code at runtime that you can call from Platypus.
 
-\[version 0.75\]
+\[version 0.76\]
 
 If the last argument is a code reference, then it will be used as a 
 wrapper around the function when called.  The first argument to the wrapper 

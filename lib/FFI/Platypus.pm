@@ -599,7 +599,7 @@ Example: a C function could return the address of another C function
 that you might want to call, or modules such as L<FFI::TinyCC> produce 
 machine code at runtime that you can call from Platypus.
 
-[version 0.75]
+[version 0.76]
 
 If the last argument is a code reference, then it will be used as a 
 wrapper around the function when called.  The first argument to the wrapper 
