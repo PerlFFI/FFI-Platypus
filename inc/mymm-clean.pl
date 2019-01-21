@@ -10,7 +10,6 @@ unlink $_ for map { bsd_glob($_) } (
   't/ffi/*.bundle',
   'xs/*.o',
   'xs/*.obj',
-  '_mm/*',
   'examples/*.o',
   'examples/*.so',
   'examples/*.dll',
@@ -27,7 +26,6 @@ unlink $_ for map { bsd_glob($_) } (
   'FFI-Platypus-*.tar.gz',
 );
 
-rmdir '_mm' if -d '_mm';
 rmdir 'ffi/_build' if -d 'ffi/_build';
 rmdir 't/ffi/_build' if -d 't/ffi/_build';
 rmdir 'corpus/ffi_build/project1/_build' if -d 'corpus/ffi_build/project1/_build';

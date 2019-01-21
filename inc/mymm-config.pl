@@ -31,10 +31,3 @@ My::Probe->configure($share_config);
   $share_config->set(extra_linker_flags   => [ shellwords($class->libs) ]);
   $share_config->set(ccflags => $class->cflags);
 }
-
-mkdir '_mm' unless -d '_mm';
-{
-  my $fh;
-  open $fh, '>', '_mm/config';
-  close $fh;
-}

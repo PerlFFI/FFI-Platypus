@@ -1,5 +1,5 @@
-use strict; use warnings;
 BEGIN {
+  use strict; use warnings;
   unless(eval q{ use 5.008001; 1}) {
     print "Perl 5.008001 or better required\n";
     exit;
@@ -85,31 +85,34 @@ mymm::myWriteMakefile(%WriteMakefileArgs);
     my $postamble = '';
 
     $postamble .=
-      "config :: mymm_config\n" .
-      "mymm_config :\n" .
-      "\t\$(FULLPERL) inc/mymm-config.pl\n\n";
+      "config :: _mm/config\n" .
+      "mymm-config _mm/config:\n" .
+      "\t\$(FULLPERL) inc/mymm-config.pl\n" .
+      "\t\$(NOECHO)\$(MKPATH) _mm\n" .
+      "\t\$(NOECHO)\$(TOUCH) _mm/config\n\n";
 
     $postamble .=
-      "pure_all :: mymm_build\n" .
-      "mymm_build :\n" .
+      "pure_all :: mymm-build\n" .
+      "mymm-build : _mm/config\n" .
       "\t\$(FULLPERL) inc/mymm-build.pl\n\n";
 
     $postamble .=
-      "subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm_test\n" .
-      "mymm_test :\n" .
+      "subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm-test\n" .
+      "mymm-test :\n" .
       "\t\$(FULLPERL) inc/mymm-test.pl\n\n";
 
     $postamble .=
-      "clean :: mymm_clean\n" .
-      "mymm_clean : \n" . 
-      "\t\$(FULLPERL) inc/mymm-clean.pl\n\n";
+      "clean :: mymm-clean\n" .
+      "mymm-clean :\n" .
+      "\t\$(FULLPERL) inc/mymm-clean.pl\n" .
+      "\t\$(RM_RF) _mm\n\n";
 
     $postamble;
   }
   sub special_targets {
     my($self, @therest) = @_;
     my $st = $self->SUPER::special_targets(@therest);
-    $st .= "\n.PHONY: mymm_config mymm_build mymm_test mymm_clean\n";
+    $st .= "\n.PHONY: mymm-config mymm-build mymm-test mymm-clean\n";
     $st;
   }
 }

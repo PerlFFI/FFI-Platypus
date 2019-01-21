@@ -1324,7 +1324,7 @@ libtest` command to build it.  Example:
 
     % perl Makefile.PL
     % make
-    % make mymm_test
+    % make mymm-test
     % prove -bv t
     # or an individual test
     % perl -Mblib t/ffi_platypus_memory.t

@@ -145,7 +145,6 @@ sub dynamic_lib
   push @{ $h{"ffi_platypus.h"} }, map { "include/ffi_platypus_$_.h" } qw( config );
 
   my %targets = (
-    '_mm/config' => ['mymm_config'],
     'include/ffi_platypus_config.h' => ['_mm/config'],
     'lib/FFI/Platypus.c' => [File::Glob::bsd_glob('xs/*.xs'), 'lib/FFI/Platypus.xs', 'lib/FFI/typemap'],
   );
