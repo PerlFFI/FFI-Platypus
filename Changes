@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.76_02   2019-01-20 20:23:34 -0500
+  - Diagnostic release only.
+
 0.76_01   2019-01-20 20:14:45 -0500
   - function method can now take a wrapper code reference as its last
     argument in the same way as attach.
