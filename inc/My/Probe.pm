@@ -227,7 +227,15 @@ sub configure
           },
         );
       }
-      %abi = %{ $probe->data->{abi} || {} };
+      if(defined $probe->data->{abi})
+      {
+        %abi = %{ $probe->data->{abi} || {} };
+      }
+      else
+      {
+        print "Unable to verify any ffi_abis.\n";
+        print "only default ABI will be available\n";
+      }
     }
     else
     {
