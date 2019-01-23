@@ -22,7 +22,7 @@ subtest 'basic' => sub {
   ok(-d $build->file->dirname, "dir is a dir" );
   isa_ok $build->platform, 'FFI::Build::Platform';
 
-  $build->source('corpus/*.c');
+  $build->source('corpus/ffi_build/source/*.c');
   
   my($cfile) = $build->source;
   isa_ok $cfile, 'FFI::Build::File::C';

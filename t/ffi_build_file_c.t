@@ -9,7 +9,7 @@ use Capture::Tiny qw( capture_merged );
 
 subtest 'basic' => sub {
 
-  my $file = FFI::Build::File::C->new(['corpus','basic.c']);
+  my $file = FFI::Build::File::C->new(['corpus','ffi_build_file_c','basic.c']);
   
   isa_ok $file, 'FFI::Build::File::C';
   isa_ok $file, 'FFI::Build::File::Base';
