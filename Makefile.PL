@@ -9,7 +9,7 @@ BEGIN {
 use strict;
 use warnings;
 use 5.008001;
-use ExtUtils::MakeMaker 7.1001;
+use ExtUtils::MakeMaker 6.64;
 require "./inc/mymm.pl";
 
 my %WriteMakefileArgs = (
@@ -76,43 +76,7 @@ my %WriteMakefileArgs = (
   "VERSION" => "0.76_01",
   "test"    => {
     "TESTS" => "t/*.t"
-    }
+  }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);
-{ package MY;
-  sub postamble {
-    my $postamble = '';
-
-    $postamble .=
-      "config :: _mm/config\n" .
-      "mymm-config _mm/config:\n" .
-      "\t\$(FULLPERL) inc/mymm-config.pl\n" .
-      "\t\$(NOECHO)\$(MKPATH) _mm\n" .
-      "\t\$(NOECHO)\$(TOUCH) _mm/config\n\n";
-
-    $postamble .=
-      "pure_all :: mymm-build\n" .
-      "mymm-build : _mm/config\n" .
-      "\t\$(FULLPERL) inc/mymm-build.pl\n\n";
-
-    $postamble .=
-      "subdirs-test_dynamic subdirs-test_static subdirs-test :: mymm-test\n" .
-      "mymm-test :\n" .
-      "\t\$(FULLPERL) inc/mymm-test.pl\n\n";
-
-    $postamble .=
-      "clean :: mymm-clean\n" .
-      "mymm-clean :\n" .
-      "\t\$(FULLPERL) inc/mymm-clean.pl\n" .
-      "\t\$(RM_RF) _mm\n\n";
-
-    $postamble;
-  }
-  sub special_targets {
-    my($self, @therest) = @_;
-    my $st = $self->SUPER::special_targets(@therest);
-    $st .= "\n.PHONY: mymm-config mymm-build mymm-test mymm-clean\n";
-    $st;
-  }
-}

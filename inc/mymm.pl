@@ -189,4 +189,40 @@ sub dynamic_lib
   $dynamic_lib;
 }
 
+sub postamble {
+  my $postamble = '';
+
+  $postamble .=
+    "config :: _mm/config\n" .
+    "mm-config _mm/config:\n" .
+    "\t\$(FULLPERL) inc/mm-config.pl\n" .
+    "\t\$(NOECHO)\$(MKPATH) _mm\n" .
+    "\t\$(NOECHO)\$(TOUCH) _mm/config\n\n";
+
+  $postamble .=
+    "pure_all :: mm-build\n" .
+    "mm-build : _mm/config\n" .
+    "\t\$(FULLPERL) inc/mm-build.pl\n\n";
+
+  $postamble .=
+    "subdirs-test_dynamic subdirs-test_static subdirs-test :: mm-test\n" .
+    "mm-test :\n" .
+    "\t\$(FULLPERL) inc/mm-test.pl\n\n";
+
+  $postamble .=
+    "clean :: mm-clean\n" .
+    "mm-clean :\n" .
+    "\t\$(FULLPERL) inc/mm-clean.pl\n" .
+    "\t\$(RM_RF) _mm\n\n";
+
+  $postamble;
+}
+
+sub special_targets {
+  my($self, @therest) = @_;
+  my $st = $self->SUPER::special_targets(@therest);
+  $st .= "\n.PHONY: mm-config mm-build mm-test mm-clean\n";
+  $st;
+}
+
 1;

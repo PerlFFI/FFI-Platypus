@@ -32,6 +32,7 @@ $post_diag = sub {
     my $pm = "$class.pm";
     $pm =~ s/::/\//g;
     require $pm;
+    $Alien::FFI::pkgconfig::VERBOSE =
     $Alien::FFI::pkgconfig::VERBOSE = 0;
     use FFI::Platypus;
     use FFI::Platypus::Memory;

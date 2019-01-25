@@ -1364,6 +1364,15 @@ The build process also respects these environment variables:
         Writing Makefile for FFI::Platypus
         Writing MYMETA.yml and MYMETA.json
 
+- V
+
+    When building platypus may hide some of the excessive output when
+    probing and building, unless youset `V` to a true value.
+
+        % env V=1 perl Makefile.PL
+        % make V=1
+        ...
+
 ## Coding Guidelines
 
 - Do not hesitate to make code contribution.  Making useful contributions 
