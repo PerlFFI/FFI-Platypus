@@ -128,13 +128,30 @@ sub myWriteMakefile
   # uniq'ify it
   @dlext = do { my %seen; grep { !$seen{$_}++ } @dlext };
 
-  #print "dlext[]=$_\n" for @dlext;
-
   $share_config->set(diag => \%diag);
   $share_config->set(config_dlext => \@dlext);
 
   ExtUtils::MakeMaker::WriteMakefile(%args);
 }
+
+#package MM;
+#
+#sub init_tools
+#{
+#  my $self = shift;
+#  $self->SUPER::init_tools(@_);
+#
+#  return if !!$ENV{V};
+#
+#  my $noecho = $^O eq 'MSWin32' ? 'REM ' : '@';
+#
+#  foreach my $tool (qw( RM_F RM_RF CP MV ))
+#  {
+#    $self->{$tool} = $noecho . $self->{$tool};
+#  }
+#
+#  return;
+#}
 
 package MY;
 
@@ -192,28 +209,30 @@ sub dynamic_lib
 sub postamble {
   my $postamble = '';
 
+  my $noecho = !!$ENV{V} ? '' : '$(NOECHO) ';
+
   $postamble .=
     "config :: _mm/config\n" .
     "mm-config _mm/config:\n" .
-    "\t\$(FULLPERL) inc/mm-config.pl\n" .
-    "\t\$(NOECHO)\$(MKPATH) _mm\n" .
-    "\t\$(NOECHO)\$(TOUCH) _mm/config\n\n";
+    "\t$noecho\$(FULLPERL) inc/mm-config.pl\n" .
+    "\t$noecho\$(MKPATH) _mm\n" .
+    "\t$noecho\$(TOUCH) _mm/config\n\n";
 
   $postamble .=
     "pure_all :: mm-build\n" .
     "mm-build : _mm/config\n" .
-    "\t\$(FULLPERL) inc/mm-build.pl\n\n";
+    "\t$noecho\$(FULLPERL) inc/mm-build.pl\n\n";
 
   $postamble .=
     "subdirs-test_dynamic subdirs-test_static subdirs-test :: mm-test\n" .
     "mm-test :\n" .
-    "\t\$(FULLPERL) inc/mm-test.pl\n\n";
+    "\t$noecho\$(FULLPERL) inc/mm-test.pl\n\n";
 
   $postamble .=
     "clean :: mm-clean\n" .
     "mm-clean :\n" .
-    "\t\$(FULLPERL) inc/mm-clean.pl\n" .
-    "\t\$(RM_RF) _mm\n\n";
+    "\t$noecho\$(FULLPERL) inc/mm-clean.pl\n" .
+    "\t$noecho\$(RM_RF) _mm\n\n";
 
   $postamble;
 }

@@ -27,7 +27,7 @@ sub generate
 
     if($content ne $old)
     {
-      print "generating new $ppport_h\n";
+      print "XX generating new $ppport_h\n";
       open my $fh, '>', $ppport_h;
       print $fh $content;
       close $fh;
