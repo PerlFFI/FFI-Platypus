@@ -173,7 +173,6 @@ sub run
   my($self, $type, @cmd) = @_;
   my($out, $ret) = capture_merged {
     print "+ @cmd\n";
-    print "cmd=$_\n" for @cmd;
     system @cmd;
     $?;
   };
