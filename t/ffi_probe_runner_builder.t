@@ -6,6 +6,8 @@ use Capture::Tiny qw( capture_merged );
 use FFI::Probe::Runner::Builder;
 use IPC::Cmd qw( can_run );
 
+$FFI::Probe::Runner::Builder::VERBOSE = 1;
+
 my $dir = tempdir( CLEANUP => 1, DIR => '.', TEMPLATE => 'test-probe-XXXXXX' );
 
 note "dir = $dir";
