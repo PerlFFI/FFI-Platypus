@@ -41,19 +41,64 @@ The root directory for where to place the probe runner files.
 Will be created if it doesn't already exist.  The default 
 makes sense for when L<FFI::Platypus> is being built.
 
+=item ccflags
+
+Any additional compiler to compile with.  May be either a string,
+or a array reference.
+
+=item ldflags
+
+Any additional compiler flags to link with.  May be either a string,
+or an array reference.
+
+=item libs
+
+Any additional library flags to link with.  May be either a string,
+or an array reference.
+
 =back
 
 =cut
+
+sub _shellwords
+{
+  my($string) = @_;
+  $string =~ s/^\s+//;
+  grep { defined $_ } Text::ParseWords::shellwords($string);
+}
 
 sub new
 {
   my($class, %args) = @_;
 
+  $DB::single = 1;
   $args{dir} ||= 'blib/lib/auto/share/dist/FFI-Platypus/probe';
 
+  foreach my $arg (qw( ccflags ldflags libs ))
+  {
+    if(! defined $args{$arg})
+    {
+      $args{$arg} = [];
+    }
+    elsif(ref($args{$arg}) eq '')
+    {
+      $args{$arg} = _shellwords $args{$arg};
+    }
+  }
+
+  unshift @{ $args{ccflags} }, _shellwords $Config{ccflags};
+  unshift @{ $args{ldflags} }, _shellwords $Config{ldflags};
+  unshift @{ $args{libs}    }, _shellwords $Config{perllibs};
+
   my $self = bless {
-    dir => $args{dir},
+    dir     => $args{dir},
+    cc      => [_shellwords($Config{cc})],
+    ccflags => $args{ccflags},
+    ldflags => $args{ldflags},
+    libs    => $args{libs},
   }, $class;
+
+  $DB::single = 1;
   $self;
 }
 
@@ -86,6 +131,29 @@ sub dir
   }
   $dir;
 }
+
+=head2 cc
+
+ my @cc = $builder->cc;
+
+=head2 ccflags
+
+ my @ccflags = $builder->ccflags;
+
+=head2 ldflags
+
+ my @ldflags = $builder->ldflags;
+
+=head2 libs
+
+ my @libs = $builder->libs;
+
+=cut
+
+sub cc      { @{ shift->{cc}      } }
+sub ccflags { @{ shift->{ccflags} } }
+sub ldflags { @{ shift->{ldflags} } }
+sub libs    { @{ shift->{libs}    } }
 
 =head2 file
 
@@ -193,13 +261,6 @@ Builds the probe runner.  Returns the path to the executable.
 
 =cut
 
-sub _shellwords
-{
-  my($string) = @_;
-  $string =~ s/^\s+//;
-  grep { defined $_ } Text::ParseWords::shellwords($string);
-}
-
 sub build
 {
   my($self) = @_;
@@ -211,11 +272,11 @@ sub build
 
   # compile
   print "c src/dlrun.c\n";
-  $self->run(compile => _shellwords($Config{cc}), _shellwords($Config{ccflags}), '-c', '-o' => $ofn, $cfn);
+  $self->run(compile => $self->cc, $self->ccflags, '-c', '-o' => $ofn, $cfn);
 
   # link
   print "l src/dlrun$Config{obj_ext}\n";
-  $self->run(link => _shellwords($Config{ld}), _shellwords($Config{ldflags}), '-o' => $xfn, $ofn, _shellwords($Config{perllibs}));
+  $self->run(link => $self->cc, $self->ldflags, '-o' => $xfn, $ofn, $self->libs);
 
   # verify
   print "v bin/dlrun$Config{exe_ext}\n";
@@ -327,7 +388,7 @@ main(int argc, char **argv)
 
   if(dlmain == NULL)
   {
-    printf(stderr, "no dlmain symbol");
+    fprintf(stderr, "no dlmain symbol");
     return 1;
   }
 

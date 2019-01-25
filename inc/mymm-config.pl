@@ -11,7 +11,6 @@ exit if -f '_mm/config';
 
 {
   require './lib/FFI/Probe/Runner/Builder.pm';
-  print "building probe runner...\n";
   my $builder = FFI::Probe::Runner::Builder->new;
   $builder->build;
 }
