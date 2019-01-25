@@ -1593,6 +1593,15 @@ environment variable when you run C<Makefile.PL>:
  Writing Makefile for FFI::Platypus
  Writing MYMETA.yml and MYMETA.json
 
+=item V
+
+When building platypus may hide some of the excessive output when
+probing and building, unless youset C<V> to a true value.
+
+ % env V=1 perl Makefile.PL
+ % make V=1
+ ...
+
 =back
 
 =head2 Coding Guidelines

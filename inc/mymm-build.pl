@@ -8,7 +8,7 @@ use FFI::Build;
 my $lib = FFI::Build->new(
   'plfill',
   source => ['ffi/*.c'],
-  verbose => 1,
+  verbose => (!!$ENV{V} ? 2 : 1),
   dir => 'blib/lib/auto/share/dist/FFI-Platypus/lib',
 )->build;
 

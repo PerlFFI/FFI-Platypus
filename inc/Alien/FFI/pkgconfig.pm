@@ -5,7 +5,7 @@ use warnings;
 use Config;
 use IPC::Cmd ();
 
-our $VERBOSE = 1;
+our $VERBOSE = !!$ENV{V};
 
 sub _pkg_config_exe
 {

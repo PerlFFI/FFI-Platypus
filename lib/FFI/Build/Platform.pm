@@ -407,6 +407,7 @@ sub cc_mm_works
 {
   my $self = _self(shift);
   my $verbose = shift;
+  $verbose ||= 0;
   
   unless(defined $self->{cc_mm_works})
   {
@@ -432,10 +433,14 @@ sub cc_mm_works
       print "+ @cmd\n";
       system @cmd;
     });
-    
-    if($verbose)
+
+    if($verbose >= 2)
     {
       print $out;
+    }
+    elsif($verbose >= 1)
+    {
+      print "CC (checkfor -MM)\n";
     }
     
     

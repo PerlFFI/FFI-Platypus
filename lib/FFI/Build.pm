@@ -109,8 +109,22 @@ List of source files.  You can use wildcards supported by C<bsd_glob> from L<Fil
 =item verbose
 
 By default this class does not print out the actual compiler and linker commands used in building
-the library unless there is a failure.  If this option is set to true, then these commands will
-always be printed.
+the library unless there is a failure.  You can alter this behavior with this option.  Set to
+one of these values:
+
+=over 4
+
+=item 0
+
+Default, quiet unless there is a failure.
+
+=item 1
+
+Output the operation (compile, link, etc) and the file, but nothing else
+
+=item 2
+
+Output the complete commands run verbatim.
 
 =back
 
@@ -381,9 +395,13 @@ sub build
     print $out;
     die "error building @{[ $self->file->path ]} from @objects";
   }
-  elsif($self->verbose)
+  elsif($self->verbose >= 2)
   {
     print $out;
+  }
+  elsif($self->verbose >= 1)
+  {
+    print "LD @{[ $self->file->path ]}\n";
   }
   
   $self->file;

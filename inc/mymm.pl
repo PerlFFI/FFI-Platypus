@@ -19,6 +19,8 @@ sub _pkg_config_exe
   return;
 }
 
+our $VERBOSE = !!$ENV{V};
+
 sub _pkg_config
 {
   my(@args) = @_;
@@ -26,7 +28,7 @@ sub _pkg_config
   if(defined $cmd)
   {
     my @cmd = ($cmd, @args);
-    print "+@cmd\n";
+    print "+@cmd\n" if $VERBOSE;
     system @cmd;
     return $? == 0;
   }
