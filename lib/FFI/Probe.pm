@@ -454,7 +454,7 @@ sub set
   my @key = @_;
 
   my $key = join ".", map { /\./ ? "\"$_\"" : $_ } @key;
-  print "$key=$value\n";
+  print "PR $key=$value\n";
   $self->log("$key=$value");
   _set($self->{data}, $value, @key);
 }
