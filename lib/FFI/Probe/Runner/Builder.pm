@@ -203,13 +203,15 @@ Extract the source for the probe runner.
 
 =cut
 
+our $VERBOSE = !!$ENV{V};
+
 sub extract
 {
   my($self) = @_;
 
   # the source src/dlrun.c
   {
-    print "x src/dlrun.c\n";
+    print "x src/dlrun.c\n" unless $VERBOSE;
     my $fh;
     my $fn = $self->file('src', 'dlrun.c');
     my $source = $self->source;
@@ -220,13 +222,11 @@ sub extract
 
   # the bin directory bin
   {
-    print "x bin/\n";
+    print "x bin/\n" unless $VERBOSE;
     $self->dir('bin');
   }
   
 }
-
-our $VERBOSE;
 
 =head2 run
 
@@ -271,15 +271,15 @@ sub build
   my $xfn = $self->file('bin', "dlrun$Config{exe_ext}");
 
   # compile
-  print "c src/dlrun.c\n";
+  print "c src/dlrun.c\n" unless $VERBOSE;
   $self->run(compile => $self->cc, $self->ccflags, '-c', '-o' => $ofn, $cfn);
 
   # link
-  print "l src/dlrun$Config{obj_ext}\n";
+  print "l src/dlrun$Config{obj_ext}\n" unless $VERBOSE;
   $self->run(link => $self->cc, $self->ldflags, '-o' => $xfn, $ofn, $self->libs);
 
   # verify
-  print "v bin/dlrun$Config{exe_ext}\n";
+  print "v bin/dlrun$Config{exe_ext}\n" unless $VERBOSE;
   my $out = $self->run(verify => $xfn, 'verify', 'self');
   if($out !~ /dlrun verify self ok/)
   {
@@ -288,7 +288,7 @@ sub build
   }
 
   # remove object
-  print "u src/dlrun$Config{obj_ext}\n";
+  print "u src/dlrun$Config{obj_ext}\n" unless $VERBOSE;
   unlink $ofn;
 
   $xfn;

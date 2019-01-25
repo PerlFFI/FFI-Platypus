@@ -67,9 +67,13 @@ sub build_item
     print $out;
     die "error building $object from $self";
   }
-  elsif($self->build && $self->build->verbose)
+  elsif($self->build && $self->build->verbose >= 2)
   {
     print $out;
+  }
+  elsif($self->build && $self->build->verbose >= 1)
+  {
+    print "CC @{[ $self->path ]}\n";
   }
   
   $object;
