@@ -242,8 +242,8 @@ sub postamble {
     "\t$noecho\$(FULLPERL) inc/mm-build.pl\n\n";
 
   $postamble .=
-    "subdirs-test_dynamic subdirs-test_static subdirs-test :: mm-test\n" .
-    "mm-test :\n" .
+    "subdirs-test_dynamic subdirs-test_static subdirs-test :: ffi-test\n" .
+    "ffi-test :\n" .
     "\t$noecho\$(FULLPERL) inc/mm-test.pl\n\n";
 
   $postamble .=
@@ -258,7 +258,7 @@ sub postamble {
 sub special_targets {
   my($self, @therest) = @_;
   my $st = $self->SUPER::special_targets(@therest);
-  $st .= "\n.PHONY: flags probe-runner-builder prb ffi\n";
+  $st .= "\n.PHONY: flags probe-runner-builder prb ffi ffi-test\n";
   $st;
 }
 
