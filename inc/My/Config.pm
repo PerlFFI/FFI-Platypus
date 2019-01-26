@@ -122,12 +122,16 @@ sub share_config
 sub probe
 {
   my($self) = @_;
+
+  my $builder = FFI::Probe::Runner::Builder->new;
+  $builder->build unless -e $builder->exe;
+
   $self->{probe} ||= FFI::Probe->new(
     runner => FFI::Probe::Runner->new(
       exe => "blib/lib/auto/share/dist/FFI-Platypus/probe/bin/dlrun$Config{exe_ext}",
     ),
     log => "config.log",
-    data_filename => "blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
+    data_filename => "./blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
     alien => [$self->share_config->get('alien')->{class}],
     cflags => ['-Iinclude'],
   );
@@ -136,8 +140,6 @@ sub probe
 sub configure
 {
   my($self) = @_;
-
-  FFI::Probe::Runner::Builder->new->build;
 
   my $probe = $self->probe;
 

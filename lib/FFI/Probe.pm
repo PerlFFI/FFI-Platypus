@@ -453,9 +453,18 @@ sub set
   my $value = pop;
   my @key = @_;
 
+  my $print_value = $value;
+  if(ref $print_value)
+  {
+    my $d = Data::Dumper->new([$value], [qw($value)]);
+    $d->Indent(0);
+    $d->Terse(1);
+    $print_value = $d->Dump;
+  }
+
   my $key = join ".", map { /\./ ? "\"$_\"" : $_ } @key;
-  print "PR $key=$value\n";
-  $self->log("$key=$value");
+  print "PR $key=$print_value\n";
+  $self->log("$key=$print_value");
   _set($self->{data}, $value, @key);
 }
 

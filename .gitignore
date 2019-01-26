@@ -35,3 +35,4 @@ core
 *.def
 /test-*
 tmpbuild.*
+/ffi-probe-*

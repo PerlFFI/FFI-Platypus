@@ -3,7 +3,6 @@ use warnings;
 use ExtUtils::CBuilder;
 use lib 'inc';
 use My::Config;
-use lib 'lib';
 
 exit if -f '_mm/config';
 

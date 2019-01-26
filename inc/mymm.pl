@@ -212,8 +212,18 @@ sub postamble {
   my $noecho = !!$ENV{V} ? '' : '$(NOECHO) ';
 
   $postamble .=
+    "_mm/flags:\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.cc \$(CC)\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ccflags \$(INC) \$(CCFLAGS) \$(OPTIMIZE)\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ld \$(LD)\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ldflags \$(LDFLAGS)\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.lddlflags \$(LDDLFLAGS)\n" .
+    "\t$noecho\$(MKPATH) _mm\n" .
+    "\t$noecho\$(TOUCH) _mm/flags\n\n";
+
+  $postamble .=
     "config :: _mm/config\n" .
-    "mm-config _mm/config:\n" .
+    "mm-config _mm/config: _mm/flags\n" .
     "\t$noecho\$(FULLPERL) inc/mm-config.pl\n" .
     "\t$noecho\$(MKPATH) _mm\n" .
     "\t$noecho\$(TOUCH) _mm/config\n\n";
@@ -232,7 +242,7 @@ sub postamble {
     "clean :: mm-clean\n" .
     "mm-clean :\n" .
     "\t$noecho\$(FULLPERL) inc/mm-clean.pl\n" .
-    "\t$noecho\$(RM_RF) _mm\n\n";
+    "\t$noecho\$(RM_RF) _mm ffi-probe-*\n\n";
 
   $postamble;
 }
