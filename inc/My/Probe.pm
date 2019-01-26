@@ -5,6 +5,7 @@ use warnings;
 use Config;
 use File::Spec;
 use FindBin;
+use Text::ParseWords qw( shellwords );
 use My::ShareConfig;
 use My::ConfigH;
 use My::ShareConfig;
@@ -272,6 +273,19 @@ sub configure
   $self->share_config->set( align    => \%align    );
   $self->share_config->set( probe    => \%probe    );
   $self->share_config->set( abi      => \%abi      );
+}
+
+sub alien
+{
+  my($self) = @_;
+
+  my $class = $self->share_config->get('alien')->{class};
+  my $pm = "$class.pm";
+  $pm =~ s/::/\//g;
+  require $pm;
+  $self->share_config->set(extra_compiler_flags => [ shellwords($class->cflags) ]);
+  $self->share_config->set(extra_linker_flags   => [ shellwords($class->libs) ]);
+  $self->share_config->set(ccflags => $class->cflags);
 }
 
 1;
