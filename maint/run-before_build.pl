@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use lib 'inc';
-use My::Dev;
+use My::Config;
 use File::Spec;
 
 if(@ARGV > 0)
@@ -20,7 +20,7 @@ if(@ARGV > 0)
     }
   }
 
-  My::Dev->clean;
+  My::Config->new->clean;
 }
 
 foreach my $bits (qw( 16 32 64 ))

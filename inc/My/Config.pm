@@ -12,6 +12,7 @@ use My::ShareConfig;
 use lib 'lib';
 use FFI::Probe;
 use FFI::Probe::Runner;
+use FFI::Probe::Runner::Builder;
 use File::Glob qw( bsd_glob );
 use File::Basename qw( basename );
 
@@ -76,6 +77,42 @@ sub new
   bless {}, $class;
 }
 
+my $ppport_h = File::Spec->catfile(qw( include ppport.h ));
+
+sub generate_dev
+{
+  if(!-r $ppport_h || -d '.git')
+  {
+    my $ppport_version = 3.28;
+    require Devel::PPPort;
+    die "Devel::PPPort $ppport_version or better required for development"
+      unless $Devel::PPPort::VERSION >= $ppport_version;
+
+    my $old = '';
+    if(-e $ppport_h)
+    {
+      open my $fh, '<', $ppport_h;
+      $old = do { local $/; <$fh> };
+      close $fh;
+    }
+
+    my $content = Devel::PPPort::GetFileContents('include/ppport.h');
+
+    if($content ne $old)
+    {
+      print "XX generating new $ppport_h\n";
+      open my $fh, '>', $ppport_h;
+      print $fh $content;
+      close $fh;
+    }
+  }
+}
+
+sub clean
+{
+  unlink $ppport_h;
+}
+
 sub share_config
 {
   my($self) = @_;
@@ -99,6 +136,8 @@ sub probe
 sub configure
 {
   my($self) = @_;
+
+  FFI::Probe::Runner::Builder->new->build;
 
   my $probe = $self->probe;
 
