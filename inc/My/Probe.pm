@@ -7,6 +7,7 @@ use File::Spec;
 use FindBin;
 use My::ShareConfig;
 use My::ConfigH;
+use My::ShareConfig;
 use lib 'lib';
 use FFI::Probe;
 use FFI::Probe::Runner;
@@ -68,23 +69,40 @@ EOF
 
 push @probe_types, @extra_probe_types unless $ENV{FFI_PLATYPUS_NO_EXTRA_TYPES};
 
-my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypus_config.h' ) );
-
-sub configure
+sub new
 {
-  my($self, $share_config) = @_;
+  my($class) = @_;
+  bless {}, $class;
+}
 
-  my $probe = FFI::Probe->new(
+sub share_config
+{
+  my($self) = @_;
+  $self->{share_config} ||= My::ShareConfig->new;
+}
+
+sub probe
+{
+  my($self) = @_;
+  $self->{probe} ||= FFI::Probe->new(
     runner => FFI::Probe::Runner->new(
       exe => "blib/lib/auto/share/dist/FFI-Platypus/probe/bin/dlrun$Config{exe_ext}",
     ),
     log => "config.log",
     data_filename => "blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
-    alien => [$share_config->get('alien')->{class}],
+    alien => [$self->share_config->get('alien')->{class}],
     cflags => ['-Iinclude'],
   );
+}
 
-  return if -r $config_h && ref($share_config->get( 'type_map' )) eq 'HASH';
+sub configure
+{
+  my($self) = @_;
+
+  my $probe = $self->probe;
+
+  my $config_h = File::Spec->rel2abs( File::Spec->catfile( 'include', 'ffi_platypus_config.h' ) );
+  return if -r $config_h && ref($self->share_config->get( 'type_map' )) eq 'HASH';
 
   my $ch = My::ConfigH->new;
 
@@ -108,7 +126,7 @@ sub configure
     }
   }
 
-  if(!$share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
+  if(!$self->share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
   {
     $ch->define_var( HAVE_IV_IS_64 => 1 );
   }
@@ -250,10 +268,10 @@ sub configure
   }
 
   $ch->write_config_h;
-  $share_config->set( type_map => \%type_map );
-  $share_config->set( align    => \%align    );
-  $share_config->set( probe    => \%probe    );
-  $share_config->set( abi      => \%abi      );
+  $self->share_config->set( type_map => \%type_map );
+  $self->share_config->set( align    => \%align    );
+  $self->share_config->set( probe    => \%probe    );
+  $self->share_config->set( abi      => \%abi      );
 }
 
 1;

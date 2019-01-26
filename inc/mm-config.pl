@@ -5,21 +5,19 @@ use Text::ParseWords qw( shellwords );
 use lib 'inc';
 use My::Probe;
 use My::Dev;
-use My::ShareConfig;
+use lib 'lib';
+use FFI::Probe::Runner::Builder;
 
 exit if -f '_mm/config';
 
-{
-  require './lib/FFI/Probe/Runner/Builder.pm';
-  my $builder = FFI::Probe::Runner::Builder->new;
-  $builder->build;
-}
+FFI::Probe::Runner::Builder->new->build;
 
 My::Dev->generate;
 
-my $share_config = My::ShareConfig->new;
+my $probe = My::Probe->new;
+$probe->configure;
 
-My::Probe->configure($share_config);
+my $share_config = $probe->share_config;
 
 {
   my $class = $share_config->get('alien')->{class};
