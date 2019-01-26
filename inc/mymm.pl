@@ -212,25 +212,33 @@ sub postamble {
   my $noecho = !!$ENV{V} ? '' : '$(NOECHO) ';
 
   $postamble .=
+    "flags: _mm/flags\n" .
     "_mm/flags:\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.cc \$(CC)\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ccflags \$(INC) \$(CCFLAGS) \$(OPTIMIZE)\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ld \$(LD)\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ldflags \$(LDFLAGS)\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.cc        \$(CC)\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ccflags   \$(INC) \$(CCFLAGS) \$(OPTIMIZE)\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ld        \$(LD)\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ldflags   \$(LDFLAGS)\n" .
     "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.lddlflags \$(LDDLFLAGS)\n" .
     "\t$noecho\$(MKPATH) _mm\n" .
     "\t$noecho\$(TOUCH) _mm/flags\n\n";
 
   $postamble .=
+    "probe-runner-builder prb: _mm/probe-builder\n" .
+    "_mm/probe-builder: _mm/flags\n" .
+    "\t$noecho\$(FULLPERL) inc/mm-config-pb.pl\n" .
+    "\t$noecho\$(MKPATH) _mm\n" .
+    "\t$noecho\$(TOUCH) _mm/probe-builder\n\n";
+
+  $postamble .=
     "config :: _mm/config\n" .
-    "mm-config _mm/config: _mm/flags\n" .
+    "_mm/config: _mm/flags _mm/probe-builder\n" .
     "\t$noecho\$(FULLPERL) inc/mm-config.pl\n" .
     "\t$noecho\$(MKPATH) _mm\n" .
     "\t$noecho\$(TOUCH) _mm/config\n\n";
 
   $postamble .=
-    "pure_all :: mm-build\n" .
-    "mm-build : _mm/config\n" .
+    "pure_all :: ffi\n" .
+    "ffi: _mm/config\n" .
     "\t$noecho\$(FULLPERL) inc/mm-build.pl\n\n";
 
   $postamble .=
@@ -250,7 +258,7 @@ sub postamble {
 sub special_targets {
   my($self, @therest) = @_;
   my $st = $self->SUPER::special_targets(@therest);
-  $st .= "\n.PHONY: mm-config mm-build mm-test mm-clean\n";
+  $st .= "\n.PHONY: flags probe-runner-builder prb ffi\n";
   $st;
 }
 

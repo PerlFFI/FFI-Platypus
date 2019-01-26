@@ -87,13 +87,19 @@ sub new
     data          => $data,
     dir           => tempdir( CLEANUP => 1, TEMPLATE => 'ffi-probe-XXXXXX', DIR => '.' ),
     counter       => 0,
-    runner        => $args{runner} || FFI::Probe::Runner->new,
+    runner        => $args{runner},
     alien         => $args{alien} || [],
     cflags        => $args{cflags},
     libs          => $args{libs},
   }, $class;
 
   $self;
+}
+
+sub _runner
+{
+  my($self) = @_;
+  $self->{runner} ||= FFI::Probe::Runner->new;
 }
 
 =head1 METHODS
@@ -275,7 +281,7 @@ sub check_eval
     $lib;
   };
 
-  my $result = $self->{runner}->run($lib->path);
+  my $result = $self->_runner->run($lib->path);
 
   $self->log("[stdout]");
   $self->log($result->stdout);
