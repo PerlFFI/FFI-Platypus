@@ -1,4 +1,4 @@
-package My::Probe;
+package My::Config;
 
 use strict;
 use warnings;

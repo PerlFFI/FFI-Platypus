@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use ExtUtils::CBuilder;
 use lib 'inc';
-use My::Probe;
+use My::Config;
 use My::Dev;
 use lib 'lib';
 use FFI::Probe::Runner::Builder;
@@ -13,6 +13,6 @@ FFI::Probe::Runner::Builder->new->build;
 
 My::Dev->generate;
 
-my $probe = My::Probe->new;
+my $probe = My::Config->new;
 $probe->configure;
 $probe->alien;
