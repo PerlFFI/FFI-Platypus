@@ -123,18 +123,38 @@ sub probe
 {
   my($self) = @_;
 
-  my $builder = FFI::Probe::Runner::Builder->new;
-  $builder->build unless -e $builder->exe;
-
   $self->{probe} ||= FFI::Probe->new(
-    runner => FFI::Probe::Runner->new(
-      exe => "blib/lib/auto/share/dist/FFI-Platypus/probe/bin/dlrun$Config{exe_ext}",
-    ),
+    runner => $self->probe_runner,
     log => "config.log",
     data_filename => "./blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
     alien => [$self->share_config->get('alien')->{class}],
     cflags => ['-Iinclude'],
   );
+}
+
+sub probe_runner
+{
+  my($self) = @_;
+  my $builder = FFI::Probe::Runner::Builder->new;
+  my $exe = $builder->exe;
+  if(-e $exe)
+  {
+    return FFI::Probe::Runner->new( exe => $exe );
+  }
+  else
+  {
+    return undef;
+  }
+}
+
+sub probe_runner_build
+{
+  my($self) = @_;
+  my $probe = $self->probe;
+  my $builder = FFI::Probe::Runner::Builder->new;
+  foreach my $key (qw( cc ccflags ld ldflags ))
+  { @{ $builder->$key } = @{ $probe->data->{eumm}->{$key} } }
+  $builder->build unless -e $builder->exe;  
 }
 
 sub configure

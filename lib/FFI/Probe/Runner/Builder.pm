@@ -61,7 +61,8 @@ sub new
   my $self = bless {
     dir     => $args{dir},
     cc      => [_shellwords $Config{cc}],
-    ccflags => [_shellwords $Config{ccflags}],
+    ld      => [_shellwords $Config{ld}],
+    ccflags => [_shellwords join(' ', $Config{ccflags}, $Config{optimize})],
     ldflags => [_shellwords $Config{ldflags}],
     libs    => [_shellwords $Config{perllibs}],
   }, $class;
@@ -127,6 +128,7 @@ The library flags to use.  Returned as a array reference so that it may be modif
 
 sub cc      { shift->{cc}      }
 sub ccflags { shift->{ccflags} }
+sub ld      { shift->{ld}      }
 sub ldflags { shift->{ldflags} }
 sub libs    { shift->{libs}    }
 
@@ -266,7 +268,7 @@ sub build
 
   # link
   print "LD src/dlrun$Config{obj_ext}\n" unless $VERBOSE;
-  $self->run(link => $self->cc, $self->ldflags, '-o' => $xfn, $ofn, $self->libs);
+  $self->run(link => $self->ld, $self->ldflags, '-o' => $xfn, $ofn, $self->libs);
 
   # verify
   print "VV bin/dlrun$Config{exe_ext}\n" unless $VERBOSE;
