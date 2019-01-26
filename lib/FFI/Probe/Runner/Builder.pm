@@ -41,21 +41,6 @@ The root directory for where to place the probe runner files.
 Will be created if it doesn't already exist.  The default 
 makes sense for when L<FFI::Platypus> is being built.
 
-=item ccflags
-
-Any additional compiler to compile with.  May be either a string,
-or a array reference.
-
-=item ldflags
-
-Any additional compiler flags to link with.  May be either a string,
-or an array reference.
-
-=item libs
-
-Any additional library flags to link with.  May be either a string,
-or an array reference.
-
 =back
 
 =cut
@@ -71,34 +56,16 @@ sub new
 {
   my($class, %args) = @_;
 
-  $DB::single = 1;
   $args{dir} ||= 'blib/lib/auto/share/dist/FFI-Platypus/probe';
-
-  foreach my $arg (qw( ccflags ldflags libs ))
-  {
-    if(! defined $args{$arg})
-    {
-      $args{$arg} = [];
-    }
-    elsif(ref($args{$arg}) eq '')
-    {
-      $args{$arg} = _shellwords $args{$arg};
-    }
-  }
-
-  unshift @{ $args{ccflags} }, _shellwords $Config{ccflags};
-  unshift @{ $args{ldflags} }, _shellwords $Config{ldflags};
-  unshift @{ $args{libs}    }, _shellwords $Config{perllibs};
 
   my $self = bless {
     dir     => $args{dir},
-    cc      => [_shellwords($Config{cc})],
-    ccflags => $args{ccflags},
-    ldflags => $args{ldflags},
-    libs    => $args{libs},
+    cc      => [_shellwords $Config{cc}],
+    ccflags => [_shellwords $Config{ccflags}],
+    ldflags => [_shellwords $Config{ldflags}],
+    libs    => [_shellwords $Config{perllibs}],
   }, $class;
 
-  $DB::single = 1;
   $self;
 }
 
@@ -134,26 +101,34 @@ sub dir
 
 =head2 cc
 
- my @cc = $builder->cc;
+ my @cc = @{ $builder->cc };
+
+The C compiler to use.  Returned as a array reference so that it may be modified.
 
 =head2 ccflags
 
- my @ccflags = $builder->ccflags;
+ my @ccflags = @{ $builder->ccflags };
+
+The C compiler flags to use.  Returned as a array reference so that it may be modified.
 
 =head2 ldflags
 
- my @ldflags = $builder->ldflags;
+ my @ldflags = @{ $builder->ldflags };
+
+The linker flags to use.  Returned as a array reference so that it may be modified.
 
 =head2 libs
 
- my @libs = $builder->libs;
+ my @libs = @{ $builder->libs };
+
+The library flags to use.  Returned as a array reference so that it may be modified.
 
 =cut
 
-sub cc      { @{ shift->{cc}      } }
-sub ccflags { @{ shift->{ccflags} } }
-sub ldflags { @{ shift->{ldflags} } }
-sub libs    { @{ shift->{libs}    } }
+sub cc      { shift->{cc}      }
+sub ccflags { shift->{ccflags} }
+sub ldflags { shift->{ldflags} }
+sub libs    { shift->{libs}    }
 
 =head2 file
 
@@ -239,6 +214,7 @@ Runs the given command.
 sub run
 {
   my($self, $type, @cmd) = @_;
+  @cmd = map { ref $_ ? @$_ : $_ } @cmd;
   my($out, $ret) = capture_merged {
     print "+ @cmd\n";
     system @cmd;
