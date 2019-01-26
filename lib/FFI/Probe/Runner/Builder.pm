@@ -151,6 +151,20 @@ sub file
 
 my $source;
 
+=head2 exe
+
+ my $exe = $builder->exe;
+
+The name of the executable, once it is built.
+
+=cut
+
+sub exe
+{
+  my($self) =  @_;
+  my $xfn = $self->file('bin', "dlrun$Config{exe_ext}");
+}
+
 =head2 source
 
  my $source = $builder->source;
@@ -244,7 +258,7 @@ sub build
 
   my $cfn = $self->file('src', 'dlrun.c');
   my $ofn = $self->file('src', "dlrun$Config{obj_ext}");
-  my $xfn = $self->file('bin', "dlrun$Config{exe_ext}");
+  my $xfn = $self->exe;
 
   # compile
   print "CC src/dlrun.c\n" unless $VERBOSE;
