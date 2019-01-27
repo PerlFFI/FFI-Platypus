@@ -152,7 +152,7 @@ sub probe_runner_build
   my($self) = @_;
   my $probe = $self->probe;
   my $builder = FFI::Probe::Runner::Builder->new;
-  foreach my $key (qw( cc ccflags ld ldflags ))
+  foreach my $key (qw( cc ccflags optimize ld ldflags ))
   { @{ $builder->$key } = @{ $probe->data->{eumm}->{$key} } }
   $builder->build unless -e $builder->exe;  
 }

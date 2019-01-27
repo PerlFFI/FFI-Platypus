@@ -59,12 +59,13 @@ sub new
   $args{dir} ||= 'blib/lib/auto/share/dist/FFI-Platypus/probe';
 
   my $self = bless {
-    dir     => $args{dir},
-    cc      => [_shellwords $Config{cc}],
-    ld      => [_shellwords $Config{ld}],
-    ccflags => [_shellwords join(' ', $Config{ccflags}, $Config{optimize})],
-    ldflags => [_shellwords $Config{ldflags}],
-    libs    => [_shellwords $Config{perllibs}],
+    dir      => $args{dir},
+    cc       => [_shellwords $Config{cc}],
+    ld       => [_shellwords $Config{ld}],
+    ccflags  => [_shellwords $Config{ccflags}],
+    optimize => [_shellwords $Config{optimize}],
+    ldflags  => [_shellwords $Config{ldflags}],
+    libs     => [_shellwords $Config{perllibs}],
   }, $class;
 
   $self;
@@ -104,33 +105,38 @@ sub dir
 
  my @cc = @{ $builder->cc };
 
-The C compiler to use.  Returned as a array reference so that it may be modified.
+The C compiler to use.  Returned as an array reference so that it may be modified.
 
 =head2 ccflags
 
  my @ccflags = @{ $builder->ccflags };
 
-The C compiler flags to use.  Returned as a array reference so that it may be modified.
+The C compiler flags to use.  Returned as an array reference so that it may be modified.
+
+=head2 optimize
+
+The C optimize flags to use.  Returned as an array reference so that it may be modified.
 
 =head2 ldflags
 
  my @ldflags = @{ $builder->ldflags };
 
-The linker flags to use.  Returned as a array reference so that it may be modified.
+The linker flags to use.  Returned as an array reference so that it may be modified.
 
 =head2 libs
 
  my @libs = @{ $builder->libs };
 
-The library flags to use.  Returned as a array reference so that it may be modified.
+The library flags to use.  Returned as an array reference so that it may be modified.
 
 =cut
 
-sub cc      { shift->{cc}      }
-sub ccflags { shift->{ccflags} }
-sub ld      { shift->{ld}      }
-sub ldflags { shift->{ldflags} }
-sub libs    { shift->{libs}    }
+sub cc       { shift->{cc}       }
+sub ccflags  { shift->{ccflags}  }
+sub optimize { shift->{optimize} }
+sub ld       { shift->{ld}       }
+sub ldflags  { shift->{ldflags}  }
+sub libs     { shift->{libs}     }
 
 =head2 file
 
@@ -264,7 +270,7 @@ sub build
 
   # compile
   print "CC src/dlrun.c\n" unless $VERBOSE;
-  $self->run(compile => $self->cc, $self->ccflags, '-c', '-o' => $ofn, $cfn);
+  $self->run(compile => $self->cc, $self->ccflags, $self->optimize, '-c', '-o' => $ofn, $cfn);
 
   # link
   print "LD src/dlrun$Config{obj_ext}\n" unless $VERBOSE;
