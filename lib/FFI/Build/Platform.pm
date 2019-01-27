@@ -200,31 +200,37 @@ The C++ compiler that naturally goes with the C compiler.
 sub cxx
 {
   my $self = _self(shift);
+
+  my @cc = @{ $self->cc };
+  
   if($self->{config}->{ccname} eq 'gcc')
   {
-    if($self->{config}->{cc} =~ /gcc$/)
+    if($cc[0] =~ /gcc$/)
     {
-      my $maybe = $self->{config}->{cc};
-      $maybe =~ s/gcc$/g++/;
-      return $maybe if $self->which($maybe);
+      my @maybe = @cc;
+      $maybe[0] =~ s/gcc$/g++/;
+      return \@maybe if $self->which($maybe[0]);
     }
-    if($self->{config}->{cc} =~ /clang/)
+    if($cc[0] =~ /clang/)
     {
-      return 'clang++';
+      my @maybe = @cc;
+      $maybe[0] =~ s/clang/clang++/;
+      return \@maybe if $self->which($maybe[0]);
     }
     else
     {
-      return 'g++';
+      foreach my $maybe (qw( g++ clang++ ))
+      {
+        return [$maybe] if $self->which($maybe);
+      }
     }
   }
   elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
   {
-    return 'cl';
+    return \@cc;
   }
-  else
-  {
-    Carp::croak("unable to detect corresponding C++ compiler");
-  }
+
+  Carp::croak("unable to detect corresponding C++ compiler");
 }
 
 =head2 for
@@ -543,8 +549,8 @@ sub diag
   
   push @diag, "osname            : ". _c($self->osname);
   push @diag, "cc                : ". _l($self->cc);
-  push @diag, "cxx               : ". (eval { $self->cxx } || '???' );
-  push @diag, "for               : ". (eval { $self->for } || '???' );
+  push @diag, "cxx               : ". (eval { _l($self->cxx) } || '---' );
+  push @diag, "for               : ". (eval { _l($self->for) } || '---' );
   push @diag, "ld                : ". _l($self->ld);
   push @diag, "cflags            : ". _l($self->cflags);
   push @diag, "ldflags           : ". _l($self->ldflags);
