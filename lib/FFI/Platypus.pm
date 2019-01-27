@@ -1596,7 +1596,7 @@ environment variable when you run C<Makefile.PL>:
 =item V
 
 When building platypus may hide some of the excessive output when
-probing and building, unless youset C<V> to a true value.
+probing and building, unless you set C<V> to a true value.
 
  % env V=1 perl Makefile.PL
  % make V=1

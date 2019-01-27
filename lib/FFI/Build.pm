@@ -114,17 +114,19 @@ one of these values:
 
 =over 4
 
-=item 0
+=item zero (0)
 
 Default, quiet unless there is a failure.
 
-=item 1
+=item one (1)
 
 Output the operation (compile, link, etc) and the file, but nothing else
 
-=item 2
+=item two (2)
 
 Output the complete commands run verbatim.
+
+=back
 
 =back
 

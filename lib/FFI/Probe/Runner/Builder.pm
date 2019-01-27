@@ -117,6 +117,12 @@ The C compiler flags to use.  Returned as an array reference so that it may be m
 
 The C optimize flags to use.  Returned as an array reference so that it may be modified.
 
+=head2 ld
+
+ my @ld = @{ $builder->ld };
+
+The linker to use.  Returned as an array reference so that it may be modified.
+
 =head2 ldflags
 
  my @ldflags = @{ $builder->ldflags };

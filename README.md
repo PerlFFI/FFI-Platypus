@@ -1367,7 +1367,7 @@ The build process also respects these environment variables:
 - V
 
     When building platypus may hide some of the excessive output when
-    probing and building, unless youset `V` to a true value.
+    probing and building, unless you set `V` to a true value.
 
         % env V=1 perl Makefile.PL
         % make V=1
