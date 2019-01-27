@@ -184,7 +184,7 @@ The C compiler
 
 sub cc
 {
-  my($self) = @_;;
+  my $self = _self(shift);
   my $cc = $self->{config}->{cc};
   [$self->shellwords($cc)];
 }
