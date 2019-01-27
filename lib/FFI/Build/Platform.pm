@@ -176,7 +176,7 @@ sub library_prefix
 
 =head2 cc
 
- my $cc = $platform->cc;
+ my @cc = @{ $platform->cc };
 
 The C compiler
 
@@ -191,7 +191,7 @@ sub cc
 
 =head2 cxx
 
- my $cxx = $platform->cxx;
+ my @cxx = @{ $platform->cxx };
 
 The C++ compiler that naturally goes with the C compiler.
 
@@ -217,12 +217,10 @@ sub cxx
       $maybe[0] =~ s/clang/clang++/;
       return \@maybe if $self->which($maybe[0]);
     }
-    else
+
+    foreach my $maybe (qw( g++ clang++ ))
     {
-      foreach my $maybe (qw( g++ clang++ ))
-      {
-        return [$maybe] if $self->which($maybe);
-      }
+      return [$maybe] if $self->which($maybe);
     }
   }
   elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
@@ -235,7 +233,7 @@ sub cxx
 
 =head2 for
 
- my $for = $platform->for;
+ my @for = @{ $platform->for };
 
 The Fortran compiler that naturally goes with the C compiler.
 
@@ -244,15 +242,22 @@ The Fortran compiler that naturally goes with the C compiler.
 sub for
 {
   my $self = _self(shift);
+
+  my @cc = @{ $self->cc };
+  
   if($self->{config}->{ccname} eq 'gcc')
   {
-    if($self->{config}->{cc} =~ /gcc$/)
+    if($cc[0] =~ /gcc$/)
     {
-      my $maybe = $self->{config}->{cc};
-      $maybe =~ s/gcc$/gfortran/;
-      return $maybe if $self->which($maybe);
+      my @maybe = @cc;
+      $maybe[0] =~ s/gcc$/gfortran/;
+      return \@maybe if $self->which($maybe[0]);
     }
-    return 'gfortran';
+
+    foreach my $maybe (qw( gfortran ))
+    {
+      return [$maybe] if $self->which($maybe);
+    }
   }
   else
   {
