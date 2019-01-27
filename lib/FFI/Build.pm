@@ -386,8 +386,7 @@ sub build
   );
   
   my($out, $exit) = Capture::Tiny::capture_merged(sub {
-    print "+ @cmd\n";
-    system @cmd;
+    $self->platform->run(@cmd);
   });
   
   if($exit || !-f $self->file->path)

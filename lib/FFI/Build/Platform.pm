@@ -184,12 +184,9 @@ The C compiler
 
 sub cc
 {
-  # TODO: cc could include flags "cc --some-flag" so we should really parse
-  # the first element of cc to be our cc, and push the rest into cflags.
-  my $cc = shift->{config}->{cc};
-  $cc =~ s/^\s+//;
-  $cc =~ s/\s+$//;
-  $cc;
+  my($self) = @_;;
+  my $cc = $self->{config}->{cc};
+  [$self->shellwords($cc)];
 }
 
 =head2 cxx
@@ -205,13 +202,13 @@ sub cxx
   my $self = _self(shift);
   if($self->{config}->{ccname} eq 'gcc')
   {
-    if($self->cc =~ /gcc$/)
+    if($self->{config}->{cc} =~ /gcc$/)
     {
-      my $maybe = $self->cc;
+      my $maybe = $self->{config}->{cc};
       $maybe =~ s/gcc$/g++/;
       return $maybe if $self->which($maybe);
     }
-    if($self->cc =~ /clang/)
+    if($self->{config}->{cc} =~ /clang/)
     {
       return 'clang++';
     }
@@ -243,9 +240,9 @@ sub for
   my $self = _self(shift);
   if($self->{config}->{ccname} eq 'gcc')
   {
-    if($self->cc =~ /gcc$/)
+    if($self->{config}->{cc} =~ /gcc$/)
     {
-      my $maybe = $self->cc;
+      my $maybe = $self->{config}->{cc};
       $maybe =~ s/gcc$/gfortran/;
       return $maybe if $self->which($maybe);
     }
@@ -267,10 +264,9 @@ The C linker
 
 sub ld
 {
-  my $ld = shift->{config}->{ld};
-  $ld =~ s/^\s+//;
-  $ld =~ s/\s+$//;
-  $ld;
+  my($self) = @_;
+  my $ld = $self->{config}->{ld};
+  [$self->shellwords($ld)];
 }
 
 sub _uniq
@@ -430,8 +426,7 @@ sub cc_mm_works
     );
     
     my($out, $exit) = Capture::Tiny::capture_merged(sub {
-      print "+ @cmd\n";
-      system @cmd;
+      $self->run(@cmd);
     });
 
     if($verbose >= 2)
@@ -516,6 +511,21 @@ sub which
   IPC::Cmd::can_run($command);
 }
 
+=head2 run
+
+ $platform->run(@command);
+
+=cut
+
+sub run
+{
+  my $self = shift;
+  my @command  = map { ref $_ ? @$_ : $_ } grep { defined $_ } @_;
+  print "+@command";
+  system @command;
+  $?;
+}
+
 =head2 diag
 
 Diagnostic for the platform as a string.  This is for human consumption only, and the format
@@ -523,23 +533,26 @@ may and will change over time so do not attempt to use is programmatically.
 
 =cut
 
+sub _c { join ',', @_ }
+sub _l { join ' ', map { ref $_ ? @$_ : $_ } @_ }
+
 sub diag
 {
   my $self = _self(shift);
   my @diag;
   
-  push @diag, "osname            : ". join(", ", $self->osname);
-  push @diag, "cc                : ". $self->cc;
+  push @diag, "osname            : ". _c($self->osname);
+  push @diag, "cc                : ". _l($self->cc);
   push @diag, "cxx               : ". (eval { $self->cxx } || '???' );
   push @diag, "for               : ". (eval { $self->for } || '???' );
-  push @diag, "ld                : ". $self->ld;
-  push @diag, "cflags            : ". $self->cflags;
-  push @diag, "ldflags           : ". $self->ldflags;
-  push @diag, "extra system inc  : ". $self->extra_system_inc;
-  push @diag, "extra system lib  : ". $self->extra_system_lib;
-  push @diag, "object suffix     : ". join(", ", $self->object_suffix);
-  push @diag, "library prefix    : ". join(", ", $self->library_prefix);
-  push @diag, "library suffix    : ". join(", ", $self->library_suffix);
+  push @diag, "ld                : ". _l($self->ld);
+  push @diag, "cflags            : ". _l($self->cflags);
+  push @diag, "ldflags           : ". _l($self->ldflags);
+  push @diag, "extra system inc  : ". _l($self->extra_system_inc);
+  push @diag, "extra system lib  : ". _l($self->extra_system_lib);
+  push @diag, "object suffix     : ". _c($self->object_suffix);
+  push @diag, "library prefix    : ". _c($self->library_prefix);
+  push @diag, "library suffix    : ". _c($self->library_suffix);
   push @diag, "cc mm works       : ". $self->cc_mm_works;
 
   join "\n", @diag;
