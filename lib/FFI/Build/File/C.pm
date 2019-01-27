@@ -58,8 +58,7 @@ sub build_item
   );
   
   my($out, $exit) = Capture::Tiny::capture_merged(sub {
-    print "+ @cmd\n";
-    system @cmd;
+    $self->platform->run(@cmd);
   });
 
   if($exit || !-f $object->path)
@@ -138,12 +137,11 @@ sub build_item_cpp
   );
 
   my($out, $err, $exit) = Capture::Tiny::capture(sub {
-    system @cmd;
+    $self->platform->run(@cmd);
   });
 
   if($exit)
   {
-    print "+@cmd\n";
     print "[out]\n$out\n" if defined $out && $out ne '';
     print "[err]\n$err\n" if defined $err && $err ne '';
     die "error building $ifile from $self";
@@ -172,8 +170,7 @@ sub _deps
   );
   
   my($out,$err,$exit) = Capture::Tiny::capture(sub {
-    print "+ @cmd\n";
-    system @cmd;
+    $self->platform->run(@cmd);
   });
   
   if($exit)
