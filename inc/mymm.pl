@@ -213,12 +213,15 @@ sub postamble {
 
   $postamble .=
     "flags: _mm/flags\n" .
-    "_mm/flags:\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.cc        \$(CC)\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ccflags   \$(INC) \$(CCFLAGS) \$(OPTIMIZE)\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ld        \$(LD)\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.ldflags   \$(LDFLAGS)\n" .
-    "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.lddlflags \$(LDDLFLAGS)\n" .
+    "_mm/flags:\n";
+
+  foreach my $key (qw( cc inc ccflags optimize ld ldflags lddlflags ))
+  {
+    $postamble .= 
+      sprintf "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.%-20s \$(%s)\n", $key, uc $key;
+  }
+
+  $postamble .=
     "\t$noecho\$(MKPATH) _mm\n" .
     "\t$noecho\$(TOUCH) _mm/flags\n\n";
 
