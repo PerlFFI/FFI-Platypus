@@ -3,7 +3,6 @@ package FFI::Build::Platform;
 use strict;
 use warnings;
 use 5.008001;
-use Config ();
 use Carp ();
 use Text::ParseWords ();
 use List::Util 1.45 ();
@@ -36,7 +35,10 @@ Create a new instance of L<FFI::Build::Platform>.
 sub new
 {
   my($class, $config) = @_;
-  $config ||= \%Config::Config;
+  $config ||= do {
+    require Config;
+    \%Config::Config;
+  };
   my $self = bless {
     config => $config,
   }, $class;
@@ -349,7 +351,7 @@ sub ccflags
 
 =head2 ldflags
 
- my $ldflags = $platform->ldflags;
+ my @ldflags = @{ $platform->ldflags };
 
 The linker flags needed to link object files into a dynamic library.  This is NOT the C<libs> style library
 flags that specify the location and name of a library to link against, this is instead the flags that tell
@@ -360,47 +362,29 @@ the linker to generate a dynamic library.  On Linux, for example, this is usuall
 sub ldflags
 {
   my $self = _self(shift);
-  my @ldflags;
+  my @ldflags = $self->shellwords($self->{config}->{lddlflags});
   if($self->osname eq 'cygwin')
   {
     no warnings 'qw';
-    push @ldflags, qw( --shared -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
+    # doesn't appear to be necessary, Perl has this in lddlflags already on cygwin
+    #push @ldflags, qw( -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
   }
   elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
   {
+    # TODO: test.
     push @ldflags, qw( -link -dll );
   }
   elsif($self->osname eq 'MSWin32')
   {
-    # TODO: VCC support *sigh*
     no warnings 'qw';
-    push @ldflags, qw( -mdll -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
+    push @ldflags, qw( -Wl,--enable-auto-import -Wl,--export-all-symbols -Wl,--enable-auto-image-base );
   }
   elsif($self->osname eq 'darwin')
   {
-    push @ldflags, '-shared';
+    # we want to build a .dylib instead of a .bundle
+    @ldflags = map { $_ eq '-bundle' ? '-shared' : $_ } @ldflags;
   }
-  else
-  {
-    push @ldflags, _uniq grep /^-shared$/i, $self->shellwords($self->{config}->{lddlflags});
-  }
-  _context_args @ldflags;
-}
-
-=head2 extra_system_lib
-
- my @dir = $platform->extra_syste_lib;
-
-Extra library directory flags, such as C<-L/usr/local/lib>, which were configured when Perl was built.
-
-=cut
-
-sub extra_system_lib
-{
-  my $self = _self(shift);
-  my @dir;
-  push @dir, _uniq grep /^-L(.*)$/, $self->shellwords(map { $self->{config}->{$_} } qw( lddlflags ldflags ldflags_nolargefiles ));
-  _context_args @dir;  
+  \@ldflags;
 }
 
 =head2 cc_mm_works
@@ -559,7 +543,6 @@ sub diag
   push @diag, "ld                : ". _l($self->ld);
   push @diag, "ccflags           : ". _l($self->ccflags);
   push @diag, "ldflags           : ". _l($self->ldflags);
-  push @diag, "extra system lib  : ". _l($self->extra_system_lib);
   push @diag, "object suffix     : ". _c($self->object_suffix);
   push @diag, "library prefix    : ". _c($self->library_prefix);
   push @diag, "library suffix    : ". _c($self->library_suffix);
