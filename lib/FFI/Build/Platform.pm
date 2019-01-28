@@ -328,21 +328,23 @@ sub _context_args
   wantarray ? @_ : join ' ', @_;
 }
 
-=head2 cflags
+=head2 ccflags
 
- my $cflags = $platform->cflags;
+ my @ccflags = @{ $platform->cflags};
 
-The compiler flags needed to compile object files that can be linked into a dynamic library.
-On Linux, for example, this is usually -fPIC.
+The compiler flags, including those needed to compile object files that can be linked into a dynamic library.
+On Linux, for example, this is usually includes C<-fPIC>.
 
 =cut
 
-sub cflags
+sub ccflags
 {
   my $self = _self(shift);
-  my @cflags;
-  push @cflags, _uniq grep /^-fPIC$/i, $self->shellwords($self->{config}->{cccdlflags});
-  _context_args @cflags;
+  my @ccflags;
+  push @ccflags, $self->shellwords($self->{config}->{cccdlflags});
+  push @ccflags, $self->shellwords($self->{config}->{ccflags});
+  push @ccflags, $self->shellwords($self->{config}->{optimize});
+  \@ccflags;
 }
 
 =head2 ldflags
@@ -383,22 +385,6 @@ sub ldflags
     push @ldflags, _uniq grep /^-shared$/i, $self->shellwords($self->{config}->{lddlflags});
   }
   _context_args @ldflags;
-}
-
-=head2 extra_system_inc
-
- my @dir = $platform->extra_syste_inc;
-
-Extra include directory flags, such as C<-I/usr/local/include>, which were configured when Perl was built.
-
-=cut
-
-sub extra_system_inc
-{
-  my $self = _self(shift);
-  my @dir;
-  push @dir, _uniq grep /^-I(.*)$/, $self->shellwords(map { $self->{config}->{$_} } qw( ccflags ccflags_nolargefiles cppflags ));
-  _context_args @dir;  
 }
 
 =head2 extra_system_lib
@@ -444,8 +430,7 @@ sub cc_mm_works
 
     my @cmd = (
       $self->cc,
-      $self->cflags,
-      $self->extra_system_inc,
+      $self->ccflags,
       "-I$dir",
       '-MM',
       $c->path,
@@ -572,9 +557,8 @@ sub diag
   push @diag, "cxx               : ". (eval { _l($self->cxx) } || '---' );
   push @diag, "for               : ". (eval { _l($self->for) } || '---' );
   push @diag, "ld                : ". _l($self->ld);
-  push @diag, "cflags            : ". _l($self->cflags);
+  push @diag, "ccflags           : ". _l($self->ccflags);
   push @diag, "ldflags           : ". _l($self->ldflags);
-  push @diag, "extra system inc  : ". _l($self->extra_system_inc);
   push @diag, "extra system lib  : ". _l($self->extra_system_lib);
   push @diag, "object suffix     : ". _c($self->object_suffix);
   push @diag, "library prefix    : ". _c($self->library_prefix);

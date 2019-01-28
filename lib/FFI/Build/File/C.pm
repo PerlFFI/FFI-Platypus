@@ -89,24 +89,18 @@ sub _base_args
   my($self) = @_;
   my @cmd = ($self->cc);
   push @cmd, $self->build->cflags_I if $self->build;
-  push @cmd, $self->platform->cflags;
+  push @cmd, $self->platform->ccflags;
   push @cmd, @{ $self->build->cflags } if $self->build;
-  push @cmd, $self->platform->extra_system_inc;
   @cmd;
 }
 
 sub _base_args_cpp
 {
   my($self) = @_;
-
-  # TODO: move into platform
-  require Config;
-  require Text::ParseWords;
   my @cmd = ($self->platform->cpp);
   push @cmd, $self->build->cflags_I if $self->build;
-  push @cmd, grep /^-[DI]/, $self->platform->cflags;
+  push @cmd, grep /^-[DI]/, $self->platform->ccflags;
   push @cmd, grep /^-D/, @{ $self->build->cflags } if $self->build;
-  push @cmd, grep /^-[DI]/, $self->platform->extra_system_inc;
   @cmd;
 }
 
