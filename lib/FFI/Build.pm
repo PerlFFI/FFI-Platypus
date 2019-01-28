@@ -238,9 +238,9 @@ Returns the verbose flag.
 
 Returns the compiler flags.
 
-=head3 cflags
+=head3 cflags_I
 
- my @cflags_I = @{ $build->cflags };
+ my @cflags_I = @{ $build->cflags_I };
 
 Returns the C<-I> cflags.
 
