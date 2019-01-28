@@ -532,7 +532,7 @@ sub run
 {
   my $self = shift;
   my @command  = map { ref $_ ? @$_ : $_ } grep { defined $_ } @_;
-  print "+@command";
+  print "+@command\n";
   system @command;
   $?;
 }
