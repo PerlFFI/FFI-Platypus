@@ -59,25 +59,6 @@ sub default
   $default ||= FFI::Build::Platform->new;
 }
 
-sub _context
-{
-  if(defined wantarray)
-  {
-    if(wantarray)
-    {
-      return @_;
-    }
-    else
-    {
-      return $_[0];
-    }
-  }
-  else
-  {
-    Carp::croak("method does not work in void context");
-  }
-}
-
 sub _self
 {
   my($self) = @_;
@@ -100,7 +81,7 @@ The "os name" as understood by Perl.  This is the same as C<$^O>.
 
 sub osname
 {
-  _context _self(shift)->{config}->{osname};
+  _self(shift)->{config}->{osname};
 }
 
 =head2 object_suffix
@@ -114,7 +95,7 @@ is usually C<.obj>.
 
 sub object_suffix
 {
-  _context _self(shift)->{config}->{obj_ext};
+  _self(shift)->{config}->{obj_ext};
 }
 
 =head2 library_suffix
@@ -131,18 +112,20 @@ sub library_suffix
 {
   my $self = _self(shift);
   my $osname = $self->osname;
+  my @suffix;
   if($osname eq 'darwin')
   {
-    return _context '.dylib', '.bundle';
+    push @suffix, '.dylib', '.bundle';
   }
   elsif($osname =~ /^(MSWin32|msys|cygwin)$/)
   {
-    return _context '.dll';
+    push @suffix, '.dll';
   }
   else
   {
-    return _context '.' . $self->{config}->{dlext};
+    push @suffix, '.' . $self->{config}->{dlext};
   }
+  wantarray ? @suffix : $suffix[0];
 }
 
 =head2 library_prefix
@@ -325,11 +308,6 @@ sub shellwords
   }
 }
 
-sub _context_args
-{
-  wantarray ? @_ : join ' ', @_;
-}
-
 =head2 ccflags
 
  my @ccflags = @{ $platform->cflags};
@@ -503,7 +481,8 @@ sub which
 {
   my(undef, $command) = @_;
   require IPC::Cmd;
-  IPC::Cmd::can_run($command);
+  my @command = ref $command ? @$command : ($command);
+  IPC::Cmd::can_run($command[0]);
 }
 
 =head2 run
