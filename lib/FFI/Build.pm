@@ -145,10 +145,12 @@ sub new
   Carp::croak "name is required" unless defined $name;
 
   my $self = bless {
-    source => [],
-    cflags => [],
-    libs   => [],
-    alien  => [],
+    source   => [],
+    cflags_I => [],
+    cflags   => [],
+    libs_L   => [],
+    libs     => [],
+    alien    => [],
   }, $class;
   
   my $platform  = $self->{platform}  = $args{platform} || FFI::Build::Platform->default;
@@ -158,12 +160,16 @@ sub new
 
   if(defined $args{cflags})
   {
-    push @{ $self->{cflags} }, ref $args{cflags} ? @{ $args{cflags} } : $self->platform->shellwords($args{cflags});
+    my @flags = ref $args{cflags} ? @{ $args{cflags} } : $self->platform->shellwords($args{cflags});
+    push @{ $self->{cflags}   }, grep !/^-I/, @flags;
+    push @{ $self->{cflags_I} }, grep  /^-I/, @flags;
   }
   
   if(defined $args{libs})
   {
-    push @{ $self->{libs} }, ref $args{libs} ? @{ $args{libs} } : $self->platform->shellwords($args{libs});
+    my @flags = ref $args{libs} ? @{ $args{libs} } : $self->platform->shellwords($args{libs});
+    push @{ $self->{libs} },   grep !/^-L/, @flags;
+    push @{ $self->{libs_L} }, grep  /^-L/, @flags;
   }
   
   if(defined $args{alien})
@@ -178,8 +184,10 @@ sub new
         require $pm;
       }
       push @{ $self->{alien} }, $alien;
-      push @{ $self->{cflags} }, $self->platform->shellwords($alien->cflags);
-      push @{ $self->{libs} }, $self->platform->shellwords($alien->libs);
+      push @{ $self->{cflags}   }, grep !/^-I/, $self->platform->shellwords($alien->cflags);
+      push @{ $self->{cflags_I} }, grep  /^-I/, $self->platform->shellwords($alien->cflags);
+      push @{ $self->{libs}     }, grep !/^-L/, $self->platform->shellwords($alien->libs);
+      push @{ $self->{libs_L}   }, grep  /^-L/, $self->platform->shellwords($alien->libs);
     }
   }
   
@@ -226,15 +234,27 @@ Returns the verbose flag.
 
 =head2 cflags
 
- my $cflags = $build->cflags;
+ my @cflags = @{ $build->cflags };
 
 Returns the compiler flags.
 
+=head3 cflags
+
+ my @cflags_I = @{ $build->cflags };
+
+Returns the C<-I> cflags.
+
 =head2 libs
 
- my $libs = $build->libs;
+ my @libs = @{ $build->libs };
 
 Returns the library flags.
+
+=head2 libs_L
+
+ my @libs = @{ $build->libs };
+
+Returns the C<-L> library flags.
 
 =head2 alien
 
@@ -249,7 +269,9 @@ sub file      { shift->{file}      }
 sub platform  { shift->{platform}  }
 sub verbose   { shift->{verbose}   }
 sub cflags    { shift->{cflags}    }
+sub cflags_I  { shift->{cflags_I}  }
 sub libs      { shift->{libs}      }
+sub libs_L    { shift->{libs_L}    }
 sub alien     { shift->{alien}     }
 
 my @file_classes;
@@ -380,9 +402,10 @@ sub build
   
   my @cmd = (
     $ld,
+    $self->libs_L,
     $self->platform->ldflags,
     (map { "$_" } @objects),
-    @{ $self->libs },
+    $self->libs,
     $self->platform->extra_system_lib,
     $self->platform->flag_library_output($self->file->path),
   );
