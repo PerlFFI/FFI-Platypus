@@ -1,11 +1,18 @@
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More;
+use FFI::Platypus::Lang::Rust;
+use FFI::CheckLib qw( find_lib );
 use FFI::Platypus;
 
-subtest 'Foo constructor' => sub {
-  plan tests => 5;
+my $types = FFI::Platypus::Lang::Rust->native_type_map;
 
+foreach my $rust_type (sort keys %$types)
+{
+  note sprintf "%-10s %s\n", $rust_type, $types->{$rust_type};
+}
+
+subtest 'Foo constructor' => sub {
   my $ffi = FFI::Platypus->new(lang => 'Rust');
   
   eval { $ffi->type('int') };
@@ -21,3 +28,21 @@ subtest 'Foo constructor' => sub {
   
 };
 
+subtest 'attach' => sub {
+  my $libtest = find_lib lib => 'rusty', libpath => 't/ffi/rusty/target/debug';
+  plan skip_all => 'test requires a rust compiler'
+    unless $libtest;
+
+  plan tests => 1;
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lang('Rust');
+  $ffi->lib($libtest);
+
+  $ffi->attach(i32_sum => ['i32', 'i32'] => 'i32');
+
+  is i32_sum(1,2), 3, 'i32_sum(1,2) = 3';
+
+};
+
+done_testing;
