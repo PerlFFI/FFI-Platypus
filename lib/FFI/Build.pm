@@ -406,7 +406,6 @@ sub build
     $self->platform->ldflags,
     (map { "$_" } @objects),
     $self->libs,
-    $self->platform->extra_system_lib,
     $self->platform->flag_library_output($self->file->path),
   );
   
