@@ -189,6 +189,21 @@ sub cc
   [$self->shellwords($cc)];
 }
 
+=head2 cpp
+
+ my @cpp = @{ $platform->cpp };
+
+The C pre-processor
+
+=cut
+
+sub cpp
+{
+  my $self = _self(shift);
+  my $cpp = $self->{config}->{cpprun};
+  [$self->shellwords($cpp)];
+}
+
 =head2 cxx
 
  my @cxx = @{ $platform->cxx };

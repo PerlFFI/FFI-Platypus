@@ -87,10 +87,9 @@ sub cc
 sub _base_args
 {
   my($self) = @_;
-  my @cmd = (
-    $self->cc,
-    $self->platform->cflags,
-  );
+  my @cmd = ($self->cc);
+  push @cmd, $self->build->cflags_I if $self->build;
+  push @cmd, $self->platform->cflags;
   push @cmd, @{ $self->build->cflags } if $self->build;
   push @cmd, $self->platform->extra_system_inc;
   @cmd;
@@ -103,11 +102,10 @@ sub _base_args_cpp
   # TODO: move into platform
   require Config;
   require Text::ParseWords;
-  my @cmd = (
-    Text::ParseWords::shellwords($Config::Config{cpprun}),
-    grep /^-[DI]/, $self->platform->cflags,
-  );
-  push @cmd, grep /^-[DI]/, @{ $self->build->cflags } if $self->build;
+  my @cmd = ($self->platform->cpp);
+  push @cmd, $self->build->cflags_I if $self->build;
+  push @cmd, grep /^-[DI]/, $self->platform->cflags;
+  push @cmd, grep /^-D/, @{ $self->build->cflags } if $self->build;
   push @cmd, grep /^-[DI]/, $self->platform->extra_system_inc;
   @cmd;
 }
