@@ -5,6 +5,7 @@ use warnings;
 use Config;
 use Capture::Tiny qw( capture_merged );
 use Text::ParseWords ();
+use FFI::Build::Platform;
 
 # ABSTRACT: Probe runner builder for FFI
 # VERSION
@@ -45,27 +46,25 @@ makes sense for when L<FFI::Platypus> is being built.
 
 =cut
 
-sub _shellwords
-{
-  my($string) = @_;
-  $string =~ s/^\s+//;
-  grep { defined $_ } Text::ParseWords::shellwords($string);
-}
-
 sub new
 {
   my($class, %args) = @_;
 
   $args{dir} ||= 'blib/lib/auto/share/dist/FFI-Platypus/probe';
 
+  my $platform = FFI::Build::Platform->new;
+
   my $self = bless {
     dir      => $args{dir},
-    cc       => [_shellwords $Config{cc}],
-    ld       => [_shellwords $Config{ld}],
-    ccflags  => [_shellwords $Config{ccflags}],
-    optimize => [_shellwords $Config{optimize}],
-    ldflags  => [_shellwords $Config{ldflags}],
-    libs     => [_shellwords $Config{perllibs}],
+    # we don't use the platform ccflags, etc because they are geared
+    # for building dynamic libs not exes
+    cc       => [$platform->shellwords($Config{cc})],
+    ld       => [$platform->shellwords($Config{ld})],
+    ccflags  => [$platform->shellwords($Config{ccflags})],
+    optimize => [$platform->shellwords($Config{optimize})],
+    ldflags  => [$platform->shellwords($Config{ldflags})],
+    libs     => [$platform->shellwords($Config{perllibs})],
+    platform => $platform,
   }, $class;
 
   $self;
@@ -244,9 +243,7 @@ sub run
   my($self, $type, @cmd) = @_;
   @cmd = map { ref $_ ? @$_ : $_ } @cmd;
   my($out, $ret) = capture_merged {
-    print "+ @cmd\n";
-    system @cmd;
-    $?;
+    $self->{platform}->run(@cmd);
   };
   if($ret)
   {

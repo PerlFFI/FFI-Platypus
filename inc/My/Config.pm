@@ -336,6 +336,18 @@ sub configure
   $self->share_config->set( abi      => \%abi      );
 }
 
+sub platform
+{
+  my($self) = @_;
+  my %Config = %Config;
+  foreach my $key (keys %{ $self->probe->data->{eumm} })
+  {
+    $Config{$key} = $self->probe->data->{eumm}->{$key};
+  }
+  require FFI::Build::Platform;
+  FFI::Build::Platform->new(\%Config);
+}
+
 sub alien
 {
   my($self) = @_;

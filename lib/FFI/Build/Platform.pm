@@ -280,11 +280,6 @@ sub ld
   [$self->shellwords($ld)];
 }
 
-sub _uniq
-{
-  List::Util::uniq(@_);
-}
-
 =head2 shellwords
 
  my @words = $platform->shellwords(@strings);
@@ -297,15 +292,22 @@ applied.
 sub shellwords
 {
   my $self = _self(shift);
-  if($self->osname eq 'MSWin32')
-  {
-    # Borrowed from Alien/Base.pm, see the caveat there.
-    Text::ParseWords::shellwords(map { my $x = $_; $x =~ s,\\,\\\\,g; $x } @_);
-  }
-  else
-  {
-    Text::ParseWords::shellwords(@_);
-  }
+
+  my $win = !!$self->osname eq 'MSWin32';
+
+  grep { defined $_ } map {
+    ref $_
+      # if we have an array ref then it has already been shellworded
+      ? @$_
+      : do {
+        # remove leading whitespace, confuses some older versions of shellwords
+        my $str = /^\s*(.*)$/ && $1;
+        # escape things on windows
+        $str =~ s,\\,\\\\,g if $win;
+        Text::ParseWords::shellwords($str);
+      }
+  } @_;
+
 }
 
 =head2 ccflags
@@ -494,6 +496,7 @@ sub which
 sub run
 {
   my $self = shift;
+  $DB::single = 1;
   my @command  = map { ref $_ ? @$_ : $_ } grep { defined $_ } @_;
   print "+@command\n";
   system @command;
