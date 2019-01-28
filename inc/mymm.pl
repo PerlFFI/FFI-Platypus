@@ -215,7 +215,7 @@ sub postamble {
     "flags: _mm/flags\n" .
     "_mm/flags:\n";
 
-  foreach my $key (qw( cc inc ccflags optimize ld ldflags lddlflags ))
+  foreach my $key (qw( cc inc ccflags cccdlflags optimize ld ldflags lddlflags ))
   {
     $postamble .= 
       sprintf "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.%-20s \$(%s)\n", $key, uc $key;

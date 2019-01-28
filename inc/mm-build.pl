@@ -2,14 +2,20 @@ use strict;
 use warnings;
 use File::Basename qw( basename );
 use File::Path qw( mkpath );
+use lib 'inc';
+use My::Config;
 use lib 'lib';
 use FFI::Build;
+use Config ();
+
+my $config = My::Config->new;
 
 my $lib = FFI::Build->new(
   'plfill',
-  source => ['ffi/*.c'],
-  verbose => (!!$ENV{V} ? 2 : 1),
-  dir => 'blib/lib/auto/share/dist/FFI-Platypus/lib',
+  source   => ['ffi/*.c'],
+  verbose  => (!!$ENV{V} ? 2 : 1),
+  dir      => 'blib/lib/auto/share/dist/FFI-Platypus/lib',
+  platform => $config->platform,
 )->build;
 
 my $name = basename($lib->basename);
