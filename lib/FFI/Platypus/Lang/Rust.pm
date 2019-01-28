@@ -114,12 +114,8 @@ sub native_type_map
     binary64 => 'double',   #  "    "  "     "    "  "
     f32      => 'float',
     f64      => 'double',
-    usize    => do { FFI::Platypus->type_meta('size_t')->{ffi_type} },
-    isize    => do {
-      my $ffi_type = FFI::Platypus->type_meta('size_t')->{ffi_type};
-      $ffi_type =~ s{^u}{s};
-      $ffi_type;
-    },
+    usize    => FFI::Platypus->type_meta('size_t')->{ffi_type},
+    isize    => FFI::Platypus->type_meta('ssize_t')->{ffi_type},
   },
 }
 
