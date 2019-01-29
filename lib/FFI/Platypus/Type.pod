@@ -509,15 +509,21 @@ free'd by Perl and if the C code ever tries to call the closure it will
 probably SIGSEGV.  Thus supposing you have a C function C<set_closure> 
 that takes a Perl closure, this is almost always wrong:
 
- set_closure(closure { $_[0] * 2 });  # BAD
+ set_closure($ffi->closure({ $_[0] * 2 }));  # BAD
 
 In some cases, you may want to create a closure shouldn't ever be 
 free'd.  For example you are passing a closure into a C function that 
 will retain it for the lifetime of your application.  You can use the 
-sticky keyword to indicate this, without the need to keep a reference of 
-the closure:
+sticky method to keep the closure, without the need to keep a reference
+of the closure:
 
- set_closure(sticky closure { $_[0] * 2 }); # OKAY 
+ {
+   my $closure = $ffi->closure(sub { $_[0] * 2 });
+   $closure->sticky;
+   set_closure($closure); # OKAY
+ }
+ # closure still exists and is accesible from C, but
+ # not from Perl land.
 
 =head2 Custom Types
 
