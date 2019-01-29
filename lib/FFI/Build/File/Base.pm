@@ -271,6 +271,7 @@ sub needs_rebuild
   foreach my $source (@source)
   {
     my $source_time = [stat "$source"]->[9];
+    return 1 if ! defined $source_time;
     return 1 if $source_time > $target_time;
   }
   return 0;
