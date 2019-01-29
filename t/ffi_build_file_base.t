@@ -37,7 +37,7 @@ subtest 'basic' => sub {
 
     if($^O eq 'MSWin32')
     {
-      is($file->native, "corpus\\basic.foo", "native name");
+      is($file->native, "corpus\\ffi_build_file_base\\basic.foo", "native name");
     }
     else
     {
