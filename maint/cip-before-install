@@ -3,7 +3,7 @@
 set -ex
 
 cip sudo apt-get update
-cip sudo apt-get -y install gfortran-6 fp-compiler-3.0.0 g++ libgtop-2.0-10 libffi-dev
+cip sudo apt-get -y install gfortran-6 fp-compiler-3.0.0 g++ libgtop-2.0-10 libffi-dev libmagic-dev
 cip exec cpanm -n version
 
 # we want to do this maybe in just one run or something
