@@ -218,7 +218,9 @@ sub cxx
       return \@maybe if $self->which($maybe[0]);
     }
 
-    foreach my $maybe (qw( g++ clang++ ))
+    my @maybe = qw( c++ g++ clang++ );
+
+    foreach my $maybe (@maybe)
     {
       return [$maybe] if $self->which($maybe);
     }

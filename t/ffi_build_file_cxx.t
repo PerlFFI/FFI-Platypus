@@ -40,7 +40,7 @@ subtest 'compile' => sub {
 subtest 'headers' => sub {
 
   my $build = FFI::Build->new('foo',
-    verbose => 1,
+    verbose => 2,
     cflags  => "-Icorpus/ffi_build_file_cxx/include",
   );
 

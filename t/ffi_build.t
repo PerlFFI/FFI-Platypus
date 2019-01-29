@@ -56,7 +56,7 @@ subtest 'build' => sub {
       my $build = FFI::Build->new('foo', 
         dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project1' ),
         buildname => "tmpbuild.tmpbuild.$$.@{[ time ]}",
-        verbose   => 1,
+        verbose   => 2,
       );
 
       my @source = $type eq 'name'
@@ -116,7 +116,7 @@ subtest 'build c++' => sub {
   my $build = FFI::Build->new('foo', 
     dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project-cxx' ),
     buildname => "tmpbuild.$$.@{[ time ]}",,
-    verbose   => 1,
+    verbose   => 2,
   );
   
   $build->source('corpus/ffi_build/project-cxx/*.cxx');
@@ -143,16 +143,33 @@ subtest 'build c++' => sub {
   platypus 2 => sub {
     my $ffi = shift;
     $ffi->lib($dll);
-  
-    is(
-      $ffi->function(foo1 => [] => 'int')->call,
-      42,
-    );
 
-    is(
-      $ffi->function(foo2 => [] => 'string')->call,
-      "42",
-    );
+    my $foo1 = eval { $ffi->function( foo1 => [] => 'int'    ) };
+    my $foo2 = eval { $ffi->function( foo2 => [] => 'string' ) };
+
+    ok defined $foo1, "foo1 found";
+    ok defined $foo2, "foo2 found";
+
+
+    SKIP: {
+      if(defined $foo1 && defined $foo2)
+      {
+        is(
+          $ffi->function(foo1 => [] => 'int')->call,
+          42,
+        );
+        is(
+          $ffi->function(foo2 => [] => 'string')->call,
+          "42",
+        );
+      }
+      else
+      {
+        diag "[build log follows]\n";
+        diag $out;
+        skip "foo1 or foo2 not found", 2 unless defined $foo1 && defined $foo2;
+      }
+    }
   };
 
   $build->clean;
@@ -173,7 +190,7 @@ subtest 'alien' => sub {
   my $build = FFI::Build->new('bar',
     dir       => tempdir( "tmpbuild.XXXXXX", DIR => 'corpus/ffi_build/project2' ),
     buildname => "tmpbuild.$$.@{[ time ]}",
-    verbose   => 1,
+    verbose   => 2,
     alien     => ['Acme::Alien::DontPanic'],
   );
   
