@@ -218,6 +218,9 @@ sub cxx
       return \@maybe if $self->which($maybe[0]);
     }
 
+    # TODO: there are probably situations, eg solaris
+    # where we don't want to try c++ in the case of
+    # a ccname = gcc ?
     my @maybe = qw( c++ g++ clang++ );
 
     foreach my $maybe (@maybe)
