@@ -13,7 +13,7 @@ dlmain(int argc, char *argv[])
   ffi_type *args[1];
   void *values[1];
   unsigned char bytes[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-  
+
   if(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 0, &ffi_type_uint8, args) ==FFI_OK)
   {
     ffi_call(&cif, (void *) my_foo, &bytes, values);
