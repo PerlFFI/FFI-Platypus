@@ -260,6 +260,12 @@ sub configure
     }
   }
 
+  if($Config{byteorder} =~ /^(1234|12345678)$/)
+  {
+    $probe{bigendian}   = 0;
+    $probe{bigendian64} = 0;
+  }
+
   foreach my $cfile (bsd_glob 'inc/probe/*.c')
   {
     my $name = basename $cfile;
