@@ -1473,12 +1473,11 @@ Like OpenVMS
 
 =item Languages that do not support using dynamic libraries from other languages
 
-Like Google's Go.  Although I believe that XS won't help in this 
-regard.
+Like older versions of Google's Go. This is a problem for C / XS code as well.
 
 =item Languages that do not compile to machine code
 
-Like .NET based languages and Java that can't be understood by gcj.
+Like .NET based languages and Java.
 
 =back
 
