@@ -52,7 +52,6 @@ pod_spelling_system:
     - zmughal
     - Scala
     - JVM
-    - gcj
     - integrators
     - ABIs
     - abis

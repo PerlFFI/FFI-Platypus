@@ -1379,57 +1379,6 @@ will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the 
 wrapper function will be returned back to the original caller.
 
-=head2 Java
-
-Java:
-
-# EXAMPLE: examples/java/Example.java
-
-C++:
-
-# EXAMPLE: examples/java/between.cpp
-
-Perl:
-
-# EXAMPLE: examples/java/example.pl
-
-Makefile:
-
-# EXAMPLE: examples/java/Makefile
-
-Output:
-
- % make
- g++ -fPIC -c -o between.o between.cpp
- gcj -fPIC -c -o Example.o Example.java
- gcj -shared -o libexample.so between.o Example.o
- % perl example.pl 
- hello world
- 3
-
-B<Discussion>: You can't call Java .class files directly from FFI / 
-Platypus, but you can compile Java source and .class files into a shared 
-library using the GNU Java Compiler C<gcj>.  Because we are calling Java 
-functions from a program (Perl!) that was not started from a Java 
-C<main()> we have to initialize the Java runtime ourselves
-(L<details|https://gcc.gnu.org/onlinedocs/gcj/Invocation.html>).
-This can most easily be accomplished from C++.
-
-The GNU Java Compiler uses the same format to mangle method names as GNU 
-C++.  The L<C++ plugin|FFI::Platypus::Lang::CPP> for handles this more 
-transparently by extracting the symbols from the shared library and 
-using either L<FFI::Platypus::Lang::CPP::Demangle::XS> or C<c++filt> to 
-determined the unmangled names.
-
-Although the Java source is compiled ahead of time with optimizations, 
-it will not necessarily perform better than a real JVM just because it 
-is compiled.  In fact the gcj developers warn than gcj will optimize 
-Java source better than Java .class files.  The GNU Java Compiler also 
-lags behind modern Java.
-
-Even so this enables you to call Java from Perl and potentially other 
-Java based languages such as Scala, Groovy or JRuby.
-
 =head1 FAQ
 
 =head2 I get seg faults on some platforms but not others with a library using pthreads.

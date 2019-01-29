@@ -40,25 +40,3 @@ do {
   }
 
 };
-
-do {
-
-  local $CWD = 'examples/java';
-
-  do {
-    my @cmd = ('make');
-    print "+ @cmd\n";
-    system @cmd;
-    exit 2 if $?;
-  };
-
-  foreach my $plfile (bsd_glob '*.pl')
-  {
-    next if $plfile =~ /^win32_/;
-    my @cmd = ( $^X, "-Mlocal::lib=$lib", $plfile );
-    print "+ @cmd\n";
-    system @cmd;
-    exit 2 if $?;
-  }
-
-};

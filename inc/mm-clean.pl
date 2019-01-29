@@ -14,8 +14,6 @@ unlink $_ for map { bsd_glob($_) } (
   'examples/*.so',
   'examples/*.dll',
   'examples/*.bundle',
-  'examples/java/*.so',
-  'examples/java/*.o',
   'corpus/ffi_build/project1/_build/*',
   'config.log',
   'test*.o',
