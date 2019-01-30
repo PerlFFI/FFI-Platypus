@@ -370,6 +370,10 @@ main(int argc, char **argv)
     return 0;
   }
 
+#if defined WIN32
+  SetErrorMode(SetErrorMode(0) | SEM_NOGPFAULTERRORBOX);
+#endif
+
   dlargv = malloc(sizeof(char*)*(argc-2));
   dlargv[0] = argv[0];
   filename = argv[1];
