@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.77_03   2019-01-29 21:44:29 -0500
   - Remove Java gcj examples.  The gcj compiler has been deprecated,
     unmaintained, and removed from the gcc collection for quite a while
     now.
