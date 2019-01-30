@@ -246,7 +246,7 @@ sub postamble {
 
   $postamble .=
     "subdirs-test_dynamic subdirs-test_static subdirs-test :: ffi-test\n" .
-    "ffi-test :\n" .
+    "ffi-test : _mm/config\n" .
     "\t$noecho\$(FULLPERL) inc/mm-test.pl\n\n";
 
   $postamble .=
