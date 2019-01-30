@@ -31,7 +31,7 @@ ffi_platypus_memory__strndup(const char *olds, size_t max)
   size_t size;
 
   size = strnlen(olds, max);
-  news = malloc(size);
+  news = malloc(size+1);
   if(news != NULL)
   {
     news[size] = '\0';
