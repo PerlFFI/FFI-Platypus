@@ -11,7 +11,7 @@ cip exec bash -c "
   chmod +x /tmp/rustup-init.sh                         ;
   /tmp/rustup-init.sh --no-modify-path -v -y           ;
   cd ~/perl5/bin                                       ;
-  ln -s ~/.cargo/bin/* .                               ;
+  ln -sf ~/.cargo/bin/* .                               ;
 "
 
 cip exec cpanm -n version
