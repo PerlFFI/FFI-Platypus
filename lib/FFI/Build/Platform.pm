@@ -501,7 +501,6 @@ sub which
 sub run
 {
   my $self = shift;
-  $DB::single = 1;
   my @command  = map { ref $_ ? @$_ : $_ } grep { defined $_ } @_;
   print "+@command\n";
   system @command;

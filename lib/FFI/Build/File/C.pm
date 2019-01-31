@@ -51,7 +51,6 @@ sub build_item
   
   File::Path::mkpath($object->dirname, { verbose => 0, mode => 0700 });
 
-  $DB::single = 1;
   my @cmd = (
     $self->_base_args,
     -c => $self->path,
