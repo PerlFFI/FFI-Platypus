@@ -63,7 +63,7 @@ sub new
     ccflags  => [$platform->shellwords($Config{ccflags})],
     optimize => [$platform->shellwords($Config{optimize})],
     ldflags  => [$platform->shellwords($Config{ldflags})],
-    libs     => [$platform->shellwords($Config{perllibs})],
+    libs     => [['-ldl'], [], map { [$_] } grep !/^-ldl/, $platform->shellwords($Config{perllibs})],
     platform => $platform,
   }, $class;
 
@@ -232,9 +232,9 @@ sub extract
 
 =head2 run
 
- $builder->run(@command);
+ $builder->run($type, @command);
 
-Runs the given command.
+Runs the given command.  Dies if the command fails.
 
 =cut
 
@@ -252,6 +252,41 @@ sub run
   }
   print $out if $VERBOSE;
   $out;
+}
+
+=head2 run_list
+
+ $builder->run($type, \@command, \@command, ...);
+
+Runs the given commands in order until one succeeds.
+Dies if they all fail.
+
+=cut
+
+sub run_list
+{
+  my($self, $type, @commands) = @_;
+
+  my $log = '';
+
+  foreach my $cmd (@commands)
+  {
+    my($out, $ret) = capture_merged {
+      $self->{platform}->run(@$cmd);
+    };
+    if($VERBOSE)
+    {
+      print $out;
+    }
+    else
+    {
+      $log .= $out;
+    }
+    return if !$ret;
+  }
+
+  print $log;
+  die "$type failed";
 }
 
 =head2 build
@@ -277,7 +312,9 @@ sub build
 
   # link
   print "LD src/dlrun$Config{obj_ext}\n" unless $VERBOSE;
-  $self->run(link => $self->ld, $self->ldflags, '-o' => $xfn, $ofn, $self->libs);
+  $self->run_list(link =>
+    map { [$self->ld, $self->ldflags, '-o' => $xfn, $ofn, @$_ ] } @{ $self->libs },
+  );
 
   # verify
   print "VV bin/dlrun$Config{exe_ext}\n" unless $VERBOSE;
