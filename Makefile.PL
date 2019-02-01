@@ -73,10 +73,10 @@ my %WriteMakefileArgs = (
     "Capture::Tiny" => 0,
     "Test::More"    => "0.98"
   },
-  "VERSION" => "0.79",
+  "VERSION" => "0.80",
   "test"    => {
     "TESTS" => "t/*.t"
-  }
+    }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);

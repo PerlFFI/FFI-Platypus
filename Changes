@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.80      2019-02-01 15:36:50 -0500
+  - Fix incompatability with parallel bsd make
+
 0.79      2019-01-31 20:58:07 -0500
   - Fix probe runner builder bug (gh#112, gh#113)
 
