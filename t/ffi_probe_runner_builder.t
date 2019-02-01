@@ -16,6 +16,11 @@ my $builder = FFI::Probe::Runner::Builder->new(
   dir => $dir,
 );
 
+foreach my $lib (@{ $builder->libs })
+{
+  note "libs=" . join(' ', @$lib) 
+}
+
 isa_ok $builder, 'FFI::Probe::Runner::Builder';
 
 my($out1, $exe, $error) = capture_merged {
