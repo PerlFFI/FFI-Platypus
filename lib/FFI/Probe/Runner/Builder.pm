@@ -39,7 +39,7 @@ Create a new instance.
 =item dir
 
 The root directory for where to place the probe runner files.
-Will be created if it doesn't already exist.  The default 
+Will be created if it doesn't already exist.  The default
 makes sense for when L<FFI::Platypus> is being built.
 
 =back
@@ -56,6 +56,7 @@ sub new
 
   my $self = bless {
     dir      => $args{dir},
+    platform => $platform,
     # we don't use the platform ccflags, etc because they are geared
     # for building dynamic libs not exes
     cc       => [$platform->shellwords($Config{cc})],
@@ -63,8 +64,10 @@ sub new
     ccflags  => [$platform->shellwords($Config{ccflags})],
     optimize => [$platform->shellwords($Config{optimize})],
     ldflags  => [$platform->shellwords($Config{ldflags})],
-    libs     => [['-ldl'], [], map { [$_] } grep !/^-ldl/, $platform->shellwords($Config{perllibs})],
-    platform => $platform,
+    libs     =>
+      $^O eq 'MSWin32'
+        ? [[]]
+        : [['-ldl'], [], map { [$_] } grep !/^-ldl/, $platform->shellwords($Config{perllibs})],
   }, $class;
 
   $self;
@@ -227,7 +230,7 @@ sub extract
     print "XX bin/\n" unless $VERBOSE;
     $self->dir('bin');
   }
-  
+
 }
 
 =head2 run
@@ -394,7 +397,7 @@ main(int argc, char **argv)
   dlib handle;
   int n;
   int ret;
-  
+
   if(argc < 3)
   {
     fprintf(stderr, "usage: %s dlfilename dlflags [ ... ]\n", argv[0]);
