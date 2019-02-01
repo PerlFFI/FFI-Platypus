@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.79      2019-01-31 20:58:07 -0500
+  - Fix probe runner builder bug (gh#112, gh#113)
+
 0.78      2019-01-30 10:28:22 -0500
   - Production release identical to 0.77_03
 
