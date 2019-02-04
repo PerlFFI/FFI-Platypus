@@ -13,6 +13,7 @@ $ffi->attach( 'string_matches_foobarbaz'     => ['string'] => 'int');
 $ffi->attach( 'string_return_foobarbaz'      => []       => 'string');
 $ffi->attach( [pointer_null => 'null']       => []       => 'string');
 $ffi->attach( [pointer_is_null => 'is_null'] => ['string'] => 'int');
+$ffi->attach( 'string_write_to_string'       => ['string','string'] => 'void');
 
 ok string_matches_foobarbaz("foobarbaz"), "string_matches_foobarbaz(foobarbaz) = true";
 ok !string_matches_foobarbaz("x"), "string_matches_foobarbaz(foobarbaz) = false";
@@ -176,6 +177,15 @@ subtest 'argument update' => sub {
     \@args,
     [ "one", "two", "xx" ],
   );
+
+};
+
+subtest 'write to string' => sub {
+
+  my $src = 'hello world';
+  my $dst = ' ' x (length($src)+1);
+  string_write_to_string($dst, $src);
+  is($dst, "hello world\0");
 
 };
 
