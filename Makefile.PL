@@ -20,6 +20,7 @@ my %WriteMakefileArgs = (
   },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "7.12",
+    "ExtUtils::ParseXS"   => "3.30",
     "IPC::Cmd"            => 0
   },
   "DISTNAME"         => "FFI-Platypus",
@@ -73,7 +74,7 @@ my %WriteMakefileArgs = (
     "Capture::Tiny" => 0,
     "Test::More"    => "0.98"
   },
-  "VERSION" => "0.80",
+  "VERSION" => "0.81_01",
   "test"    => {
     "TESTS" => "t/*.t"
     }
