@@ -78,7 +78,7 @@ string_test_pointer_arg(char **arg)
     sprintf(buffer, "*arg==%s", *arg);
 
   *arg = "out";
-  
+
   return buffer;
 }
 
@@ -92,4 +92,16 @@ string_test_pointer_ret(char *arg)
   else
     sprintf(buffer, "%s", arg);
   return (char**) &buffer;
+}
+
+EXTERN void
+string_write_to_string(char *dst, char *src)
+{
+  int i=0;
+  while(src[i] != '\0')
+  {
+    dst[i]=src[i];
+    i++;
+  }
+  dst[i]=0;
 }
