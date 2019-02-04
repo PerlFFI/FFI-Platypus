@@ -255,8 +255,7 @@ sub postamble {
     "\t$noecho\$(FULLPERL) inc/mm-clean.pl\n" .
     "\t$noecho\$(RM_RF) _mm ffi-probe-*\n\n";
 
-  # TODO: remove this conditional at a later date
-  if($^O =~ /bsd$/)
+  if(1)
   {
     # Workaround for the tireless testers out there
     # who want to make -jX a thing.  For some reason.
