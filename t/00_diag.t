@@ -14,6 +14,7 @@ $modules{$_} = $_ for qw(
   Capture::Tiny
   ExtUtils::CBuilder
   ExtUtils::MakeMaker
+  ExtUtils::ParseXS
   FFI::CheckLib
   IPC::Cmd
   JSON::PP
