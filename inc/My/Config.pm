@@ -123,13 +123,27 @@ sub probe
 {
   my($self) = @_;
 
-  $self->{probe} ||= FFI::Probe->new(
+  my $probe = $self->{probe} ||= FFI::Probe->new(
     runner => $self->probe_runner,
     log => "config.log",
     data_filename => "./blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
     alien => [$self->share_config->get('alien')->{class}],
     cflags => ['-Iinclude'],
   );
+
+  unless(exists $probe->data->{alien})
+  {
+    my $class = $self->share_config->get('alien')->{class};
+    my $pm = $class . ".pm";
+    $pm =~ s{::}{/}g;
+    require $pm;
+    $probe->set( 'alien', 'ffi', 'class'    => $class                                       );
+    $probe->set( 'alien', 'ffi', 'version', => do { eval { $class->version } || 'unknown' } );
+    $probe->set( 'alien', 'ffi', 'cflags'   => $class->cflags                               );
+    $probe->set( 'alien', 'ffi', 'libs'     => $class->libs                                 );
+  }
+
+  $probe;
 }
 
 sub probe_runner
