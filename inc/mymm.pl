@@ -28,8 +28,17 @@ sub myWriteMakefile
   }
   else
   {
-    require Alien::FFI::pkgconfig;
-    if(Alien::FFI::pkgconfig->exists)
+    require Alien::FFI::pkgconfig    if $^O ne 'MSWin32';
+    require Alien::FFI::PkgConfigPP  if $^O eq 'MSWin32';
+    if($^O eq 'MSWin32' && Alien::FFI::PkgConfigPP->exists)
+    {
+      print "using system libffia via PkgConfigPP\n";
+      $share_config->set(alien => { class => 'Alien::FFI::PkgConfigPP', mode => 'system' });
+      require Alien::Base::Wrapper;
+      Alien::Base::Wrapper->import( 'Alien::FFI::PkgConfigPP', 'Alien::psapi', '!export' );
+      %alien = Alien::Base::Wrapper->mm_args;
+    }
+    elsif($^O ne 'MSWin32' && Alien::FFI::pkgconfig->exists)
     {
       print "using system libffi via @{[ Alien::FFI::pkgconfig->pkg_config_exe ]}\n";
       $share_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
