@@ -137,10 +137,10 @@ sub probe
     my $pm = $class . ".pm";
     $pm =~ s{::}{/}g;
     require $pm;
-    $probe->set( 'alien', 'ffi', 'class'    => $class                                       );
-    $probe->set( 'alien', 'ffi', 'version', => do { eval { $class->version } || 'unknown' } );
-    $probe->set( 'alien', 'ffi', 'cflags'   => $class->cflags                               );
-    $probe->set( 'alien', 'ffi', 'libs'     => $class->libs                                 );
+    $probe->set( 'alien', 'ffi', 'class'    => $class                    );
+    $probe->set( 'alien', 'ffi', 'version', => $class->config('version') );
+    $probe->set( 'alien', 'ffi', 'cflags'   => $class->cflags            );
+    $probe->set( 'alien', 'ffi', 'libs'     => $class->libs              );
   }
 
   $probe;

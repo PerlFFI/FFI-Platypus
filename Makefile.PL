@@ -19,6 +19,7 @@ my %WriteMakefileArgs = (
     "ExtUtils::CBuilder" => 0
   },
   "CONFIGURE_REQUIRES" => {
+    "Capture::Tiny"       => 0,
     "ExtUtils::MakeMaker" => "7.12",
     "ExtUtils::ParseXS"   => "3.30",
     "IPC::Cmd"            => 0
@@ -77,7 +78,7 @@ my %WriteMakefileArgs = (
   "VERSION" => "0.81_02",
   "test"    => {
     "TESTS" => "t/*.t"
-    }
+  }
 );
 
 mymm::myWriteMakefile(%WriteMakefileArgs);

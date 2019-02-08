@@ -5,39 +5,9 @@ use warnings;
 use Config;
 use File::Glob qw( bsd_glob );
 use ExtUtils::MakeMaker ();
-use IPC::Cmd qw( can_run );
+use IPC::Cmd ();
 use lib 'inc';
 use My::ShareConfig;
-
-sub _pkg_config_exe
-{
-  foreach my $cmd ($ENV{PKG_CONFIG}, qw( pkgconf pkg-config ))
-  {
-    next unless defined $cmd;
-    return $cmd if can_run($cmd);
-  }
-  return;
-}
-
-our $VERBOSE = !!$ENV{V};
-
-sub _pkg_config
-{
-  my(@args) = @_;
-  my $cmd = _pkg_config_exe;
-  if(defined $cmd)
-  {
-    my @cmd = ($cmd, @args);
-    print "+@cmd\n" if $VERBOSE;
-    system @cmd;
-    return $? == 0;
-  }
-  else
-  {
-    print "no pkg-config.\n";
-    return;
-  }
-}
 
 sub myWriteMakefile
 {
@@ -58,9 +28,10 @@ sub myWriteMakefile
   }
   else
   {
-    if(_pkg_config('--exists', 'libffi'))
+    require Alien::FFI::pkgconfig;
+    if(Alien::FFI::pkgconfig->exists)
     {
-      print "using system libffi via @{[ _pkg_config_exe ]}\n";
+      print "using system libffi via @{[ Alien::FFI::pkgconfig->pkg_config_exe ]}\n";
       $share_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
       require Alien::Base::Wrapper;
       Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'Alien::psapi', '!export' );

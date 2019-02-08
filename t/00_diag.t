@@ -42,8 +42,7 @@ $post_diag = sub {
     diag "$class->install_type = ", $class->install_type;
     diag "$class->cflags       = ", $class->cflags;
     diag "$class->libs         = ", $class->libs;
-    diag "$class->dist_dir     = ", eval { $class->dist_dir } || 'undef';
-    diag "$class->version      = ", eval { $class->config('version') } || 'unknown';
+    diag "$class->version      = ", $class->config('version');
     diag "my_configure             = ", $class->runtime_prop->{my_configure} if defined $class->runtime_prop->{my_configure};
     spacer();
     my %type_map = %{ $share_config->get('type_map') };
