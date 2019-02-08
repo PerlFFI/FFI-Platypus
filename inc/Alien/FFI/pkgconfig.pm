@@ -6,7 +6,7 @@ use Config;
 use IPC::Cmd ();
 use Capture::Tiny qw( capture );
 
-our $VERBOSE = !!$ENV{V};
+our $VERBOSE = $^O eq 'MSWin32' ? 1 : !!$ENV{V};
 
 sub pkg_config_exe
 {
