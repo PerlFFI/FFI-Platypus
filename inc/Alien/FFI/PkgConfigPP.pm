@@ -37,12 +37,12 @@ sub config
 
 sub cflags
 {
-  _pkg->get_cflags;
+  scalar _pkg->get_cflags;
 }
 
 sub libs
 {
-  _pkg->get_ldflags;
+  scalar _pkg->get_ldflags;
 }
 
 sub install_type { return 'system' }
