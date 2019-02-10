@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.82      2019-02-10 10:34:57 -0500
+  - Production release identical to 0.81_04
+
 0.81_04   2019-02-08 14:49:20 -0500
   - Diagnostic release
 
