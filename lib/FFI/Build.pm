@@ -335,6 +335,11 @@ sub source
     {
       my($type, $content, @args) = @$file_spec;
       my $class = "FFI::Build::File::$type";
+      unless($class->can('new'))
+      {
+        my $pm = "FFI/Build/File/$type.pm";
+        require $pm;
+      }
       push @{ $self->{source} }, $class->new(
         $content,
         build    => $self,
