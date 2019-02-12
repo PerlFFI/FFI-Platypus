@@ -3,6 +3,7 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - Fix warning in FFI::Build when verbose off
   - Allow arry file spec for FFI::Buuild source method
+  - Added scalar_to_pointer to FFI::Platypus::Buffer
 
 0.82      2019-02-10 10:34:57 -0500
   - Production release identical to 0.81_04

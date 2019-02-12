@@ -5,6 +5,7 @@ use warnings;
 use base qw( Exporter );
 
 our @EXPORT = qw( scalar_to_buffer buffer_to_scalar );
+our @EXPORT_OK = qw ( scalar_to_pointer );
 
 # ABSTRACT: Convert scalars to C buffers
 # VERSION
@@ -88,6 +89,22 @@ copying the buffer instead.  For example:
 sub scalar_to_buffer ($)
 {
   (unpack(_incantation, pack 'P', $_[0]), do { use bytes; length $_[0] });
+}
+
+=head2 scalar_to_pointer
+
+ my $pointer = scalar_to_pointer $scalar;
+
+Get the pointer to the scalar.  (Similar to C<scalar_to_buffer> above, but
+the size of the scalar is not computed or returned).
+
+Not exported by default, but may be exported on request.
+
+=cut
+
+sub scalar_to_pointer ($)
+{
+  unpack(_incantation, pack 'P', $_[0]);
 }
 
 =head2 buffer_to_scalar

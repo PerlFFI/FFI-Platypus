@@ -5,12 +5,15 @@ use utf8;
 use if $^O ne 'MSWin32' || $] >= 5.018, 'open', ':std', ':encoding(utf8)';
 use Test::More;
 use Encode qw( decode );
-use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
+use FFI::Platypus::Buffer;
+use FFI::Platypus::Buffer qw( scalar_to_pointer );
 
 subtest simple => sub {
   my $orig = 'me grimlock king';
   my($ptr, $size) = scalar_to_buffer($orig);
   ok $ptr, "ptr = $ptr";
+  my $ptr2 = scalar_to_pointer($orig);
+  is $ptr2, $ptr, "scalar to pointer matches";
   is $size, 16, 'size = 16';
   my $scalar = buffer_to_scalar($ptr, $size);
   is $scalar, 'me grimlock king', "scalar = $scalar";
