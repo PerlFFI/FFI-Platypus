@@ -153,10 +153,10 @@ sub new
     alien    => [],
   }, $class;
   
-  my $platform  = $self->{platform}  = $args{platform} || FFI::Build::Platform->default;
-  my $file      = $self->{file}      = $args{file} || FFI::Build::File::Library->new([$args{dir} || '.', $self->_native_name($name)], platform => $self->platform);
+  my $platform  = $self->{platform}  = $args{platform}  || FFI::Build::Platform->default;
+  my $file      = $self->{file}      = $args{file}      || FFI::Build::File::Library->new([$args{dir} || '.', $self->_native_name($name)], platform => $self->platform);
   my $buildname = $self->{buildname} = $args{buildname} || '_build';
-  my $verbose   = $self->{verbose}   = $args{verbose};
+  my $verbose   = $self->{verbose}   = $args{verbose}   || 0;
 
   if(defined $args{cflags})
   {
