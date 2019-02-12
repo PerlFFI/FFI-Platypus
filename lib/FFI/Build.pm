@@ -331,6 +331,18 @@ sub source
       push @{ $self->{source} }, $file_spec;
       next;
     }
+    if(ref $file_spec eq 'ARRAY')
+    {
+      my($type, $content, @args) = @$file_spec;
+      my $class = "FFI::Build::File::$type";
+      push @{ $self->{source} }, $class->new(
+        $content,
+        build    => $self,
+        platform => $self->platform,
+        @args
+      );
+      next;
+    }
     my @paths = File::Glob::bsd_glob($file_spec);
 path:
     foreach my $path (@paths)

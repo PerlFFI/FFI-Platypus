@@ -48,7 +48,7 @@ subtest 'file classes' => sub {
 
 subtest 'build' => sub {
 
-  foreach my $type (qw( name object ))
+  foreach my $type (qw( name object array ))
   {
   
     subtest $type => sub {
@@ -59,9 +59,21 @@ subtest 'build' => sub {
         verbose   => 2,
       );
 
-      my @source = $type eq 'name'
-        ? ('corpus/ffi_build/project1/*.c')
-        : (map { FFI::Build::File::C->new($_) } bsd_glob('corpus/ffi_build/project1/*.c'));
+      my @source;
+
+      if($type eq 'name')
+      {
+        @source = 'corpus/ffi_build/project1/*.c';
+      }
+      elsif($type eq 'object')
+      {
+        @source = map { FFI::Build::File::C->new($_) } bsd_glob('corpus/ffi_build/project1/*.c');
+      }
+      elsif($type eq 'array')
+      {
+        @source = map { [ C => $_ ] } bsd_glob('corpus/ffi_build/project1/*.c');
+      }
+
       $build->source(@source);
       note "$_" for $build->source;
 
