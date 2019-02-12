@@ -25,4 +25,3 @@ if($config->platform->which('cargo'))
   system 'cargo', 'build';
   chdir '../../..';
 }
-        
