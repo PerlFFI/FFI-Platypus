@@ -133,6 +133,7 @@ pod_coverage:
     - FFI::Build::File::C#cc
     - FFI::Build::File::C#ld
     - FFI::Build::File::C#accept_suffix
+    - FFI::Build::File::C#build_item_cpp
     - FFI::Build::File::CXX#cc
     - FFI::Build::File::CXX#ld
     - FFI::Build::File::CXX#accept_suffix
