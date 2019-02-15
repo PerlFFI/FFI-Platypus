@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.84      2019-02-15 15:26:23 -0500
+  - FFI::Build sets @rpath on libraries that it builds
+    on OS X.
+
 0.83      2019-02-12 14:05:04 -0500
   - Fix warning in FFI::Build when verbose off
   - Allow arry file spec for FFI::Buuild source method
