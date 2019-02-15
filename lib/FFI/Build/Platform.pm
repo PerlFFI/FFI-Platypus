@@ -470,6 +470,10 @@ sub flag_library_output
   {
     return ("-OUT:$file");
   }
+  elsif($self->osname eq 'darwin')
+  {
+    return ('-install_name' => "\@rpath/$file", -o => $file);
+  }
   else
   {
     return ('-o' => $file);

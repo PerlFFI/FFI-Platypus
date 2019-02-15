@@ -17,6 +17,7 @@
 *.bundle
 *.tmp
 *.core
+*.old
 core
 /inc/probe/bigendian
 /inc/probe/bigendian64
