@@ -1,30 +1,42 @@
----
+environment:
+    install_berry_perl: "cmd /C git clone https://github.com/stevieb9/berrybrew && cd berrybrew/bin && berrybrew.exe install %version% && berrybrew.exe switch %version%"
+    install_active_perl: "cmd /C choco install activeperl -version %version%"
+
+    matrix:
+      - install_perl: "%install_berry_perl%"
+        version: "5.26.2_64"
+      - install_perl: "%install_berry_perl%"
+        version: "5.26.2_32"
+
 
 install:
-  - choco install strawberryperl
-  - SET PATH=C:\Perl5\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
-  - perl -v
-  - if not exist C:\Perl5 mkdir C:\Perl5
+  # Install perl
+  - cmd: "%install_perl%"
+  # Make sure we are in project root
+  - cmd: "cd %APPVEYOR_BUILD_FOLDER%"
+  # Set path for berrybrew
+  - SET PATH=C:\Perl5\bin;C:\berrybrew\%version%\c\bin;C:\berrybrew\%version%\perl\site\bin;C:\berrybrew\%version%\perl\bin;%PATH%
   - SET PERL5LIB=C:/Perl5/lib/perl5
   - SET PERL_LOCAL_LIB_ROOT=C:/Perl5
   - SET PERL_MB_OPT=--install_base C:/Perl5
   - SET PERL_MM_OPT=INSTALL_BASE=C:/Perl5
-  - cpanm -n Alien::FFI
-  - cpanm -n ExtUtils::CBuilder
-  - cpanm -n FFI::CheckLib
-  - cpanm -n Math::Int64
-  - cpanm -n Win32::ErrorMode
-  - cpanm -n Devel::PPPort  
-  - cpanm -n constant
+  - cpanm -n Capture::Tiny ExtUtils::MakeMaker ExtUtils::ParseXS IPC::Cmd
+  - cpanm --installdeps .
+
 
 build: off
 
 test_script:
-  - perl Build.PL
-  - Build --verbose
-  - Build test --verbose
-
-#cache:
-#  - C:\Perl5
+  - perl Makefile.PL
+  - gmake
+  - gmake test
 
 shallow_clone: true
+
+#matrix:
+#  allow_failures:
+#    - install_perl: "%install_active_perl%"
+#      version: "5.24.1.2402"
+
+cache:
+  - C:\Perl5
