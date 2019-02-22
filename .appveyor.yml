@@ -29,7 +29,7 @@ build: off
 test_script:
   - perl Makefile.PL
   - gmake
-  - gmake test
+  - gmake test TEST_VERBOSE=1
 
 shallow_clone: true
 
