@@ -206,10 +206,6 @@ sub configure
   {
     $ch->define_var( HAVE_IV_IS_64 => 1 );
   }
-  else
-  {
-    $ch->define_var( HAVE_IV_IS_64 => 0 );
-  }
 
   my %type_map;
   my %align;
