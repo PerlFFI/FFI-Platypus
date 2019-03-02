@@ -2,6 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.85_01   2019-03-01 20:38:22 -0500
+  - Fix configure bug that misconfigured Perls with 32bit IVs
+    resulting in truncated 64bit values. (gh#117, gh#118).
+    This was a regression, probably introduced around 0.72
+    or so.  The test t/gh117.t has been added to avoid a
+    recurrence of this regression.
+
 0.84      2019-02-15 15:26:23 -0500
   - FFI::Build sets @rpath on libraries that it builds
     on OS X.
