@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.86      2019-03-02 16:42:12 -0500
+  - Production release identical to 0.85_01
+
 0.85_01   2019-03-01 20:38:22 -0500
   - Fix configure bug that misconfigured Perls with 32bit IVs
     resulting in truncated 64bit values. (gh#117, gh#118).
