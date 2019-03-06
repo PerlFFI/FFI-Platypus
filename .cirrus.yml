@@ -4,7 +4,7 @@ freebsd_instance:
 task:
   install_script:
     - sudo tzsetup America/New_York
-    - sudo pkg install -y p5-Dist-Zilla p5-App-cpanminus git libffi p5-Capture-Tiny p5-ExtUtils-MakeMaker p5-IPC-Cmd p5-ExtUtils-ParseXS
+    - sudo pkg install -y p5-Dist-Zilla p5-App-cpanminus git libffi p5-Capture-Tiny p5-ExtUtils-MakeMaker p5-IPC-Cmd p5-ExtUtils-ParseXS pkgconf
     - sudo dzil authordeps --missing | cpanm -n
     - sudo dzil listdeps --missing | cpanm -n
   script:
