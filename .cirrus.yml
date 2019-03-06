@@ -1,0 +1,12 @@
+freebsd_instance:
+  image: freebsd-11-2-release-amd64
+
+task:
+  install_script:
+    - sudo tzsetup America/New_York
+    - sudo pkg install -y p5-Dist-Zilla p5-App-cpanminus git
+    - sudo dzil authordeps --missing | cpanm -n
+    - sudo dzil listdeps --missing | cpanm -n
+  script:
+    - dzil test -v
+  
