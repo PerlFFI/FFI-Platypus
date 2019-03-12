@@ -1,4 +1,3 @@
-#!perl
 #Description: Get linux system uptime using GNOME libgtop library and FFI::Platypus
 #Refer: https://developer.gnome.org/libgtop/stable/libgtop-Uptime.html
 #Author: Bakkiaraj M
