@@ -114,7 +114,9 @@ pod_spelling_system:
     - shellwords
     - fbx
     - strndup
-
+    - Petr
+    - Pisar
+    - ppisar
 
 pod_coverage:
   skip: 0
