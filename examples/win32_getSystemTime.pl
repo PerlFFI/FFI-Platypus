@@ -1,4 +1,3 @@
-#!perl
 # Author : Bakkiaraj M
 # Script: Get System time from windows OS using GetLocalTime API.
 use strict;
