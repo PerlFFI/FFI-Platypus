@@ -30,7 +30,10 @@ sub myWriteMakefile
   {
     require Alien::FFI::pkgconfig    if $^O ne 'MSWin32';
     require Alien::FFI::PkgConfigPP  if $^O eq 'MSWin32';
-    if($^O eq 'MSWin32' && Alien::FFI::PkgConfigPP->exists)
+
+    my $alien_install_type_unset = !defined $ENV{ALIEN_INSTALL_TYPE};
+
+    if($alien_install_type_unset && $^O eq 'MSWin32' && Alien::FFI::PkgConfigPP->exists)
     {
       print "using system libffia via PkgConfigPP\n";
       $share_config->set(alien => { class => 'Alien::FFI::PkgConfigPP', mode => 'system' });
@@ -38,7 +41,7 @@ sub myWriteMakefile
       Alien::Base::Wrapper->import( 'Alien::FFI::PkgConfigPP', 'Alien::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
     }
-    elsif($^O ne 'MSWin32' && Alien::FFI::pkgconfig->exists)
+    elsif($alien_install_type_unset && $^O ne 'MSWin32' && Alien::FFI::pkgconfig->exists)
     {
       print "using system libffi via @{[ Alien::FFI::pkgconfig->pkg_config_exe ]}\n";
       $share_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
@@ -197,7 +200,7 @@ sub postamble {
 
   foreach my $key (qw( cc inc ccflags cccdlflags optimize ld ldflags lddlflags ))
   {
-    $postamble .= 
+    $postamble .=
       sprintf "\t$noecho\$(FULLPERL) inc/mm-config-set.pl eumm.%-20s \$(%s)\n", $key, uc $key;
   }
 
