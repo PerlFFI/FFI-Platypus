@@ -1429,6 +1429,8 @@ Ilya Pavlov (Ilya33)
 
 Petr Pisar (ppisar)
 
+Mohammad S Anwar (MANWAR)
+
 # COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2015,2016,2017,2018,2019 by Graham Ollis.
