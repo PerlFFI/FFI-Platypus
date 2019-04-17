@@ -119,8 +119,8 @@ sub custom_type ($$)
 
 Load the custom type defined in the module I<$name>, and make an alias 
 with the name I<$alias>. If the custom type requires any arguments, they 
-may be passed in as I<@type_args>. See L<FFI::Platypus::Type#Custom 
-Types> for details.
+may be passed in as I<@type_args>. See L<FFI::Platypus::Type#Custom-Types>
+for details.
 
 If I<$name> contains C<::> then it will be assumed to be a fully 
 qualified package name. If not, then C<FFI::Platypus::Type::> will be 
