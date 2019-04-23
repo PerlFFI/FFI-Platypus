@@ -1,7 +1,12 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.87      2019-04-23 08:25:35 -0400
   - Add probe for intptr_t and uintptr_t types (gh#123)
+  - You may now use the ALIEN_INSTALL_TYPE environment
+    to force using Alien::FFI (gh#121)
+  - Documentation improvements (gh#122 manwar++ gh#120 ppisar++)
 
 0.86      2019-03-02 16:42:12 -0500
   - Production release identical to 0.85_01
