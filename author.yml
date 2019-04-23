@@ -117,7 +117,8 @@ pod_spelling_system:
     - Petr
     - Pisar
     - ppisar
-
+    - Anwar
+    - MANWAR
 pod_coverage:
   skip: 0
   # format is "Class#method" or "Class", regex allowed
