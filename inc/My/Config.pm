@@ -48,6 +48,8 @@ long double complex
 bool
 _Bool
 pointer
+uintptr_t
+intptr_t
 EOF
 
 my @extra_probe_types = split /\n/, <<EOF;

@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add probe for intptr_t and uintptr_t types (gh#123)
 
 0.86      2019-03-02 16:42:12 -0500
   - Production release identical to 0.85_01
