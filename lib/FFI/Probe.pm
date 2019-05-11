@@ -505,7 +505,7 @@ sub save
   close $fh;
 }
 
-=head2
+=head2 data
 
  my $data = $probe->data;
 
