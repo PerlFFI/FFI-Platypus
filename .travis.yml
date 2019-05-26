@@ -16,15 +16,16 @@ script:
 
 jobs:
   include:
-    - env: CIP_TAG=5.29
+    - env: CIP_TAG=5.31
+    - env: CIP_TAG=5.30
+    - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
+    - env: CIP_TAG=5.30-threads
+    - env: CIP_TAG=5.30-longdouble
+    - env: CIP_TAG=5.30-quadmath
+    - env: CIP_TAG=5.30-ffimaster
+    - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_DEBUG_FAKE32=1
+    - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
     - env: CIP_TAG=5.28
-    - env: CIP_TAG=5.28 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
-    - env: CIP_TAG=5.28-threads
-    - env: CIP_TAG=5.28-longdouble
-    - env: CIP_TAG=5.28-quadmath
-    - env: CIP_TAG=5.28-ffimaster
-    - env: CIP_TAG=5.28 CIP_ENV=FFI_PLATYPUS_DEBUG_FAKE32=1
-    - env: CIP_TAG=5.28 CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
     - env: CIP_TAG=5.26
     - env: CIP_TAG=5.24
     - env: CIP_TAG=5.22
