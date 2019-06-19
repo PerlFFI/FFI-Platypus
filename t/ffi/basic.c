@@ -22,3 +22,9 @@ f2(int *i)
 {
   *i = *i+1;
 }
+
+EXTERN int
+mystrangeprefix_bar(void)
+{
+  return 42;
+}

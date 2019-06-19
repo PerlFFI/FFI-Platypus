@@ -567,6 +567,32 @@ sub type_meta
   $type->meta;
 }
 
+=head2 mangler
+
+ $ffi->mangler(\&mangler);
+
+Specify a customer mangler to be used for symbol lookup.  This is usually useful
+when you are writing bindings for a library where all of the functions have the
+same prefix.  Example:
+
+ $ffi->mangler(sub {
+   my($symbol) = @_;
+   return "foo_$symbol";
+ });
+ 
+ $ffi->function( get_bar => [] => 'int' );  # attaches foo_get_bar
+ 
+ my $f = $ffi->function( set_baz => ['int'] => 'void' );
+ $f->call(22); # calls foo_set_baz 
+
+=cut
+
+sub mangler
+{
+  my($self, $sub) = @_;
+  $self->{mangler} = $self->{mymangler} = $sub;
+}
+
 =head2 function
 
  my $function = $ffi->function($name => \@argument_types => $return_type);
@@ -887,8 +913,10 @@ sub find_symbol
 {
   my($self, $name) = @_;
 
+  $self->{mangler} ||= $self->{mymangler};
+
   unless(defined $self->{mangler})
-  {  
+  {
     my $class = _lang_class($self->{lang});
     if($class->can('mangler'))
     {
