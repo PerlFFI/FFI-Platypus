@@ -16,7 +16,7 @@ use Text::ParseWords qw( shellwords );
 # distributed with Alien-Build.
 
 # ABSTRACT: Compiler and linker wrapper for Alien
-our $VERSION = '1.63'; # VERSION
+our $VERSION = '1.74'; # VERSION
 
 
 my @cflags_I;
@@ -201,7 +201,7 @@ Alien::Base::Wrapper - Compiler and linker wrapper for Alien
 
 =head1 VERSION
 
-version 1.63
+version 1.74
 
 =head1 SYNOPSIS
 
@@ -340,7 +340,7 @@ Contributors:
 
 Diab Jerius (DJERIUS)
 
-Roy Storey
+Roy Storey (KIWIROY)
 
 Ilya Pavlov
 
