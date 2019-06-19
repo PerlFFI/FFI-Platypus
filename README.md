@@ -277,6 +277,24 @@ Examples:
     $ffi->type('int[128]' => 'myintarray');
     my $meta = $ffi->type_meta('myintarray'); # array of 128 ints
 
+## mangler
+
+    $ffi->mangler(\&mangler);
+
+Specify a customer mangler to be used for symbol lookup.  This is usually useful
+when you are writing bindings for a library where all of the functions have the
+same prefix.  Example:
+
+    $ffi->mangler(sub {
+      my($symbol) = @_;
+      return "foo_$symbol";
+    });
+    
+    $ffi->function( get_bar => [] => 'int' );  # attaches foo_get_bar
+    
+    my $f = $ffi->function( set_baz => ['int'] => 'void' );
+    $f->call(22); # calls foo_set_baz 
+
 ## function
 
     my $function = $ffi->function($name => \@argument_types => $return_type);

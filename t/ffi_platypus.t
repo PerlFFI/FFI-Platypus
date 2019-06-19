@@ -773,4 +773,12 @@ subtest 'attach void' => sub {
 
 };
 
+subtest 'customer mangler' => sub {
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($libtest);
+  $ffi->mangler( sub { "mystrangeprefix_$_[0]" });
+  is($ffi->function(bar => [] => 'int')->call, 42 );
+};
+
 done_testing;
