@@ -3,7 +3,7 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
 
 0.88      2019-06-19 06:56:57 -0400
-  - Add mangler attribute for FFI::Platypus
+  - Add mangler attribute for FFI::Platypus (gh#128)
 
 0.87      2019-04-23 08:25:35 -0400
   - Add probe for intptr_t and uintptr_t types (gh#123)
