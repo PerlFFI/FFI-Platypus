@@ -82,7 +82,8 @@ sub new
 sub call
 {
   my($function, $wrapper) = @{ shift() };
-  $wrapper->($function, @_);
+  @_ = ($function, @_);
+  goto &$wrapper;
 }
 
 my $counter = 0;
@@ -106,7 +107,10 @@ sub attach
 
   {
     no strict 'refs';
-    *{$perl_name} = sub { $wrapper->($xsub, @_) };
+    *{$perl_name} = sub {
+      unshift @_, $xsub;
+      goto &$wrapper;
+    };
   }
 
   $self;
