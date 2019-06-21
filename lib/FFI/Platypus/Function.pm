@@ -27,13 +27,22 @@ context and better examples see L<FFI::Platypus>.
 
 =head1 METHODS
 
+=head2 attach
+
+ $f->attach($name);
+ $f->attach($name, $prototype);
+
+Attaches the function as an xsub (similar to calling attach directly
+from an L<FFI::Platypus> instance).  You may optionally include a
+prototype.
+
 =head2 call
 
  my $ret = $f->call(@arguments);
  my $ret = $f->(@arguments);
 
-Calls the function and returns the result.  You can also use the
-function object like a code reference.
+Calls the function and returns the result. You can also use the
+function object B<like> a code reference.
 
 =cut
 
