@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Better file/line number diagnostics for croak inside a
+    wrapper (gh#129, gh#132)
 
 0.88      2019-06-19 06:56:57 -0400
   - Add mangler attribute for FFI::Platypus (gh#128)
