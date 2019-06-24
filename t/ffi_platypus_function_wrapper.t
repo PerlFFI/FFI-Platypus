@@ -40,6 +40,31 @@ subtest 'sub_ref' => sub {
     my $package = Sub::Identify::stash_name($sub_ref);
     note "name = ${package}::$name";
   }
+};
+
+subtest 'prototype' => sub {
+
+  subtest one => sub {
+
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib($libtest);
+    my $sub_ref = $ffi->attach(['f0' => 'f0_prototyped1'], [ 'uint8' ] => 'uint8', '$', sub { my($xsub, $arg) = @_; $arg*2});
+
+    is(f0_prototyped1(2), 4); # just make sure it attached okay
+    is(prototype(\&f0_prototyped1), '$');
+
+  };
+
+  subtest two => sub {
+
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib($libtest);
+    my $sub_ref = $ffi->function('f0', [ 'uint8' ] => 'uint8', sub { my($xsub, $arg) = @_; $arg*2})->attach('f0_prototyped2', '$');
+
+    is(f0_prototyped2(2), 4); # just make sure it attached okay
+    is(prototype(\&f0_prototyped2), '$');
+
+  };
 
 };
 

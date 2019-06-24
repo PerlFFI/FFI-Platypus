@@ -150,11 +150,16 @@ sub attach
   my $xsub = $function->sub_ref;
 
   {
-    no strict 'refs';
-    *{$perl_name} = sub {
+    my $code = sub {
       unshift @_, $xsub;
       goto &$wrapper;
     };
+    if(defined $proto)
+    {
+      _set_prototype $proto, $code;
+    }
+    no strict 'refs';
+    *{$perl_name} = $code;
   }
 
   $self;

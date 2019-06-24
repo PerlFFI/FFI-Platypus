@@ -100,4 +100,30 @@ subtest 'sub_ref' => sub {
 
 };
 
+subtest 'prototype' => sub {
+
+  subtest one => sub {
+
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib($libtest);
+    my $sub_ref = $ffi->attach(['f0' => 'f0_prototyped1'], [ 'uint8' ] => 'uint8', '$');
+
+    is(f0_prototyped1(2), 2); # just make sure it attached okay
+    is(prototype(\&f0_prototyped1), '$');
+
+  };
+
+  subtest two => sub {
+
+    my $ffi = FFI::Platypus->new;
+    $ffi->lib($libtest);
+    my $sub_ref = $ffi->function('f0', [ 'uint8' ] => 'uint8')->attach('f0_prototyped2', '$');
+
+    is(f0_prototyped2(2), 2); # just make sure it attached okay
+    is(prototype(\&f0_prototyped2), '$');
+
+  };
+
+};
+
 done_testing;

@@ -740,7 +740,7 @@ sub attach
   
   if(defined $function)
   {
-    $function->attach($perl_name);
+    $function->attach($perl_name, $proto);
   }
   
   $self;
