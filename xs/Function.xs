@@ -156,3 +156,16 @@ DESTROY(self)
       Safefree(self);
     }
 
+MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Function::Wrapper
+
+void
+_set_prototype(proto, code)
+    SV *proto;
+    SV *code;
+  PROTOTYPE: $$
+  PREINIT:
+    SV *cv; /* not CV */
+  CODE:
+    SvGETMAGIC(code);
+    cv = SvRV(code);
+    sv_copypv(cv, proto);
