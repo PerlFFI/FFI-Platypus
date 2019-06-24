@@ -95,26 +95,18 @@ sub attach
   $self;
 }
 
+sub sub_ref
 {
-  my $serial = 0;
+  my($self) = @_;
 
-  sub sub_ref
-  {
-    my($self) = @_;
-    my $perl_name = "FFI::Platypus::Function::Serial::S@{[ $serial++ ]}";
-    $self->attach($perl_name);
-    my $xsub_ref = \&{$perl_name};
+  my $frame = -1;
+  my($caller, $filename, $line);
 
-    ## it would be nice to be able to undef this
-    ## but then the xsub_ref won't work.
-    #undef &{$perl_name};
+  do {
+    ($caller, $filename, $line) = caller(++$frame);
+  } while( $caller =~ /^FFI::Platypus(|::Function|::Function::Wrapper|::Declare)$/ );
 
-    ## we also reveal the name of the real sub.  It would be better
-    ## to use Sub::Name to rename it to something else, though not
-    ## crazy about adding that as a dep.
-
-    $xsub_ref;
-  }
+  $self->_sub_ref("$filename:$line");
 }
 
 package FFI::Platypus::Function::Wrapper;
@@ -156,7 +148,7 @@ sub attach
     };
     if(defined $proto)
     {
-      _set_prototype $proto, $code;
+      _set_prototype($proto, $code);
     }
     no strict 'refs';
     *{$perl_name} = $code;

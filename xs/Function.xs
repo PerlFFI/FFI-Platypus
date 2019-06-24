@@ -20,7 +20,7 @@ new(class, platypus, address, abi, return_type, ...)
   CODE:
     (void)class;
     ffi_abi = abi == -1 ? FFI_DEFAULT_ABI : abi;
-    
+
     for(i=0,extra_arguments=0; i<(items-5); i++)
     {
       ffi_pl_type *arg_type;
@@ -33,15 +33,15 @@ new(class, platypus, address, abi, return_type, ...)
       if((arg_type->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
         extra_arguments += arg_type->extra[0].custom_perl.argument_count;
     }
-  
+
     Newx(buffer, (sizeof(ffi_pl_function) + sizeof(ffi_pl_type*)*(items-5+extra_arguments)), char);
     self = (ffi_pl_function*)buffer;
     Newx(ffi_argument_types, items-5+extra_arguments, ffi_type*);
-    
+
     self->address = address;
     self->return_type = return_type;
     ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
-    
+
     for(i=0,n=0; i<(items-5); i++,n++)
     {
       arg = ST(i+5);
@@ -60,7 +60,7 @@ new(class, platypus, address, abi, return_type, ...)
         n += self->argument_types[n]->extra[0].custom_perl.argument_count;
       }
     }
-    
+
     ffi_status = ffi_prep_cif(
       &self->ffi_cif,            /* ffi_cif     | */
       ffi_abi,                   /* ffi_abi     | */
@@ -68,7 +68,7 @@ new(class, platypus, address, abi, return_type, ...)
       ffi_return_type,           /* ffi_type *  | return type */
       ffi_argument_types         /* ffi_type ** | argument types */
     );
-    
+
     if(ffi_status != FFI_OK)
     {
       if(!PL_dirty)
@@ -83,7 +83,7 @@ new(class, platypus, address, abi, return_type, ...)
       else
         croak("unknown error with ffi_prep_cif");
     }
-    
+
     self->platypus_sv = SvREFCNT_inc_simple_NN(platypus);
 
     RETVAL = self;
@@ -144,6 +144,27 @@ _attach(self, perl_name, path_name, proto)
      * it was created from.
      */
     SvREFCNT_inc_simple_void_NN(self);
+
+SV*
+_sub_ref(self, path_name)
+    SV *self
+    ffi_pl_string path_name
+  PREINIT:
+    CV* cv;
+    SV *ref;
+  CODE:
+    cv =newXS(NULL, ffi_pl_sub_call, path_name);
+    CvXSUBANY(cv).any_ptr = (void *) INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
+    /*
+     * No coresponding decrement !!
+     * once attached, you can never free the function object, or the FFI::Platypus
+     * it was created from.
+     */
+    SvREFCNT_inc_simple_void_NN(self);
+    RETVAL = newRV_inc((SV*)cv);
+  OUTPUT:
+    RETVAL
+
 
 void
 DESTROY(self)
