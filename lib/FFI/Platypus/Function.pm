@@ -49,17 +49,7 @@ function object B<like> a code reference.
  my $code = $f->sub_ref;
 
 Returns an anonymous code reference.  This will usually be faster
-than using the C<call> method above.  It can also tie up resources,
-because an C<attach> is done under the hood, which keeps an xsub
-around, even if the returned code reference falls out of scope.
-
-Thus, this is essentially a shortcut for:
-
- $f->attach("Generated::Function::name");
- my $code = \&Generated::Function::name;
-
-But it can be useful when you just need a sub reference and don't
-care about the "real" name.
+than using the C<call> method above.
 
 =cut
 
