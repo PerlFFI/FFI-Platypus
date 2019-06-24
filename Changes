@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add sub_ref method to FFI::Platypus::Function
   - Better file/line number diagnostics for croak inside a
     wrapper (gh#129, gh#132)
 
