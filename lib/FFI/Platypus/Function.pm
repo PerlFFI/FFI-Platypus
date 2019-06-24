@@ -46,7 +46,6 @@ function object B<like> a code reference.
 
 =head2 sub_ref
 
- my $code = $f->sub_ref($proto);
  my $code = $f->sub_ref;
 
 Returns an anonymous code reference.  This will usually be faster
@@ -101,9 +100,9 @@ sub attach
 
   sub sub_ref
   {
-    my($self, $proto) = @_;
+    my($self) = @_;
     my $perl_name = "FFI::Platypus::Function::Serial::S@{[ $serial++ ]}";
-    $self->attach($perl_name, $proto);
+    $self->attach($perl_name);
     my $xsub_ref = \&{$perl_name};
 
     ## it would be nice to be able to undef this
@@ -163,7 +162,7 @@ sub attach
 
 sub sub_ref
 {
-  my($self, $proto) = @_;
+  my($self) = @_;
   my($function, $wrapper) = @{ $self };
   my $xsub = $function->sub_ref;
 
