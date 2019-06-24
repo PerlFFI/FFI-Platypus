@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.89_01   2019-06-24 08:33:05 -0400
   - Fixed bug where prototypes to attach were sometimes being
     ignored.
   - Add sub_ref method to FFI::Platypus::Function (gh#133)
