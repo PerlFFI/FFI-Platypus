@@ -82,4 +82,22 @@ subtest 'meta' => sub {
 
 };
 
+subtest 'sub_ref' => sub {
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($libtest);
+  my $sub_ref = $ffi->function('f0', [ 'uint8' ] => 'uint8')->sub_ref;
+
+  is $sub_ref->(99), 99, 'calls okay';
+  is ref($sub_ref), 'CODE', 'it is a code reference';
+
+  if(eval { require Sub::Identify; 1 })
+  {
+    my $name = Sub::Identify::sub_name($sub_ref);
+    my $package = Sub::Identify::stash_name($sub_ref);
+    note "name = ${package}::$name";
+  }
+
+};
+
 done_testing;

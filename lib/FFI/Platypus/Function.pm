@@ -44,6 +44,24 @@ prototype.
 Calls the function and returns the result. You can also use the
 function object B<like> a code reference.
 
+=head2 sub_ref
+
+ my $code = $f->sub_ref($proto);
+ my $code = $f->sub_ref;
+
+Returns an anonymous code reference.  This will usually be faster
+than using the C<call> method above.  It can also tie up resources,
+because an C<attach> is done under the hood, which keeps an xsub
+around, even if the returned code reference falls out of scope.
+
+Thus, this is essentially a shortcut for:
+
+ $f->attach("Generated::Function::name");
+ my $code = \&Generated::Function::name;
+
+But it can be useful when you just need a sub reference and don't
+care about the "real" name.
+
 =cut
 
 use overload '&{}' => sub {
@@ -78,6 +96,28 @@ sub attach
   $self;
 }
 
+{
+  my $serial = 0;
+
+  sub sub_ref
+  {
+    my($self, $proto) = @_;
+    my $perl_name = "FFI::Platypus::Function::Serial::S@{[ $serial++ ]}";
+    $self->attach($perl_name, $proto);
+    my $xsub_ref = \&{$perl_name};
+
+    ## it would be nice to be able to undef this
+    ## but then the xsub_ref won't work.
+    #undef &{$perl_name};
+
+    ## we also reveal the name of the real sub.  It would be better
+    ## to use Sub::Name to rename it to something else, though not
+    ## crazy about adding that as a dep.
+
+    $xsub_ref;
+  }
+}
+
 package FFI::Platypus::Function::Wrapper;
 
 use base qw( FFI::Platypus::Function );
@@ -95,8 +135,6 @@ sub call
   goto &$wrapper;
 }
 
-my $counter = 0;
-
 sub attach
 {
   my($self, $perl_name, $proto) = @_;
@@ -110,9 +148,7 @@ sub attach
     $perl_name = join '::', $caller, $perl_name
   }
 
-  my $attach_name = "FFI::Platypus::Inner::xsub@{[ $counter++ ]}";
-  $function->attach($attach_name);
-  my $xsub = \&{$attach_name};
+  my $xsub = $function->sub_ref;
 
   {
     no strict 'refs';
@@ -123,6 +159,18 @@ sub attach
   }
 
   $self;
+}
+
+sub sub_ref
+{
+  my($self, $proto) = @_;
+  my($function, $wrapper) = @{ $self };
+  my $xsub = $function->sub_ref;
+
+  return sub {
+    unshift @_, $xsub;
+    goto &$wrapper;
+  };
 }
 
 1;
