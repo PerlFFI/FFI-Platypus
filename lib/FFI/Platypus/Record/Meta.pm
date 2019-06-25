@@ -3,6 +3,16 @@ package FFI::Platypus::Record::Meta;
 use strict;
 use warnings;
 
+# ABSTRACT: FFI support for structured records data
+# VERSION
+
+=head1 DESCRIPTION
+
+This class is private to FFI::Platypus.  See L<FFI::Platypus::Record> for
+the public interface to Platypus records.
+
+=cut
+
 BEGIN {
   require FFI::Platypus;
   my $ffi = FFI::Platypus->new;
@@ -25,6 +35,12 @@ BEGIN {
   $ffi->attach( new => ['opaque[]'] => 'meta_t', sub {  # ffi_type[]
     my($xsub, $class, $elements) = @_;
 
+    if(ref($elements) ne 'ARRAY')
+    {
+      require Carp;
+      Carp::croak("passed something other than a array ref to @{[ __PACKAGE__ ]}");
+    }
+
     my $ffi = FFI::Platypus->new;
     $ffi->lib(undef);
 
@@ -39,7 +55,7 @@ BEGIN {
       else
       {
         require Carp;
-        Carp::croak "unknown type: $element_type";
+        Carp::croak("unknown type: $element_type");
       }
     }
 
