@@ -1225,9 +1225,10 @@ will get.
 Also in this example, we rename some of the functions when they are 
 placed into Perl space to save typing:
 
- attach [notify_notification_new => 'notify_new']
-   => [string,string,string]
-   => opaque;
+ $ffi->attach( [notify_notification_new => 'notify_new']
+   => ['string','string','string']
+   => 'opaque'
+ );
 
 When you specify a list reference as the "name" of the function the 
 first element is the symbol name as understood by the dynamic library. 
