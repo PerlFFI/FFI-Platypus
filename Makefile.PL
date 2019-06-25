@@ -58,6 +58,7 @@ my %WriteMakefileArgs = (
     "lib/FFI/Platypus/Type/PointerSizeBuffer.pm" => "\$(INST_LIB)/FFI/Platypus/Type/PointerSizeBuffer.pm",
     "lib/FFI/Platypus/Type/StringArray.pm"       => "\$(INST_LIB)/FFI/Platypus/Type/StringArray.pm",
     "lib/FFI/Platypus/Type/StringPointer.pm"     => "\$(INST_LIB)/FFI/Platypus/Type/StringPointer.pm",
+    "lib/FFI/Platypus/TypeParser.pm"             => "\$(INST_LIB)/FFI/Platypus/TypeParser.pm",
     "lib/FFI/Probe.pm"                           => "\$(INST_LIB)/FFI/Probe.pm",
     "lib/FFI/Probe/Runner.pm"                    => "\$(INST_LIB)/FFI/Probe/Runner.pm",
     "lib/FFI/Probe/Runner/Builder.pm"            => "\$(INST_LIB)/FFI/Probe/Runner/Builder.pm",

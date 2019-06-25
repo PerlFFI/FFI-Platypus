@@ -119,6 +119,7 @@ pod_spelling_system:
     - ppisar
     - Anwar
     - MANWAR
+
 pod_coverage:
   skip: 0
   # format is "Class#method" or "Class", regex allowed
@@ -128,6 +129,7 @@ pod_coverage:
     - FFI::Platypus::Record::Meta
     - FFI::Platypus::ShareConfig
     - FFI::Platypus::Internal
+    - FFI::Platypus::TypeParser
     - FFI::Platypus::Closure#get_data
     - FFI::Platypus::Closure#add_data
     - FFI::Probe

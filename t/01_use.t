@@ -30,6 +30,7 @@ require_ok 'FFI::Platypus::ShareConfig';
 require_ok 'FFI::Platypus::Type::PointerSizeBuffer';
 require_ok 'FFI::Platypus::Type::StringArray';
 require_ok 'FFI::Platypus::Type::StringPointer';
+require_ok 'FFI::Platypus::TypeParser';
 require_ok 'FFI::Probe';
 require_ok 'FFI::Probe::Runner';
 require_ok 'FFI::Probe::Runner::Builder';
@@ -62,6 +63,7 @@ ok -f 't/ffi_platypus_shareconfig.t',                         'test for FFI::Pla
 ok -f 't/ffi_platypus_type_pointersizebuffer.t',              'test for FFI::Platypus::Type::PointerSizeBuffer';
 ok -f 't/ffi_platypus_type_stringarray.t',                    'test for FFI::Platypus::Type::StringArray';
 ok -f 't/ffi_platypus_type_stringpointer.t',                  'test for FFI::Platypus::Type::StringPointer';
+ok -f 't/ffi_platypus_typeparser.t',                          'test for FFI::Platypus::TypeParser';
 ok -f 't/ffi_probe.t',                                        'test for FFI::Probe';
 ok -f 't/ffi_probe_runner.t',                                 'test for FFI::Probe::Runner';
 ok -f 't/ffi_probe_runner_builder.t',                         'test for FFI::Probe::Runner::Builder';
