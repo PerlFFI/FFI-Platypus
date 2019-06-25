@@ -125,6 +125,7 @@ pod_coverage:
   # for either Class or method.
   private:
     - FFI::Platypus::Type::.*
+    - FFI::Platypus::Record::Meta
     - FFI::Platypus::ShareConfig
     - FFI::Platypus::Internal
     - FFI::Platypus::Closure#get_data
