@@ -16,14 +16,16 @@ my $lib = FFI::Build->new(
   verbose  => (!!$ENV{V} ? 2 : 1),
   dir      => 'blib/lib/auto/share/dist/FFI-Platypus/lib',
   platform => $config->platform,
+  alien    => [$config->alien],
 )->build;
 
 my $name = basename($lib->basename);
 
-foreach my $mod (qw( Memory ))
+foreach my $dir ( 'FFI/Platypus/Memory','FFI/Platypus/Record/Meta' )
 {
-  mkpath("blib/arch/auto/FFI/Platypus/$mod", 0, 0755);
-  my $txtfile = "blib/arch/auto/FFI/Platypus/$mod/$mod.txt";
+  my($file) = $dir =~ m{/([^/]+)$};
+  mkpath("blib/arch/auto/$dir", 0, 0755);
+  my $txtfile = "blib/arch/auto/$dir/$file.txt";
   my $fh;
   open($fh, '>', $txtfile) || die "unable to write to $txtfile $!";
   print $fh "FFI::Build\@auto/share/dist/FFI-Platypus/lib/$name\n";

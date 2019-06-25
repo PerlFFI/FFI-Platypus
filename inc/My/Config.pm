@@ -377,6 +377,8 @@ sub alien
   $self->share_config->set(extra_compiler_flags => [ shellwords($class->cflags) ]);
   $self->share_config->set(extra_linker_flags   => [ shellwords($class->libs) ]);
   $self->share_config->set(ccflags => $class->cflags);
+
+  $self->share_config->get('alien')->{class};
 }
 
 1;

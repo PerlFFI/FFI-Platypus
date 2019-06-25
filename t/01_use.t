@@ -24,6 +24,7 @@ require_ok 'FFI::Platypus::Lang::C';
 require_ok 'FFI::Platypus::Lang::Win32';
 require_ok 'FFI::Platypus::Memory';
 require_ok 'FFI::Platypus::Record';
+require_ok 'FFI::Platypus::Record::Meta';
 require_ok 'FFI::Platypus::Record::TieArray';
 require_ok 'FFI::Platypus::ShareConfig';
 require_ok 'FFI::Platypus::Type::PointerSizeBuffer';
@@ -55,6 +56,7 @@ ok -f 't/ffi_platypus_lang_c.t',                              'test for FFI::Pla
 ok -f 't/ffi_platypus_lang_win32.t',                          'test for FFI::Platypus::Lang::Win32';
 ok -f 't/ffi_platypus_memory.t',                              'test for FFI::Platypus::Memory';
 ok -f 't/ffi_platypus_record.t',                              'test for FFI::Platypus::Record';
+ok -f 't/ffi_platypus_record_meta.t',                         'test for FFI::Platypus::Record::Meta';
 ok -f 't/ffi_platypus_record_tiearray.t',                     'test for FFI::Platypus::Record::TieArray';
 ok -f 't/ffi_platypus_shareconfig.t',                         'test for FFI::Platypus::ShareConfig';
 ok -f 't/ffi_platypus_type_pointersizebuffer.t',              'test for FFI::Platypus::Type::PointerSizeBuffer';

@@ -51,6 +51,7 @@ my %WriteMakefileArgs = (
     "lib/FFI/Platypus/Lang/Win32.pm"             => "\$(INST_LIB)/FFI/Platypus/Lang/Win32.pm",
     "lib/FFI/Platypus/Memory.pm"                 => "\$(INST_LIB)/FFI/Platypus/Memory.pm",
     "lib/FFI/Platypus/Record.pm"                 => "\$(INST_LIB)/FFI/Platypus/Record.pm",
+    "lib/FFI/Platypus/Record/Meta.pm"            => "\$(INST_LIB)/FFI/Platypus/Record/Meta.pm",
     "lib/FFI/Platypus/Record/TieArray.pm"        => "\$(INST_LIB)/FFI/Platypus/Record/TieArray.pm",
     "lib/FFI/Platypus/ShareConfig.pm"            => "\$(INST_LIB)/FFI/Platypus/ShareConfig.pm",
     "lib/FFI/Platypus/Type.pod"                  => "\$(INST_LIB)/FFI/Platypus/Type.pod",
