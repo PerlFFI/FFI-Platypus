@@ -547,6 +547,11 @@ Say you have a C header file like this:
  void foo(foo_t foo);
  foo_t get_foo();
 
+The challenge is here that once the source is processed by the C
+pre-processor the name/value mappings for these C<FOO_> constants
+are lost.  There is no way to fetch them from the library once it
+is compiled and linked.
+
 One common way of implementing this would be to create and export 
 constants in your Perl module, like this:
 
@@ -607,6 +612,10 @@ representation:
 
  use Foo;
  foo('static');
+
+If the library that you are using has a lot of these constants you can
+try using L<Convert::Binary::C> or another C header parser to obtain
+the appropriate name/value pairings for the constants that you need.
 
 =head4 Example 2: Blessed references
 

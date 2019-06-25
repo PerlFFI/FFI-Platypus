@@ -1409,6 +1409,30 @@ wrapper function will be returned back to the original caller.
 
 =head1 FAQ
 
+=head2 How do I get constants defined as macros in C header files
+
+This turns out to be a challenge for any language calling into C, which
+frequently uses C<#define> macros to define constants like so:
+
+ #define FOO_STATIC  1
+ #define FOO_DYNAMIC 2
+ #define FOO_OTHER   3
+
+As macros are expanded and their definitions are thrown away by the C pre-processor
+there isn't any way to get the name/value mappings from the compiled dynamic
+library.
+
+You can manually create equivalent constants in your Perl source:
+
+ use constant FOO_STATIC  => 1;
+ use constant FOO_DYNAMIC => 2;
+ use constant FOO_OTHER   => 3;
+
+If there are a lot of these types of constants you might want to consider using
+a tool (L<Convert::Binary::C> can do this) that can extract the constants for you.
+
+See also the "Integer constants" example in L<FFI::Platypus::Type>.
+
 =head2 I get seg faults on some platforms but not others with a library using pthreads.
 
 On some platforms, Perl isn't linked with C<libpthreads> if Perl threads are not
