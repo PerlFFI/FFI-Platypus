@@ -32,6 +32,8 @@ BEGIN {
     },
   });
 
+  $ffi->attach( _find_symbol => ['string'] => 'ffi_type');
+
   $ffi->attach( new => ['opaque[]'] => 'meta_t', sub {  # ffi_type[]
     my($xsub, $class, $elements) = @_;
 
@@ -41,13 +43,10 @@ BEGIN {
       Carp::croak("passed something other than a array ref to @{[ __PACKAGE__ ]}");
     }
 
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib(undef);
-
     my @element_type_pointers;
     foreach my $element_type (@$elements)
     {
-      my $ptr = $ffi->find_symbol("ffi_type_$element_type");
+      my $ptr = _find_symbol($element_type);
       if($ptr)
       {
         push @element_type_pointers, $ptr;

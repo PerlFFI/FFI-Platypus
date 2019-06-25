@@ -19,7 +19,7 @@ subtest 'basic' => sub {
   is $meta->alignment, 0, 'meta->alignment';
 
   my $got = $meta->element_pointers;
-  my $exp = [map { $ffi->find_symbol("ffi_type_$_") } qw( uint8 uint8 pointer float double )];
+  my $exp = [map { FFI::Platypus::Record::Meta::_find_symbol($_) } qw( uint8 uint8 pointer float double )];
 
   is_deeply
     $got,

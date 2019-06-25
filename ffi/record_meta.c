@@ -1,5 +1,6 @@
 #include <ffi.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct meta_t {
   ffi_type top;
@@ -67,4 +68,34 @@ void
 ffi_platypus_record_meta__DESTROY(meta_t *t)
 {
   free(t);
+}
+
+ffi_type *
+ffi_platypus_record_meta___find_symbol(const char *name)
+{
+  if(!strcmp(name, "sint8"))
+    return &ffi_type_sint8;
+  else if(!strcmp(name, "sint16"))
+    return &ffi_type_sint16;
+  else if(!strcmp(name, "sint32"))
+    return &ffi_type_sint32;
+  else if(!strcmp(name, "sint64"))
+    return &ffi_type_sint64;
+  else if(!strcmp(name, "uint8"))
+    return &ffi_type_uint8;
+  else if(!strcmp(name, "uint16"))
+    return &ffi_type_uint16;
+  else if(!strcmp(name, "uint32"))
+    return &ffi_type_uint32;
+  else if(!strcmp(name, "uint64"))
+    return &ffi_type_uint64;
+  else if(!strcmp(name, "pointer"))
+    return &ffi_type_pointer;
+  else if(!strcmp(name, "float"))
+    return &ffi_type_float;
+  else if(!strcmp(name, "double"))
+    return &ffi_type_double;
+    /*  TODO: longdouble, complex_float, complex_duble, complex_longdouble */
+  else
+    return NULL;
 }
