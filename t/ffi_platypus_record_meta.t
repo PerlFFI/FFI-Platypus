@@ -28,4 +28,20 @@ subtest 'basic' => sub {
   or diag Dumper([[map { sprintf "0x%x", $_ } @$got],[ map { sprintf "0x%x", $_ } @$exp]]);
 };
 
+subtest 'bogus types' => sub {
+
+  {
+    local $@ = '';
+    eval { FFI::Platypus::Record::Meta->new(qw( completely bogsu )) };
+    like "$@", qr/passed something other than a array ref/;
+  }
+
+  {
+    local $@ = '';
+    eval { FFI::Platypus::Record::Meta->new([qw( completely bogsu )]) };
+    like "$@", qr/unknown type: completely/;
+  }
+
+};
+
 done_testing;
