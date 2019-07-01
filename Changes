@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.90      2019-07-01 09:47:31 -0400
+  - Documentation improvements (gh#137, et. al.)
+
 0.89_01   2019-06-24 08:33:05 -0400
   - Fixed bug where prototypes to attach were sometimes being
     ignored.
