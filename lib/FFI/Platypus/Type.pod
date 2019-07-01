@@ -32,26 +32,9 @@ attaching functions.
  my $f = $ffi->function(puts => ['string'] => 'int');
  $ffi->attach(puts => ['string'] => 'int');
 
-If you are using the declarative interface, you can either pass the 
-types you need to the L<FFI::Platypus::Declare> C<use> invocation, or 
-you can use the L<FFI::Platypus::Declare#type> function.  The advantage 
-of the former is that it creates a Perl constant for that type so that 
-you do not need to use quotation marks when using the type.
-
- # Declarative with use
- use FFI::Platypus::Declare 'string', 'int';
- attach puts => [string] => int;
-
- # Declarative with type
- use FFI::Platypus::Declare;
- type 'string';
- type 'int';
- attach puts => ['string'] => 'int';
-
-Unless you are using aliases the L<FFI::Platypus#type> method or
-L<FFI::Platypus::Declare#type> function are not necessary, but they
-will throw an exception if the type is incorrectly specified or not
-supported, which may be helpful.
+Unless you are using aliases the L<FFI::Platypus#type> method is not
+necessary, but they will throw an exception if the type is incorrectly
+specified or not supported, which may be helpful.
 
 Note: This document sometimes uses the term "C Function" as short hand 
 for function implemented in a compiled language.  Unless the term is 
@@ -66,10 +49,6 @@ You can get the size of a type using the L<FFI::Platypus#sizeof> method.
  my $intsize = $ffi->sizeof('int');
  my intarraysize = $ffi->sizeof('int[64]');
  
- # Declare interface
- my $intsize = sizeof 'int';
- my intarraysize = sizeof 'int[64]';
-
 =head2 converting types
 
 Sometimes it is necessary to convert types.  In particular various 
@@ -82,18 +61,13 @@ supported.  Here are some useful ones:
  my $address = $ffi->cast('string' => 'opaque', $string);
  my $string  = $ffi->cast('opaque' => 'string', $pointer);
  
- # Declare interface
- use FFI::Platypus::Declare;
- my $address = cast 'string' => 'opaque', $string;
- my $string  = cast 'opaque' => 'string', $pointer;
-
 =head2 aliases
 
 Some times using alternate names is useful for documenting the purpose 
 of an argument or return type.  For this "aliases" can be helpful.  The 
-second argument to the L<FFI::Platypus#type> method or 
-L<FFI::Platypus::Declare#type> function can be used to define a type 
-alias that can later be used by function declaration and attachment.
+second argument to the L<FFI::Platypus#type> method can be used to
+define a type alias that can later be used by function declaration
+and attachment.
 
  # OO style
  use FFI::Platypus;
@@ -103,20 +77,7 @@ alias that can later be used by function declaration and attachment.
  my $f = $ffi->function( puts => ['mystring'] => 'myint' );
  $ffi->attach( puts => ['mystring'] => 'myint' );
 
- # Declarative style
- use FFI::Platypus::Declare;
- type 'int'    => 'myint';
- type 'string' => 'mystring';
- attach puts => ['mystring'] => 'myint';
-
- # Declarative style with use (and with fewer quotes)
- use FFI::Platypus::Declare
-   [ int    => 'myint' ],
-   [ string => 'mystring' ];
- attach puts => [mystring] => myint;
-
-Aliases are contained without the L<FFI::Platypus> object, or the 
-current package if you are using L<FFI::Platypus::Declare>, so feel free 
+Aliases are contained without the L<FFI::Platypus> object, so feel free 
 to define your own crazy types without stepping on the toes of other 
 CPAN Platypus developers.
 
@@ -202,8 +163,8 @@ type functions:
 This is usually an C<unsigned long>, but it is up to the compiler to 
 decide.  The C<malloc> function is defined in terms of C<size_t>:
 
- use FFI::Platypus::Declare qw( size_t opaque );
- attach malloc => [size_t] => opaque;
+ my $ffi = FFI::Platypus->new;
+ $ffi->attach( malloc => ['size_t'] => 'opaque';
 
 (Note that you can get C<malloc> from L<FFI::Platypus::Memory>).
 
@@ -302,11 +263,13 @@ C<archive_write_new> functions to create a new instance of this opaque
 object and C<archive_read_free> and C<archive_write_free> to destroy 
 this objects when you are done.
 
- use FFI::Platypus::Declare qw( opaque int );
- attach archive_read_new   => []       => opaque;
- attach archive_write_new  => []       => opaque;
- attach archive_read_free  => [opaque] => int;
- attach archive_write_free => [opaque] => int;
+ use FFI::Platypus;
+ my $ffi = FFI::Platypus->new;
+ $lib->find_lib( lib => 'archive' );
+ $ffi->attach(archive_read_new   => []         => 'opaque');
+ $ffi->attach(archive_write_new  => []         => 'opaque');
+ $ffi->attach(archive_read_free  => ['opaque'] => 'int');
+ $ffi->attach(archive_write_free => ['opaque'] => 'int');
 
 As a special case, when you pass C<undef> into a function that takes an 
 opaque type it will be translated into C<NULL> for C.  When a C function 
@@ -321,8 +284,9 @@ where they differ.  Basically when you see C<char *> or C<const char *>
 used in a C header file you can expect to be able to use the C<string> 
 type.
 
- use FFI::Platypus::Declare qw( string int );
- attach puts => [string] => int;
+ use FFI::Platypus;
+ my $ffi = FFI::Platypus->new;
+ $ffi->attach( puts => [ 'string' ] => 'int' );
 
 Currently strings are only supported as simple argument and return types
 and as argument (but not return types) for closures.  In the future pointers
@@ -355,10 +319,12 @@ code.
  }
 
  # foo.pl
- use FFI::Platypus::Declare 'void', ['int*' =>'int_p'];
- lib 'libfoo.so'; # change to reflect the dynamic lib 
-                  # that contains foo.c
- attach increment_int => [int_p] => void;
+ use FFI::Platypus;
+ my $ffi = FFI::Platypus->new;
+ $ffi->lib('libfoo.so'); # change to reflect the dynamic lib 
+                         # that contains foo.c
+ $ffi->type('int*' => 'int_p');
+ $ffi->attach(increment_int => ['int_p'] => 'void');
  my $i = 0;
  increment_int(\$i);   # $i == 1
  increment_int(\$i);   # $i == 2
@@ -557,7 +523,7 @@ constants in your Perl module, like this:
 
  package Foo;
  
- use FFI::Platypus::Declare qw( void int );
+ use FFI::Platypus;
  use base qw( Exporter );
  
  our @EXPORT_OK = qw( FOO_STATIC FOO_DYNAMIC FOO_OTHER foo get_foo );
@@ -566,8 +532,9 @@ constants in your Perl module, like this:
  use constant FOO_DYNAMIC => 2;
  use constant FOO_OTHER   => 3;
  
- attach foo => [int] => void;
- attach get_foo => [] => int;
+ my $ffi = FFI::Platypus->new;
+ $ffi->attach(foo     => ['int'] => 'void');
+ $ffi->attach(get_foo => []      => 'int');
 
 Then you could use the module thus:
 
@@ -580,8 +547,7 @@ function, like this:
 
  package Foo;
  
- use FFI::Platypus::Declare qw( void );
- use base qw( Exporter );
+ use FFI::Platypus;
  
  our @EXPORT_OK = qw( foo get_foo );
  
@@ -591,8 +557,9 @@ function, like this:
    other   => 3,
  );
  my %foo_types_reverse = reverse %foo_types;
- 
- custom_type foo_t => {
+
+ ny $ffi = FFI::Platypus->new;
+ $ffi->custom_type(foo_t => {
    native_type    => 'int',
    native_to_perl => sub {
      $foo_types{$_[0]};
@@ -600,10 +567,10 @@ function, like this:
    perl_to_native => sub {
      $foo_types_reverse{$_[0]};
    },
- };
+ });
  
- attach foo => ['foo_t'] => void;
- attach get_foo => [] => foo_t;
+ $ffi->attach(foo     => ['foo_t'] => 'void');
+ $ffi->attach(get_foo => []        => 'foo_t');
 
 Now when an argument of type C<foo_t> is called for it will be converted 
 from an appropriate string representation, and any function that returns 
@@ -633,22 +600,22 @@ interface like this:
 
  package Foo;
  
- use FFI::Platypus::Declare
-   'void', 'int';
+ use FFI::Platypus;
  use FFI::Platypus::API qw( arguments_get_string );
  
- custom_type foo_t => {
+ my $ffi = FFI::Platypus->new;
+ $ffi->custom_type(foo_t => {
    native_type    => 'opaque',
    native_to_perl => sub {
      my $class = arguments_get_string(0);
      bless \$_[0], $class;
    }
    perl_to_native => sub { ${$_[0]} },
- };
+ });
  
- attach [ foo_new => 'new' ] => [ string ] => 'foo_t' );
- attach [ foo_method => 'method' ] => [ 'foo_t', int ] => void;
- attach [ foo_free => 'DESTROY' ] => [ 'foo_t' ] => void;
+ $ffi->attach([ foo_new => 'new' ] => [ 'string' ] => 'foo_t' );
+ $ffi->attach([ foo_method => 'method' ] => [ 'foo_t', 'int' ] => 'void');
+ $ffi->attach([ foo_free => 'DESTROY' ] => [ 'foo_t' ] => 'void');
  
  my $foo = Foo->new;
 
@@ -704,10 +671,6 @@ native code.
 =item L<FFI::Platypus>
 
 Main platypus documentation.
-
-=item L<FFI::Platypus::Declare>
-
-Declarative interface for L<FFI::Platypus>.
 
 =item L<FFI::Platypus::API>
 
