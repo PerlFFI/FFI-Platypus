@@ -55,23 +55,7 @@ create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classna
   CODE:
     (void)class;
     self = NULL;
-
-    if(!strcmp(type, "longdouble"))
-    {
-      if(MY_CXT.have_math_longdouble == -1)
-        MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
-    }
-    else if(!strcmp(type, "complex_float"))
-    {
-      if(MY_CXT.have_math_complex == -1)
-        MY_CXT.have_math_complex = have_pm("Math::Complex");
-    }
-    else if(!strcmp(type, "complex_double"))
-    {
-      if(MY_CXT.have_math_complex == -1)
-        MY_CXT.have_math_complex = have_pm("Math::Complex");
-    }
-
+    probe_for_math_stuff(type);
     if(!strcmp(fuzzy_type, "ffi"))
     {
       self = ffi_pl_type_new(0);
