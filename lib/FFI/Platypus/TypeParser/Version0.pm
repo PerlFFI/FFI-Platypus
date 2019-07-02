@@ -44,13 +44,15 @@ sub parse
       0,     # pass by value
     );
   }
-  elsif($type =~ /^ string ( _rw | _ro | \s+ro | \s+rw | ) $/x)
+
+  if($type =~ /^ string ( _rw | _ro | \s+ro | \s+rw | ) $/x)
   {
     return $class->create_type_string(
       defined $1 && $1 =~ /rw/ ? 1 : 0,   # rw
-    );
+   );
   }
-  elsif($type =~ /^ record \s* \( ([0-9]+) \) $/x)
+
+  if($type =~ /^ record \s* \( ([0-9]+) \) $/x)
   {
     return $class->create_type_record(
       $1,             # size
@@ -58,14 +60,16 @@ sub parse
       0,              # pass by value
     );
   }
-  elsif($type =~ /^ record \s* \( ([0-9:A-Za-z_]+) \) $/x)
+
+  if($type =~ /^ record \s* \( ([0-9:A-Za-z_]+) \) $/x)
   {
     my $size;
     my $classname = $1;
     unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
     {
-      eval qq{ use $classname };
-      warn "error requiring $classname: $@" if $@;
+      my $pm = "$classname.pm";
+      $pm =~ s/\//::/g;
+      require $pm;
     }
     if($classname->can('ffi_record_size'))
     {
@@ -85,15 +89,16 @@ sub parse
       0,              # pass by value
     );
   }
-  elsif($type =~ s/\s+\*$//) {
-    $ffi_type = $type;
-    $fuzzy_type = 'pointer';
-  }
-  elsif($type =~ s/\s+\[([0-9]*)\]$//)
+
+  if($type =~ s/\s+\[([0-9]*)\]$//)
   {
     $ffi_type = $type;
     $fuzzy_type = 'array';
     $size = $1 ? $1 : 0;
+  }
+  elsif($type =~ s/\s+\*$//) {
+    $ffi_type = $type;
+    $fuzzy_type = 'pointer';
   }
   else
   {

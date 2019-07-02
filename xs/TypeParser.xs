@@ -55,33 +55,26 @@ create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classna
   CODE:
     (void)class;
     self = NULL;
-    if(!strcmp(fuzzy_type, "string"))
+
+    if(!strcmp(type, "longdouble"))
     {
-      self = ffi_pl_type_new(0);
-      self->type_code |= FFI_PL_TYPE_STRING;
-      self->sub_type = rw ? FFI_PL_TYPE_STRING_RW : FFI_PL_TYPE_STRING_RO;
+      if(MY_CXT.have_math_longdouble == -1)
+        MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
     }
-    else if(!strcmp(fuzzy_type, "ffi"))
+    else if(!strcmp(type, "complex_float"))
+    {
+      if(MY_CXT.have_math_complex == -1)
+        MY_CXT.have_math_complex = have_pm("Math::Complex");
+    }
+    else if(!strcmp(type, "complex_double"))
+    {
+      if(MY_CXT.have_math_complex == -1)
+        MY_CXT.have_math_complex = have_pm("Math::Complex");
+    }
+
+    if(!strcmp(fuzzy_type, "ffi"))
     {
       self = ffi_pl_type_new(0);
-      if(!strcmp(type, "longdouble"))
-      {
-        self->type_code |= FFI_PL_TYPE_LONG_DOUBLE;
-        if(MY_CXT.have_math_longdouble == -1)
-          MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
-      }
-      else if(!strcmp(type, "complex_float"))
-      {
-        self->type_code |= FFI_PL_TYPE_COMPLEX_FLOAT;
-        if(MY_CXT.have_math_complex == -1)
-          MY_CXT.have_math_complex = have_pm("Math::Complex");
-      }
-      else if(!strcmp(type, "complex_double"))
-      {
-        self->type_code |= FFI_PL_TYPE_COMPLEX_DOUBLE;
-        if(MY_CXT.have_math_complex == -1)
-          MY_CXT.have_math_complex = have_pm("Math::Complex");
-      }
     }
     else if(!strcmp(fuzzy_type, "pointer"))
     {

@@ -126,4 +126,118 @@ subtest string => sub {
 
 };
 
+subtest array => sub {
+
+  is_deeply(
+    $type = FFI::Platypus::TypeParser::Version0->parse('uint64 [4]', $ffi)->meta,
+    {
+      element_count => 4,
+      element_size  => 8,
+      element_type  => 'int',
+      ffi_type      => 'uint64',
+      sign          => 0,
+      size          => 32,
+      type          => 'array',
+      type_code     => FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY,
+    },
+    'fixed array',
+  ) or diag explain $type;
+
+  is_deeply(
+    $type = FFI::Platypus::TypeParser::Version0->parse('uint64 []', $ffi)->meta,
+    {
+      element_count => 0,
+      element_size  => 8,
+      element_type  => 'int',
+      ffi_type      => 'uint64',
+      sign          => 0,
+      size          => 0,
+      type          => 'array',
+      type_code     => FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY,
+    },
+    'variable array',
+  ) or diag explain $type;
+
+  subtest 'longdouble' => sub {
+
+    plan skip_all => 'test requires support for long double'
+      unless FFI::Platypus::_have_type('longdouble');
+
+    FFI::Platypus::_have_math_longdouble(-1),
+
+    is_deeply(
+      $type = FFI::Platypus::TypeParser::Version0->parse('longdouble []', $ffi)->meta,
+      {
+        element_count => 0,
+        element_size  => 16,
+        element_type  => 'float',
+        ffi_type      => 'longdouble',
+        size          => 0,
+        type          => 'array',
+        type_code     => FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_ARRAY,
+      },
+      'variable array',
+    ) or diag explain $type;
+
+    isnt(
+      FFI::Platypus::_have_math_longdouble(),
+      -1,
+    );
+
+  };
+
+  subtest 'complex' => sub {
+
+    plan skip_all => 'test requires support for complex'
+      unless FFI::Platypus::_have_type('complex_float');
+
+    plan skip_all => 'test requires support for complex'
+      unless FFI::Platypus::_have_type('complex_double');
+
+    FFI::Platypus::_have_math_complex(-1),
+
+    is_deeply(
+      $type = FFI::Platypus::TypeParser::Version0->parse('complex_float []', $ffi)->meta,
+      {
+        element_count => 0,
+        element_size  => 8,
+        element_type  => 'float',
+        ffi_type      => 'complex_float',
+        size          => 0,
+        type          => 'array',
+        type_code     => FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_ARRAY,
+      },
+      'variable array',
+    ) or diag explain $type;
+
+    isnt(
+      FFI::Platypus::_have_math_complex(),
+      -1,
+    );
+
+    FFI::Platypus::_have_math_complex(-1),
+
+    is_deeply(
+      $type = FFI::Platypus::TypeParser::Version0->parse('complex_double []', $ffi)->meta,
+      {
+        element_count => 0,
+        element_size  => 16,
+        element_type  => 'float',
+        ffi_type      => 'complex_double',
+        size          => 0,
+        type          => 'array',
+        type_code     => FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_ARRAY,
+      },
+      'variable array',
+    ) or diag explain $type;
+
+    isnt(
+      FFI::Platypus::_have_math_complex(),
+      -1,
+    );
+
+  };
+
+};
+
 done_testing;
