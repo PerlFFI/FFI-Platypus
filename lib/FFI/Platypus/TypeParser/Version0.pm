@@ -36,24 +36,20 @@ sub parse
   my $classname;
   my $rw = 0;
 
-  if($type =~ /^ string ( _rw | _ro | \s+ro | \s+rw | \s* \( [0-9]+ \) | ) $/x)
+  if($type =~ /^ string \s* \( ([0-9]+) \) $/x)
+  {
+    return $class->create_type_record(
+      $1,    # size
+      undef, # record_class
+      0,     # pass by value
+    );
+  }
+  elsif($type =~ /^ string ( _rw | _ro | \s+ro | \s+rw | ) $/x)
   {
     my $extra = $1;
     $ffi_type = 'pointer';
     $rw = 1 if $extra =~ /rw$/;
-    if($extra =~ /\(([0-9]+)\)$/)
-    {
-      # Fixed string is really an alias for an unpackaged record
-      return $class->create_type_record(
-        $1,    # size
-        undef, # record_class
-        0,     # pass by value
-      );
-    }
-    else
-    {
-      $fuzzy_type = 'string';
-    }
+    $fuzzy_type = 'string';
   }
   elsif($type =~ /^ record \s* \( ([0-9:A-Za-z_]+) \) $/x)
   {
