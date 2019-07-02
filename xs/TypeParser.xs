@@ -1,6 +1,30 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::TypeParser
 
 ffi_pl_type *
+create_type_record(class, size, record_class, pass_by_value)
+    const char *class
+    size_t size
+    ffi_pl_string record_class
+    int pass_by_value
+  PREINIT:
+    ffi_pl_type *type;
+  CODE:
+    (void)class;
+    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
+    type->type_code = FFI_PL_BASE_RECORD;
+    if(!pass_by_value)
+      type->type_code |= FFI_PL_TYPE_OPAQUE;
+    type->extra[0].record.size = size;
+    if(record_class == NULL)
+      type->extra[0].record.stash = NULL;
+    else
+      type->extra[0].record.stash = gv_stashpv(record_class, GV_ADD);
+    RETVAL = type;
+  OUTPUT:
+    RETVAL
+
+
+ffi_pl_type *
 create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw)
     const char *class
     const char *type
@@ -95,16 +119,16 @@ create_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_p
     type_code = ffi_pl_name_to_code(type);
     if(type_code == -1)
       croak("unknown ffi/platypus type: %s/custom", type);
-    
-    self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));  
+
+    self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));
     self->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
-    
+
     custom = &self->extra[0].custom_perl;
     custom->perl_to_native = SvOK(perl_to_native) ? SvREFCNT_inc_simple_NN(perl_to_native) : NULL;
     custom->perl_to_native_post = SvOK(perl_to_native_post) ? SvREFCNT_inc_simple_NN(perl_to_native_post) : NULL;
     custom->native_to_perl = SvOK(native_to_perl) ? SvREFCNT_inc_simple_NN(native_to_perl) : NULL;
     custom->argument_count = argument_count-1;
-    
+
     RETVAL = self;
   OUTPUT:
     RETVAL
@@ -142,7 +166,7 @@ create_closure(class, return_type, ...)
         croak("Only native types are supported as closure return types");
         break;
     }
-    
+
     for(i=0; i<(items-2); i++)
     {
       arg = ST(2+i);
@@ -167,25 +191,25 @@ create_closure(class, return_type, ...)
         default:
           croak("Only native types and strings are supported as closure argument types");
           break;
-      } 
+      }
     }
-    
+
     Newx(ffi_argument_types, items-2, ffi_type*);
     self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2));
     self->type_code = FFI_PL_TYPE_CLOSURE;
-    
+
     self->extra[0].closure.return_type = return_type;
     self->extra[0].closure.flags = 0;
-    
+
     ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
-    
+
     for(i=0; i<(items-2); i++)
     {
       arg = ST(2+i);
       self->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
       ffi_argument_types[i] = ffi_pl_type_to_libffi_type(self->extra[0].closure.argument_types[i]);
     }
-    
+
     ffi_status = ffi_prep_cif(
       &self->extra[0].closure.ffi_cif,
       FFI_DEFAULT_ABI,
@@ -193,7 +217,7 @@ create_closure(class, return_type, ...)
       ffi_return_type,
       ffi_argument_types
     );
-    
+
     if(ffi_status != FFI_OK)
     {
       Safefree(self);
@@ -210,7 +234,7 @@ create_closure(class, return_type, ...)
     {
       self->extra[0].closure.flags |= G_NOARGS;
     }
-    
+
     if(self->extra[0].closure.return_type->type_code == FFI_PL_TYPE_VOID)
     {
       self->extra[0].closure.flags |= G_DISCARD | G_VOID;
@@ -219,8 +243,10 @@ create_closure(class, return_type, ...)
     {
       self->extra[0].closure.flags |= G_SCALAR;
     }
-    
+
     RETVAL = self;
-    
+
   OUTPUT:
     RETVAL
+
+

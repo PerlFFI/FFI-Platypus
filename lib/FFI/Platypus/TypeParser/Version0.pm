@@ -44,8 +44,11 @@ sub parse
     if($extra =~ /\(([0-9]+)\)$/)
     {
       # Fixed string is really an alias for an unpackaged record
-      $size = $1;
-      $fuzzy_type = 'record';
+      return $class->create_type_record(
+        $1,    # size
+        undef, # record_class
+        0,     # pass by value
+      );
     }
     else
     {
@@ -54,8 +57,6 @@ sub parse
   }
   elsif($type =~ /^ record \s* \( ([0-9:A-Za-z_]+) \) $/x)
   {
-    $ffi_type = 'pointer';
-    $fuzzy_type = 'record';
     if($1 =~ /^([0-9]+)$/)
     {
       $size = $1;
@@ -81,6 +82,11 @@ sub parse
         croak "$classname has not ffi_record_size or _ffi_record_size method";
       }
     }
+    return $class->create_type_record(
+      $size,          # size
+      $classname,     # record_class
+      0,              # pass by value
+    );
   }
   elsif($type =~ s/\s+\*$//) {
     $ffi_type = $type;
