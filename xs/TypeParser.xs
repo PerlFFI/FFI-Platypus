@@ -1,7 +1,7 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::TypeParser
 
 ffi_pl_type *
-_new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw)
+create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw)
     const char *class
     const char *type
     const char *fuzzy_type
@@ -79,7 +79,7 @@ _new(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw
     RETVAL
 
 ffi_pl_type *
-_new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
+create_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
     const char *class
     const char *type
     SV *perl_to_native
@@ -111,7 +111,7 @@ _new_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_pos
 
 
 ffi_pl_type *
-_new_closure(class, return_type, ...)
+create_closure(class, return_type, ...)
     const char *class;
     ffi_pl_type *return_type
   PREINIT:

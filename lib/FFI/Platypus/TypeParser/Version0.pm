@@ -17,7 +17,7 @@ the public interface to Platypus types.
 
 sub parse
 {
-  my($class, $type, $platypus) = @_;
+  my($class, $type, $ffi) = @_;
 
   # the platypus object is only needed for closures, so
   # that it can lookup existing types.
@@ -25,9 +25,9 @@ sub parse
   if($type =~ m/^\((.*)\)\s*-\>\s*(.*)\s*$/)
   {
     croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
-    my @argument_types = map { $platypus->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
-    my $return_type = $platypus->_type_lookup($2);
-    return $class->_new_closure($return_type, @argument_types);
+    my @argument_types = map { $ffi->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
+    my $return_type = $ffi->_type_lookup($2);
+    return $class->create_closure($return_type, @argument_types);
   }
 
   my $ffi_type;
@@ -98,7 +98,7 @@ sub parse
     $fuzzy_type = 'ffi';
   }
 
-  $class->_new($ffi_type, $fuzzy_type, $size, $classname, $rw);
+  $class->create_old($ffi_type, $fuzzy_type, $size, $classname, $rw);
 }
 
 1;
