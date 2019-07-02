@@ -11,7 +11,7 @@ create_type_record(class, size, record_class, pass_by_value)
   CODE:
     (void)class;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
-    type->type_code = FFI_PL_BASE_RECORD;
+    type->type_code |= FFI_PL_BASE_RECORD;
     if(!pass_by_value)
       type->type_code |= FFI_PL_TYPE_OPAQUE;
     type->extra[0].record.size = size;
@@ -23,6 +23,23 @@ create_type_record(class, size, record_class, pass_by_value)
   OUTPUT:
     RETVAL
 
+ffi_pl_type *
+create_type_string(class, rw)
+    const char *class
+    int rw
+  PREINIT:
+    ffi_pl_type *type;
+  CODE:
+    (void)class;
+    type = ffi_pl_type_new(0);
+    type->type_code = FFI_PL_TYPE_STRING;
+    if(rw)
+      type->sub_type = FFI_PL_TYPE_STRING_RW;
+    else
+      type->sub_type = FFI_PL_TYPE_STRING_RO;
+    RETVAL = type;
+  OUTPUT:
+    RETVAL
 
 ffi_pl_type *
 create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw)
@@ -76,13 +93,6 @@ create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classna
       self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
       self->type_code |= FFI_PL_SHAPE_ARRAY;
       self->extra[0].array.element_count = array_or_record_or_string_size;
-    }
-    else if(!strcmp(fuzzy_type, "record"))
-    {
-      self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
-      self->type_code |= FFI_PL_TYPE_RECORD;
-      self->extra[0].record.size = array_or_record_or_string_size;
-      self->extra[0].record.stash = type_classname != NULL ? gv_stashpv(type_classname, GV_ADD) : NULL;
     }
     else
     {

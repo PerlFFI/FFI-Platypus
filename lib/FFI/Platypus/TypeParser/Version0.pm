@@ -46,10 +46,9 @@ sub parse
   }
   elsif($type =~ /^ string ( _rw | _ro | \s+ro | \s+rw | ) $/x)
   {
-    my $extra = $1;
-    $ffi_type = 'pointer';
-    $rw = 1 if $extra =~ /rw$/;
-    $fuzzy_type = 'string';
+    return $class->create_type_string(
+      defined $1 && $1 =~ /rw/ ? 1 : 0,   # rw
+    );
   }
   elsif($type =~ /^ record \s* \( ([0-9:A-Za-z_]+) \) $/x)
   {
