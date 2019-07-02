@@ -129,7 +129,10 @@ pod_coverage:
     - FFI::Platypus::Record::Meta
     - FFI::Platypus::ShareConfig
     - FFI::Platypus::Internal
+    - FFI::Platypus::Type
     - FFI::Platypus::TypeParser
+    - FFI::Platypus::TypeParser::Version0
+    - FFI::Platypus::TypeParser::Version1
     - FFI::Platypus::Closure#get_data
     - FFI::Platypus::Closure#add_data
     - FFI::Probe

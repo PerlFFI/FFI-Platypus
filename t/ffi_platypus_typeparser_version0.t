@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
-use FFI::Platypus::TypeParser;
+use FFI::Platypus::TypeParser::Version0;
 
 ok 1;
 

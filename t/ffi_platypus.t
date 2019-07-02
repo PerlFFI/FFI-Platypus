@@ -529,8 +529,8 @@ subtest 'type' => sub {
       subtest $name => sub {
         plan skip_all => 'test requires longdouble support'
           unless FFI::Platypus::_have_type($name);
-        my $type = eval { FFI::Platypus::Type->new($name) };
-        is $@, '', "type = FFI::Platypus::Type->new($name)";
+        my $type = eval { FFI::Platypus::TypeParser::Version0->parse($name) };
+        is $@, '', "type = FFI::Platypus::TypeParser::Version0->parse($name)";
         isa_ok $type, 'FFI::Platypus::Type';
         my $expected = $name eq 'opaque' ? 'pointer' : $name;
         is eval { $type->meta->{ffi_type} }, $expected, "type.meta.ffi_type = $expected";
@@ -538,8 +538,8 @@ subtest 'type' => sub {
     }
 
     subtest string => sub {
-      my $type = eval { FFI::Platypus::Type->new('string') };
-      is $@, '', "type = FFI::Platypus::Type->new(string)";
+      my $type = eval { FFI::Platypus::TypeParser::Version0->parse('string') };
+      is $@, '', "type = FFI::Platypus::TypeParser::Version0->parse(string)";
       isa_ok $type, 'FFI::Platypus::Type';
       is eval { $type->meta->{ffi_type} }, 'pointer', 'type.meta.ffi_type = pointer';
     };

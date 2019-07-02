@@ -109,6 +109,7 @@ CLONE(...)
 INCLUDE: ../../xs/DL.xs
 INCLUDE: ../../xs/Internal.xs
 INCLUDE: ../../xs/Type.xs
+INCLUDE: ../../xs/TypeParser.xs
 INCLUDE: ../../xs/Function.xs
 INCLUDE: ../../xs/ClosureData.xs
 INCLUDE: ../../xs/API.xs

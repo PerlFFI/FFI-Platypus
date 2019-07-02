@@ -35,7 +35,7 @@ subtest 'private' => sub {
   $ffi->lib($libtest);
 
   my $address = $ffi->find_symbol('f0');
-  my $uint8   = FFI::Platypus::Type->new('uint8');
+  my $uint8   = FFI::Platypus::TypeParser::Version0->parse('uint8');
 
   my $function = eval { FFI::Platypus::Function::Function->new($ffi, $address, -1, -1, $uint8, $uint8) };
   is $@, '', 'FFI::Platypus::Function->new';
