@@ -27,7 +27,7 @@ sub parse
     croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
     my @argument_types = map { $ffi->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
     my $return_type = $ffi->_type_lookup($2);
-    return $class->create_closure($return_type, @argument_types);
+    return $class->create_type_closure($return_type, @argument_types);
   }
 
   my $ffi_type;

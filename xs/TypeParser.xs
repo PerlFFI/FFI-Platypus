@@ -145,7 +145,7 @@ create_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_p
 
 
 ffi_pl_type *
-create_closure(class, return_type, ...)
+create_type_closure(class, return_type, ...)
     const char *class;
     ffi_pl_type *return_type
   PREINIT:
