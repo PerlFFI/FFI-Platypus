@@ -50,32 +50,34 @@ sub parse
       defined $1 && $1 =~ /rw/ ? 1 : 0,   # rw
     );
   }
+  elsif($type =~ /^ record \s* \( ([0-9]+) \) $/x)
+  {
+    return $class->create_type_record(
+      $1,             # size
+      undef,          # record_class
+      0,              # pass by value
+    );
+  }
   elsif($type =~ /^ record \s* \( ([0-9:A-Za-z_]+) \) $/x)
   {
-    if($1 =~ /^([0-9]+)$/)
+    my $size;
+    my $classname = $1;
+    unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
     {
-      $size = $1;
+      eval qq{ use $classname };
+      warn "error requiring $classname: $@" if $@;
+    }
+    if($classname->can('ffi_record_size'))
+    {
+      $size = $classname->ffi_record_size;
+    }
+    elsif($classname->can('_ffi_record_size'))
+    {
+      $size = $classname->_ffi_record_size;
     }
     else
     {
-      $classname = $1;
-      unless($classname->can('ffi_record_size') || $classname->can('_ffi_record_size'))
-      {
-        eval qq{ use $classname };
-        warn "error requiring $classname: $@" if $@;
-      }
-      if($classname->can('ffi_record_size'))
-      {
-        $size = $classname->ffi_record_size;
-      }
-      elsif($classname->can('_ffi_record_size'))
-      {
-        $size = $classname->_ffi_record_size;
-      }
-      else
-      {
-        croak "$classname has not ffi_record_size or _ffi_record_size method";
-      }
+      croak "$classname has not ffi_record_size or _ffi_record_size method";
     }
     return $class->create_type_record(
       $size,          # size
