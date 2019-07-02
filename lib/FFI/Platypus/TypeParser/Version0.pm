@@ -22,7 +22,7 @@ sub parse
   # the platypus object is only needed for closures, so
   # that it can lookup existing types.
 
-  if($type =~ m/^\((.*)\)\s*-\>\s*(.*)\s*$/)
+  if($type =~ m/^ \( (.*) \) \s* -\> \s* (.*) \s* $/x)
   {
     croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
     my @argument_types = map { $ffi->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
@@ -36,7 +36,7 @@ sub parse
   my $classname;
   my $rw = 0;
 
-  if($type =~ /^string(_rw|_ro|\s+ro|\s+rw|\s*\([0-9]+\)|)$/)
+  if($type =~ /^ string ( _rw | _ro | \s+ro | \s+rw | \s* \( [0-9]+ \) | ) $/x)
   {
     my $extra = $1;
     $ffi_type = 'pointer';
@@ -52,7 +52,7 @@ sub parse
       $fuzzy_type = 'string';
     }
   }
-  elsif($type =~ /^record\s*\(([0-9:A-Za-z_]+)\)$/)
+  elsif($type =~ /^ record \s* \( ([0-9:A-Za-z_]+) \) $/x)
   {
     $ffi_type = 'pointer';
     $fuzzy_type = 'record';
