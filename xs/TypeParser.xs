@@ -62,6 +62,25 @@ create_type_array(class, name, size)
   OUTPUT:
     RETVAL
 
+ffi_pl_type*
+create_type_pointer(class, name)
+    const char *class
+    const char *name
+  PREINIT:
+    ffi_pl_type *type;
+    int type_code;
+    dMY_CXT;
+  CODE:
+    type_code = ffi_pl_name_to_code(name);
+    if(type_code == -1)
+      croak("unknown ffi/platypus type: %s/pointer", name);
+    probe_for_math_stuff(name);
+    type = ffi_pl_type_new(0);
+    type->type_code |= FFI_PL_SHAPE_POINTER | type_code;
+    RETVAL = type;
+  OUTPUT:
+    RETVAL
+
 ffi_pl_type *
 create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw)
     const char *class
@@ -80,11 +99,6 @@ create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classna
     if(!strcmp(fuzzy_type, "ffi"))
     {
       self = ffi_pl_type_new(0);
-    }
-    else if(!strcmp(fuzzy_type, "pointer"))
-    {
-      self = ffi_pl_type_new(0);
-      self->type_code |= FFI_PL_SHAPE_POINTER;
     }
     else
     {

@@ -99,14 +99,13 @@ sub parse
   }
 
   if($type =~ s/\s+\*$//) {
-    $ffi_type = $type;
-    $fuzzy_type = 'pointer';
+    return $class->create_type_pointer(
+      $type,      # name
+    );
   }
-  else
-  {
-    $ffi_type = $type;
-    $fuzzy_type = 'ffi';
-  }
+
+  $ffi_type = $type;
+  $fuzzy_type = 'ffi';
 
   $class->create_old($ffi_type, $fuzzy_type, $size, $classname, $rw);
 }
