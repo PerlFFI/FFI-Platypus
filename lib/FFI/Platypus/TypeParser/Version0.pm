@@ -157,10 +157,9 @@ sub parse
     );
   }
 
-  $ffi_type = $type;
-  $fuzzy_type = 'ffi';
-
-  $class->create_old($ffi_type, $fuzzy_type, $size, $classname, $rw);
+  return $class->create_type_basic(
+    $type, # name
+  );
 }
 
 1;

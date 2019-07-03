@@ -1,6 +1,26 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::TypeParser
 
 ffi_pl_type *
+create_type_basic(class, name)
+    const char *class
+    const char *name
+  PREINIT:
+    ffi_pl_type *type;
+    int type_code;
+    dMY_CXT;
+  CODE:
+    (void)class;
+    type_code = ffi_pl_name_to_code(name);
+    if(type_code == -1)
+      croak("unknown ffi/platypus type: %s/ffi", name);
+    probe_for_math_stuff(name);
+    type = ffi_pl_type_new(0);
+    type->type_code |= type_code;
+    RETVAL = type;
+  OUTPUT:
+    RETVAL
+
+ffi_pl_type *
 create_type_record(class, size, record_class, pass_by_value)
     const char *class
     size_t size
@@ -51,6 +71,7 @@ create_type_array(class, name, size)
     int type_code;
     dMY_CXT;
   CODE:
+    (void)class;
     type_code = ffi_pl_name_to_code(name);
     if(type_code == -1)
       croak("unknown ffi/platypus type: %s/array", name);
@@ -71,6 +92,7 @@ create_type_pointer(class, name)
     int type_code;
     dMY_CXT;
   CODE:
+    (void)class;
     type_code = ffi_pl_name_to_code(name);
     if(type_code == -1)
       croak("unknown ffi/platypus type: %s/pointer", name);
@@ -78,38 +100,6 @@ create_type_pointer(class, name)
     type = ffi_pl_type_new(0);
     type->type_code |= FFI_PL_SHAPE_POINTER | type_code;
     RETVAL = type;
-  OUTPUT:
-    RETVAL
-
-ffi_pl_type *
-create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw)
-    const char *class
-    const char *type
-    const char *fuzzy_type
-    size_t array_or_record_or_string_size
-    ffi_pl_string type_classname
-    int rw
-  PREINIT:
-    ffi_pl_type *self;
-    dMY_CXT;
-  CODE:
-    (void)class;
-    self = NULL;
-    probe_for_math_stuff(type);
-    if(strcmp(fuzzy_type, "ffi"))
-    {
-      croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
-    }
-    self = ffi_pl_type_new(0);
-    int type_code = ffi_pl_name_to_code(type);
-    if(type_code == -1)
-    {
-      Safefree(self);
-      self = NULL;
-      croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
-    }
-    self->type_code |= type_code;
-    RETVAL = self;
   OUTPUT:
     RETVAL
 
