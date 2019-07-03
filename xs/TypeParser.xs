@@ -105,7 +105,7 @@ create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classna
     RETVAL
 
 ffi_pl_type *
-create_custom_perl(class, type, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
+create_type_custom(class, type, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
     const char *class
     const char *type
     SV *perl_to_native

@@ -461,7 +461,7 @@ sub custom_type
   croak "$type is not a native type" unless defined $type_map->{$type} || $type eq 'string';
   croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
 
-  $self->{types}->{$name} = $self->{type_parser}->create_custom_perl(
+  $self->{types}->{$name} = $self->{type_parser}->create_type_custom(
     $type_map->{$type},
     $cb->{perl_to_native},
     $cb->{native_to_perl},
