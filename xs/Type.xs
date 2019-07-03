@@ -44,32 +44,3 @@ DESTROY(self)
     if(!PL_dirty)
       Safefree(self);
 
-MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type::StringPointer
-
-void
-native_to_perl_xs(pointer)
-    SV *pointer
-  PREINIT:
-    const char **string_c;
-    SV *string_perl;
-  CODE:
-    /* we currently use the pp version instead */
-    if(SvOK(pointer))
-    {
-      string_c = INT2PTR(const char**,SvIV(pointer));
-      if(*string_c != NULL)
-      {
-        string_perl = sv_newmortal();
-        sv_setpv(string_perl, *string_c);
-        ST(0) = newRV_inc(string_perl);
-      }
-      else
-      {
-        ST(0) = newRV_noinc(&PL_sv_undef);
-      }
-      XSRETURN(1);
-    }
-    else
-    {
-      XSRETURN_EMPTY;
-    }
