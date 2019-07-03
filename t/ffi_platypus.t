@@ -783,12 +783,17 @@ subtest 'customer mangler' => sub {
 
 subtest 'api 1 warning' => sub {
 
+  my @warnings;
   local $SIG{__WARN__} = sub {
-    note "_=$_" for @_;
+    note "[warning]\n", $_[0];
+    push @warnings, $_[0];
   };
 
   my $ffi = FFI::Platypus->new( api => 1 );
   is $ffi->{api}, 1;
+
+  my $api_warning = grep /^Enabling development API version 1 prior to FFI::Platypus 1.00/, @warnings;
+  ok $api_warning;
 };
 
 done_testing;
