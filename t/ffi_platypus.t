@@ -781,4 +781,14 @@ subtest 'customer mangler' => sub {
   is($ffi->function(bar => [] => 'int')->call, 42 );
 };
 
+subtest 'api 1 warning' => sub {
+
+  local $SIG{__WARN__} = sub {
+    note "_=$_" for @_;
+  };
+
+  my $ffi = FFI::Platypus->new( api => 1 );
+  is $ffi->{api}, 1;
+};
+
 done_testing;

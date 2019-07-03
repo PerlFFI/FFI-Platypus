@@ -147,6 +147,24 @@ the L<lib|/lib> attribute.
 
 =over 4
 
+=item api
+
+Sets the API level.  Legal values are
+
+=over
+
+=item 0
+
+Original API level.
+
+=item 1
+
+Enable the next generation type parser which allows pass-by-value records
+and type decoration on basic types.  Using API level 1 prior to Platypus
+version 1.00 will trigger a (noisy) warning.
+
+=back
+
 =item lib
 
 Either a pathname (string) or a list of pathnames (array ref of strings)
@@ -195,6 +213,12 @@ sub new
   }
 
   my $api = $args{api} || 0;
+
+  if(defined $api && $api > 0 && ($args{experimental}||0) != $api)
+  {
+    Carp::cluck("Enabling development API version $api prior to FFI::Platypus $api.00");
+  }
+
   my $type_parser = $api < 1
     ? 'Version0'
     : 'Version1';
