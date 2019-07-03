@@ -42,6 +42,27 @@ create_type_string(class, rw)
     RETVAL
 
 ffi_pl_type *
+create_type_array(class, name, size)
+    const char *class
+    const char *name
+    size_t size
+  PREINIT:
+    ffi_pl_type *type;
+    int type_code;
+    dMY_CXT;
+  CODE:
+    type_code = ffi_pl_name_to_code(name);
+    if(type_code == -1)
+      croak("unknown ffi/platypus type: %s/array", name);
+    probe_for_math_stuff(name);
+    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
+    type->type_code |= FFI_PL_SHAPE_ARRAY | type_code;
+    type->extra[0].array.element_count = size;
+    RETVAL = type;
+  OUTPUT:
+    RETVAL
+
+ffi_pl_type *
 create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classname, rw)
     const char *class
     const char *type
@@ -64,12 +85,6 @@ create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classna
     {
       self = ffi_pl_type_new(0);
       self->type_code |= FFI_PL_SHAPE_POINTER;
-    }
-    else if(!strcmp(fuzzy_type, "array"))
-    {
-      self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
-      self->type_code |= FFI_PL_SHAPE_ARRAY;
-      self->extra[0].array.element_count = array_or_record_or_string_size;
     }
     else
     {

@@ -90,13 +90,15 @@ sub parse
     );
   }
 
-  if($type =~ s/\s+\[([0-9]*)\]$//)
+  if($type =~ s/\s+ \[ ([0-9]*) \] $//x)
   {
-    $ffi_type = $type;
-    $fuzzy_type = 'array';
-    $size = $1 ? $1 : 0;
+    return $class->create_type_array(
+      $type,       # name
+      $1 ? $1 : 0, # size
+    );
   }
-  elsif($type =~ s/\s+\*$//) {
+
+  if($type =~ s/\s+\*$//) {
     $ffi_type = $type;
     $fuzzy_type = 'pointer';
   }
