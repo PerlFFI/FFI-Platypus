@@ -96,15 +96,11 @@ create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classna
     (void)class;
     self = NULL;
     probe_for_math_stuff(type);
-    if(!strcmp(fuzzy_type, "ffi"))
-    {
-      self = ffi_pl_type_new(0);
-    }
-    else
+    if(strcmp(fuzzy_type, "ffi"))
     {
       croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
     }
-
+    self = ffi_pl_type_new(0);
     int type_code = ffi_pl_name_to_code(type);
     if(type_code == -1)
     {
@@ -113,7 +109,6 @@ create_old(class, type, fuzzy_type, array_or_record_or_string_size, type_classna
       croak("unknown ffi/platypus type: %s/%s", type, fuzzy_type);
     }
     self->type_code |= type_code;
-
     RETVAL = self;
   OUTPUT:
     RETVAL
