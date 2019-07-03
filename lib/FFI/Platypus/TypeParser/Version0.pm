@@ -8,10 +8,63 @@ use base qw( FFI::Platypus::TypeParser );
 # ABSTRACT: FFI Type Parser Version Zero
 # VERSION
 
+=head1 SYNOPSIS
+
+ use FFI::Platypus;
+ my $ffi = FFI::Platypus->new( api => 0 );
+ $ffi->type('record(Foo::Bar)' => 'foo_bar_t');
+ $ffi->type('opaque' => 'baz_t');
+ $ffi->type('opaque*' => 'baz_ptr');
+
 =head1 DESCRIPTION
 
-This class is private to FFI::Platypus.  See L<FFI::Platypus> for
-the public interface to Platypus types.
+This documents the original L<FFI::Platypus> type parser.  It was the default and only
+type parser used by L<FFI::Platypus> starting with version C<0.02>.  Starting with
+version C<1.00> L<FFI::Platypus> comes with a new type parser with design fixes that
+are not backward compatability.
+
+=head2 Interface differences
+
+=over
+
+=item Pass-by-value records are not allowed
+
+Originally L<FFI::Platypus> only supported passing records as a pointer.  The type
+C<record(Foo::Bar)> actually passes a pointer to the record.  In the version 1.00 parser
+allows C<record(Foo::Bar)> which is pass-by-value (the contents of the record is copied
+onto the stack) and C<record(Foo::Bar)*> which is pass-by-reference or pointer (a pointer
+to the record is passed to the callee so that it can make modifications to the record).
+
+TL;DR C<record(Foo::Bar)> in version 0 is equivalent to C<record(Foo::Bar)*> in the
+version 1 API.  There is no equivalent to C<record(Foo::Bar)*> in the version 0 API.
+
+=item decorate aliases of basic types
+
+This is not allowed in the version 0 API:
+
+ $ffi->type('opaque' => 'foo_t');    # ok!
+ $ffi->type('foo_t*' => 'foo_ptr');  # not ok! in version 0, ok! in version 1
+
+Instead you need to use the basic type in the second type definition:
+
+ $ffi->type('opaque' => 'foo_t');    # ok!
+ $ffi->type('opaque*' => 'foo_ptr'); # ok!
+
+=back
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus>
+
+The core L<FFI::Platypus> documentation.
+
+=item L<FFI::Platypus::TypeParser::Version1>
+
+The API C<1.00> type parser.
+
+=back
 
 =cut
 

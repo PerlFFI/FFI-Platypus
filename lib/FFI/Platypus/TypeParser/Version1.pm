@@ -10,10 +10,37 @@ use FFI::Platypus::Internal;
 # ABSTRACT: FFI Type Parser Version One
 # VERSION
 
+=head1 SYNOPSIS
+
+ use FFI::Platypus;
+ my $ffi = FFI::Platypus->new( api => 1 );
+ $ffi->type('record(Foo::Bar)' => 'foo_bar_t');
+ $ffi->type('record(Foo::Bar)*' => 'foo_bar_ptr');
+ $ffi->type('opaque' => 'baz_t');
+ $ffi->type('bar_t*' => 'baz_ptr');
+
 =head1 DESCRIPTION
 
-This class is private to FFI::Platypus.  See L<FFI::Platypus> for
-the public interface to Platypus types.
+This documents the second (version 1) type parser for L<FFI::Platypus>.
+This type parser was included with L<FFI::Platypus> starting with version
+C<0.91> in an experimental capability, and C<1.00> as a stable interface.
+Starting with version C<1.00> the main L<FFI::Platypus> documentation
+describes the version 1 API and you can refere to
+L<FFI::Platypus::TypeParser::Version0> for details on the version0 API.
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus>
+
+The core L<FFI::Platypus> documentation.
+
+=item L<FFI::Platypus::TypeParser::Version0>
+
+The API C<0.02> type parser.
+
+=back
 
 =cut
 
