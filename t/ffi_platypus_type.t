@@ -2,6 +2,6 @@ use strict;
 use warnings;
 use Test::More;
 
-ok 1;
+plan skip_all => 'TODO';
 
 done_testing;
