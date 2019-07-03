@@ -119,6 +119,7 @@ pod_spelling_system:
     - ppisar
     - Anwar
     - MANWAR
+    - api
 
 pod_coverage:
   skip: 0

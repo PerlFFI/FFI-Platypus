@@ -153,11 +153,12 @@ Sets the API level.  Legal values are
 
 =over
 
-=item 0
+=item C<0>
 
-Original API level.
+Original API level.  See L<FFI::Platypus::TypeParser::Version0> for details
+on the differences.
 
-=item 1
+=item C<1>
 
 Enable the next generation type parser which allows pass-by-value records
 and type decoration on basic types.  Using API level 1 prior to Platypus

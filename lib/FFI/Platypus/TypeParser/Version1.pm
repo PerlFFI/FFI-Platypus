@@ -25,7 +25,7 @@ This documents the second (version 1) type parser for L<FFI::Platypus>.
 This type parser was included with L<FFI::Platypus> starting with version
 C<0.91> in an experimental capability, and C<1.00> as a stable interface.
 Starting with version C<1.00> the main L<FFI::Platypus> documentation
-describes the version 1 API and you can refere to
+describes the version 1 API and you can refer to
 L<FFI::Platypus::TypeParser::Version0> for details on the version0 API.
 
 =head1 SEE ALSO

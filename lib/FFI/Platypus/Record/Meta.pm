@@ -13,7 +13,7 @@ the public interface to Platypus records.
 
 =cut
 
-BEGIN {
+{
   require FFI::Platypus;
   my $ffi = FFI::Platypus->new;
   $ffi->package;

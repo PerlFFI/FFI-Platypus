@@ -108,6 +108,20 @@ the [lib](#lib) attribute.
 
 ### options
 
+- api
+
+    Sets the API level.  Legal values are
+
+    - `0`
+
+        Original API level.
+
+    - `1`
+
+        Enable the next generation type parser which allows pass-by-value records
+        and type decoration on basic types.  Using API level 1 prior to Platypus
+        version 1.00 will trigger a (noisy) warning.
+
 - lib
 
     Either a pathname (string) or a list of pathnames (array ref of strings)

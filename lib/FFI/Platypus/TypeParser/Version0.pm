@@ -21,7 +21,7 @@ use base qw( FFI::Platypus::TypeParser );
 This documents the original L<FFI::Platypus> type parser.  It was the default and only
 type parser used by L<FFI::Platypus> starting with version C<0.02>.  Starting with
 version C<1.00> L<FFI::Platypus> comes with a new type parser with design fixes that
-are not backward compatability.
+are not backward compatibility.
 
 =head2 Interface differences
 
