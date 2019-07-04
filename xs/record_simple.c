@@ -1,4 +1,4 @@
-/* DO NOT MODIFY THIS FILE it is generated from these files: 
+/* DO NOT MODIFY THIS FILE it is generated from these files:
  * inc/template/accessor.tt
  * inc/template/accessor_wrapper.tt
  * inc/run/generate_record_accessor.pl

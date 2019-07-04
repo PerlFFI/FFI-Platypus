@@ -52,7 +52,7 @@ _accessor(perl_name, path_name, type, offset)
   CODE:
     Newx(member, 1, ffi_pl_record_member);
     member->offset = offset;
-    
+
     switch(type->type_code & FFI_PL_SHAPE_MASK)
     {
       case FFI_PL_SHAPE_ARRAY:
@@ -153,10 +153,10 @@ _accessor(perl_name, path_name, type, offset)
         XSRETURN_PV("type not supported");
         break;
     }
-    
+
     if(path_name == NULL)
       path_name = "unknown";
-    
+
     /*
      * this ifdef is needed for Perl 5.8.8 support.
      * once we don't need to support 5.8.8 we can

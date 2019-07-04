@@ -11,7 +11,7 @@ decompose(SV *sv, int imag)
 {
   /* Re(z) */
   dSP;
-  
+
   int count;
   double result = 0.0;
 
@@ -20,18 +20,18 @@ decompose(SV *sv, int imag)
   PUSHMARK(SP);
   XPUSHs(sv);
   PUTBACK;
-  
+
   count = call_pv(imag ? "Math::Complex::Im" : "Math::Complex::Re", G_ARRAY);
-  
+
   SPAGAIN;
-  
+
   if(count >= 1)
     result = POPn;
-  
+
   PUTBACK;
   FREETMPS;
   LEAVE;
-  
+
   return result;
 }
 
@@ -39,16 +39,16 @@ static void
 set(SV *sv, SV *new_value, int imag)
 {
   dSP;
-  
+
   ENTER;
   SAVETMPS;
   PUSHMARK(SP);
   XPUSHs(sv);
   XPUSHs(new_value);
   PUTBACK;
-  
+
   call_pv(imag ? "Math::Complex::Im" : "Math::Complex::Re", G_DISCARD);
-  
+
   FREETMPS;
   LEAVE;
 }
@@ -89,7 +89,7 @@ ffi_pl_complex_float_to_perl(SV *sv, float *ptr)
   {
     /* the complex variable is a Math::Complex object */
     set(sv, sv_2mortal(newSVnv(ptr[0])), 0);
-    set(sv, sv_2mortal(newSVnv(ptr[1])), 1);    
+    set(sv, sv_2mortal(newSVnv(ptr[1])), 1);
   }
   else if(SvROK(sv) && SvTYPE(SvRV(sv)) == SVt_PVAV)
   {
@@ -146,7 +146,7 @@ ffi_pl_complex_double_to_perl(SV *sv, double *ptr)
   {
     /* the complex variable is a Math::Complex object */
     set(sv, sv_2mortal(newSVnv(ptr[0])), 0);
-    set(sv, sv_2mortal(newSVnv(ptr[1])), 1);    
+    set(sv, sv_2mortal(newSVnv(ptr[1])), 1);
   }
   else if(SvROK(sv) && SvTYPE(SvRV(sv)) == SVt_PVAV)
   {

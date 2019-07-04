@@ -35,7 +35,7 @@ windlopen(const char *filename, int flags)
 {
   char *win_path_filename;
   library_handle *handle;
-  
+
   win_path_filename = NULL;
 
 #ifdef PERL_OS_CYGWIN
@@ -65,7 +65,7 @@ windlopen(const char *filename, int flags)
 #endif
 
   handle = malloc(sizeof(library_handle));
-  
+
   if(handle == NULL)
   {
     if(win_path_filename != NULL)
@@ -73,7 +73,7 @@ windlopen(const char *filename, int flags)
     error = "unable to allocate memory for handle";
     return NULL;
   }
-  
+
   if(filename == NULL)
   {
     handle->is_null = 1;
@@ -89,9 +89,9 @@ windlopen(const char *filename, int flags)
       return NULL;
     }
   }
-  
+
   handle->flags = flags;
-  
+
   if(win_path_filename != NULL)
     free(win_path_filename);
   error = NULL;
@@ -108,7 +108,7 @@ windlsym(void *void_handle, const char *symbol_name)
   library_handle *handle = (library_handle*) void_handle;
   static const char *not_found = "symbol not found";
   void *symbol;
-  
+
   if(!handle->is_null)
   {
     symbol = GetProcAddress(handle->os_handle, symbol_name);
@@ -125,18 +125,18 @@ windlsym(void *void_handle, const char *symbol_name)
     HANDLE process;
     HMODULE mods[1024];
     TCHAR mod_name[MAX_PATH];
-    
+
     process = OpenProcess(
       PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
       FALSE, GetCurrentProcessId()
     );
-    
+
     if(process == NULL)
     {
       error = "Process for self not found";
       return NULL;
     }
-    
+
     if(EnumProcessModules(process, mods, sizeof(mods), &needed))
     {
       for(n=0; n < (needed/sizeof(HMODULE)); n++)
@@ -147,14 +147,14 @@ windlsym(void *void_handle, const char *symbol_name)
           if(handle == NULL)
             continue;
           symbol = GetProcAddress(handle, symbol_name);
-          
+
           if(symbol != NULL)
           {
             error = NULL;
             FreeLibrary(handle);
             return symbol;
           }
-          
+
           FreeLibrary(handle);
         }
       }

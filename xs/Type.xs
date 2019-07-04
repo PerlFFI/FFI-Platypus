@@ -31,9 +31,9 @@ DESTROY(self)
     else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
     {
       ffi_pl_type_extra_custom_perl *custom;
-      
+
       custom = &self->extra[0].custom_perl;
-      
+
       if(custom->perl_to_native != NULL)
         SvREFCNT_dec(custom->perl_to_native);
       if(custom->perl_to_native_post != NULL)
