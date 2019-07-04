@@ -13,4 +13,14 @@ the public interface to Platypus types.
 
 =cut
 
+sub new
+{
+  my($class) = @_;
+  my $self = bless {}, $class;
+  $self->build;
+  $self;
+}
+
+sub build {}
+
 1;

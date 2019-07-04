@@ -220,12 +220,12 @@ sub new
     Carp::cluck("Enabling development API version $api prior to FFI::Platypus $api.00");
   }
 
-  my $type_parser = $api < 1
+  my $tp = $api < 1
     ? 'Version0'
     : 'Version1';
 
-  require "FFI/Platypus/TypeParser/$type_parser.pm";
-  $type_parser = "FFI::Platypus::TypeParser::$type_parser";
+  require "FFI/Platypus/TypeParser/$tp.pm";
+  $tp = "FFI::Platypus::TypeParser::$tp";
 
   bless {
     lib              => \@lib,
@@ -234,7 +234,7 @@ sub new
     lang             => $args{lang} || 'C',
     abi              => -1,
     api              => $api,
-    type_parser      => $type_parser,
+    tp               => $tp->new,
     ignore_not_found => defined $args{ignore_not_found} ? $args{ignore_not_found} : 0,
   }, $class;
 }
@@ -429,7 +429,7 @@ sub type
     # basic type so you can have many many many copies of a given
     # closure type if you do not spell it exactly the same each time.
     # Recommended that you use an alias for a closure type anyway.
-    $self->{types}->{$name} ||= $self->{type_parser}->parse($name, $self);
+    $self->{types}->{$name} ||= $self->{tp}->parse($name, $self);
   }
   else
   {
@@ -441,7 +441,7 @@ sub type
     }
 
     croak "unknown type: $basic" unless defined $type_map->{$basic};
-    $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= $self->{type_parser}->parse($type_map->{$basic}.$extra, $self);
+    $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= $self->{tp}->parse($type_map->{$basic}.$extra, $self);
   }
 
   if(defined $alias)
@@ -486,7 +486,7 @@ sub custom_type
   croak "$type is not a native type" unless defined $type_map->{$type} || $type eq 'string';
   croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
 
-  $self->{types}->{$name} = $self->{type_parser}->create_type_custom(
+  $self->{types}->{$name} = $self->{tp}->create_type_custom(
     $type_map->{$type},
     $cb->{perl_to_native},
     $cb->{native_to_perl},
