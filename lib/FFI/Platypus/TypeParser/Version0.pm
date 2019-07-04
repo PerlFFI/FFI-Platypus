@@ -83,12 +83,6 @@ sub parse
     return $class->create_type_closure($return_type, @argument_types);
   }
 
-  my $ffi_type;
-  my $fuzzy_type;
-  my $size = 0;
-  my $classname;
-  my $rw = 0;
-
   if($type =~ /^ string \s* \( ([0-9]+) \) $/x)
   {
     return $class->create_type_record(
