@@ -126,5 +126,39 @@ subtest 'prototype' => sub {
 
 };
 
+subtest 'variadic' => sub {
+
+  my $ffi = FFI::Platypus->new;
+  $ffi->lib($libtest);
+
+  subtest 'unattached' => sub {
+
+    is(
+      $ffi->function(variadic_return_arg => ['int'] => ['int','int','int','int','int','int','int'] => 'int')->call(4,10,20,30,40,50,60,70),
+      40,
+      'sans wrapper'
+    );
+
+    my $wrapper = sub {
+      my($xsub, @args) = @_;
+      my $ret = $xsub->(@args);
+      $ret*2;
+    };
+
+    is(
+      $ffi->function(variadic_return_arg => ['int'] => ['int','int','int','int','int','int','int'] => 'int', $wrapper)->call(4,10,20,30,40,50,60,70),
+      80,
+      'with wrapper'
+    );
+  };
+
+  #sub 'attached' => sub {
+#
+#    $ffi->attach([variadic_return_arg => 'y1'] => ['int']
+#
+#  };
+
+};
+
 done_testing;
 

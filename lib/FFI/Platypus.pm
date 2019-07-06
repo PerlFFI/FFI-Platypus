@@ -643,14 +643,25 @@ sub function
 {
   my $wrapper;
   $wrapper = pop if ref $_[-1] eq 'CODE';
-  my($self, $name, $args, $ret) = @_;
-  croak "usage \$ffi->function( name, [ arguments ], return_type)" unless @_ == 4 || @_ == 5;
+
+  croak "usage \$ffi->function( name, [ arguments ], return_type)" unless @_ >= 4 && @_ <= 6;
+
+  my $self = shift;
+  my $name = shift;
+  my $fixed_args = shift;
+  my $var_args;
+  $var_args = shift if defined $_[0] && ref($_[0]) eq 'ARRAY';
+  my $ret = shift;
+
+  my $args = [@$fixed_args, @{ $var_args || [] } ];
+  my $fixed_arg_count = defined $var_args ? scalar(@$fixed_args) : -1;
+
   my @args = map { $self->_type_lookup($_) || croak "unknown type: $_" } @$args;
   $ret = $self->_type_lookup($ret) || croak "unknown type: $ret";
   my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
   croak "unable to find $name" unless defined $address || $self->ignore_not_found;
   return unless defined $address;
-  my $function = FFI::Platypus::Function::Function->new($self, $address, $self->{abi}, -1, $ret, @args);
+  my $function = FFI::Platypus::Function::Function->new($self, $address, $self->{abi}, $fixed_arg_count, $ret, @args);
   $wrapper
     ? FFI::Platypus::Function::Wrapper->new($function, $wrapper)
     : $function;
