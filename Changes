@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add support for variadic functions (gh#136, gh#141)
 
 0.90      2019-07-01 09:47:31 -0400
   - Documentation improvements (gh#137, et. al.)
