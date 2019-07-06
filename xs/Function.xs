@@ -1,11 +1,12 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Function::Function
 
 ffi_pl_function *
-new(class, platypus, address, abi, return_type, ...)
+new(class, platypus, address, abi, var_fixed_args, return_type, ...)
     const char *class
     SV *platypus
     void *address
     int abi
+    int var_fixed_args
     ffi_pl_type *return_type
   PREINIT:
     ffi_pl_function *self;
@@ -21,10 +22,10 @@ new(class, platypus, address, abi, return_type, ...)
     (void)class;
     ffi_abi = abi == -1 ? FFI_DEFAULT_ABI : abi;
 
-    for(i=0,extra_arguments=0; i<(items-5); i++)
+    for(i=0,extra_arguments=0; i<(items-6); i++)
     {
       ffi_pl_type *arg_type;
-      arg = ST(i+5);
+      arg = ST(i+6);
       if(!(sv_isobject(arg) && sv_derived_from(arg, "FFI::Platypus::Type")))
       {
         croak("non-type parameter passed in as type");
@@ -34,17 +35,17 @@ new(class, platypus, address, abi, return_type, ...)
         extra_arguments += arg_type->extra[0].custom_perl.argument_count;
     }
 
-    Newx(buffer, (sizeof(ffi_pl_function) + sizeof(ffi_pl_type*)*(items-5+extra_arguments)), char);
+    Newx(buffer, (sizeof(ffi_pl_function) + sizeof(ffi_pl_type*)*(items-6+extra_arguments)), char);
     self = (ffi_pl_function*)buffer;
-    Newx(ffi_argument_types, items-5+extra_arguments, ffi_type*);
+    Newx(ffi_argument_types, items-6+extra_arguments, ffi_type*);
 
     self->address = address;
     self->return_type = return_type;
     ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
 
-    for(i=0,n=0; i<(items-5); i++,n++)
+    for(i=0,n=0; i<(items-6); i++,n++)
     {
-      arg = ST(i+5);
+      arg = ST(i+6);
       self->argument_types[n] = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
       ffi_argument_types[n] = ffi_pl_type_to_libffi_type(self->argument_types[n]);
 
@@ -61,13 +62,27 @@ new(class, platypus, address, abi, return_type, ...)
       }
     }
 
-    ffi_status = ffi_prep_cif(
-      &self->ffi_cif,            /* ffi_cif     | */
-      ffi_abi,                   /* ffi_abi     | */
-      items-5+extra_arguments,   /* int         | argument count */
-      ffi_return_type,           /* ffi_type *  | return type */
-      ffi_argument_types         /* ffi_type ** | argument types */
-    );
+    if(var_fixed_args == -1)
+    {
+      ffi_status = ffi_prep_cif(
+        &self->ffi_cif,            /* ffi_cif     | */
+        ffi_abi,                   /* ffi_abi     | */
+        items-6+extra_arguments,   /* int         | argument count */
+        ffi_return_type,           /* ffi_type *  | return type */
+        ffi_argument_types         /* ffi_type ** | argument types */
+      );
+    }
+    else
+    {
+      ffi_status = ffi_prep_cif_var(
+        &self->ffi_cif,                           /* ffi_cif     | */
+        ffi_abi,                                  /* ffi_abi     | */
+        var_fixed_args,                           /* int         | fixed argument count */
+        items-6+extra_arguments-var_fixed_args,   /* int         | var argument count */
+        ffi_return_type,                          /* ffi_type *  | return type */
+        ffi_argument_types                        /* ffi_type ** | argument types */
+      );
+    }
 
     if(ffi_status != FFI_OK)
     {
