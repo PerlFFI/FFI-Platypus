@@ -131,6 +131,10 @@ subtest 'variadic' => sub {
   my $ffi = FFI::Platypus->new;
   $ffi->lib($libtest);
 
+  plan skip_all => 'test requires variadic function support'
+    unless eval { $ffi->function('variadic_return_arg' => ['int'] => ['int'] => 'int') };
+
+
   my $wrapper = sub {
     my($xsub, @args) = @_;
     my $ret = $xsub->(@args);
