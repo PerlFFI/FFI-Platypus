@@ -637,6 +637,29 @@ Examples:
  my $function = $ffi->function('my_function_name', ['int', 'string'] => 'string');
  my $return_string = $function->(1, "hi there");
 
+[version 0.91]
+
+ my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type);
+ my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type, \&wrapper);
+
+Version 0.91 and later allows you to creat functions for c variadic functions
+(such as printf, scanf, etc) which can take a variable number of arguments.
+The first set of arguments are the fixed set, the second set are the variable
+arguments to bind with.  The variable argument types must be specified in order
+to create a function object, so if you need to call variadic function with
+different set of arguments then you will need to create a new function object
+each time:
+
+ # int printf(const char *fmt, ...);
+ $ffi->function( printf => ['string'] => ['int'] => 'int' )
+     ->call("print integer %d\n", 42);
+ $ffi->function( printf => ['string'] => ['string'] => 'int' )
+     ->call("print string %s\n", 'platypus');
+
+Some older versions of libffi and possibly some platforms may not support
+variadic functions.  If you try to create a one, then an exception will be
+thrown.
+
 =cut
 
 sub function
@@ -728,6 +751,16 @@ Examples:
    $return_string =~ s/Belgium//; # HHGG remove profanity
    $return_string;
  });
+
+[version 0.91]
+
+ $ffi->attach($name => \@fixed_argument_types => \@var_argument_types, $return_type);
+ $ffi->attach($name => \@fixed_argument_types => \@var_argument_types, $return_type, \&wrapper);
+
+As of version 0.91 you can attach a variadic functions, if it is supported
+by the platform / libffi that you are using.  For details see the C<function>
+documentation.  If not supported by the implementation then an exception
+will be thrown.
 
 =cut
 
