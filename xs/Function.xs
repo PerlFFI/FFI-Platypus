@@ -20,6 +20,12 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
     int extra_arguments;
   CODE:
     (void)class;
+#ifndef FFI_PL_PROBE_VARIADIC
+    if(var_fixed_args != -1)
+    {
+      croak("variadic functions are not supported by some combination of your libffi/compiler/platypus");
+    }
+#endif
     ffi_abi = abi == -1 ? FFI_DEFAULT_ABI : abi;
 
     for(i=0,extra_arguments=0; i<(items-6); i++)
@@ -74,6 +80,7 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
     }
     else
     {
+#ifdef FFI_PL_PROBE_VARIADIC
       ffi_status = ffi_prep_cif_var(
         &self->ffi_cif,                           /* ffi_cif     | */
         ffi_abi,                                  /* ffi_abi     | */
@@ -82,6 +89,7 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
         ffi_return_type,                          /* ffi_type *  | return type */
         ffi_argument_types                        /* ffi_type ** | argument types */
       );
+#endif
     }
 
     if(ffi_status != FFI_OK)
