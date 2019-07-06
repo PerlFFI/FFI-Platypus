@@ -131,6 +131,12 @@ subtest 'variadic' => sub {
   my $ffi = FFI::Platypus->new;
   $ffi->lib($libtest);
 
+  my $wrapper = sub {
+    my($xsub, @args) = @_;
+    my $ret = $xsub->(@args);
+    $ret*2;
+  };
+
   subtest 'unattached' => sub {
 
     is(
@@ -139,12 +145,6 @@ subtest 'variadic' => sub {
       'sans wrapper'
     );
 
-    my $wrapper = sub {
-      my($xsub, @args) = @_;
-      my $ret = $xsub->(@args);
-      $ret*2;
-    };
-
     is(
       $ffi->function(variadic_return_arg => ['int'] => ['int','int','int','int','int','int','int'] => 'int', $wrapper)->call(4,10,20,30,40,50,60,70),
       80,
@@ -152,11 +152,15 @@ subtest 'variadic' => sub {
     );
   };
 
-  #sub 'attached' => sub {
-#
-#    $ffi->attach([variadic_return_arg => 'y1'] => ['int']
-#
-#  };
+  subtest 'attached' => sub {
+
+    $ffi->attach([variadic_return_arg => 'y1'] => ['int'] => ['int','int','int','int','int','int','int'] => 'int');
+    is(y1(4,10,20,30,40,50,60,70), 40, 'sans wrapper');
+
+    $ffi->attach([variadic_return_arg => 'y2'] => ['int'] => ['int','int','int','int','int','int','int'] => 'int', $wrapper);
+    is(y2(4,10,20,30,40,50,60,70), 80, 'with wrapper');
+
+  };
 
 };
 
