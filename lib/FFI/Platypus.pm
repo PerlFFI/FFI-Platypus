@@ -738,7 +738,13 @@ sub attach
   my $wrapper;
   $wrapper = pop if ref $_[-1] eq 'CODE';
 
-  my($self, $name, $args, $ret, $proto) = @_;
+  my $self = shift;
+  my $name = shift;
+  my $args = shift;
+  my $varargs = shift if defined $_[0] && ref($_[0]) eq 'ARRAY';
+  my $ret = shift;
+  my $proto = shift;
+
   $ret = 'void' unless defined $ret;
 
   my($c_name, $perl_name) = ref($name) ? @$name : ($name, $name);
@@ -746,7 +752,9 @@ sub attach
   croak "you tried to provide a perl name that looks like an address"
     if $perl_name =~ /^-?[0-9]+$/;
   
-  my $function = $self->function($c_name, $args, $ret, $wrapper);
+  my $function = $varargs
+    ? $self->function($c_name, $args, $varargs, $ret, $wrapper)
+    : $self->function($c_name, $args, $ret, $wrapper);
   
   if(defined $function)
   {
