@@ -28,13 +28,13 @@ BOOT:
 }
 
 ffi_pl_type *
-create_type_basic(class, type_code)
-    const char *class
+create_type_basic(self, type_code)
+    SV *self
     int type_code
   PREINIT:
     ffi_pl_type *type;
   CODE:
-    (void)class;
+    (void)self;
     type = ffi_pl_type_new(0);
     type->type_code |= type_code;
     RETVAL = type;
@@ -42,15 +42,15 @@ create_type_basic(class, type_code)
     RETVAL
 
 ffi_pl_type *
-create_type_record(class, size, record_class, pass_by_value)
-    const char *class
+create_type_record(self, size, record_class, pass_by_value)
+    SV *self
     size_t size
     ffi_pl_string record_class
     int pass_by_value
   PREINIT:
     ffi_pl_type *type;
   CODE:
-    (void)class;
+    (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
     type->type_code |= FFI_PL_BASE_RECORD;
     if(!pass_by_value)
@@ -65,13 +65,13 @@ create_type_record(class, size, record_class, pass_by_value)
     RETVAL
 
 ffi_pl_type *
-create_type_string(class, rw)
-    const char *class
+create_type_string(self, rw)
+    SV *self
     int rw
   PREINIT:
     ffi_pl_type *type;
   CODE:
-    (void)class;
+    (void)self;
     type = ffi_pl_type_new(0);
     type->type_code = FFI_PL_TYPE_STRING;
     if(rw)
@@ -83,14 +83,14 @@ create_type_string(class, rw)
     RETVAL
 
 ffi_pl_type *
-create_type_array(class, type_code, size)
-    const char *class
+create_type_array(self, type_code, size)
+    SV *self
     int type_code
     size_t size
   PREINIT:
     ffi_pl_type *type;
   CODE:
-    (void)class;
+    (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
     type->type_code |= FFI_PL_SHAPE_ARRAY | type_code;
     type->extra[0].array.element_count = size;
@@ -99,13 +99,13 @@ create_type_array(class, type_code, size)
     RETVAL
 
 ffi_pl_type*
-create_type_pointer(class, type_code)
-    const char *class
+create_type_pointer(self, type_code)
+    SV *self
     int type_code
   PREINIT:
     ffi_pl_type *type;
   CODE:
-    (void)class;
+    (void)self;
     type = ffi_pl_type_new(0);
     type->type_code |= FFI_PL_SHAPE_POINTER | type_code;
     RETVAL = type;
@@ -113,8 +113,8 @@ create_type_pointer(class, type_code)
     RETVAL
 
 ffi_pl_type *
-create_type_custom(class, name, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
-    const char *class
+create_type_custom(self, name, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
+    SV *self
     const char *name
     SV *perl_to_native
     SV *native_to_perl
@@ -125,7 +125,7 @@ create_type_custom(class, name, perl_to_native, native_to_perl, perl_to_native_p
     ffi_pl_type_extra_custom_perl *custom;
     int type_code;
   CODE:
-    (void)class;
+    (void)self;
     type_code = ffi_pl_name_to_code(name);
     if(type_code == -1)
       croak("unknown ffi/platypus type: %s/custom", name);
@@ -145,8 +145,8 @@ create_type_custom(class, name, perl_to_native, native_to_perl, perl_to_native_p
 
 
 ffi_pl_type *
-create_type_closure(class, return_type, ...)
-    const char *class;
+create_type_closure(self, return_type, ...)
+    SV *self
     ffi_pl_type *return_type
   PREINIT:
     ffi_pl_type *type;
@@ -156,7 +156,7 @@ create_type_closure(class, return_type, ...)
     ffi_type **ffi_argument_types;
     ffi_status ffi_status;
   CODE:
-    (void)class;
+    (void)self;
     switch(return_type->type_code)
     {
       case FFI_PL_TYPE_VOID:
