@@ -56,19 +56,6 @@ XS(ffi_pl_sub_call)
   }
 }
 
-#define probe_for_math_stuff(type_code)                                    \
-    if((type_code & FFI_PL_BASE_MASK) == FFI_PL_BASE_FLOAT &&              \
-       (type_code & FFI_PL_SIZE_MASK) == FFI_PL_SIZE_128)                  \
-    {                                                                      \
-      if(MY_CXT.have_math_longdouble == -1)                                \
-        MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");         \
-    }                                                                      \
-    else if((type_code & FFI_PL_BASE_MASK) == FFI_PL_BASE_COMPLEX)         \
-    {                                                                      \
-      if(MY_CXT.have_math_complex == -1)                                   \
-        MY_CXT.have_math_complex = have_pm("Math::Complex");               \
-    }
-
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 
 BOOT:
