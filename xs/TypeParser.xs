@@ -1,5 +1,31 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::TypeParser
 
+BOOT:
+{
+  HV *bt = get_hv("FFI::Platypus::TypeParser::basic_type", GV_ADD);
+
+  hv_stores(bt, "void",       newSViv(FFI_PL_TYPE_VOID));
+  hv_stores(bt, "sint8",      newSViv(FFI_PL_TYPE_SINT8));
+  hv_stores(bt, "sint16",     newSViv(FFI_PL_TYPE_SINT16));
+  hv_stores(bt, "sint32",     newSViv(FFI_PL_TYPE_SINT32));
+  hv_stores(bt, "sint64",     newSViv(FFI_PL_TYPE_SINT64));
+  hv_stores(bt, "uint8",      newSViv(FFI_PL_TYPE_UINT8));
+  hv_stores(bt, "uint16",     newSViv(FFI_PL_TYPE_UINT16));
+  hv_stores(bt, "uint32",     newSViv(FFI_PL_TYPE_UINT32));
+  hv_stores(bt, "uint64",     newSViv(FFI_PL_TYPE_UINT64));
+
+  hv_stores(bt, "float",      newSViv(FFI_PL_TYPE_FLOAT));
+  hv_stores(bt, "double",     newSViv(FFI_PL_TYPE_DOUBLE));
+  hv_stores(bt, "string",     newSViv(FFI_PL_TYPE_STRING));
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+  hv_stores(bt, "longdouble", newSViv(FFI_PL_TYPE_LONG_DOUBLE));
+#endif
+#ifdef FFI_PL_PROBE_COMPLEX
+  hv_stores(bt, "complex_float", newSViv(FFI_PL_TYPE_COMPLEX_FLOAT));
+  hv_stores(bt, "complex_double", newSViv(FFI_PL_TYPE_COMPLEX_DOUBLE));
+#endif
+}
+
 ffi_pl_type *
 create_type_basic(class, name)
     const char *class
