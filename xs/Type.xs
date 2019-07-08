@@ -39,11 +39,6 @@ first_use(self)
       if(MY_CXT.have_math_longdouble == -1)
         MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
     }
-    else if((self->type_code & FFI_PL_BASE_MASK) == FFI_PL_BASE_COMPLEX)
-    {
-      if(MY_CXT.have_math_complex == -1)
-        MY_CXT.have_math_complex = have_pm("Math::Complex");
-    }
 
 void
 DESTROY(self)

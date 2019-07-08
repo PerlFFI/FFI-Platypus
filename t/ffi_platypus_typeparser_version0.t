@@ -61,8 +61,6 @@ subtest basic => sub {
     plan skip_all => 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
-    FFI::Platypus::_have_math_complex(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('complex_float', $ffi)->meta,
       {
@@ -76,13 +74,6 @@ subtest basic => sub {
       'complex float',
     ) or diag explain $type;
 
-    isnt(
-      FFI::Platypus::_have_math_complex(),
-      -1,
-    );
-
-    FFI::Platypus::_have_math_complex(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('complex_double', $ffi)->meta,
       {
@@ -95,11 +86,6 @@ subtest basic => sub {
       },
       'complex double',
     ) or diag explain $type;
-
-    isnt(
-      FFI::Platypus::_have_math_complex(),
-      -1,
-    );
 
   };
 
@@ -290,8 +276,6 @@ subtest array => sub {
     plan skip_all => 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
-    FFI::Platypus::_have_math_complex(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('complex_float []', $ffi)->meta,
       {
@@ -306,13 +290,6 @@ subtest array => sub {
       'variable array',
     ) or diag explain $type;
 
-    isnt(
-      FFI::Platypus::_have_math_complex(),
-      -1,
-    );
-
-    FFI::Platypus::_have_math_complex(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('complex_double []', $ffi)->meta,
       {
@@ -326,11 +303,6 @@ subtest array => sub {
       },
       'variable array',
     ) or diag explain $type;
-
-    isnt(
-      FFI::Platypus::_have_math_complex(),
-      -1,
-    );
 
   };
 
@@ -387,8 +359,6 @@ subtest pointer => sub {
     plan skip_all => 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
-    FFI::Platypus::_have_math_complex(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('complex_float *', $ffi)->meta,
       {
@@ -402,13 +372,6 @@ subtest pointer => sub {
       'complex float pointer',
     ) or diag explain $type;
 
-    isnt(
-      FFI::Platypus::_have_math_complex(),
-      -1,
-    );
-
-    FFI::Platypus::_have_math_complex(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('complex_double *', $ffi)->meta,
       {
@@ -421,11 +384,6 @@ subtest pointer => sub {
       },
       'complex double pointer',
     ) or diag explain $type;
-
-    isnt(
-      FFI::Platypus::_have_math_complex(),
-      -1,
-    );
 
   };
 
