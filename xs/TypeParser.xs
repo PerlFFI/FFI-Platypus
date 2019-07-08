@@ -17,6 +17,7 @@ BOOT:
   hv_stores(bt, "float",      newSViv(FFI_PL_TYPE_FLOAT));
   hv_stores(bt, "double",     newSViv(FFI_PL_TYPE_DOUBLE));
   hv_stores(bt, "string",     newSViv(FFI_PL_TYPE_STRING));
+  hv_stores(bt, "opaque",     newSViv(FFI_PL_TYPE_OPAQUE));
 #ifdef FFI_PL_PROBE_LONGDOUBLE
   hv_stores(bt, "longdouble", newSViv(FFI_PL_TYPE_LONG_DOUBLE));
 #endif
@@ -27,19 +28,13 @@ BOOT:
 }
 
 ffi_pl_type *
-create_type_basic(class, name)
+create_type_basic(class, type_code)
     const char *class
-    const char *name
+    int type_code
   PREINIT:
     ffi_pl_type *type;
-    int type_code;
-    dMY_CXT;
   CODE:
     (void)class;
-    type_code = ffi_pl_name_to_code(name);
-    if(type_code == -1)
-      croak("unknown ffi/platypus type: %s/ffi", name);
-    probe_for_math_stuff(type_code);
     type = ffi_pl_type_new(0);
     type->type_code |= type_code;
     RETVAL = type;
@@ -110,19 +105,13 @@ create_type_array(class, name, size)
     RETVAL
 
 ffi_pl_type*
-create_type_pointer(class, name)
+create_type_pointer(class, type_code)
     const char *class
-    const char *name
+    int type_code
   PREINIT:
     ffi_pl_type *type;
-    int type_code;
-    dMY_CXT;
   CODE:
     (void)class;
-    type_code = ffi_pl_name_to_code(name);
-    if(type_code == -1)
-      croak("unknown ffi/platypus type: %s/pointer", name);
-    probe_for_math_stuff(type_code);
     type = ffi_pl_type_new(0);
     type->type_code |= FFI_PL_SHAPE_POINTER | type_code;
     RETVAL = type;

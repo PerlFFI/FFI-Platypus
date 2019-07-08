@@ -20,6 +20,24 @@ sizeof(self)
     RETVAL
 
 void
+first_use(self)
+    ffi_pl_type *self
+  PREINIT:
+    dMY_CXT;
+  CODE:
+    if((self->type_code & FFI_PL_BASE_MASK) == FFI_PL_BASE_FLOAT &&
+       (self->type_code & FFI_PL_SIZE_MASK) == FFI_PL_SIZE_128)
+    {
+      if(MY_CXT.have_math_longdouble == -1)
+        MY_CXT.have_math_longdouble = have_pm("Math::LongDouble");
+    }
+    else if((self->type_code & FFI_PL_BASE_MASK) == FFI_PL_BASE_COMPLEX)
+    {
+      if(MY_CXT.have_math_complex == -1)
+        MY_CXT.have_math_complex = have_pm("Math::Complex");
+    }
+
+void
 DESTROY(self)
     ffi_pl_type *self
   CODE:
