@@ -15,22 +15,23 @@
 typedef struct {
   ffi_pl_arguments *current_argv;
   /*
-   * -1 until we have checked
-   *  0 tried, not there
-   *  1 tried, is there
+   *  0 not loaded
+   *  1 loaded ok
+   *  2 attempted load, but errored
    */
-  int have_math_longdouble;  /* Math::LongDouble */
-
+  int loaded_math_longdouble;
 } my_cxt_t;
 
 START_MY_CXT
 
-void *cast0(void)
+void *
+cast0(void)
 {
   return NULL;
 }
 
-void *cast1(void *value)
+void *
+cast1(void *value)
 {
   return value;
 }
@@ -43,10 +44,10 @@ XS(ffi_pl_sub_call)
   ffi_pl_result result;
   ffi_pl_arguments *arguments;
   void **argument_pointers;
-  
+
   dMY_CXT;
   dVAR; dXSARGS;
-  
+
   self = (ffi_pl_function*) CvXSUBANY(cv).any_ptr;
 
 #define EXTRA_ARGS 0
@@ -60,24 +61,12 @@ MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 BOOT:
 {
   MY_CXT_INIT;
-  MY_CXT.current_argv         = NULL;
-  MY_CXT.have_math_longdouble = -1;
+  MY_CXT.current_argv           = NULL;
+  MY_CXT.loaded_math_longdouble = 0;
 #ifndef HAVE_IV_IS_64
   PERL_MATH_INT64_LOAD_OR_CROAK;
 #endif
 }
-
-int
-_have_math_longdouble(value = -2)
-    int value
-  PREINIT:
-    dMY_CXT;
-  CODE:
-    if(value != -2)
-      MY_CXT.have_math_longdouble = value;
-    RETVAL = MY_CXT.have_math_longdouble;
-  OUTPUT:
-    RETVAL
 
 void
 CLONE(...)

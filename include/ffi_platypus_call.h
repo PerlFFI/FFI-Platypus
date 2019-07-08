@@ -1021,7 +1021,7 @@
 #ifdef FFI_PL_PROBE_LONGDOUBLE
         case FFI_PL_TYPE_LONG_DOUBLE:
         {
-          if(MY_CXT.have_math_longdouble)
+          if(MY_CXT.loaded_math_longdouble == 1)
           {
             SV *sv;
             long double *ptr;

@@ -31,8 +31,6 @@ subtest basic => sub {
     plan skip_all => 'test requires support for long double'
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
-    FFI::Platypus::_have_math_longdouble(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('longdouble', $ffi)->meta,
       {
@@ -45,11 +43,6 @@ subtest basic => sub {
       },
       'longdouble',
     ) or diag explain $type;
-
-    isnt(
-      FFI::Platypus::_have_math_longdouble(),
-      -1,
-    );
 
   };
 
@@ -245,8 +238,6 @@ subtest array => sub {
     plan skip_all => 'test requires support for long double'
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
-    FFI::Platypus::_have_math_longdouble(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('longdouble []', $ffi)->meta,
       {
@@ -260,11 +251,6 @@ subtest array => sub {
       },
       'variable array',
     ) or diag explain $type;
-
-    isnt(
-      FFI::Platypus::_have_math_longdouble(),
-      -1,
-    );
 
   };
 
@@ -329,8 +315,6 @@ subtest pointer => sub {
     plan skip_all => 'test requires support for long double'
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
-    FFI::Platypus::_have_math_longdouble(-1),
-
     is_deeply(
       $type = FFI::Platypus::TypeParser::Version0->parse('longdouble *', $ffi)->meta,
       {
@@ -343,11 +327,6 @@ subtest pointer => sub {
       },
       'longdouble pointer',
     ) or diag explain $type;
-
-    isnt(
-      FFI::Platypus::_have_math_longdouble(),
-      -1,
-    );
 
   };
 

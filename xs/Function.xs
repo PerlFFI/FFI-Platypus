@@ -18,6 +18,7 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
     ffi_status ffi_status;
     ffi_abi ffi_abi;
     int extra_arguments;
+    dMY_CXT;
   CODE:
     (void)class;
 #ifndef FFI_PL_PROBE_VARIADIC
@@ -68,6 +69,29 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
       }
     }
 
+    if(
+        (return_type->type_code & (FFI_PL_BASE_MASK|FFI_PL_SIZE_MASK)) == FFI_PL_TYPE_LONG_DOUBLE
+      )
+    {
+      /*
+       * For historical reasons, we return longdouble as Math::LongDouble if it is
+       * installed, but we need to load it when the function is created, not on
+       * the first call
+       */
+      if(!MY_CXT.loaded_math_longdouble)
+      {
+        require_pv("Math/LongDouble.pm");
+        if(SvTRUE(ERRSV))
+        {
+          MY_CXT.loaded_math_longdouble = 2;
+        }
+        else
+        {
+          MY_CXT.loaded_math_longdouble = 1;
+        }
+      }
+    }
+
     if(var_fixed_args == -1)
     {
       ffi_status = ffi_prep_cif(
@@ -89,8 +113,6 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
         ffi_return_type,                          /* ffi_type *  | return type */
         ffi_argument_types                        /* ffi_type ** | argument types */
       );
-#else
-      croak("variadic functions not supported");
 #endif
     }
 
@@ -124,7 +146,6 @@ call(self, ...)
     ffi_pl_result result;
     ffi_pl_arguments *arguments;
     void **argument_pointers;
-    dMY_CXT;
   CODE:
 #define EXTRA_ARGS 1
     {

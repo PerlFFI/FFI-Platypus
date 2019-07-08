@@ -47,7 +47,7 @@ void ffi_pl_complex_double_to_perl(SV *sv, double *ptr);
   {                                                              \
     *INT2PTR(long double *, SvIV((SV*) SvRV(sv))) = *(ptr);      \
   }                                                              \
-  else if(MY_CXT.have_math_longdouble)                           \
+  else if(MY_CXT.loaded_math_longdouble == 1)                    \
   {                                                              \
     long double *tmp;                                            \
     Newx(tmp, 1, long double);                                   \

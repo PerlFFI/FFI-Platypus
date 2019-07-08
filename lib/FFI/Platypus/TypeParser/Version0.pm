@@ -130,14 +130,12 @@ sub parse
     {
       croak "$classname has not ffi_record_size or _ffi_record_size method";
     }
-    return $self->create_type_record(
+    return $self->store->{record}->{$classname} ||= $self->create_type_record(
       $size,          # size
       $classname,     # record_class
       0,              # pass by value
     );
   }
-
-  my $type;
 
   # array types
   if($name =~ s/\s+ \[ ([0-9]*) \] $//x)
@@ -146,14 +144,14 @@ sub parse
     my $basic = $self->store->{basic}->{$name} || croak("unknown ffi/platypus type $name [$size]");
     if($size)
     {
-      $type = $self->create_type_array(
+      return $self->create_type_array(
         $basic->type_code,
         $1,
       );
     }
     else
     {
-      $type = $self->store->{array}->{$name} ||= $self->create_type_array(
+      return $self->store->{array}->{$name} ||= $self->create_type_array(
         $basic->type_code,
         0
       );
@@ -161,17 +159,13 @@ sub parse
   }
 
   # pointer types
-  elsif($name =~ s/\s+\*$//) {
-    $type = $self->store->{ptr}->{$name} || croak("unknown ffi/platypus type $name *");
-
-  # basic types
-  } else {
-    $type = $self->store->{basic}->{$name} || croak("unknown ffi/platypus type $name");
+  if($name =~ s/\s+\*$//)
+  {
+    return $self->store->{ptr}->{$name} || croak("unknown ffi/platypus type $name *");
   }
 
-  $type->first_use;
-
-  $type;
+  # basic types
+  return $self->store->{basic}->{$name} || croak("unknown ffi/platypus type $name");
 }
 
 1;

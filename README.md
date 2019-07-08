@@ -114,7 +114,8 @@ the [lib](#lib) attribute.
 
     - `0`
 
-        Original API level.
+        Original API level.  See [FFI::Platypus::TypeParser::Version0](https://metacpan.org/pod/FFI::Platypus::TypeParser::Version0) for details
+        on the differences.
 
     - `1`
 
