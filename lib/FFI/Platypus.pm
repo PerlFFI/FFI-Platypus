@@ -264,11 +264,11 @@ sub _type_map
     foreach my $key (keys %{ $class->native_type_map  })
     {
       my $value = $class->native_type_map->{$key};
-      next unless _have_type($value);
+      next unless $self->{tp}->have_type($value);
       $type_map{$key} = $value;
     }
     # include the standard libffi types
-    $type_map{$_} = $_ for grep { _have_type($_) }
+    $type_map{$_} = $_ for grep { $self->{tp}->have_type($_) }
       qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque
           longdouble complex_float complex_double );
     $type_map{pointer} = 'opaque';

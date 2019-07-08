@@ -2,11 +2,12 @@ use strict;
 use warnings;
 use Test::More;
 use FFI::Platypus;
+use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
 
 BEGIN {
   plan skip_all => 'test requires support for long double'
-    unless FFI::Platypus::_have_type('longdouble');
+    unless FFI::Platypus::TypeParser->have_type('longdouble');
 }
 
 my $ffi = FFI::Platypus->new;

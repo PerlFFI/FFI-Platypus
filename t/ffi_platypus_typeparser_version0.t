@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 use FFI::Platypus;
+use FFI::Platypus::TypeParser;
 use FFI::Platypus::Internal;
 use FFI::Platypus::TypeParser::Version0;
 
@@ -28,7 +29,7 @@ subtest basic => sub {
   subtest 'longdouble' => sub {
 
     plan skip_all => 'test requires support for long double'
-      unless FFI::Platypus::_have_type('longdouble');
+      unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     FFI::Platypus::_have_math_longdouble(-1),
 
@@ -55,10 +56,10 @@ subtest basic => sub {
   subtest 'complex' => sub {
 
     plan skip_all => 'test requires support for complex'
-      unless FFI::Platypus::_have_type('complex_float');
+      unless FFI::Platypus::TypeParser->have_type('complex_float');
 
     plan skip_all => 'test requires support for complex'
-      unless FFI::Platypus::_have_type('complex_double');
+      unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     FFI::Platypus::_have_math_complex(-1),
 
@@ -256,7 +257,7 @@ subtest array => sub {
   subtest 'longdouble' => sub {
 
     plan skip_all => 'test requires support for long double'
-      unless FFI::Platypus::_have_type('longdouble');
+      unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     FFI::Platypus::_have_math_longdouble(-1),
 
@@ -284,10 +285,10 @@ subtest array => sub {
   subtest 'complex' => sub {
 
     plan skip_all => 'test requires support for complex'
-      unless FFI::Platypus::_have_type('complex_float');
+      unless FFI::Platypus::TypeParser->have_type('complex_float');
 
     plan skip_all => 'test requires support for complex'
-      unless FFI::Platypus::_have_type('complex_double');
+      unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     FFI::Platypus::_have_math_complex(-1),
 
@@ -354,7 +355,7 @@ subtest pointer => sub {
   subtest 'longdouble' => sub {
 
     plan skip_all => 'test requires support for long double'
-      unless FFI::Platypus::_have_type('longdouble');
+      unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     FFI::Platypus::_have_math_longdouble(-1),
 
@@ -381,10 +382,10 @@ subtest pointer => sub {
   subtest 'complex' => sub {
 
     plan skip_all => 'test requires support for complex'
-      unless FFI::Platypus::_have_type('complex_float');
+      unless FFI::Platypus::TypeParser->have_type('complex_float');
 
     plan skip_all => 'test requires support for complex'
-      unless FFI::Platypus::_have_type('complex_double');
+      unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     FFI::Platypus::_have_math_complex(-1),
 

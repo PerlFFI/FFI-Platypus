@@ -2,6 +2,7 @@ package FFI::Platypus::TypeParser;
 
 use strict;
 use warnings;
+use Carp qw( croak );
 
 # ABSTRACT: FFI Type Parser
 # VERSION
@@ -23,9 +24,23 @@ sub new
 
 sub build {}
 
+our %basic_type;
+
+sub have_type
+{
+  my(undef, $name) = @_;
+  !!$basic_type{$name};
+}
+
+sub create_type_custom
+{
+  my($self, $name, @rest) = @_;
+  my $basic = $self->store->{basic}->{$name} || croak "unknown type $name";
+  $self->_create_type_custom($basic->type_code, @rest);
+}
+
 {
   my %store;
-  our %basic_type;
 
   foreach my $name (keys %basic_type)
   {

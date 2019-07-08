@@ -5,6 +5,7 @@ use FFI::Platypus;
 use FFI::CheckLib;
 use Data::Dumper;
 use File::Spec;
+use FFI::Platypus::TypeParser;
 
 my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
@@ -352,7 +353,7 @@ subtest 'type' => sub {
     ok scalar(grep { $_ eq 'my_integer_8' } $ffi->types), 'ffi.types returns my_integer_8';
   };
 
-  my @list = grep { FFI::Platypus::_have_type($_) } qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double opaque string longdouble complex_float complex_double );
+  my @list = grep { FFI::Platypus::TypeParser->have_type($_) } qw( sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double opaque string longdouble complex_float complex_double );
 
   subtest 'ffi basic types' => sub {
     foreach my $name (@list)
@@ -528,7 +529,7 @@ subtest 'type' => sub {
     {
       subtest $name => sub {
         plan skip_all => 'test requires longdouble support'
-          unless FFI::Platypus::_have_type($name);
+          unless FFI::Platypus::TypeParser->have_type($name);
         my $type = eval { FFI::Platypus::TypeParser::Version0->parse($name) };
         is $@, '', "type = FFI::Platypus::TypeParser::Version0->parse($name)";
         isa_ok $type, 'FFI::Platypus::Type';

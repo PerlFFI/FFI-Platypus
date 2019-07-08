@@ -2,11 +2,12 @@ use strict;
 use warnings;
 use Test::More;
 use FFI::Platypus;
+use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
 
 BEGIN {
   plan skip_all => 'Test requires support for double complex'
-    unless FFI::Platypus::_have_type('complex_double');
+    unless FFI::Platypus::TypeParser->have_type('complex_double');
 }
 
 my $ffi = FFI::Platypus->new;

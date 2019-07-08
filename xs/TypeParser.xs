@@ -113,9 +113,9 @@ create_type_pointer(self, type_code)
     RETVAL
 
 ffi_pl_type *
-create_type_custom(self, name, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
+_create_type_custom(self, type_code, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
     SV *self
-    const char *name
+    int type_code
     SV *perl_to_native
     SV *native_to_perl
     SV *perl_to_native_post
@@ -123,13 +123,8 @@ create_type_custom(self, name, perl_to_native, native_to_perl, perl_to_native_po
   PREINIT:
     ffi_pl_type *type;
     ffi_pl_type_extra_custom_perl *custom;
-    int type_code;
   CODE:
     (void)self;
-    type_code = ffi_pl_name_to_code(name);
-    if(type_code == -1)
-      croak("unknown ffi/platypus type: %s/custom", name);
-
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));
     type->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
 
@@ -160,48 +155,44 @@ create_type_closure(self, return_type, ...)
     switch(return_type->type_code)
     {
       case FFI_PL_TYPE_VOID:
+        ffi_return_type = &ffi_type_void;
+        break;
       case FFI_PL_TYPE_SINT8:
+        ffi_return_type = &ffi_type_sint8;
+        break;
       case FFI_PL_TYPE_SINT16:
+        ffi_return_type = &ffi_type_sint16;
+        break;
       case FFI_PL_TYPE_SINT32:
+        ffi_return_type = &ffi_type_sint32;
+        break;
       case FFI_PL_TYPE_SINT64:
+        ffi_return_type = &ffi_type_sint64;
+        break;
       case FFI_PL_TYPE_UINT8:
+        ffi_return_type = &ffi_type_uint8;
+        break;
       case FFI_PL_TYPE_UINT16:
+        ffi_return_type = &ffi_type_uint16;
+        break;
       case FFI_PL_TYPE_UINT32:
+        ffi_return_type = &ffi_type_uint32;
+        break;
       case FFI_PL_TYPE_UINT64:
+        ffi_return_type = &ffi_type_uint64;
+        break;
       case FFI_PL_TYPE_FLOAT:
+        ffi_return_type = &ffi_type_float;
+        break;
       case FFI_PL_TYPE_DOUBLE:
+        ffi_return_type = &ffi_type_double;
+        break;
       case FFI_PL_TYPE_OPAQUE:
+        ffi_return_type = &ffi_type_pointer;
         break;
       default:
         croak("Only native types are supported as closure return types");
         break;
-    }
-
-    for(i=0; i<(items-2); i++)
-    {
-      arg = ST(2+i);
-      ffi_pl_type *arg_type = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
-      switch(arg_type->type_code)
-      {
-        case FFI_PL_TYPE_VOID:
-        case FFI_PL_TYPE_SINT8:
-        case FFI_PL_TYPE_SINT16:
-        case FFI_PL_TYPE_SINT32:
-        case FFI_PL_TYPE_SINT64:
-        case FFI_PL_TYPE_UINT8:
-        case FFI_PL_TYPE_UINT16:
-        case FFI_PL_TYPE_UINT32:
-        case FFI_PL_TYPE_UINT64:
-        case FFI_PL_TYPE_FLOAT:
-        case FFI_PL_TYPE_DOUBLE:
-        case FFI_PL_TYPE_OPAQUE:
-        case FFI_PL_TYPE_STRING:
-        case FFI_PL_TYPE_RECORD:
-          break;
-        default:
-          croak("Only native types and strings are supported as closure argument types");
-          break;
-      }
     }
 
     Newx(ffi_argument_types, items-2, ffi_type*);
@@ -211,13 +202,55 @@ create_type_closure(self, return_type, ...)
     type->extra[0].closure.return_type = return_type;
     type->extra[0].closure.flags = 0;
 
-    ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
-
     for(i=0; i<(items-2); i++)
     {
       arg = ST(2+i);
       type->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
-      ffi_argument_types[i] = ffi_pl_type_to_libffi_type(type->extra[0].closure.argument_types[i]);
+      switch(type->extra[0].closure.argument_types[i]->type_code)
+      {
+        case FFI_PL_TYPE_VOID:
+          ffi_argument_types[i] = &ffi_type_void;
+          break;
+        case FFI_PL_TYPE_SINT8:
+          ffi_argument_types[i] = &ffi_type_sint8;
+          break;
+        case FFI_PL_TYPE_SINT16:
+          ffi_argument_types[i] = &ffi_type_sint16;
+          break;
+        case FFI_PL_TYPE_SINT32:
+          ffi_argument_types[i] = &ffi_type_sint32;
+          break;
+        case FFI_PL_TYPE_SINT64:
+          ffi_argument_types[i] = &ffi_type_sint64;
+          break;
+        case FFI_PL_TYPE_UINT8:
+          ffi_argument_types[i] = &ffi_type_uint8;
+          break;
+        case FFI_PL_TYPE_UINT16:
+          ffi_argument_types[i] = &ffi_type_uint16;
+          break;
+        case FFI_PL_TYPE_UINT32:
+          ffi_argument_types[i] = &ffi_type_uint32;
+          break;
+        case FFI_PL_TYPE_UINT64:
+          ffi_argument_types[i] = &ffi_type_uint64;
+          break;
+        case FFI_PL_TYPE_FLOAT:
+          ffi_argument_types[i] = &ffi_type_float;
+          break;
+        case FFI_PL_TYPE_DOUBLE:
+          ffi_argument_types[i] = &ffi_type_double;
+          break;
+        case FFI_PL_TYPE_OPAQUE:
+        case FFI_PL_TYPE_STRING:
+        case FFI_PL_TYPE_RECORD:
+          ffi_argument_types[i] = &ffi_type_pointer;
+          break;
+        default:
+          Safefree(ffi_argument_types);
+          croak("Only native types and strings are supported as closure argument types");
+          break;
+      }
     }
 
     ffi_status = ffi_prep_cif(

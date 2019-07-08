@@ -341,7 +341,6 @@ typedef struct _ffi_pl_heap {
 #endif
 
 ffi_type *ffi_pl_type_to_libffi_type(ffi_pl_type *type);
-int ffi_pl_name_to_code(const char *name);
 ffi_pl_type *ffi_pl_type_new(size_t size);
 
 #ifdef __cplusplus

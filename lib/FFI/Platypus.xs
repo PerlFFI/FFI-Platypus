@@ -106,14 +106,6 @@ _have_math_complex(value = -2)
   OUTPUT:
     RETVAL
 
-int
-_have_type(name)
-    const char *name
-  CODE:
-    RETVAL = !strcmp(name, "string") || ffi_pl_name_to_code(name) != -1;
-  OUTPUT:
-    RETVAL
-
 void
 CLONE(...)
   CODE:

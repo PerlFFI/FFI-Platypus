@@ -89,6 +89,8 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
         ffi_return_type,                          /* ffi_type *  | return type */
         ffi_argument_types                        /* ffi_type ** | argument types */
       );
+#else
+      croak("variadic functions not supported");
 #endif
     }
 
