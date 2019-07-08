@@ -137,18 +137,34 @@ sub parse
     );
   }
 
-  if($name =~ s/\s+ \[ ([0-9]*) \] $//x)
-  {
-    return $self->create_type_array(
-      $name,       # name
-      $1 ? $1 : 0, # size
-    );
-  }
-
   my $type;
 
-  if($name =~ s/\s+\*$//) {
+  # array types
+  if($name =~ s/\s+ \[ ([0-9]*) \] $//x)
+  {
+    my $size = $1 || '';
+    my $basic = $self->store->{basic}->{$name} || croak("unknown ffi/platypus type $name [$size]");
+    if($size)
+    {
+      $type = $self->create_type_array(
+        $basic->type_code,
+        $1,
+      );
+    }
+    else
+    {
+      $type = $self->store->{array}->{$name} ||= $self->create_type_array(
+        $basic->type_code,
+        0
+      );
+    }
+  }
+
+  # pointer types
+  elsif($name =~ s/\s+\*$//) {
     $type = $self->store->{ptr}->{$name} || croak("unknown ffi/platypus type $name *");
+
+  # basic types
   } else {
     $type = $self->store->{basic}->{$name} || croak("unknown ffi/platypus type $name");
   }

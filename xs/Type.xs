@@ -19,6 +19,14 @@ sizeof(self)
   OUTPUT:
     RETVAL
 
+int
+type_code(self)
+    ffi_pl_type *self
+  CODE:
+    RETVAL = self->type_code;
+  OUTPUT:
+    RETVAL
+
 void
 first_use(self)
     ffi_pl_type *self

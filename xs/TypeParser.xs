@@ -83,20 +83,14 @@ create_type_string(class, rw)
     RETVAL
 
 ffi_pl_type *
-create_type_array(class, name, size)
+create_type_array(class, type_code, size)
     const char *class
-    const char *name
+    int type_code
     size_t size
   PREINIT:
     ffi_pl_type *type;
-    int type_code;
-    dMY_CXT;
   CODE:
     (void)class;
-    type_code = ffi_pl_name_to_code(name);
-    if(type_code == -1)
-      croak("unknown ffi/platypus type: %s/array", name);
-    probe_for_math_stuff(type_code);
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
     type->type_code |= FFI_PL_SHAPE_ARRAY | type_code;
     type->extra[0].array.element_count = size;
