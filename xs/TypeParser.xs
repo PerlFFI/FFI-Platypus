@@ -113,33 +113,33 @@ create_type_pointer(class, type_code)
     RETVAL
 
 ffi_pl_type *
-create_type_custom(class, type, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
+create_type_custom(class, name, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
     const char *class
-    const char *type
+    const char *name
     SV *perl_to_native
     SV *native_to_perl
     SV *perl_to_native_post
     int argument_count
   PREINIT:
-    ffi_pl_type *self;
+    ffi_pl_type *type;
     ffi_pl_type_extra_custom_perl *custom;
     int type_code;
   CODE:
     (void)class;
-    type_code = ffi_pl_name_to_code(type);
+    type_code = ffi_pl_name_to_code(name);
     if(type_code == -1)
-      croak("unknown ffi/platypus type: %s/custom", type);
+      croak("unknown ffi/platypus type: %s/custom", name);
 
-    self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));
-    self->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
+    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));
+    type->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
 
-    custom = &self->extra[0].custom_perl;
+    custom = &type->extra[0].custom_perl;
     custom->perl_to_native = SvOK(perl_to_native) ? SvREFCNT_inc_simple_NN(perl_to_native) : NULL;
     custom->perl_to_native_post = SvOK(perl_to_native_post) ? SvREFCNT_inc_simple_NN(perl_to_native_post) : NULL;
     custom->native_to_perl = SvOK(native_to_perl) ? SvREFCNT_inc_simple_NN(native_to_perl) : NULL;
     custom->argument_count = argument_count-1;
 
-    RETVAL = self;
+    RETVAL = type;
   OUTPUT:
     RETVAL
 
@@ -149,7 +149,7 @@ create_type_closure(class, return_type, ...)
     const char *class;
     ffi_pl_type *return_type
   PREINIT:
-    ffi_pl_type *self;
+    ffi_pl_type *type;
     int i;
     SV *arg;
     ffi_type *ffi_return_type;
@@ -205,23 +205,23 @@ create_type_closure(class, return_type, ...)
     }
 
     Newx(ffi_argument_types, items-2, ffi_type*);
-    self = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2));
-    self->type_code = FFI_PL_TYPE_CLOSURE;
+    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2));
+    type->type_code = FFI_PL_TYPE_CLOSURE;
 
-    self->extra[0].closure.return_type = return_type;
-    self->extra[0].closure.flags = 0;
+    type->extra[0].closure.return_type = return_type;
+    type->extra[0].closure.flags = 0;
 
     ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
 
     for(i=0; i<(items-2); i++)
     {
       arg = ST(2+i);
-      self->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
-      ffi_argument_types[i] = ffi_pl_type_to_libffi_type(self->extra[0].closure.argument_types[i]);
+      type->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
+      ffi_argument_types[i] = ffi_pl_type_to_libffi_type(type->extra[0].closure.argument_types[i]);
     }
 
     ffi_status = ffi_prep_cif(
-      &self->extra[0].closure.ffi_cif,
+      &type->extra[0].closure.ffi_cif,
       FFI_DEFAULT_ABI,
       items-2,
       ffi_return_type,
@@ -230,7 +230,7 @@ create_type_closure(class, return_type, ...)
 
     if(ffi_status != FFI_OK)
     {
-      Safefree(self);
+      Safefree(type);
       Safefree(ffi_argument_types);
       if(ffi_status == FFI_BAD_TYPEDEF)
         croak("bad typedef");
@@ -242,19 +242,19 @@ create_type_closure(class, return_type, ...)
 
     if( items-2 == 0 )
     {
-      self->extra[0].closure.flags |= G_NOARGS;
+      type->extra[0].closure.flags |= G_NOARGS;
     }
 
-    if(self->extra[0].closure.return_type->type_code == FFI_PL_TYPE_VOID)
+    if(type->extra[0].closure.return_type->type_code == FFI_PL_TYPE_VOID)
     {
-      self->extra[0].closure.flags |= G_DISCARD | G_VOID;
+      type->extra[0].closure.flags |= G_DISCARD | G_VOID;
     }
     else
     {
-      self->extra[0].closure.flags |= G_SCALAR;
+      type->extra[0].closure.flags |= G_SCALAR;
     }
 
-    RETVAL = self;
+    RETVAL = type;
 
   OUTPUT:
     RETVAL
