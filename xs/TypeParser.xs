@@ -39,7 +39,7 @@ create_type_basic(class, name)
     type_code = ffi_pl_name_to_code(name);
     if(type_code == -1)
       croak("unknown ffi/platypus type: %s/ffi", name);
-    probe_for_math_stuff(name);
+    probe_for_math_stuff(type_code);
     type = ffi_pl_type_new(0);
     type->type_code |= type_code;
     RETVAL = type;
@@ -101,7 +101,7 @@ create_type_array(class, name, size)
     type_code = ffi_pl_name_to_code(name);
     if(type_code == -1)
       croak("unknown ffi/platypus type: %s/array", name);
-    probe_for_math_stuff(name);
+    probe_for_math_stuff(type_code);
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_array));
     type->type_code |= FFI_PL_SHAPE_ARRAY | type_code;
     type->extra[0].array.element_count = size;
@@ -122,7 +122,7 @@ create_type_pointer(class, name)
     type_code = ffi_pl_name_to_code(name);
     if(type_code == -1)
       croak("unknown ffi/platypus type: %s/pointer", name);
-    probe_for_math_stuff(name);
+    probe_for_math_stuff(type_code);
     type = ffi_pl_type_new(0);
     type->type_code |= FFI_PL_SHAPE_POINTER | type_code;
     RETVAL = type;
