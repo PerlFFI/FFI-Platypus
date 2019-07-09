@@ -3,7 +3,6 @@ MODULE = FFI::Platypus PACKAGE = FFI::Platypus::TypeParser
 BOOT:
 {
   HV *bt = get_hv("FFI::Platypus::TypeParser::basic_type", GV_ADD);
-
   hv_stores(bt, "void",       newSViv(FFI_PL_TYPE_VOID));
   hv_stores(bt, "sint8",      newSViv(FFI_PL_TYPE_SINT8));
   hv_stores(bt, "sint16",     newSViv(FFI_PL_TYPE_SINT16));

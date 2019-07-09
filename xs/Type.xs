@@ -1,5 +1,29 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Type
 
+BOOT:
+{
+  HV *ft = get_hv("FFI::Platypus::TypeParser::ffi_type", GV_ADD);
+  hv_stores(ft, "void",           newSViv(PTR2IV( &ffi_type_void           )));
+  hv_stores(ft, "sint8",          newSViv(PTR2IV( &ffi_type_sint8          )));
+  hv_stores(ft, "sint16",         newSViv(PTR2IV( &ffi_type_sint16         )));
+  hv_stores(ft, "sint32",         newSViv(PTR2IV( &ffi_type_sint32         )));
+  hv_stores(ft, "sint64",         newSViv(PTR2IV( &ffi_type_sint64         )));
+  hv_stores(ft, "uint8",          newSViv(PTR2IV( &ffi_type_uint8          )));
+  hv_stores(ft, "uint16",         newSViv(PTR2IV( &ffi_type_uint16         )));
+  hv_stores(ft, "uint32",         newSViv(PTR2IV( &ffi_type_uint32         )));
+  hv_stores(ft, "uint64",         newSViv(PTR2IV( &ffi_type_uint64         )));
+  hv_stores(ft, "pointer",        newSViv(PTR2IV( &ffi_type_pointer        )));
+  hv_stores(ft, "float",          newSViv(PTR2IV( &ffi_type_float          )));
+  hv_stores(ft, "double",         newSViv(PTR2IV( &ffi_type_double         )));
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+  hv_stores(ft, "longdouble",     newSViv(PTR2IV( &ffi_type_longdouble     )));
+#endif
+#ifdef FFI_PL_PROBE_COMPLEX
+  hv_stores(ft, "complex_float",  newSViv(PTR2IV( &ffi_type_complex_float  )));
+  hv_stores(ft, "complex_double", newSViv(PTR2IV( &ffi_type_complex_double )));
+#endif
+}
+
 SV*
 meta(self)
     ffi_pl_type *self
