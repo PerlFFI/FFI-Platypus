@@ -347,6 +347,4 @@ ffi_pl_type *ffi_pl_type_new(size_t size);
 }
 #endif
 
-extern int have_pm(const char *pm_name);
-
 #endif
