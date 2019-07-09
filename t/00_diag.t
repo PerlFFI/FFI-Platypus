@@ -19,6 +19,7 @@ $modules{$_} = $_ for qw(
   IPC::Cmd
   JSON::PP
   List::Util
+  Math::LongDouble
   PkgConfig
   Test::More
   constant
