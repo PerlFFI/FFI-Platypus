@@ -107,7 +107,7 @@ subtest 'with Math::LongDouble' => sub {
 
 subtest 'without Math::LongDouble' => sub {
   plan skip_all => 'test requires Math::LongDouble'
-    if !$Config{uselongdouble} && !eval q{ use Math::LongDouble; 1 };
+    if ! $Config{uselongdouble} || ! eval q{ use Math::LongDouble; 1 };
 
   subtest 'scalar' => sub {
     is add(1.5, 2.5), 4.0, "add(1.5,2.5) = 4";
