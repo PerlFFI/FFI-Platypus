@@ -8,3 +8,4 @@ cip exec cpanm -n version
 
 # we want to do this maybe in just one run or something
 #cip exec cpanm -n Acme::Alien::DontPanic
+cip exec cpanm -n Math::LongDouble
