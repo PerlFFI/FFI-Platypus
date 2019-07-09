@@ -146,6 +146,7 @@ call(self, ...)
     ffi_pl_result result;
     ffi_pl_arguments *arguments;
     void **argument_pointers;
+    dMY_CXT;
   CODE:
 #define EXTRA_ARGS 1
     {
