@@ -227,16 +227,20 @@ sub new
   require "FFI/Platypus/TypeParser/$tp.pm";
   $tp = "FFI::Platypus::TypeParser::$tp";
 
-  bless {
+  my $self = bless {
     lib              => \@lib,
+    lang             => '',
     handles          => {},
     types            => {},
-    lang             => $args{lang} || 'C',
     abi              => -1,
     api              => $api,
     tp               => $tp->new,
     ignore_not_found => defined $args{ignore_not_found} ? $args{ignore_not_found} : 0,
   }, $class;
+
+  $self->lang($args{lang} || 'C');
+
+  $self;
 }
 
 sub _lang_class ($)
@@ -251,31 +255,6 @@ sub _lang_class ($)
   croak "$class does not provide native_type_map method"
     unless $class->can("native_type_map");
   $class;
-}
-
-sub _type_map
-{
-  my($self) = @_;
-
-  unless(defined $self->{type_map})
-  {
-    my $class = _lang_class($self->{lang});
-    my %type_map;
-    foreach my $key (keys %{ $class->native_type_map  })
-    {
-      my $value = $class->native_type_map->{$key};
-      next unless $self->{tp}->have_type($value);
-      $type_map{$key} = $value;
-    }
-    # include the standard libffi types
-    $type_map{$_} = $_ for grep { $self->{tp}->have_type($_) }
-      qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque
-          longdouble complex_float complex_double );
-    $type_map{pointer} = 'opaque';
-    $self->{type_map} = \%type_map;
-  }
-
-  $self->{type_map};
 }
 
 =head1 ATTRIBUTES
@@ -380,12 +359,26 @@ sub lang
 {
   my($self, $value) = @_;
 
-  if(defined $value)
+  if(defined $value && $value ne $self->{lang})
   {
     $self->{lang} = $value;
-    delete $self->{type_map};
     my $class = _lang_class($self->{lang});
     $self->abi($class->abi) if $class->can('abi');
+
+    {
+      my %type_map;
+      foreach my $key (keys %{ $class->native_type_map })
+      {
+        my $value = $class->native_type_map->{$key};
+        next unless $self->{tp}->have_type($value);
+        $type_map{$key} = $value;
+      }
+      $type_map{$_} = $_ for grep { $self->{tp}->have_type($_) }
+        qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque
+            longdouble complex_float complex_double );
+      $type_map{pointer} = 'opaque';
+      $self->{tp}->type_map(\%type_map);
+    }
   }
 
   $self->{lang};
@@ -418,7 +411,7 @@ sub type
   croak "spaces not allowed in alias" if defined $alias && $alias =~ /\s/;
   croak "allowed characters for alias: [A-Za-z0-9_]+" if defined $alias && $alias =~ /[^A-Za-z0-9_]/;
 
-  my $type_map = $self->_type_map;
+  my $type_map = $self->{tp}->type_map;
 
   croak "alias conflicts with existing type" if defined $alias && (defined $type_map->{$alias} || defined $self->{types}->{$alias});
 
@@ -482,7 +475,7 @@ sub custom_type
   croak "must define at least one of native_to_perl, perl_to_native, or perl_to_native_post"
     unless defined $cb->{native_to_perl} || defined $cb->{perl_to_native} || defined $cb->{perl_to_native_post};
 
-  my $type_map = $self->_type_map;
+  my $type_map = $self->{tp}->type_map;
   croak "$type is not a native type" unless defined $type_map->{$type} || $type eq 'string';
   croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
 
@@ -569,7 +562,7 @@ sub types
 {
   my($self) = @_;
   $self = $self->new unless ref $self && eval { $self->isa('FFI::Platypus') };
-  my %types = map { $_ => 1 } keys %{ $self->_type_map };
+  my %types = map { $_ => 1 } keys %{ $self->{tp}->type_map };
   $types{$_} ||= 1 foreach keys %{ $self->{types} };
   sort keys %types;
 }
@@ -821,11 +814,11 @@ sub attach
 
   croak "you tried to provide a perl name that looks like an address"
     if $perl_name =~ /^-?[0-9]+$/;
-  
+
   my $function = $varargs
     ? $self->function($c_name, $args, $varargs, $ret, $wrapper)
     : $self->function($c_name, $args, $ret, $wrapper);
-  
+
   if(defined $function)
   {
     $function->attach($perl_name, $proto);

@@ -39,6 +39,18 @@ sub create_type_custom
   $self->_create_type_custom($basic->type_code, @rest);
 }
 
+sub type_map
+{
+  my($self, $new) = @_;
+
+  if(defined $new)
+  {
+    $self->{type_map} = $new;
+  }
+
+  $self->{type_map};
+}
+
 {
   my %store;
 
