@@ -66,6 +66,31 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
         }
 
         n += self->argument_types[n]->extra[0].custom_perl.argument_count;
+
+        if(
+            (self->argument_types[n]->type_code & (FFI_PL_BASE_MASK|FFI_PL_SIZE_MASK)) == FFI_PL_TYPE_LONG_DOUBLE &&
+            ((self->argument_types[n]->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_POINTER ||
+             (self->argument_types[n]->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_ARRAY)
+          )
+        {
+          /*
+           * For historical reasons, we return longdouble pointer and array as Math::LongDouble
+           * if it is installed, but we need to load it when the function is created, not on
+           * the first call
+           */
+          if(!MY_CXT.loaded_math_longdouble)
+          {
+            require_pv("Math/LongDouble.pm");
+            if(SvTRUE(ERRSV))
+            {
+              MY_CXT.loaded_math_longdouble = 2;
+            }
+            else
+            {
+              MY_CXT.loaded_math_longdouble = 1;
+            }
+          }
+        }
       }
     }
 

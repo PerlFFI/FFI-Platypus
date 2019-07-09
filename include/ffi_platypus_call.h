@@ -1021,6 +1021,7 @@
 #ifdef FFI_PL_PROBE_LONGDOUBLE
         case FFI_PL_TYPE_LONG_DOUBLE:
         {
+#if !(defined(USE_LONG_DOUBLE) && defined(HAS_LONG_DOUBLE))
           if(MY_CXT.loaded_math_longdouble == 1)
           {
             SV *sv;
@@ -1034,8 +1035,11 @@
           }
           else
           {
+#endif
             XSRETURN_NV((NV) result.longdouble);
+#if !(defined(USE_LONG_DOUBLE) && defined(HAS_LONG_DOUBLE))
           }
+#endif
         }
 #endif
 #ifdef FFI_PL_PROBE_COMPLEX

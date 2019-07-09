@@ -18,19 +18,9 @@ $ffi->lib(find_lib lib => 'test', libpath => 't/ffi');
 subtest 'Math::LongDouble is loaded when needed for return type' => sub {
   is($INC{'Math/LongDouble.pm'}, undef, 'not pre-loaded');
   $ffi->function( longdouble_add => ['longdouble','longdouble'] => 'longdouble' );
-
   my $pm = $INC{'Math/LongDouble.pm'};
-
-  if(eval q{ use Math::LongDouble; 1 })
-  {
-    is($pm, $INC{'Math/LongDouble.pm'});
-    isnt $pm, undef;
-  }
-  else
-  {
-    is($pm, undef);
-    is($INC{'Math/LongDouble.pm'}, undef);
-  }
+  is($pm, undef);
+  is($INC{'Math/LongDouble.pm'}, undef);
 };
 
 $ffi->type('longdouble*' => 'longdouble_p');
