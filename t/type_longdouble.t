@@ -4,6 +4,7 @@ use Test::More;
 use FFI::Platypus;
 use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
+use Config;
 
 BEGIN {
   plan skip_all => 'test requires support for long double'
@@ -45,7 +46,7 @@ $ffi->attach( pointer_null => [] => 'longdouble_p');
 
 subtest 'with Math::LongDouble' => sub {
   plan skip_all => 'test requires Math::LongDouble'
-    unless eval q{ use Math::LongDouble; 1 };
+    if $Config{uselongdouble} || !eval q{ use Math::LongDouble; 1 };
   
   my $ld15 = Math::LongDouble->new(1.5);
   my $ld25 = Math::LongDouble->new(2.5);
@@ -106,7 +107,7 @@ subtest 'with Math::LongDouble' => sub {
 
 subtest 'without Math::LongDouble' => sub {
   plan skip_all => 'test requires Math::LongDouble'
-    if eval q{ use Math::LongDouble; 1 };
+    if !$Config{uselongdouble} && !eval q{ use Math::LongDouble; 1 };
 
   subtest 'scalar' => sub {
     is add(1.5, 2.5), 4.0, "add(1.5,2.5) = 4";
