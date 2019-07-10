@@ -17,7 +17,7 @@ the public interface to Platypus types.
 sub new
 {
   my($class) = @_;
-  my $self = bless {}, $class;
+  my $self = bless { types => {} }, $class;
   $self->build;
   $self;
 }
@@ -49,6 +49,11 @@ sub type_map
   }
 
   $self->{type_map};
+}
+
+sub types
+{
+  shift->{types};
 }
 
 {

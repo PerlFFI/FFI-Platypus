@@ -71,21 +71,22 @@ The API C<1.00> type parser.
 sub parse
 {
   my($self, $name, $ffi) = @_;
-
   # the platypus object is only needed for closures, so
   # that it can lookup existing types.
+
+  return $self->types->{$name} if defined $self->types->{$name};
 
   if($name =~ m/^ \( (.*) \) \s* -\> \s* (.*) \s* $/x)
   {
     croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
     my @argument_types = map { $ffi->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
     my $return_type = $ffi->_type_lookup($2);
-    return $self->create_type_closure($return_type, @argument_types);
+    return $self->types->{$name} = $self->create_type_closure($return_type, @argument_types);
   }
 
   if($name =~ /^ string \s* \( ([0-9]+) \) $/x)
   {
-    return $self->create_type_record(
+    return $self->types->{$name} = $self->create_type_record(
       $1,    # size
       undef, # record_class
       0,     # pass by value
@@ -94,14 +95,14 @@ sub parse
 
   if($name =~ /^ string ( _rw | _ro | \s+ro | \s+rw | ) $/x)
   {
-    return $self->create_type_string(
+    return $self->types->{$name} = $self->create_type_string(
       defined $1 && $1 =~ /rw/ ? 1 : 0,   # rw
    );
   }
 
   if($name =~ /^ record \s* \( ([0-9]+) \) $/x)
   {
-    return $self->create_type_record(
+    return $self->types->{$name} = $self->create_type_record(
       $1,             # size
       undef,          # record_class
       0,              # pass by value
@@ -138,15 +139,15 @@ sub parse
   }
 
   # array types
-  if($name =~ s/\s+ \[ ([0-9]*) \] $//x)
+  if($name =~ /^([\S]+)\s+ \[ ([0-9]*) \] $/x)
   {
-    my $size = $1 || '';
-    my $basic = $self->store->{basic}->{$name} || croak("unknown ffi/platypus type $name [$size]");
+    my $size = $2 || '';
+    my $basic = $self->store->{basic}->{$1} || croak("unknown ffi/platypus type $name [$size]");
     if($size)
     {
-      return $self->create_type_array(
+      return $self->types->{$name} = $self->create_type_array(
         $basic->type_code,
-        $1,
+        $size,
       );
     }
     else

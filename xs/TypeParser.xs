@@ -190,7 +190,7 @@ create_type_closure(self, return_type, ...)
         ffi_return_type = &ffi_type_pointer;
         break;
       default:
-        croak("Only native types are supported as closure return types");
+        croak("Only native types are supported as closure return types (%d)", return_type->type_code);
         break;
     }
 
@@ -247,7 +247,7 @@ create_type_closure(self, return_type, ...)
           break;
         default:
           Safefree(ffi_argument_types);
-          croak("Only native types and strings are supported as closure argument types");
+          croak("Only native types and strings are supported as closure argument types (%d)", return_type->type_code);
           break;
       }
     }
