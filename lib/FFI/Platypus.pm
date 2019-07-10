@@ -456,27 +456,30 @@ Define a custom type.  See L<FFI::Platypus::Type#Custom-Types> for details.
 
 sub custom_type
 {
-  my($self, $name, $cb) = @_;
+  my($self, $alias, $cb) = @_;
 
   my $argument_count = $cb->{argument_count} || 1;
 
   croak "argument_count must be >= 1"
     unless $argument_count >= 1;
 
-  croak "Usage: \$ffi->custom_type(\$name, { ... })"
-    unless defined $name && ref($cb) eq 'HASH';
+  croak "Usage: \$ffi->custom_type(\$alias, { ... })"
+    unless defined $alias && ref($cb) eq 'HASH';
 
   croak "must define at least one of native_to_perl, perl_to_native, or perl_to_native_post"
     unless defined $cb->{native_to_perl} || defined $cb->{perl_to_native} || defined $cb->{perl_to_native_post};
 
-  $self->{types}->{$name} = $self->{tp}->create_type_custom(
+  $self->{tp}->check_alias($alias);
+
+  my $type = $self->{types}->{$alias} = $self->{tp}->create_type_custom(
     $cb->{native_type},
-    $name,
     $cb->{perl_to_native},
     $cb->{native_to_perl},
     $cb->{perl_to_native_post},
     $argument_count,
   );
+
+  $self->{tp}->set_alias($alias, $type);
 
   $self;
 }

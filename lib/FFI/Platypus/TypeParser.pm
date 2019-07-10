@@ -34,15 +34,13 @@ sub have_type
 
 sub create_type_custom
 {
-  my($self, $basic_type_name, $alias, @rest) = @_;
-
-  $self->check_alias($alias);
+  my($self, $basic_type_name, @rest) = @_;
 
   my $basic = $self->store->{basic}->{
     $self->type_map->{$basic_type_name||'opaque'}
   } || croak "not basic type $basic_type_name";
 
-  $self->types->{$alias} = $self->_create_type_custom($basic->type_code, @rest);
+  $self->_create_type_custom($basic->type_code, @rest);
 }
 
 sub type_map
