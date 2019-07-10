@@ -68,6 +68,25 @@ The API C<1.00> type parser.
 
 =cut
 
+our @CARP_NOT = qw( FFI::Platypus FFI::Platypus::TypeParser );
+
+sub check_alias
+{
+  my($self, $alias) = @_;
+  croak "spaces not allowed in alias" if $alias =~ /\s/;
+  croak "allowed characters for alias: [A-Za-z0-9_]" if $alias !~ /^[A-Za-z0-9_]+$/;
+  croak "alias \"$alias\" conflicts with existing type"
+    if defined $self->type_map->{$alias}
+    || $self->types->{$alias};
+  return 1;
+}
+
+sub set_alias
+{
+  my($self, $alias, $type) = @_;
+  $self->types->{$alias} = $type;
+}
+
 sub parse
 {
   my($self, $name, $ffi) = @_;
@@ -78,7 +97,6 @@ sub parse
 
   if($name =~ m/^ \( (.*) \) \s* -\> \s* (.*) \s* $/x)
   {
-    croak "passing closure into a closure not supported" if $1 =~ /(\(|\)|-\>)/;
     my @argument_types = map { $ffi->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
     my $return_type = $ffi->_type_lookup($2);
     return $self->types->{$name} = $self->create_type_closure($return_type, @argument_types);

@@ -122,4 +122,18 @@ subtest 'immediate' => sub {
   is $ret, 42;
 };
 
+subtest 'closure passing into a closure' => sub {
+
+  my $ffi = FFI::Platypus->new;
+  eval { $ffi->type('((int)->int)->int') };
+  isnt "$@", "";
+  note "error = $@";
+
+  $ffi->type('(int)->int' => 'foo_t');
+  eval { $ffi->type('()->foo_t') };
+  isnt "$@", "";
+  note "error = $@";
+
+};
+
 done_testing;

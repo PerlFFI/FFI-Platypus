@@ -408,12 +408,10 @@ sub type
 {
   my($self, $name, $alias) = @_;
   croak "usage: \$ffi->type(name => alias) (alias is optional)" unless defined $self && defined $name;
-  croak "spaces not allowed in alias" if defined $alias && $alias =~ /\s/;
-  croak "allowed characters for alias: [A-Za-z0-9_]+" if defined $alias && $alias =~ /[^A-Za-z0-9_]/;
 
-  my $type_map = $self->{tp}->type_map;
+  $self->{tp}->check_alias($alias) if defined $alias;
 
-  croak "alias conflicts with existing type" if defined $alias && (defined $type_map->{$alias} || defined $self->{types}->{$alias});
+  my $type;
 
   if($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/
   || $name =~ /^string(_rw|_ro|\s+rw|\s+ro|\s*\([0-9]+\))$/)
@@ -422,7 +420,7 @@ sub type
     # basic type so you can have many many many copies of a given
     # closure type if you do not spell it exactly the same each time.
     # Recommended that you use an alias for a closure type anyway.
-    $self->{types}->{$name} ||= $self->{tp}->parse($name, $self);
+    $type = $self->{types}->{$name} ||= $self->{tp}->parse($name, $self);
   }
   else
   {
@@ -433,14 +431,13 @@ sub type
       $extra = " $1";
     }
 
+    my $type_map = $self->{tp}->type_map;
     croak "unknown type: $basic" unless defined $type_map->{$basic};
-    $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= $self->{tp}->parse($type_map->{$basic}.$extra, $self);
+    $type = $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= $self->{tp}->parse($type_map->{$basic}.$extra, $self);
   }
 
-  if(defined $alias)
-  {
-    $self->{types}->{$alias} = $self->{types}->{$name};
-  }
+  $self->{tp}->set_alias($alias, $type) if defined $alias;
+  $self->{types}->{$alias} = $type if defined $alias;
   $self;
 }
 
@@ -461,9 +458,6 @@ sub custom_type
 {
   my($self, $name, $cb) = @_;
 
-  my $type = $cb->{native_type};
-  $type ||= 'opaque';
-
   my $argument_count = $cb->{argument_count} || 1;
 
   croak "argument_count must be >= 1"
@@ -475,12 +469,9 @@ sub custom_type
   croak "must define at least one of native_to_perl, perl_to_native, or perl_to_native_post"
     unless defined $cb->{native_to_perl} || defined $cb->{perl_to_native} || defined $cb->{perl_to_native_post};
 
-  my $type_map = $self->{tp}->type_map;
-  croak "$type is not a native type" unless defined $type_map->{$type} || $type eq 'string';
-  croak "name conflicts with existing type" if defined $type_map->{$name} || defined $self->{types}->{$name};
-
   $self->{types}->{$name} = $self->{tp}->create_type_custom(
-    $type_map->{$type},
+    $cb->{native_type},
+    $name,
     $cb->{perl_to_native},
     $cb->{native_to_perl},
     $cb->{perl_to_native_post},
