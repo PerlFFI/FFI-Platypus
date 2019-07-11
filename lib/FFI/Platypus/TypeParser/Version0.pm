@@ -71,6 +71,9 @@ The API C<1.00> type parser.
 
 our @CARP_NOT = qw( FFI::Platypus FFI::Platypus::TypeParser );
 
+# The type parser is responsible for deciding if something is a legal
+# alias name.  Since this needs to be checked before the type is parsed
+# it is separate from set_alias below.
 sub check_alias
 {
   my($self, $alias) = @_;
@@ -88,15 +91,20 @@ sub set_alias
   $self->types->{$alias} = $type;
 }
 
+# list all the types that this type parser knows about, including
+# those provided by the language plugin (if any), those defined
+# by the user, and the basic types that everyone gets.
 sub list_types
 {
   my($self) = @_;
   uniqstr( ( keys %{ $self->type_map } ), ( keys %{ $self->types } ) );
 }
 
+# This method takes a string representation of the a type and
+# returns the internal platypus type representation.
 sub parse
 {
-  my($self, $name, $ffi) = @_;
+  my($self, $name) = @_;
 
   return $self->types->{$name} if defined $self->types->{$name};
 
@@ -175,7 +183,7 @@ sub parse
     {
       croak "$classname has not ffi_record_size or _ffi_record_size method";
     }
-    return $self->store->{record}->{$classname} ||= $self->create_type_record(
+    return $self->global_type->{record}->{$classname} ||= $self->create_type_record(
       $size,          # size
       $classname,     # record_class
       0,              # pass by value
@@ -186,7 +194,7 @@ sub parse
   if($name =~ /^([\S]+)\s+ \[ ([0-9]*) \] $/x)
   {
     my $size = $2 || '';
-    my $basic = $self->store->{basic}->{$1} || croak("unknown ffi/platypus type $name [$size]");
+    my $basic = $self->global_type->{basic}->{$1} || croak("unknown ffi/platypus type $name [$size]");
     if($size)
     {
       return $self->types->{$name} = $self->create_type_array(
@@ -196,7 +204,7 @@ sub parse
     }
     else
     {
-      return $self->store->{array}->{$name} ||= $self->create_type_array(
+      return $self->global_type->{array}->{$name} ||= $self->create_type_array(
         $basic->type_code,
         0
       );
@@ -206,11 +214,11 @@ sub parse
   # pointer types
   if($name =~ s/\s+\*$//)
   {
-    return $self->store->{ptr}->{$name} || croak("unknown ffi/platypus type $name *");
+    return $self->global_type->{ptr}->{$name} || croak("unknown ffi/platypus type $name *");
   }
 
   # basic types
-  return $self->store->{basic}->{$name} || croak("unknown ffi/platypus type $name");
+  return $self->global_type->{basic}->{$name} || croak("unknown ffi/platypus type $name");
 }
 
 1;

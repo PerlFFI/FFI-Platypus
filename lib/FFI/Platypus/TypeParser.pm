@@ -14,6 +14,11 @@ the public interface to Platypus types.
 
 =cut
 
+# The TypeParser and Type classes are used internally ONLY and
+# are not to be exposed to the user.  External users should
+# not under any circumstances rely on the implementation of
+# these classes.
+
 sub new
 {
   my($class) = @_;
@@ -26,6 +31,10 @@ sub build {}
 
 our %basic_type;
 
+# this just checks if the underlying libffi/platypus implementation
+# has the basic type.  It is used mainly to verify that exotic types
+# like longdouble and complex_float are available before the test
+# suite tries to use them.
 sub have_type
 {
   my(undef, $name) = @_;
@@ -36,13 +45,15 @@ sub create_type_custom
 {
   my($self, $basic_type_name, @rest) = @_;
 
-  my $basic = $self->store->{basic}->{
+  my $basic = $self->global_types->{basic}->{
     $self->type_map->{$basic_type_name||'opaque'}
   } || croak "not basic type $basic_type_name";
 
   $self->_create_type_custom($basic->type_code, @rest);
 }
 
+# this is the type map provided by the language plugin, if any
+# in addition to the basic types (which map to themselves).
 sub type_map
 {
   my($self, $new) = @_;
@@ -55,6 +66,8 @@ sub type_map
   $self->{type_map};
 }
 
+# this stores the types that have been mentioned so far.  It also
+# usually includes aliases.
 sub types
 {
   shift->{types};
@@ -72,7 +85,7 @@ sub types
 
   $store{$_}->{pointer} = $store{$_}->{opaque} for qw( basic ptr );
 
-  sub store
+  sub global_types
   {
     \%store;
   }
