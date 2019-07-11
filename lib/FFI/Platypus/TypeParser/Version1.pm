@@ -61,27 +61,27 @@ sub list_types
 
 use constant type_regex =>
 
-  qr/^
-
-    \s*
-
-    (?:
-
+  qr/^                                                                                                                                                            #
+                                                                                                                                                                  #
+    \s*                                                                                                                                                           # prefix white space
+                                                                                                                                                                  #
+    (?:                                                                                                                                                           #
+                                                                                                                                                                  #
       \( ([^)]+) \) -> (.*)                                                                                                                                       # closure  $1 argument types, $2 return type
-      |
+      |                                                                                                                                                           #
       (?: string | record ) \s* \( \s* ([0-9]+) \s* \)                                                              (?: \s* (\*) | )                              # fixed record, fixed string $3, ponter $4
-      |
+      |                                                                                                                                                           #
       record                \s* \( (  \s* (?: [A-Za-z_] [A-Za-z_0-9]* :: )* [A-Za-z_] [A-Za-z_0-9]* ) \s* \)        (?: \s* (\*) | )                              # record class $5, pointer $6
-      |
+      |                                                                                                                                                           #
       ( (?: [A-Za-z_] [A-Za-z_0-9]* \s+ )* [A-Za-z_] [A-Za-z_0-9]* )         \s*                                                                                  # unit type name $7
-
+                                                                                                                                                                  #
               (?:  (\*)  |   \[ ([0-9]*) \]  |  )                                                                                                                 # pointer $8,       array $9
-
-    )
-
-    \s*
-
-  $/x;
+                                                                                                                                                                  #
+    )                                                                                                                                                             #
+                                                                                                                                                                  #
+    \s*                                                                                                                                                           # trailing white space
+                                                                                                                                                                  #
+  $/x;                                                                                                                                                            #
 
 sub parse
 {
