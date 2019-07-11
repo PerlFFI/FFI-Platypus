@@ -100,6 +100,127 @@ subtest 'basic types' => sub {
 
 };
 
+subtest 'type map' => sub {
+
+  my $tp = FFI::Platypus::TypeParser::Version1->new;
+
+  $tp->type_map({
+    'char'          => 'sint8',
+    'int'           => 'sint32',
+    'unsigned int'  => 'uint32',
+    'intptr'        => 'sint32*',
+  });
+
+
+  is(
+    $tp->parse('char')->type_code,
+    FFI_PL_TYPE_SINT8,
+  );
+
+  is(
+    $tp->parse('int')->type_code,
+    FFI_PL_TYPE_SINT32,
+  );
+
+  is(
+    $tp->parse('unsigned int')->type_code,
+    FFI_PL_TYPE_UINT32,
+  );
+
+  is(
+    $tp->parse('char*')->type_code,
+    FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER,
+  );
+
+  is(
+    $tp->parse('int*')->type_code,
+    FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER,
+  );
+
+  is(
+    $tp->parse('unsigned int *')->type_code,
+    FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER,
+  );
+
+  is(
+    $tp->parse('char[]')->type_code,
+    FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY,
+  );
+
+  is(
+    $tp->parse('int[]')->type_code,
+    FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY,
+  );
+
+  is(
+    $tp->parse('unsigned int []')->type_code,
+    FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY,
+  );
+
+  is(
+    $tp->parse('char[]')->meta->{size},
+    0,
+  );
+
+  is(
+    $tp->parse('int[]')->meta->{size},
+    0,
+  );
+
+  is(
+    $tp->parse('unsigned int []')->meta->{size},
+    0,
+  );
+
+  is(
+    $tp->parse('char[22]')->type_code,
+    FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY,
+  );
+
+  is(
+    $tp->parse('int[22]')->type_code,
+    FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY,
+  );
+
+  is(
+    $tp->parse('unsigned int [22]')->type_code,
+    FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY,
+  );
+
+  is(
+    $tp->parse('char[22]')->meta->{size},
+    22,
+  );
+
+  is(
+    $tp->parse('int[22]')->meta->{size},
+    88,
+  );
+
+  is(
+    $tp->parse('unsigned int [22]')->meta->{size},
+    88,
+  );
+
+  eval { $tp->parse('int[0]') };
+  like "$@", qr/^array size must be larger than 0/;
+
+  is(
+    $tp->parse('intptr')->type_code,
+    FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER,
+  );
+
+  eval { $tp->parse('intptr*') };
+  like "$@", qr/^bad type name: sint32\* \*/;
+
+  eval { $tp->parse('intptr[]') };
+  like "$@", qr/^bad type name: sint32\* \[\]/;
+
+  eval { $tp->parse('intptr[10]') };
+  like "$@", qr/^bad type name: sint32\* \[10\]/;
+
+};
+
 subtest 'fixed record / fixed string' => sub {
 
   subtest 'zero bad' => sub {

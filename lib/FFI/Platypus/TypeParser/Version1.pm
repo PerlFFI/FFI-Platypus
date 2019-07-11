@@ -161,6 +161,28 @@ sub parse
       return $self->global_types->{basic}->{$unit_name};
     }
 
+    if(my $map_name = $self->type_map->{$unit_name})
+    {
+      if(my $pointer = $8)
+      {
+        return $self->types->{$name} = $self->parse("$map_name *");
+      }
+      if(defined (my $size = $9))
+      {
+        if($size ne '')
+        {
+          croak "array size must be larger than 0" if $size < 1;
+          return $self->types->{$name} = $self->parse("$map_name [$size]");
+        }
+        else
+        {
+          return $self->types->{$name} = $self->parse("$map_name []");
+        }
+      }
+
+      return $self->types->{$name} = $self->parse("$map_name");
+    }
+
     croak "todo: aliased or type map type";
   }
 
