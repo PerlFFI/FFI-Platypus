@@ -98,6 +98,8 @@ sub parse
 {
   my($self, $name, $ffi) = @_;
 
+  return $self->types->{$name} if defined $self->types->{$name};
+
   # Darmock and Legacy Code at Tanagra
   unless($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/
   || $name =~ /^string(_rw|_ro|\s+rw|\s+ro|\s*\([0-9]+\))$/)
@@ -108,10 +110,16 @@ sub parse
     {
       $extra = " $1";
     }
-    $name = $self->type_map->{$basic} . $extra if defined $self->type_map->{$basic};
+    if(defined $self->type_map->{$basic})
+    {
+      my $new_name = $self->type_map->{$basic} . $extra;
+      if($new_name ne $name)
+      {
+        # hopefully no recursion here.
+        return $self->types->{$name} = $self->parse($new_name);
+      }
+    }
   }
-
-  return $self->types->{$name} if defined $self->types->{$name};
 
   if($name =~ m/^ \( (.*) \) \s* -\> \s* (.*) \s* $/x)
   {
