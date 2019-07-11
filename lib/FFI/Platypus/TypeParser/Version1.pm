@@ -44,6 +44,11 @@ The API C<0.02> type parser.
 
 our @CARP_NOT = qw( FFI::Platypus FFI::Platypus::TypeParser );
 
+my %reserved = map { $_ => 1 } qw(
+  struct
+  enum
+);
+
 # The type parser is responsible for deciding if something is a legal
 # alias name.  Since this needs to be checked before the type is parsed
 # it is separate from set_alias below.
@@ -52,6 +57,8 @@ sub check_alias
   my($self, $alias) = @_;
   croak "spaces not allowed in alias" if $alias =~ /\s/;
   croak "allowed characters for alias: [A-Za-z0-9_]" if $alias !~ /^[A-Za-z0-9_]+$/;
+  croak "reserved world \"$alias\" cannot be used as an alias"
+    if $reserved{$alias};
   croak "alias \"$alias\" conflicts with existing type"
     if defined $self->type_map->{$alias}
     || $self->types->{$alias}

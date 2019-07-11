@@ -365,6 +365,12 @@ subtest 'check alias' => sub {
   eval { $tp->check_alias('void') };
   like "$@", qr/^alias "void" conflicts with existing type/;
 
+  eval { $tp->check_alias('struct') };
+  like "$@", qr/^reserved world "struct" cannot be used as an alias/;
+
+  eval { $tp->check_alias('enum') };
+  like "$@", qr/^reserved world "enum" cannot be used as an alias/;
+
   my $tp = FFI::Platypus::TypeParser::Version1->new;
 
   $tp->type_map({
