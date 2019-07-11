@@ -6,6 +6,12 @@ use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
 
 BEGIN {
+  local $SIG{__WARN__} = sub {
+    my $message = shift;
+    return note $message if $message =~ /hides Math\/LongDouble\.pm/;
+    warn $message;
+  };
+
   plan skip_all => 'test requires support for long double'
     unless FFI::Platypus::TypeParser->have_type('longdouble');
   plan skip_all => 'test requires Devel::Hide'
