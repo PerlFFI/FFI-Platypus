@@ -51,6 +51,30 @@ type_code(self)
   OUTPUT:
     RETVAL
 
+int
+can_decorate(self)
+    ffi_pl_type *self
+  CODE:
+    if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_SCALAR)
+    {
+      switch(self->type_code & FFI_PL_BASE_MASK)
+      {
+        case FFI_PL_BASE_SINT:
+        case FFI_PL_BASE_UINT:
+        case FFI_PL_BASE_FLOAT:
+        case FFI_PL_BASE_COMPLEX:
+        case FFI_PL_BASE_OPAQUE:
+        case FFI_PL_BASE_STRING | FFI_PL_BASE_OPAQUE:
+          RETVAL = 1;
+          break;
+        default:
+          RETVAL = 0;
+          break;
+      }
+    }
+  OUTPUT:
+    RETVAL
+
 void
 DESTROY(self)
     ffi_pl_type *self

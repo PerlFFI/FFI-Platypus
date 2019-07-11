@@ -16,6 +16,7 @@ subtest 'basic type' => sub {
   isa_ok $type, 'FFI::Platypus::Type';
   is $type->type_code, FFI_PL_TYPE_SINT8;
   is $type->sizeof, 1;
+  is $type->can_decorate, 1;
   note Dumper($type->meta);
 
 };
@@ -31,6 +32,7 @@ subtest 'fixed string / record (pass by reference)' => sub {
   isa_ok $type, 'FFI::Platypus::Type';
   is $type->type_code, FFI_PL_TYPE_RECORD;
   is $type->sizeof, 22;
+  is $type->can_decorate, 0;
   note Dumper($type->meta);
 };
 
@@ -54,6 +56,7 @@ subtest 'record class (pass by reference)' => sub {
   is $type->type_code, FFI_PL_TYPE_RECORD;
   is $type->meta->{ref}, 1;
   is $type->sizeof, 4;
+  is $type->can_decorate, 0;
   note Dumper($type->meta);
 
 };
@@ -68,6 +71,7 @@ subtest 'string rw' => sub {
   is $type->type_code, FFI_PL_TYPE_STRING;
   is $type->meta->{access}, 'rw';
   is $type->sizeof, $pointer_size;
+  is $type->can_decorate, 1;
   note Dumper($type->meta);
 
 };
@@ -82,6 +86,7 @@ subtest 'string ro' => sub {
   is $type->type_code, FFI_PL_TYPE_STRING;
   is $type->meta->{access}, 'ro';
   is $type->sizeof, $pointer_size;
+  is $type->can_decorate, 1;
   note Dumper($type->meta);
 
 };
@@ -97,6 +102,7 @@ subtest 'fixed array' => sub {
   is $type->type_code, FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY;
   is $type->meta->{size}, 10;
   is $type->sizeof, 10;
+  is $type->can_decorate, 0;
   note Dumper($type->meta);
 
 };
@@ -111,6 +117,7 @@ subtest 'var array' => sub {
   isa_ok $type, 'FFI::Platypus::Type';
   is $type->type_code, FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY;
   is $type->meta->{size}, 0;
+  is $type->can_decorate, 0;
   note Dumper($type->meta);
 
 };
@@ -124,6 +131,7 @@ subtest 'pointer' => sub {
   isa_ok $type, 'FFI::Platypus::Type';
   is $type->type_code, FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER;
   is $type->sizeof, $pointer_size;
+  is $type->can_decorate, 0;
   note Dumper($type->meta);
 
 };
@@ -143,6 +151,7 @@ subtest 'custom type' => sub {
   isa_ok $type, 'FFI::Platypus::Type';
   is $type->type_code, FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_CUSTOM_PERL;
   is $type->sizeof, 1;
+  is $type->can_decorate, 0;
   note Dumper($type->meta);
 
 };

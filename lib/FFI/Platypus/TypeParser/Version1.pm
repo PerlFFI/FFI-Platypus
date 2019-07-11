@@ -196,7 +196,56 @@ sub parse
       return $self->types->{$name} = $self->parse("$map_name");
     }
 
-    croak "todo: aliased";
+    if(my $unit_type = $self->parse($unit_name))
+    {
+
+      if(my $pointer = $8)
+      {
+        if($unit_type->can_decorate)
+        {
+          # TODO: use the global type for this?
+          return $self->types->{$name} = $self->create_type_pointer(
+            $unit_type->type_code,
+          );
+        }
+        else
+        {
+          croak "cannot make a pointer to $unit_name";
+        }
+      }
+
+      if(defined (my $size = $9))
+      {
+        if($unit_type->can_decorate)
+        {
+          if($size ne '')
+          {
+            croak "array size must be larger than 0" if $size < 1;
+            # TODO: use the global type for this?
+            return $self->types->{$name} = $self->create_type_array(
+              $unit_type->type_code,
+              $size,
+            );
+          }
+          else
+          {
+            # TODO: use the global type for this?
+            return $self->types->{$name} = $self->create_type_array(
+              $unit_type->type_code,
+              0,
+            );
+          }
+        }
+        else
+        {
+          croak "cannot make an array of $unit_name";
+        }
+      }
+
+      return $self->types->{$name} = $unit_type;
+    }
+
+    croak "unknown type: $unit_name";
   }
 
   croak "internal error parsing: $name";

@@ -80,7 +80,7 @@ typedef enum _ffi_pl_type_code {
    * basics: void, integer, float, complex
    *
    * opaque is a pointer to something, a void*
-   * 
+   *
    * string is a pointer to a null terminated string
    * (a c string, basically)
    *

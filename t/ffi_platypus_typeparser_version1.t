@@ -95,7 +95,7 @@ subtest 'basic types' => sub {
 
     eval { $tp->parse('sint8[0]') };
     like "$@", qr/^array size must be larger than 0/;
-  
+
   };
 
 };
@@ -383,6 +383,59 @@ subtest 'check alias' => sub {
   $tp->set_alias('bar_t' => $tp->parse('sint32'));
   eval { $tp->check_alias('bar_t') };
   like "$@", qr/^alias "bar_t" conflicts with existing type/;
+
+};
+
+subtest 'use alias' => sub {
+
+  my $tp = FFI::Platypus::TypeParser::Version1->new;
+
+  $tp->set_alias('foo_t' => $tp->parse('sint8'));
+  $tp->set_alias('bar_t' => $tp->parse('sint8*'));
+
+  is(
+    $tp->parse('foo_t')->type_code,
+    FFI_PL_TYPE_SINT8,
+  );
+
+  is(
+    $tp->parse('foo_t*')->type_code,
+    FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER,
+  );
+
+  is(
+    $tp->parse('foo_t[]')->type_code,
+    FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY,
+  );
+
+  is(
+    $tp->parse('foo_t[]')->meta->{size},
+    0,
+  );
+
+  is(
+    $tp->parse('foo_t[99]')->type_code,
+    FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY,
+  );
+
+  is(
+    $tp->parse('foo_t[99]')->meta->{size},
+    99,
+  );
+
+  is(
+    $tp->parse('bar_t')->type_code,
+    FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER,
+  );
+
+  eval { $tp->parse('bar_t*') };
+  like "$@", qr/^cannot make a pointer to bar_t/;
+
+  eval { $tp->parse('bar_t[]') };
+  like "$@", qr/^cannot make an array of bar_t/;
+
+  eval { $tp->parse('bar_t[200]') };
+  like "$@", qr/^cannot make an array of bar_t/;
 
 };
 

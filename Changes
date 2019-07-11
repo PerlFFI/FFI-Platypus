@@ -7,7 +7,9 @@ Revision history for {{$dist->name}}
   - Usage of Type Parser version 1 is experimental and will
     issue a warning until FFI::Platypus 1.00 is released (gh#135)
   - Added support for pass-by-value records (gh#57,gh#92,gh#135)
+    this requires Type Parser version 1
   - Allow decoration of aliases of basic types (gh#135, gh#135)
+    this requires Type Parser version 1
   - Fix bug where Math::LongDouble and Math::Complex detection
     wasn't being made for array and pointers of longdouble,
     complex_float and complex_double types. (gh#135)
