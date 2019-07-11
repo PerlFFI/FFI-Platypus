@@ -3,9 +3,7 @@ package FFI::Platypus::TypeParser::Version1;
 use strict;
 use warnings;
 use Carp qw( croak );
-use base qw( Exporter );
 use base qw( FFI::Platypus::TypeParser );
-use FFI::Platypus::Internal;
 
 # ABSTRACT: FFI Type Parser Version One
 # VERSION
@@ -44,104 +42,129 @@ The API C<0.02> type parser.
 
 =cut
 
-our @EXPORT_OK = qw( parse );
+our @CARP_NOT = qw( FFI::Platypus FFI::Platypus::TypeParser );
 
-my $regex = qr{
+sub check_alias
+{
+  croak "todo";
+}
 
-    (
-      [A-Za-z_]  ( [A-Za-z_0-9 ]* [A-Za-z_0-9] )?                                          | #  $1,  ($2) the base type
-      record \(  (  [A-Za-z_] [A-Za-z_0-9]* ( :: [A-Za-z_] [A-Za-z_0-9]* )* | [0-9]+ ) \)  | #  $3,  ($4) record name
-      (string|string[ _]ro|string[ _]rw)  \(  ( [0-9]+ ) \)                                  # ($5),  $6 fixed string size
+sub set_alias
+{
+  croak "todo";
+}
+
+sub list_types
+{
+  croak "todo";
+}
+
+use constant type_regex =>
+
+  qr/^
+
+    \s*
+
+    (?:
+
+      \( ([^)]+) \) -> (.*)                                                                                                                                       # closure  $1 argument types, $2 return type
+      |
+      (?: string | record ) \s* \( \s* ([0-9]+) \s* \)                                                              (?: \s* (\*) | )                              # fixed record, fixed string $3, ponter $4
+      |
+      record                \s* \( (  \s* (?: [A-Za-z_] [A-Za-z_0-9]* :: )* [A-Za-z_] [A-Za-z_0-9]* ) \s* \)        (?: \s* (\*) | )                              # record class $5, pointer $6
+      |
+      ( (?: [A-Za-z_] [A-Za-z_0-9]* \s+ )* [A-Za-z_] [A-Za-z_0-9]* )         \s*                                                                                  # unit type name $7
+
+              (?:  (\*)  |   \[ ([0-9]*) \]  |  )                                                                                                                 # pointer $8,       array $9
+
     )
 
-    ( \* | \[ ([0-9]+) \] | )                       # $7 is the shape specifier
-                                                    # $8 is the array count
-  
-  }x;
+    \s*
+
+  $/x;
 
 sub parse
 {
-  my($type, $base_aliases) = @_;
+  my($self, $name) = @_;
 
-  my $code;
-  my %type;
+  return $self->types->{$name} if $self->types->{$name};
 
-  if($type =~ $regex)
+  $name =~ type_regex or croak "bad type name: $name";
+
+  if(defined (my $size = $3))  # fixed record / fixed string
   {
-    my $base     = $1;
-    my $record   = $3;
-    my $fixed    = $6;
-    my $shape    = $7;
-    my $count    = $8;
+    croak "fixed record / fixed string size must be larger than 0"
+      unless $size > 0;
 
-    if($shape eq '*')
+    if(my $pointer = $4)
     {
-      $code |= FFI_PL_SHAPE_POINTER;
-    }
-    elsif($shape =~ /^\[/)
-    {
-      $code |= FFI_PL_SHAPE_ARRAY;
-      $type{count} = $count;
-    }
-    elsif($shape eq '')
-    {
-      $code |= FFI_PL_SHAPE_SCALAR;
+      return $self->types->{$name} = $self->create_type_record(
+        $size,
+        undef,
+        0,
+      );
     }
     else
     {
-      croak("unknown shape: $shape");
-    }
-
-    if($record)
-    {
-      if($shape eq '*' || $shape =~ /^\[/)
-      {
-        $code |= FFI_PL_BASE_RECORD;
-        if($record =~ /^[0-9]+$/)
-        {
-          $type{record_size} = $record;
-        }
-        else
-        {
-          $type{record_class} = $record;
-        }
-      }
-      else
-      {
-        croak("ony scalar and pointer records allowed");
-      }
-    }
-    elsif($fixed)
-    {
-      if($shape eq '*' || $shape =~ /^\[/)
-      {
-        $code |= FFI_PL_BASE_RECORD;
-        $type{record_size} = $fixed;
-      }
-      else
-      {
-        croak("only scalar and pointer fixed strings allowed");
-      }
-    }
-    else
-    {
-      my $method = "FFI_PL_TYPE_" . uc($base);
-      if($base =~ /^( [su]int(8|16|32|64) | float | double | longdouble | complex_float | complex_double )$/x  && __PACKAGE__->can($method))
-      {
-        $code |= __PACKAGE__->$method;
-      }
-      elsif($base_aliases->{$base})
-      {
-        $code |= $base_aliases->{$base};
-      }
-      else
-      {
-        croak("unknown base type: $base");
-      }
+      croak "todo pass-by-value fixed record";
     }
   }
 
-  return ($code, \%type)
+  if(defined (my $class = $5))  # class record
+  {
+    my $size_method = $class->can('ffi_record_size') || $class->can('_ffi_record_size') || croak "$class has no ffi_record_size or _ffi_record_size_ method";
+    if(my $pointer = $6)
+    {
+      return $self->types->{$name} = $self->create_type_record(
+        $class->$size_method,
+        $class,
+        0,
+      );
+    }
+    else
+    {
+      croak "todo pass-by-value record";
+    }
+  }
+
+  if(defined (my $unit_name = $7))  # basic type
+  {
+    if($self->global_types->{basic}->{$unit_name})
+    {
+      if(my $pointer = $8)
+      {
+        croak "void pointer not allowed" if $unit_name eq 'void';
+        return $self->types->{$name} = $self->global_types->{ptr}->{$unit_name};
+      }
+
+      if(defined (my $size = $9))  # array
+      {
+        croak "void array not allowed" if $unit_name eq 'void';
+        if($size ne '')
+        {
+          croak "array size must be larger than 0" if $size < 1;
+          return $self->types->{$name} = $self->create_type_array(
+            $self->global_types->{basic}->{$unit_name}->type_code,
+            $size,
+          );
+        }
+        else
+        {
+          return $self->global_types->{array}->{$unit_name} ||= $self->create_type_array(
+            $self->global_types->{basic}->{$unit_name}->type_code,
+            0,
+          );
+        }
+      }
+
+      # basic type with no decorations
+      return $self->global_types->{basic}->{$unit_name};
+    }
+
+    croak "todo: aliased or type map type";
+  }
+
+  croak "todo";
 }
 
 1;
