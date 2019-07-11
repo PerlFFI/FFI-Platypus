@@ -255,7 +255,7 @@ sub record_layout
       my $error_str = _accessor
         $full_name,
         "$filename:$line",
-        $ffi->_type_lookup($type),
+        $ffi->{tp}->parse($type),
         $offset;
       croak("$error_str ($type $name)") if $error_str;
     };

@@ -526,13 +526,6 @@ sub load_custom_type
   $self;
 }
 
-sub _type_lookup
-{
-  my($self, $name) = @_;
-  $self->type($name) unless defined $self->{types}->{$name};
-  $self->{types}->{$name};
-}
-
 =head2 types
 
  my @types = $ffi->types;
@@ -587,8 +580,7 @@ sub type_meta
 {
   my($self, $name) = @_;
   $self = $self->new unless ref $self && eval { $self->isa('FFI::Platypus') };
-  my $type = $self->{types}->{$name} || $self->_type_lookup($name);
-  $type->meta;
+  $self->{tp}->parse($name)->meta;
 }
 
 =head2 mangler
@@ -703,8 +695,8 @@ sub function
   my $args = [@$fixed_args, @{ $var_args || [] } ];
   my $fixed_arg_count = defined $var_args ? scalar(@$fixed_args) : -1;
 
-  my @args = map { $self->_type_lookup($_) || croak "unknown type: $_" } @$args;
-  $ret = $self->_type_lookup($ret) || croak "unknown type: $ret";
+  my @args = map { $self->{tp}->parse($_) || croak "unknown type: $_" } @$args;
+  $ret = $self->{tp}->parse($ret) || croak "unknown type: $ret";
   my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
   croak "unable to find $name" unless defined $address || $self->ignore_not_found;
   return unless defined $address;
@@ -909,8 +901,7 @@ iterations.
 sub sizeof
 {
   my($self,$name) = @_;
-  my $type = $self->{types}->{$name} || $self->_type_lookup($name);
-  FFI::Platypus::Type::sizeof($type);
+  $self->{tp}->parse($name)->sizeof;
 }
 
 =head2 alignof
