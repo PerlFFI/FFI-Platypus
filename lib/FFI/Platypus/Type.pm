@@ -2,6 +2,7 @@ package FFI::Platypus::Type;
 
 use strict;
 use warnings;
+require FFI::Platypus;
 
 # ABSTRACT: Defining types for FFI::Platypus
 # VERSION
