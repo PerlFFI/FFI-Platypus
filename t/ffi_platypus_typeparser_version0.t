@@ -13,7 +13,7 @@ my $pointer_size = $ffi->sizeof('opaque');
 subtest basic => sub {
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('uint64', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('uint64')->meta,
     {
       element_size  => 8,
       element_type  => 'int',
@@ -32,7 +32,7 @@ subtest basic => sub {
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('longdouble', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('longdouble')->meta,
       {
         element_size  => 16,
         element_type  => 'float',
@@ -55,7 +55,7 @@ subtest basic => sub {
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_float', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_float')->meta,
       {
         element_size  => 8,
         element_type  => 'float',
@@ -68,7 +68,7 @@ subtest basic => sub {
     ) or diag explain $type;
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_double', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_double')->meta,
       {
         element_size  => 16,
         element_type  => 'float',
@@ -87,7 +87,7 @@ subtest basic => sub {
 subtest record => sub {
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('string(42)', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('string(42)')->meta,
     {
       ffi_type  => 'pointer',
       ref       => 0,
@@ -99,7 +99,7 @@ subtest record => sub {
   ) or diag explain $type;
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('record(42)', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('record(42)')->meta,
     {
       ffi_type  => 'pointer',
       ref       => 0,
@@ -119,7 +119,7 @@ subtest record => sub {
   }
 
   is_deeply(
-    $type =FFI::Platypus::TypeParser::Version0->new->parse('record(Foo::Bar::Baz)', $ffi)->meta,
+    $type =FFI::Platypus::TypeParser::Version0->new->parse('record(Foo::Bar::Baz)')->meta,
     {
       ffi_type  => 'pointer',
       ref       => 1,
@@ -135,7 +135,7 @@ subtest record => sub {
 subtest string => sub {
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('string', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('string')->meta,
     {
       access => 'ro',
       element_size => $pointer_size,
@@ -148,7 +148,7 @@ subtest string => sub {
   ) or diag explain $type;
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('string ro', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('string ro')->meta,
     {
       access => 'ro',
       element_size => $pointer_size,
@@ -161,7 +161,7 @@ subtest string => sub {
   ) or diag explain $type;
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('string_ro', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('string_ro')->meta,
     {
       access => 'ro',
       element_size => $pointer_size,
@@ -174,7 +174,7 @@ subtest string => sub {
   ) or diag explain $type;
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('string rw', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('string rw')->meta,
     {
       access => 'rw',
       element_size => $pointer_size,
@@ -187,7 +187,7 @@ subtest string => sub {
   ) or diag explain $type;
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('string_rw', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('string_rw')->meta,
     {
       access => 'rw',
       element_size => $pointer_size,
@@ -204,7 +204,7 @@ subtest string => sub {
 subtest array => sub {
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('uint64 [4]', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('uint64 [4]')->meta,
     {
       element_count => 4,
       element_size  => 8,
@@ -219,7 +219,7 @@ subtest array => sub {
   ) or diag explain $type;
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('uint64 []', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('uint64 []')->meta,
     {
       element_count => 0,
       element_size  => 8,
@@ -239,7 +239,7 @@ subtest array => sub {
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('longdouble []', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('longdouble []')->meta,
       {
         element_count => 0,
         element_size  => 16,
@@ -263,7 +263,7 @@ subtest array => sub {
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_float []', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_float []')->meta,
       {
         element_count => 0,
         element_size  => 8,
@@ -277,7 +277,7 @@ subtest array => sub {
     ) or diag explain $type;
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_double []', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_double []')->meta,
       {
         element_count => 0,
         element_size  => 16,
@@ -297,7 +297,7 @@ subtest array => sub {
 subtest pointer => sub {
 
   is_deeply(
-    $type = FFI::Platypus::TypeParser::Version0->new->parse('uint64 *', $ffi)->meta,
+    $type = FFI::Platypus::TypeParser::Version0->new->parse('uint64 *')->meta,
     {
       element_size  => 8,
       element_type  => 'int',
@@ -316,7 +316,7 @@ subtest pointer => sub {
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('longdouble *', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('longdouble *')->meta,
       {
         element_size  => 16,
         element_type  => 'float',
@@ -339,7 +339,7 @@ subtest pointer => sub {
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_float *', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_float *')->meta,
       {
         element_size  => 8,
         element_type  => 'float',
@@ -352,7 +352,7 @@ subtest pointer => sub {
     ) or diag explain $type;
 
     is_deeply(
-      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_double *', $ffi)->meta,
+      $type = FFI::Platypus::TypeParser::Version0->new->parse('complex_double *')->meta,
       {
         element_size  => 16,
         element_type  => 'float',

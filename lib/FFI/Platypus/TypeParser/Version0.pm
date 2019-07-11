@@ -90,15 +90,26 @@ sub set_alias
 sub parse
 {
   my($self, $name, $ffi) = @_;
-  # the platypus object is only needed for closures, so
-  # that it can lookup existing types.
+
+  # Darmock and Legacy Code at Tanagra
+  unless($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/
+  || $name =~ /^string(_rw|_ro|\s+rw|\s+ro|\s*\([0-9]+\))$/)
+  {
+    my $basic = $name;
+    my $extra = '';
+    if($basic =~ s/\s*((\*|\[|\<).*)$//)
+    {
+      $extra = " $1";
+    }
+    $name = $self->type_map->{$basic} . $extra if defined $self->type_map->{$basic};
+  }
 
   return $self->types->{$name} if defined $self->types->{$name};
 
   if($name =~ m/^ \( (.*) \) \s* -\> \s* (.*) \s* $/x)
   {
-    my @argument_types = map { $ffi->_type_lookup($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
-    my $return_type = $ffi->_type_lookup($2);
+    my @argument_types = map { $self->parse($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
+    my $return_type = $self->parse($2);
     return $self->types->{$name} = $self->create_type_closure($return_type, @argument_types);
   }
 

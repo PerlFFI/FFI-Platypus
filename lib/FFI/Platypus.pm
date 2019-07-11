@@ -420,7 +420,7 @@ sub type
     # basic type so you can have many many many copies of a given
     # closure type if you do not spell it exactly the same each time.
     # Recommended that you use an alias for a closure type anyway.
-    $type = $self->{types}->{$name} ||= $self->{tp}->parse($name, $self);
+    $type = $self->{types}->{$name} ||= $self->{tp}->parse($name);
   }
   else
   {
@@ -433,7 +433,7 @@ sub type
 
     my $type_map = $self->{tp}->type_map;
     croak "unknown type: $basic" unless defined $type_map->{$basic};
-    $type = $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= $self->{tp}->parse($type_map->{$basic}.$extra, $self);
+    $type = $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= $self->{tp}->parse($type_map->{$basic}.$extra);
   }
 
   $self->{tp}->set_alias($alias, $type) if defined $alias;
