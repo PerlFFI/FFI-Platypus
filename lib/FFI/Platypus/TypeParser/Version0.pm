@@ -2,7 +2,6 @@ package FFI::Platypus::TypeParser::Version0;
 
 use strict;
 use warnings;
-use List::Util 1.45 qw( uniqstr );
 use Carp qw( croak );
 use base qw( FFI::Platypus::TypeParser );
 
@@ -89,15 +88,6 @@ sub set_alias
 {
   my($self, $alias, $type) = @_;
   $self->types->{$alias} = $type;
-}
-
-# list all the types that this type parser knows about, including
-# those provided by the language plugin (if any), those defined
-# by the user, and the basic types that everyone gets.
-sub list_types
-{
-  my($self) = @_;
-  uniqstr( ( keys %{ $self->type_map } ), ( keys %{ $self->types } ) );
 }
 
 # This method takes a string representation of the a type and

@@ -349,4 +349,35 @@ subtest 'record class' => sub {
 
 };
 
+subtest 'check alias' => sub {
+
+  is(
+    $tp->check_alias('foo_bar_baz_1239_XOR'),
+    1,
+  );
+
+  eval { $tp->check_alias('foo bar') };
+  like "$@", qr/^spaces not allowed in alias/;
+
+  eval { $tp->check_alias('!$#!$#') };
+  like "$@", qr/^allowed characters for alias: \[A-Za-z0-9_\]/;
+
+  eval { $tp->check_alias('void') };
+  like "$@", qr/^alias "void" conflicts with existing type/;
+
+  my $tp = FFI::Platypus::TypeParser::Version1->new;
+
+  $tp->type_map({
+    'foo_t' => 'sint16',
+  });
+
+  eval { $tp->check_alias('foo_t') };
+  like "$@", qr/^alias "foo_t" conflicts with existing type/;
+
+  $tp->set_alias('bar_t' => $tp->parse('sint32'));
+  eval { $tp->check_alias('bar_t') };
+  like "$@", qr/^alias "bar_t" conflicts with existing type/;
+
+};
+
 done_testing;

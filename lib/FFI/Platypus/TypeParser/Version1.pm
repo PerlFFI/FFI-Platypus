@@ -44,19 +44,25 @@ The API C<0.02> type parser.
 
 our @CARP_NOT = qw( FFI::Platypus FFI::Platypus::TypeParser );
 
+# The type parser is responsible for deciding if something is a legal
+# alias name.  Since this needs to be checked before the type is parsed
+# it is separate from set_alias below.
 sub check_alias
 {
-  croak "todo";
+  my($self, $alias) = @_;
+  croak "spaces not allowed in alias" if $alias =~ /\s/;
+  croak "allowed characters for alias: [A-Za-z0-9_]" if $alias !~ /^[A-Za-z0-9_]+$/;
+  croak "alias \"$alias\" conflicts with existing type"
+    if defined $self->type_map->{$alias}
+    || $self->types->{$alias}
+    || $self->global_types->{basic}->{$alias};
+  return 1;
 }
 
 sub set_alias
 {
-  croak "todo";
-}
-
-sub list_types
-{
-  croak "todo";
+  my($self, $alias, $type) = @_;
+  $self->types->{$alias} = $type;
 }
 
 use constant type_regex =>
@@ -183,10 +189,10 @@ sub parse
       return $self->types->{$name} = $self->parse("$map_name");
     }
 
-    croak "todo: aliased or type map type";
+    croak "todo: aliased";
   }
 
-  croak "todo";
+  croak "internal error parsing: $name";
 }
 
 1;

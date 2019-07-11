@@ -2,6 +2,7 @@ package FFI::Platypus::TypeParser;
 
 use strict;
 use warnings;
+use List::Util 1.45 qw( uniqstr );
 use Carp qw( croak );
 
 # ABSTRACT: FFI Type Parser
@@ -89,6 +90,15 @@ sub types
   {
     \%store;
   }
+}
+
+# list all the types that this type parser knows about, including
+# those provided by the language plugin (if any), those defined
+# by the user, and the basic types that everyone gets.
+sub list_types
+{
+  my($self) = @_;
+  uniqstr( ( keys %{ $self->type_map } ), ( keys %{ $self->types } ) );
 }
 
 1;
