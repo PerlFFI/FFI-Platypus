@@ -183,7 +183,7 @@ sub parse
     {
       croak "$classname has not ffi_record_size or _ffi_record_size method";
     }
-    return $self->global_type->{record}->{$classname} ||= $self->create_type_record(
+    return $self->global_types->{record}->{$classname} ||= $self->create_type_record(
       $size,          # size
       $classname,     # record_class
       0,              # pass by value
@@ -194,7 +194,7 @@ sub parse
   if($name =~ /^([\S]+)\s+ \[ ([0-9]*) \] $/x)
   {
     my $size = $2 || '';
-    my $basic = $self->global_type->{basic}->{$1} || croak("unknown ffi/platypus type $name [$size]");
+    my $basic = $self->global_types->{basic}->{$1} || croak("unknown ffi/platypus type $name [$size]");
     if($size)
     {
       return $self->types->{$name} = $self->create_type_array(
@@ -204,7 +204,7 @@ sub parse
     }
     else
     {
-      return $self->global_type->{array}->{$name} ||= $self->create_type_array(
+      return $self->global_types->{array}->{$name} ||= $self->create_type_array(
         $basic->type_code,
         0
       );
@@ -214,11 +214,11 @@ sub parse
   # pointer types
   if($name =~ s/\s+\*$//)
   {
-    return $self->global_type->{ptr}->{$name} || croak("unknown ffi/platypus type $name *");
+    return $self->global_types->{ptr}->{$name} || croak("unknown ffi/platypus type $name *");
   }
 
   # basic types
-  return $self->global_type->{basic}->{$name} || croak("unknown ffi/platypus type $name");
+  return $self->global_types->{basic}->{$name} || croak("unknown ffi/platypus type $name");
 }
 
 1;

@@ -55,7 +55,6 @@ my %WriteMakefileArgs = (
     "lib/FFI/Platypus/Record/TieArray.pm"        => "\$(INST_LIB)/FFI/Platypus/Record/TieArray.pm",
     "lib/FFI/Platypus/ShareConfig.pm"            => "\$(INST_LIB)/FFI/Platypus/ShareConfig.pm",
     "lib/FFI/Platypus/Type.pm"                   => "\$(INST_LIB)/FFI/Platypus/Type.pm",
-    "lib/FFI/Platypus/Type.pod"                  => "\$(INST_LIB)/FFI/Platypus/Type.pod",
     "lib/FFI/Platypus/Type/PointerSizeBuffer.pm" => "\$(INST_LIB)/FFI/Platypus/Type/PointerSizeBuffer.pm",
     "lib/FFI/Platypus/Type/StringArray.pm"       => "\$(INST_LIB)/FFI/Platypus/Type/StringArray.pm",
     "lib/FFI/Platypus/Type/StringPointer.pm"     => "\$(INST_LIB)/FFI/Platypus/Type/StringPointer.pm",
