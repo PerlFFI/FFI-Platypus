@@ -2,6 +2,7 @@ package FFI::Platypus::TypeParser::Version0;
 
 use strict;
 use warnings;
+use List::Util 1.45 qw( uniqstr );
 use Carp qw( croak );
 use base qw( FFI::Platypus::TypeParser );
 
@@ -85,6 +86,12 @@ sub set_alias
 {
   my($self, $alias, $type) = @_;
   $self->types->{$alias} = $type;
+}
+
+sub list_types
+{
+  my($self) = @_;
+  uniqstr( ( keys %{ $self->type_map } ), ( keys %{ $self->types } ) );
 }
 
 sub parse

@@ -338,8 +338,6 @@ subtest 'type' => sub {
     my $ffi = FFI::Platypus->new;
     eval { $ffi->type('sint8') };
     is $@, '', 'ffi.type(sint8)';
-
-    isa_ok $ffi->{types}->{sint8}, 'FFI::Platypus::Type';
   };
 
   subtest 'aliased type' => sub {
@@ -347,8 +345,7 @@ subtest 'type' => sub {
     eval { $ffi->type('sint8', 'my_integer_8') };
     is $@, '', 'ffi.type(sint8 => my_integer_8)';
 
-    isa_ok $ffi->{types}->{my_integer_8}, 'FFI::Platypus::Type';
-    isa_ok $ffi->{types}->{sint8}, 'FFI::Platypus::Type';
+    isa_ok $ffi->{tp}->types->{my_integer_8}, 'FFI::Platypus::Type';
 
     ok scalar(grep { $_ eq 'my_integer_8' } $ffi->types), 'ffi.types returns my_integer_8';
   };
@@ -362,7 +359,6 @@ subtest 'type' => sub {
         my $ffi = FFI::Platypus->new;
         eval { $ffi->type($name) };
         is $@, '', "ffi.type($name)";
-        isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
         my $meta = $ffi->type_meta($name);
         note xdump( $meta);
         cmp_ok $meta->{size}, '>', 0, "size = " . $meta->{size};
@@ -379,7 +375,6 @@ subtest 'type' => sub {
         my $ffi = FFI::Platypus->new;
         eval { $ffi->type($name) };
         is $@, '', "ffi.type($name)";
-        isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
         my $meta = $ffi->type_meta($name);
         note xdump( $meta);
         cmp_ok $meta->{size}, '>', 0, "size = " . $meta->{size};
@@ -400,7 +395,6 @@ subtest 'type' => sub {
         my $ffi = FFI::Platypus->new;
         eval { $ffi->type($name) };
         is $@, '', "ffi.type($name)";
-        isa_ok $ffi->{types}->{$name}, 'FFI::Platypus::Type';
         my $meta = $ffi->type_meta($name);
         note xdump( $meta);
         cmp_ok $meta->{size}, '>', 0, "size = " . $meta->{size};

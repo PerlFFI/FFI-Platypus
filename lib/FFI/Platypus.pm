@@ -231,7 +231,6 @@ sub new
     lib              => \@lib,
     lang             => '',
     handles          => {},
-    types            => {},
     abi              => -1,
     api              => $api,
     tp               => $tp->new,
@@ -410,34 +409,9 @@ sub type
   croak "usage: \$ffi->type(name => alias) (alias is optional)" unless defined $self && defined $name;
 
   $self->{tp}->check_alias($alias) if defined $alias;
-
-  my $type;
-
-  if($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/
-  || $name =~ /^string(_rw|_ro|\s+rw|\s+ro|\s*\([0-9]+\))$/)
-  {
-    # for closure and record types we do not try to convet into the
-    # basic type so you can have many many many copies of a given
-    # closure type if you do not spell it exactly the same each time.
-    # Recommended that you use an alias for a closure type anyway.
-    $type = $self->{types}->{$name} ||= $self->{tp}->parse($name);
-  }
-  else
-  {
-    my $basic = $name;
-    my $extra = '';
-    if($basic =~ s/\s*((\*|\[|\<).*)$//)
-    {
-      $extra = " $1";
-    }
-
-    my $type_map = $self->{tp}->type_map;
-    croak "unknown type: $basic" unless defined $type_map->{$basic};
-    $type = $self->{types}->{$name} = $self->{types}->{$type_map->{$basic}.$extra} ||= $self->{tp}->parse($type_map->{$basic}.$extra);
-  }
-
+  my $type = $self->{tp}->parse($name);
   $self->{tp}->set_alias($alias, $type) if defined $alias;
-  $self->{types}->{$alias} = $type if defined $alias;
+
   $self;
 }
 
@@ -471,7 +445,7 @@ sub custom_type
 
   $self->{tp}->check_alias($alias);
 
-  my $type = $self->{types}->{$alias} = $self->{tp}->create_type_custom(
+  my $type = $self->{tp}->create_type_custom(
     $cb->{native_type},
     $cb->{perl_to_native},
     $cb->{native_to_perl},
@@ -549,9 +523,7 @@ sub types
 {
   my($self) = @_;
   $self = $self->new unless ref $self && eval { $self->isa('FFI::Platypus') };
-  my %types = map { $_ => 1 } keys %{ $self->{tp}->type_map };
-  $types{$_} ||= 1 foreach keys %{ $self->{types} };
-  sort keys %types;
+  sort $self->{tp}->list_types;
 }
 
 =head2 type_meta
