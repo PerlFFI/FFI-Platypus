@@ -145,6 +145,7 @@ typedef enum _ffi_pl_type_code {
   FFI_PL_TYPE_STRING         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_STRING,
   FFI_PL_TYPE_CLOSURE        = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_CLOSURE,
   FFI_PL_TYPE_RECORD         = FFI_PL_TYPE_OPAQUE | FFI_PL_BASE_RECORD,
+  FFI_PL_TYPE_RECORD_VALUE   = FFI_PL_BASE_RECORD,
 } ffi_pl_type_code;
 
 typedef enum _platypus_string_type {
@@ -154,8 +155,14 @@ typedef enum _platypus_string_type {
 
 typedef struct _ffi_pl_type_extra_record {
   size_t size;
-  void *stash; /* really a HV* pointing to the package stash, or NULL */
+  void *stash; /* really an HV* pointing to the package stash, or NULL */
 } ffi_pl_type_extra_record;
+
+typedef struct _ffi_pl_type_extra_record_value {
+  size_t size;
+  char *class; /* base class */
+  ffi_type *ffi_type;
+} ffi_pl_type_extra_record_value;
 
 typedef struct _ffi_pl_type_extra_custom_perl {
   void *perl_to_native;
@@ -182,6 +189,7 @@ typedef union _ffi_pl_type_extra {
   ffi_pl_type_extra_array        array;
   ffi_pl_type_extra_closure      closure;
   ffi_pl_type_extra_record       record;
+  ffi_pl_type_extra_record_value record_value;
 } ffi_pl_type_extra;
 
 typedef struct _ffi_pl_type {

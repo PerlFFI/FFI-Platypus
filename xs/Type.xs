@@ -51,6 +51,15 @@ type_code(self)
   OUTPUT:
     RETVAL
 
+int
+is_record(self)
+    ffi_pl_type *self
+  CODE:
+    /* may not need this method anymore */
+    RETVAL = self->type_code == FFI_PL_TYPE_RECORD;
+  OUTPUT:
+    RETVAL
+
 void
 DESTROY(self)
     ffi_pl_type *self
@@ -59,6 +68,10 @@ DESTROY(self)
     {
       if(!PL_dirty)
         Safefree(self->extra[0].closure.ffi_cif.arg_types);
+    }
+    else if(self->type_code == FFI_PL_TYPE_RECORD_VALUE)
+    {
+      Safefree(self->extra[0].record_value.class);
     }
     else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
     {

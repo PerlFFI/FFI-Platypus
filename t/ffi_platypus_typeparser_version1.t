@@ -278,9 +278,8 @@ subtest 'fixed record / fixed string' => sub {
 
     foreach my $good (@good)
     {
-      # TODO
       eval { $tp->parse($good) };
-      like "$@", qr{todo pass-by-value};
+      like "$@", qr{^fixed string / classless record not allowed as value type};
     }
 
   };
@@ -333,17 +332,24 @@ subtest 'record class' => sub {
 
   };
 
+  {
+    package Foo::Bar5;
+    use FFI::Platypus::Record;
+    record_layout(qw(
+      int foo
+    ));
+  }
+
   subtest 'pass-by-value' => sub {
 
     my @bad = qw(
-      record(Foo::Bar1)
-      record(Foo::Bar2)
+      record(Foo::Bar5)
     );
 
     foreach my $bad (@bad)
     {
-      eval { $tp->parse($bad) };
-      like "$@", qr/^todo pass-by-value record/;
+      my $type = $tp->parse($bad);
+      isa_ok $type, 'FFI::Platypus::Type';
     }
 
   };

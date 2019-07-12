@@ -131,7 +131,6 @@ sub parse
     return $self->types->{$name} = $self->create_type_record(
       $1,    # size
       undef, # record_class
-      0,     # pass by value
     );
   }
 
@@ -147,7 +146,6 @@ sub parse
     return $self->types->{$name} = $self->create_type_record(
       $1,             # size
       undef,          # record_class
-      0,              # pass by value
     );
   }
 
@@ -176,7 +174,6 @@ sub parse
     return $self->global_types->{record}->{$classname} ||= $self->create_type_record(
       $size,          # size
       $classname,     # record_class
-      0,              # pass by value
     );
   }
 

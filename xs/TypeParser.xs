@@ -41,24 +41,43 @@ create_type_basic(self, type_code)
     RETVAL
 
 ffi_pl_type *
-create_type_record(self, size, record_class, pass_by_value)
+create_type_record(self, size, record_class)
     SV *self
     size_t size
     ffi_pl_string record_class
-    int pass_by_value
   PREINIT:
     ffi_pl_type *type;
   CODE:
     (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
-    type->type_code |= FFI_PL_BASE_RECORD;
-    if(!pass_by_value)
-      type->type_code |= FFI_PL_TYPE_OPAQUE;
+    type->type_code |= FFI_PL_TYPE_RECORD;
     type->extra[0].record.size = size;
     if(record_class == NULL)
       type->extra[0].record.stash = NULL;
     else
       type->extra[0].record.stash = gv_stashpv(record_class, GV_ADD);
+    RETVAL = type;
+  OUTPUT:
+    RETVAL
+
+ffi_pl_type*
+create_type_record_value(self, size, class, ffi_type)
+    SV *self
+    size_t size
+    const char *class
+    void* ffi_type
+  PREINIT:
+    ffi_pl_type *type;
+    size_t class_name_size;
+  CODE:
+    (void)self;
+    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record_value));
+    type->type_code |= FFI_PL_TYPE_RECORD_VALUE;
+    type->extra[0].record_value.size = size;
+    class_name_size = strlen(class)+1;
+    type->extra[0].record_value.class = malloc(class_name_size);
+    memcpy(type->extra[0].record_value.class, class, class_name_size);
+    type->extra[0].record_value.ffi_type = ffi_type;
     RETVAL = type;
   OUTPUT:
     RETVAL

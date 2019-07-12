@@ -53,3 +53,4 @@ _init()
     newCONSTSUB(stash, "FFI_PL_TYPE_STRING",           newSViv(FFI_PL_TYPE_STRING));
     newCONSTSUB(stash, "FFI_PL_TYPE_CLOSURE",          newSViv(FFI_PL_TYPE_CLOSURE));
     newCONSTSUB(stash, "FFI_PL_TYPE_RECORD",           newSViv(FFI_PL_TYPE_RECORD));
+    newCONSTSUB(stash, "FFI_PL_TYPE_RECORD_VALUE",     newSViv(FFI_PL_TYPE_RECORD_VALUE));

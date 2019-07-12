@@ -44,6 +44,10 @@ ffi_pl_sizeof(ffi_pl_type *self)
   {
     return self->extra[0].record.size;
   }
+  else if(self->type_code == FFI_PL_TYPE_RECORD_VALUE)
+  {
+    return self->extra[0].record_value.size;
+  }
   else
   {
     return ffi_pl_sizeof_new(self);
@@ -115,6 +119,12 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
           case FFI_PL_TYPE_RECORD:
             hv_store(meta, "type",          4, newSVpv("record",0),0);
             hv_store(meta, "ref",           3, newSViv(self->extra[0].record.stash != NULL ? 1 : 0),0);
+            break;
+
+          case FFI_PL_TYPE_RECORD_VALUE:
+            hv_store(meta, "type",          4, newSVpv("record_value",0),0);
+            hv_store(meta, "ref",           3, newSViv(1),0);
+            hv_store(meta, "class",         5, newSVpv(self->extra[0].record_value.class,0), 0);
             break;
 
           default:
@@ -229,6 +239,9 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
     case FFI_PL_TYPE_CLOSURE:
     case FFI_PL_TYPE_RECORD:
       string = "pointer";
+      break;
+    case FFI_PL_TYPE_RECORD_VALUE:
+      string = "struct";
       break;
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
     case FFI_PL_TYPE_COMPLEX_FLOAT:

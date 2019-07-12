@@ -15,7 +15,10 @@ the public interface to Platypus records.
 
 {
   require FFI::Platypus;
-  my $ffi = FFI::Platypus->new;
+  my $ffi = FFI::Platypus->new(
+    api          => 1,
+    experimental => 1,  # okay if used internally
+  );
   $ffi->package;
   $ffi->mangler(sub {
     my($name) = @_;
@@ -34,7 +37,7 @@ the public interface to Platypus records.
 
   $ffi->attach( _find_symbol => ['string'] => 'ffi_type');
 
-  $ffi->attach( new => ['opaque[]'] => 'meta_t', sub {  # ffi_type[]
+  $ffi->attach( new => ['ffi_type[]'] => 'meta_t', sub {
     my($xsub, $class, $elements) = @_;
 
     if(ref($elements) ne 'ARRAY')
@@ -67,7 +70,7 @@ the public interface to Platypus records.
   $ffi->attach( ffi_type         => ['meta_t'] => 'ffi_type'   );
   $ffi->attach( size             => ['meta_t'] => 'size_t'     );
   $ffi->attach( alignment        => ['meta_t'] => 'uint'       );
-  $ffi->attach( element_pointers => ['meta_t'] => 'opaque[]'   ); # ffi_type[]
+  $ffi->attach( element_pointers => ['meta_t'] => 'ffi_type[]' );
 
   $ffi->attach( DESTROY          => ['meta_t'] => 'void'       );
 }

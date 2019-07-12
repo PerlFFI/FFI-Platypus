@@ -114,12 +114,11 @@ sub parse
       return $self->types->{$name} = $self->create_type_record(
         $size,
         undef,
-        0,
       );
     }
     else
     {
-      croak "todo pass-by-value fixed record";
+      croak "fixed string / classless record not allowed as value type";
     }
   }
 
@@ -131,12 +130,15 @@ sub parse
       return $self->types->{$name} = $self->create_type_record(
         $class->$size_method,
         $class,
-        0,
       );
     }
     else
     {
-      croak "todo pass-by-value record";
+      return $self->types->{$name} = $self->create_type_record_value(
+        $class->$size_method,
+        $class,
+        $class->_ffi_meta->ffi_type,
+      );
     }
   }
 
