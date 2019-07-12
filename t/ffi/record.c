@@ -1,3 +1,4 @@
+#include <string.h>
 #include "libtest.h"
 
 typedef struct {
@@ -13,6 +14,14 @@ foo_get_name(foo_record_t *self)
   return self->name;
 }
 
+EXTERN const char *
+foo_value_get_name(foo_record_t self)
+{
+  static char name[16];
+  strcpy(name, self.name);
+  return name;
+}
+
 EXTERN int32_t
 foo_get_value(foo_record_t *self)
 {
@@ -21,13 +30,30 @@ foo_get_value(foo_record_t *self)
   return self->value;
 }
 
+EXTERN int32_t
+foo_value_get_value(foo_record_t self)
+{
+  return self.value;
+}
+
 EXTERN foo_record_t *
 foo_create(const char *name, int32_t value)
 {
-  static foo_record_t myfoo;
-  
-  strcpy((char*)myfoo.name, name);
-  myfoo.value = value;
-  
-  return &myfoo;
+  static foo_record_t self;
+
+  strcpy((char*)self.name, name);
+  self.value = value;
+
+  return &self;
+}
+
+EXTERN foo_record_t
+foo_value_create(const char *name, int32_t value)
+{
+  foo_record_t self;
+
+  strcpy(self.name, name);
+  self.value = value;
+
+  return self;
 }
