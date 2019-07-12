@@ -253,7 +253,7 @@ sub record_layout
         $count    = $meta->{element_count};
         $count    = 1 unless defined $count;
       }
-      push @ffi_types, $ffi_type for $count;
+      push @ffi_types, $ffi_type for 1..$count;
     }
 
     if($name ne ':')

@@ -28,16 +28,32 @@ subtest 'is a reference' => sub {
 
   subtest 'argument' => sub {
 
-    plan skip_all => 'not working yet';
+    subtest 'bad' => sub {
 
-    my $rv = FooRecord->new(
-      name => "hello",
-      value => 42,
-    );
+      my $data = "\0" x 100;
+      my $bad1 = bless \$data, 'FooRecordBad';
+      eval { $get_name->call($bad1) };
+      like "$@", qr/^argument 0 is not an instance of FooRecord/;
 
-    is $get_name->call($rv), "hello";
-    is $get_value->call($rv), 42;
-  
+      eval { $get_name->call(\42) };
+      like "$@", qr/^argument 0 is not an instance of FooRecord/;
+
+      eval { $get_name->call(42) };
+      like "$@", qr/^argument 0 is not an instance of FooRecord/;
+
+    };
+
+    subtest 'good' => sub {
+
+      my $rv = FooRecord->new(
+        name => "hello",
+        value => 42,
+      );
+
+      is $get_name->call($rv), "hello";
+      is $get_value->call($rv), 42;
+
+    };
   };
 
 };

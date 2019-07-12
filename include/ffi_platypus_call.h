@@ -148,11 +148,10 @@
         case FFI_PL_TYPE_RECORD_VALUE:
           {
             const char *record_class = self->argument_types[i]->extra[0].record_value.class;
+            /* TODO if object is read-onyl ? */
             if(sv_isobject(arg) && sv_derived_from(arg, record_class))
             {
-              SV *arg2 = SvRV(arg);
-              void *ptr = SvPV_nolen(arg2);
-              ffi_pl_arguments_set_pointer(arguments, i, ptr);
+              argument_pointers[i] = SvPV_nolen(SvRV(arg));
             }
             else
             {
