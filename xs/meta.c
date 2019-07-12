@@ -23,9 +23,10 @@
 size_t
 ffi_pl_sizeof_new(ffi_pl_type *self)
 {
-  switch( self->type_code & (FFI_PL_SHAPE_SCALAR | FFI_PL_SHAPE_POINTER | FFI_PL_SHAPE_ARRAY) )
+  switch( self->type_code & FFI_PL_SHAPE_MASK )
   {
     case FFI_PL_SHAPE_SCALAR:
+    case FFI_PL_SHAPE_CUSTOM_PERL:
       return unit_size(self);
     case FFI_PL_SHAPE_POINTER:
       return sizeof(void*);

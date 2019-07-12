@@ -111,7 +111,7 @@ typedef enum _ffi_pl_type_code {
   FFI_PL_SHAPE_SCALAR        = 0x0000,
   FFI_PL_SHAPE_POINTER       = 0x1000,
   FFI_PL_SHAPE_ARRAY         = 0x2000,
-  FFI_PL_SHAPE_CUSTOM_PERL   = 0x4000,
+  FFI_PL_SHAPE_CUSTOM_PERL   = 0x3000,
   FFI_PL_SHAPE_MASK          = 0xf000,
 
   /*
