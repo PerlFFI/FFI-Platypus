@@ -104,6 +104,12 @@ sub parse
 
   $name =~ type_regex or croak "bad type name: $name";
 
+  if(defined (my $at = $1))  # closure
+  {
+    my $rt = $2;
+    croak "todo";
+  }
+
   if(defined (my $size = $3))  # fixed record / fixed string
   {
     croak "fixed record / fixed string size must be larger than 0"
@@ -118,6 +124,7 @@ sub parse
     }
     else
     {
+      # TODO: legal for record members.
       croak "fixed string / classless record not allowed as value type";
     }
   }
@@ -144,6 +151,11 @@ sub parse
 
   if(defined (my $unit_name = $7))  # basic type
   {
+    if($unit_name =~ /^string\s+ro$/)
+    {
+      croak "todo";
+    }
+
     if($self->global_types->{basic}->{$unit_name})
     {
       if(my $pointer = $8)
