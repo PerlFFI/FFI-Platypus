@@ -33,6 +33,12 @@ our @EXPORT = grep /^arguments_/, keys %FFI::Platypus::API::;
 
 =head1 DESCRIPTION
 
+B<NOTE>: I added this interface early on to L<FFI::Platypus>, but haven't
+used it much, generally finding function wrappers to be a more powerful
+(although possibly not as fast) interface.  It has thus not been
+tested as much as the rest of Platypus.  If you feel the need to use
+this interface please coordinate with the Platypus developers.
+
 The custom types API for L<FFI::Platypus> allows you to set multiple C 
 arguments from a single Perl argument as a common type.  This is 
 sometimes useful for pointer / size pairs which are a common pattern in 
