@@ -72,6 +72,10 @@ can_decorate(self)
           break;
       }
     }
+    else
+    {
+      RETVAL = 0;
+    }
   OUTPUT:
     RETVAL
 

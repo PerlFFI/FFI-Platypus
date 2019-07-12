@@ -6,6 +6,7 @@ use FFI::Platypus::Internal;
 use FFI::Platypus::TypeParser::Version1;
 
 my $tp = FFI::Platypus::TypeParser::Version1->new;
+my $pointer_size = FFI::Platypus->new->sizeof('opaque');
 
 subtest 'basic types' => sub {
 
@@ -86,7 +87,7 @@ subtest 'basic types' => sub {
 
     is(
       $tp->parse('string[10]')->meta->{size},
-      80,
+      10 * $pointer_size,
     );
 
   };
