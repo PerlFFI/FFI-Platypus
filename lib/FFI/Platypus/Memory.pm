@@ -99,7 +99,7 @@ copied in the new string.
 
 our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup strndup );
 
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1, experimental => 1);
 $ffi->lib(undef);
 $ffi->package;
 sub _ffi { $ffi }
