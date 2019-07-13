@@ -222,8 +222,9 @@ sub record_layout
 
   while(@_)
   {
-    my $type = shift;
+    my $spec = shift;
     my $name = shift;
+    my $type = $ffi->{tp}->parse( $spec, { member => 1 } );
 
     croak "illegal name $name"
       unless $name =~ /^[A-Za-z_][A-Za-z_0-9]*$/
@@ -231,10 +232,10 @@ sub record_layout
     croak "accessor/method $name already exists"
       if $caller->can($name);
 
-    my $size  = $ffi->sizeof($type);
-    my $align = $ffi->alignof($type);
+    my $size  = $type->sizeof;
+    my $align = $type->alignof;
     $record_align = $align if $align > $record_align;
-    my $meta  = $ffi->type_meta($type);
+    my $meta  = $type->meta;
 
     $offset++ while $offset % $align;
 
@@ -274,9 +275,9 @@ sub record_layout
       my $error_str = _accessor
         $full_name,
         "$filename:$line",
-        $ffi->{tp}->parse($type),
+        $type,
         $offset;
-      croak("$error_str ($type $name)") if $error_str;
+      croak("$error_str ($spec $name)") if $error_str;
     };
 
     $offset += $size;

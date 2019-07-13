@@ -210,6 +210,26 @@ subtest 'closure' => sub {
 
 };
 
+subtest 'api = 1 fixed string' => sub {
+
+  my $ffi = FFI::Platypus->new( api => 1, experimental => 1);
+  $ffi->lib($libtest);
+
+  {
+    package My::FooRecord2;
+    use FFI::Platypus::Record;
+    eval { record_layout( $ffi, qw( string(5)* foo string(5) bar )) };
+  }
+
+  is "$@", "";
+
+  my $r = My::FooRecord2->new( foo => '12345', bar => '67890' );
+
+  is $r->foo, '12345';
+  is $r->bar, '67890';
+
+};
+
 done_testing;
 
 package

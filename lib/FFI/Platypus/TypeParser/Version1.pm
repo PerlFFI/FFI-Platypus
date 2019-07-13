@@ -98,7 +98,9 @@ use constant type_regex =>
 
 sub parse
 {
-  my($self, $name) = @_;
+  my($self, $name, $opt) = @_;
+
+  $opt ||= {};
 
   return $self->types->{$name} if $self->types->{$name};
 
@@ -108,8 +110,8 @@ sub parse
   {
     my $rt = $2;
     return $self->types->{$name} = $self->create_type_closure(
-      $self->parse($rt),
-      map { $self->parse($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $at,
+      $self->parse($rt, $opt),
+      map { $self->parse($_, $opt) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $at,
     );
   }
 
@@ -125,9 +127,15 @@ sub parse
         undef,
       );
     }
+    elsif($opt->{member})
+    {
+      return $self->types->{"$name *"} = $self->create_type_record(
+        $size,
+        undef,
+      );
+    }
     else
     {
-      # TODO: legal for record members.
       croak "fixed string / classless record not allowed as value type";
     }
   }
@@ -190,31 +198,31 @@ sub parse
     {
       if(my $pointer = $8)
       {
-        return $self->types->{$name} = $self->parse("$map_name *");
+        return $self->types->{$name} = $self->parse("$map_name *", $opt);
       }
       if(defined (my $size = $9))
       {
         if($size ne '')
         {
           croak "array size must be larger than 0" if $size < 1;
-          return $self->types->{$name} = $self->parse("$map_name [$size]");
+          return $self->types->{$name} = $self->parse("$map_name [$size]", $opt);
         }
         else
         {
-          return $self->types->{$name} = $self->parse("$map_name []");
+          return $self->types->{$name} = $self->parse("$map_name []", $opt);
         }
       }
 
-      return $self->types->{$name} = $self->parse("$map_name");
+      return $self->types->{$name} = $self->parse("$map_name", $opt);
     }
 
     if(my $pointer = $8)
     {
-      my $unit_type = $self->parse($unit_name);
+      my $unit_type = $self->parse($unit_name, $opt);
       my $basic_name = $self->global_types->{rev}->{$unit_type->type_code};
       if($basic_name)
       {
-        return $self->types->{$name} = $self->parse("$basic_name *");
+        return $self->types->{$name} = $self->parse("$basic_name *", $opt);
       }
       else
       {
@@ -224,18 +232,18 @@ sub parse
 
     if(defined (my $size = $9))
     {
-      my $unit_type = $self->parse($unit_name);
+      my $unit_type = $self->parse($unit_name, $opt);
       my $basic_name = $self->global_types->{rev}->{$unit_type->type_code};
       if($basic_name)
       {
         if($size ne '')
         {
           croak "array size must be larger than 0" if $size < 1;
-          return $self->types->{$name} = $self->parse("$basic_name [$size]");
+          return $self->types->{$name} = $self->parse("$basic_name [$size]", $opt);
         }
         else
         {
-          return $self->types->{$name} = $self->parse("$basic_name []");
+          return $self->types->{$name} = $self->parse("$basic_name []", $opt);
         }
       }
       else

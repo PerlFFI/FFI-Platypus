@@ -2,6 +2,7 @@ package FFI::Platypus::Type;
 
 use strict;
 use warnings;
+use Carp qw( croak );
 require FFI::Platypus;
 
 # ABSTRACT: Defining types for FFI::Platypus
@@ -11,6 +12,36 @@ require FFI::Platypus;
 # are not to be exposed to the user.  External users should
 # not under any circumstances rely on the implementation of
 # these classes.
+
+sub alignof
+{
+  my($self) = @_;
+  my $meta = $self->meta;
+
+  # TODO: it is possible, though complicated
+  #       to compute the alignment of a struct
+  #       type record.
+  croak "cannot determine alignment of record"
+    if $meta->{type} eq 'record'
+    && $meta->{ref} == 1;
+
+  my $ffi_type;
+  if($meta->{type} eq 'pointer')
+  {
+    $ffi_type = 'pointer';
+  }
+  elsif($meta->{type} eq 'record')
+  {
+    $ffi_type = 'uint8';
+  }
+  else
+  {
+    $ffi_type = $meta->{ffi_type};
+  }
+
+  require FFI::Platypus::ShareConfig;
+  FFI::Platypus::ShareConfig->get('align')->{$ffi_type};
+}
 
 1;
 

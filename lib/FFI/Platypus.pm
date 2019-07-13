@@ -889,31 +889,7 @@ Returns the alignment of the given type in bytes.
 sub alignof
 {
   my($self, $name) = @_;
-  my $meta = $self->type_meta($name);
-
-  # TODO: it is possible, though complicated
-  #       to compute the alignment of a struct
-  #       type record.
-  croak "cannot determine alignment of record"
-    if $meta->{type} eq 'record'
-    && $meta->{ref} == 1;
-
-  my $ffi_type;
-  if($meta->{type} eq 'pointer')
-  {
-    $ffi_type = 'pointer';
-  }
-  elsif($meta->{type} eq 'record')
-  {
-    $ffi_type = 'uint8';
-  }
-  else
-  {
-    $ffi_type = $meta->{ffi_type};
-  }
-
-  require FFI::Platypus::ShareConfig;
-  FFI::Platypus::ShareConfig->get('align')->{$ffi_type};
+  $self->{tp}->parse($name)->alignof;
 }
 
 =head2 find_lib
