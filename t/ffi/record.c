@@ -53,6 +53,7 @@ foo_value_create(const char *name, int32_t value)
 {
   foo_record_t self;
 
+  memset(self.name, 16, 0);
   strcpy(self.name, name);
   self.value = value;
 
