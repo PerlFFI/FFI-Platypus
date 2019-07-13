@@ -43,7 +43,7 @@ subtest 'is a reference' => sub {
 
     };
 
-    subtest 'good' => sub {
+    subtest 'as arg' => sub {
 
       my $rv = FooRecord->new(
         name => "hello",
@@ -54,6 +54,15 @@ subtest 'is a reference' => sub {
       is $get_value->call($rv), 42;
 
     };
+
+    subtest 'as rv' => sub {
+
+      my $rv = $create->call("hi there", 47);
+      is $rv->name, "hi there\0\0\0\0\0\0\0\0";
+      is $rv->value, 47;
+
+    };
+
   };
 
 };

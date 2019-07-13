@@ -309,5 +309,3 @@ create_type_closure(self, return_type, ...)
 
   OUTPUT:
     RETVAL
-
-
