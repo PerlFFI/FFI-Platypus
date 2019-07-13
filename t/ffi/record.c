@@ -18,6 +18,7 @@ EXTERN const char *
 foo_value_get_name(foo_record_t self)
 {
   static char name[16];
+  memset(name, 16, 0);
   strcpy(name, self.name);
   return name;
 }
