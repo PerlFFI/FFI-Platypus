@@ -169,7 +169,6 @@ call(self, ...)
   PREINIT:
     int i, n, perl_arg_index;
     SV *arg;
-    ffi_pl_result result;
     ffi_pl_arguments *arguments;
     void **argument_pointers;
     dMY_CXT;

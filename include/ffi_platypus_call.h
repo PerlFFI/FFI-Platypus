@@ -21,6 +21,15 @@
  */
 
     ffi_pl_heap *heap = NULL;
+    ffi_pl_result *result;
+    if(self->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
+    {
+      Newx_or_alloca(result, self->return_type->extra[0].record_value.size, char);
+    }
+    else
+    {
+      Newx_or_alloca(result, 1, ffi_pl_result);
+    }
 
     {
       /* buffer contains the memory required for the arguments structure */
@@ -638,12 +647,12 @@
 
     if(self->address != NULL)
     {
-      ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
+      ffi_call(&self->ffi_cif, self->address, result, ffi_pl_arguments_pointers(arguments));
     }
     else
     {
       void *address = self->ffi_cif.nargs > 0 ? (void*) &cast1 : (void*) &cast0;
-      ffi_call(&self->ffi_cif, address, &result, ffi_pl_arguments_pointers(arguments));
+      ffi_call(&self->ffi_cif, address, result, ffi_pl_arguments_pointers(arguments));
     }
 
 /*
@@ -938,85 +947,85 @@
           break;
         case FFI_PL_TYPE_UINT8:
 #if defined FFI_PL_PROBE_BIGENDIAN
-          XSRETURN_UV(result.uint8_array[3]);
+          XSRETURN_UV(result->uint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-          XSRETURN_UV(result.uint8_array[7]);
+          XSRETURN_UV(result->uint8_array[7]);
 #else
-          XSRETURN_UV(result.uint8);
+          XSRETURN_UV(result->uint8);
 #endif
           break;
         case FFI_PL_TYPE_SINT8:
 #if defined FFI_PL_PROBE_BIGENDIAN
-          XSRETURN_IV(result.sint8_array[3]);
+          XSRETURN_IV(result->sint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-          XSRETURN_IV(result.sint8_array[7]);
+          XSRETURN_IV(result->sint8_array[7]);
 #else
-          XSRETURN_IV(result.sint8);
+          XSRETURN_IV(result->sint8);
 #endif
           break;
         case FFI_PL_TYPE_UINT16:
 #if defined FFI_PL_PROBE_BIGENDIAN
-          XSRETURN_UV(result.uint16_array[1]);
+          XSRETURN_UV(result->uint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-          XSRETURN_UV(result.uint16_array[3]);
+          XSRETURN_UV(result->uint16_array[3]);
 #else
-          XSRETURN_UV(result.uint16);
+          XSRETURN_UV(result->uint16);
 #endif
           break;
         case FFI_PL_TYPE_SINT16:
 #if defined FFI_PL_PROBE_BIGENDIAN
-          XSRETURN_IV(result.sint16_array[1]);
+          XSRETURN_IV(result->sint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-          XSRETURN_IV(result.sint16_array[3]);
+          XSRETURN_IV(result->sint16_array[3]);
 #else
-          XSRETURN_IV(result.sint16);
+          XSRETURN_IV(result->sint16);
 #endif
           break;
         case FFI_PL_TYPE_UINT32:
 #if defined FFI_PL_PROBE_BIGENDIAN64
-          XSRETURN_UV(result.uint32_array[1]);
+          XSRETURN_UV(result->uint32_array[1]);
 #else
-          XSRETURN_UV(result.uint32);
+          XSRETURN_UV(result->uint32);
 #endif
           break;
         case FFI_PL_TYPE_SINT32:
 #if defined FFI_PL_PROBE_BIGENDIAN64
-          XSRETURN_IV(result.sint32_array[1]);
+          XSRETURN_IV(result->sint32_array[1]);
 #else
-          XSRETURN_IV(result.sint32);
+          XSRETURN_IV(result->sint32);
 #endif
           break;
         case FFI_PL_TYPE_UINT64:
 #ifdef HAVE_IV_IS_64
-          XSRETURN_UV(result.uint64);
+          XSRETURN_UV(result->uint64);
 #else
           {
             ST(0) = sv_newmortal();
-            sv_setu64(ST(0), result.uint64);
+            sv_setu64(ST(0), result->uint64);
             XSRETURN(1);
           }
 #endif
           break;
         case FFI_PL_TYPE_SINT64:
 #ifdef HAVE_IV_IS_64
-          XSRETURN_IV(result.sint64);
+          XSRETURN_IV(result->sint64);
 #else
           {
             ST(0) = sv_newmortal();
-            sv_seti64(ST(0), result.uint64);
+            sv_seti64(ST(0), result->uint64);
             XSRETURN(1);
           }
 #endif
           break;
         case FFI_PL_TYPE_FLOAT:
-          XSRETURN_NV(result.xfloat);
+          XSRETURN_NV(result->xfloat);
           break;
         case FFI_PL_TYPE_DOUBLE:
-          XSRETURN_NV(result.xdouble);
+          XSRETURN_NV(result->xdouble);
           break;
         case FFI_PL_TYPE_OPAQUE:
         case FFI_PL_TYPE_STRING:
-          if(result.pointer == NULL)
+          if(result->pointer == NULL)
           {
             XSRETURN_EMPTY;
           }
@@ -1025,10 +1034,10 @@
             switch(type_code)
             {
               case FFI_PL_TYPE_OPAQUE:
-                XSRETURN_IV(PTR2IV(result.pointer));
+                XSRETURN_IV(PTR2IV(result->pointer));
                 break;
               case FFI_PL_TYPE_STRING:
-                XSRETURN_PV(result.pointer);
+                XSRETURN_PV(result->pointer);
                 break;
             }
           }
@@ -1042,7 +1051,7 @@
             SV *sv;
             long double *ptr;
             Newx(ptr, 1, long double);
-            *ptr = result.longdouble;
+            *ptr = result->longdouble;
             sv = sv_newmortal();
             sv_setref_pv(sv, "Math::LongDouble", (void*)ptr);
             ST(0) = sv;
@@ -1051,7 +1060,7 @@
           else
           {
 #endif
-            XSRETURN_NV((NV) result.longdouble);
+            XSRETURN_NV((NV) result->longdouble);
 #if !(defined(USE_LONG_DOUBLE) && defined(HAS_LONG_DOUBLE))
           }
 #endif
@@ -1061,7 +1070,7 @@
         case FFI_PL_TYPE_COMPLEX_FLOAT:
           {
             SV *sv = sv_newmortal();
-            ffi_pl_complex_float_to_perl(sv, (float*)&result.complex_float);
+            ffi_pl_complex_float_to_perl(sv, (float*)&result->complex_float);
             ST(0) = sv;
             XSRETURN(1);
           }
@@ -1069,21 +1078,21 @@
         case FFI_PL_TYPE_COMPLEX_DOUBLE:
           {
             SV *sv = sv_newmortal();
-            ffi_pl_complex_double_to_perl(sv, (double*)&result.complex_double);
+            ffi_pl_complex_double_to_perl(sv, (double*)&result->complex_double);
             ST(0) = sv;
             XSRETURN(1);
           }
           break;
 #endif
         case FFI_PL_TYPE_RECORD:
-          if(result.pointer == NULL)
+          if(result->pointer == NULL)
           {
             XSRETURN_EMPTY;
           }
           else
           {
             SV *value = sv_newmortal();
-            sv_setpvn(value, result.pointer, self->return_type->extra[0].record.size);
+            sv_setpvn(value, result->pointer, self->return_type->extra[0].record.size);
             if(self->return_type->extra[0].record.stash)
             {
               SV *ref = ST(0) = newRV_inc(value);
@@ -1099,11 +1108,12 @@
         case FFI_PL_TYPE_RECORD_VALUE:
           {
             SV *value = sv_newmortal();
-            sv_setpvn(value, (void*) &result, self->return_type->extra[0].record_value.size);
+            sv_setpvn(value, (void*) result, self->return_type->extra[0].record_value.size);
             SV *ref = ST(0) = newRV_inc(value);
             sv_bless(ref, gv_stashpv(self->return_type->extra[0].record_value.class, GV_ADD));
             XSRETURN(1);
           }
+          break;
         default:
 
           switch(type_code & FFI_PL_SHAPE_MASK)
@@ -1114,7 +1124,7 @@
  */
 
             case FFI_PL_SHAPE_POINTER:
-              if(result.pointer == NULL)
+              if(result->pointer == NULL)
               {
                 XSRETURN_EMPTY;
               }
@@ -1125,81 +1135,81 @@
                 {
                   case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    sv_setuv(value, *((uint8_t*) result.pointer));
+                    sv_setuv(value, *((uint8_t*) result->pointer));
                     break;
                   case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    sv_setiv(value, *((int8_t*) result.pointer));
+                    sv_setiv(value, *((int8_t*) result->pointer));
                     break;
                   case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    sv_setuv(value, *((uint16_t*) result.pointer));
+                    sv_setuv(value, *((uint16_t*) result->pointer));
                     break;
                   case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    sv_setiv(value, *((int16_t*) result.pointer));
+                    sv_setiv(value, *((int16_t*) result->pointer));
                     break;
                   case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    sv_setuv(value, *((uint32_t*) result.pointer));
+                    sv_setuv(value, *((uint32_t*) result->pointer));
                     break;
                   case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    sv_setiv(value, *((int32_t*) result.pointer));
+                    sv_setiv(value, *((int32_t*) result->pointer));
                     break;
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
 #ifdef HAVE_IV_IS_64
-                    sv_setuv(value, *((uint64_t*) result.pointer));
+                    sv_setuv(value, *((uint64_t*) result->pointer));
 #else
-                    sv_seti64(value, *((int64_t*) result.pointer));
+                    sv_seti64(value, *((int64_t*) result->pointer));
 #endif
                     break;
                   case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
 #ifdef HAVE_IV_IS_64
-                    sv_setiv(value, *((int64_t*) result.pointer));
+                    sv_setiv(value, *((int64_t*) result->pointer));
 #else
-                    sv_seti64(value, *((int64_t*) result.pointer));
+                    sv_seti64(value, *((int64_t*) result->pointer));
 #endif
                     break;
                   case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    sv_setnv(value, *((float*) result.pointer));
+                    sv_setnv(value, *((float*) result->pointer));
                     break;
                   case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    sv_setnv(value, *((double*) result.pointer));
+                    sv_setnv(value, *((double*) result->pointer));
                     break;
                   case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    if( *((void**)result.pointer) == NULL )
+                    if( *((void**)result->pointer) == NULL )
                       value = &PL_sv_undef;
                     else
-                      sv_setiv(value, PTR2IV(*((void**)result.pointer)));
+                      sv_setiv(value, PTR2IV(*((void**)result->pointer)));
                     break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
                   case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    ffi_pl_long_double_to_perl(value, (long double*)result.pointer);
+                    ffi_pl_long_double_to_perl(value, (long double*)result->pointer);
                     break;
 #endif
 #ifdef FFI_PL_PROBE_COMPLEX
                   case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    ffi_pl_complex_float_to_perl(value, (float*)result.pointer);
+                    ffi_pl_complex_float_to_perl(value, (float*)result->pointer);
                     break;
                   case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    ffi_pl_complex_double_to_perl(value, (double*)result.pointer);
+                    ffi_pl_complex_double_to_perl(value, (double*)result->pointer);
                     break;
 #endif
                   case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
                     value = sv_newmortal();
-                    if( *((void**)result.pointer) == NULL )
+                    if( *((void**)result->pointer) == NULL )
                       value = &PL_sv_undef;
                     else
-                      sv_setpv(value, (char*) result.pointer);
+                      sv_setpv(value, (char*) result->pointer);
                     break;
                   default:
                     warn("return type not supported");
@@ -1215,7 +1225,7 @@
  */
 
             case FFI_PL_SHAPE_ARRAY:
-              if(result.pointer == NULL)
+              if(result->pointer == NULL)
               {
                 XSRETURN_EMPTY;
               }
@@ -1224,7 +1234,7 @@
                 int count = self->return_type->extra[0].array.element_count;
                 if(count == 0 && type_code & FFI_PL_TYPE_OPAQUE)
                 {
-                  while(((void**)result.pointer)[count] != NULL)
+                  while(((void**)result->pointer)[count] != NULL)
                     count++;
                 }
                 AV *av;
@@ -1235,46 +1245,46 @@
                   case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = newSVuv( ((uint8_t*)result.pointer)[i] );
+                      sv[i] = newSVuv( ((uint8_t*)result->pointer)[i] );
                     }
                     break;
                   case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = newSViv( ((int8_t*)result.pointer)[i] );
+                      sv[i] = newSViv( ((int8_t*)result->pointer)[i] );
                     }
                     break;
                   case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = newSVuv( ((uint16_t*)result.pointer)[i] );
+                      sv[i] = newSVuv( ((uint16_t*)result->pointer)[i] );
                     }
                     break;
                   case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = newSViv( ((int16_t*)result.pointer)[i] );
+                      sv[i] = newSViv( ((int16_t*)result->pointer)[i] );
                     }
                     break;
                   case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = newSVuv( ((uint32_t*)result.pointer)[i] );
+                      sv[i] = newSVuv( ((uint32_t*)result->pointer)[i] );
                     }
                     break;
                   case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = newSViv( ((int32_t*)result.pointer)[i] );
+                      sv[i] = newSViv( ((int32_t*)result->pointer)[i] );
                     }
                     break;
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
 #ifdef HAVE_IV_IS_64
-                      sv[i] = newSVuv( ((uint64_t*)result.pointer)[i] );
+                      sv[i] = newSVuv( ((uint64_t*)result->pointer)[i] );
 #else
-                      sv[i] = newSVu64( ((uint64_t*)result.pointer)[i] );
+                      sv[i] = newSVu64( ((uint64_t*)result->pointer)[i] );
 #endif
                     }
                     break;
@@ -1282,29 +1292,29 @@
                     for(i=0; i<count; i++)
                     {
 #ifdef HAVE_IV_IS_64
-                      sv[i] = newSViv( ((int64_t*)result.pointer)[i] );
+                      sv[i] = newSViv( ((int64_t*)result->pointer)[i] );
 #else
-                      sv[i] = newSVi64( ((int64_t*)result.pointer)[i] );
+                      sv[i] = newSVi64( ((int64_t*)result->pointer)[i] );
 #endif
                     }
                     break;
                   case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = newSVnv( ((float*)result.pointer)[i] );
+                      sv[i] = newSVnv( ((float*)result->pointer)[i] );
                     }
                     break;
                   case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = newSVnv( ((double*)result.pointer)[i] );
+                      sv[i] = newSVnv( ((double*)result->pointer)[i] );
                     }
                     break;
                   case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_ARRAY:
                   case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      if( ((void**)result.pointer)[i] == NULL)
+                      if( ((void**)result->pointer)[i] == NULL)
                       {
                         sv[i] = &PL_sv_undef;
                       }
@@ -1312,10 +1322,10 @@
                       {
                         switch(type_code) {
                           case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_ARRAY:
-                            sv[i] = newSVpv( ((char**)result.pointer)[i], 0 );
+                            sv[i] = newSVpv( ((char**)result->pointer)[i], 0 );
                             break;
                           case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_ARRAY:
-                            sv[i] = newSViv( PTR2IV( ((void**)result.pointer)[i] ));
+                            sv[i] = newSViv( PTR2IV( ((void**)result->pointer)[i] ));
                             break;
                         }
                       }
@@ -1326,7 +1336,7 @@
                     for(i=0; i<count; i++)
                     {
                       sv[i] = newSV(0);
-                      ffi_pl_long_double_to_perl(sv[i], &((long double*)result.pointer)[i]);
+                      ffi_pl_long_double_to_perl(sv[i], &((long double*)result->pointer)[i]);
                     }
                     break;
 #endif
@@ -1352,77 +1362,77 @@
                 {
                   case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
-                    ret_in = newSVuv(result.uint8_array[3]);
+                    ret_in = newSVuv(result->uint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-                    ret_in = newSVuv(result.uint8_array[7]);
+                    ret_in = newSVuv(result->uint8_array[7]);
 #else
-                    ret_in = newSVuv(result.uint8);
+                    ret_in = newSVuv(result->uint8);
 #endif
                     break;
                   case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
-                    ret_in = newSViv(result.sint8_array[3]);
+                    ret_in = newSViv(result->sint8_array[3]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-                    ret_in = newSViv(result.sint8_array[7]);
+                    ret_in = newSViv(result->sint8_array[7]);
 #else
-                    ret_in = newSViv(result.sint8);
+                    ret_in = newSViv(result->sint8);
 #endif
                     break;
                   case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
-                    ret_in = newSVuv(result.uint16_array[1]);
+                    ret_in = newSVuv(result->uint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-                    ret_in = newSVuv(result.uint16_array[3]);
+                    ret_in = newSVuv(result->uint16_array[3]);
 #else
-                    ret_in = newSVuv(result.uint16);
+                    ret_in = newSVuv(result->uint16);
 #endif
                     break;
                   case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
-                    ret_in = newSViv(result.sint16_array[1]);
+                    ret_in = newSViv(result->sint16_array[1]);
 #elif defined FFI_PL_PROBE_BIGENDIAN64
-                    ret_in = newSViv(result.sint16_array[3]);
+                    ret_in = newSViv(result->sint16_array[3]);
 #else
-                    ret_in = newSViv(result.sint16);
+                    ret_in = newSViv(result->sint16);
 #endif
                     break;
                   case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN64
-                    ret_in = newSVuv(result.uint32_array[1]);
+                    ret_in = newSVuv(result->uint32_array[1]);
 #else
-                    ret_in = newSVuv(result.uint32);
+                    ret_in = newSVuv(result->uint32);
 #endif
                     break;
                   case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN64
-                    ret_in = newSViv(result.sint32_array[1]);
+                    ret_in = newSViv(result->sint32_array[1]);
 #else
-                    ret_in = newSViv(result.sint32);
+                    ret_in = newSViv(result->sint32);
 #endif
                     break;
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
 #ifdef HAVE_IV_IS_64
-                    ret_in = newSVuv(result.uint64);
+                    ret_in = newSVuv(result->uint64);
 #else
-                    ret_in = newSVu64(result.uint64);
+                    ret_in = newSVu64(result->uint64);
 #endif
                     break;
                   case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
 #ifdef HAVE_IV_IS_64
-                    ret_in = newSViv(result.sint64);
+                    ret_in = newSViv(result->sint64);
 #else
-                    ret_in = newSVi64(result.sint64);
+                    ret_in = newSVi64(result->sint64);
 #endif
                     break;
                   case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_CUSTOM_PERL:
-                    ret_in = newSVnv(result.xfloat);
+                    ret_in = newSVnv(result->xfloat);
                     break;
                   case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_CUSTOM_PERL:
-                    ret_in = newSVnv(result.xdouble);
+                    ret_in = newSVnv(result->xdouble);
                     break;
                   case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_CUSTOM_PERL:
-                    if(result.pointer != NULL)
-                      ret_in = newSViv(PTR2IV(result.pointer));
+                    if(result->pointer != NULL)
+                      ret_in = newSViv(PTR2IV(result->pointer));
                     break;
                   default:
                     ffi_pl_heap_free();
