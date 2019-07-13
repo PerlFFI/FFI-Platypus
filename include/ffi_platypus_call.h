@@ -1096,6 +1096,8 @@
             XSRETURN(1);
           }
           break;
+        case FFI_PL_TYPE_RECORD_VALUE:
+          /* TODO */
         default:
 
           switch(type_code & FFI_PL_SHAPE_MASK)
