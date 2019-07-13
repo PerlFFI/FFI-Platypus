@@ -9,7 +9,7 @@
  *    some of the more esoteric types.
  *  - one way we avoid making function calls is by putting the FFI dispatch
  *    in this header file so that it can be "called" twice without an
- *    extra function call.  (`$ffi->function(...)->call(...)` and 
+ *    extra function call.  (`$ffi->function(...)->call(...)` and
  *    `$ffi->attach(foo => ...); foo(...)`).  This is obviously absurd.
  *
  * Maybe all each of these weird trade offs each save only a few ms on

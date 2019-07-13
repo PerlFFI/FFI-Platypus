@@ -15,9 +15,9 @@ foreach my $api (0, 1)
   subtest "api = $api" => sub {
 
     local $SIG{__WARN__} = sub {
-        my $message = shift;
-        return if $message =~ /^Subroutine main::.* redefined/;
-        warn $message;
+      my $message = shift;
+      return if $message =~ /^Subroutine main::.* redefined/;
+      warn $message;
     };
 
     my $ffi = FFI::Platypus->new( api => $api, experimental => 1 );
