@@ -9,8 +9,6 @@ use Config;
 BEGIN {
   plan skip_all => 'test requires support for long double'
     unless FFI::Platypus::TypeParser->have_type('longdouble');
-#  plan skip_all => 'test doesn\'t make sense on Perl with longdouble'
-#    if $Config{uselongdouble};
 }
 
 my $ffi = FFI::Platypus->new;
