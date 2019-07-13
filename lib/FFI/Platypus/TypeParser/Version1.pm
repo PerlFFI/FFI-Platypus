@@ -80,7 +80,7 @@ use constant type_regex =>
                                                                                                                                                                   #
     (?:                                                                                                                                                           #
                                                                                                                                                                   #
-      \( ([^)]+) \) -> (.*)                                                                                                                                       # closure  $1 argument types, $2 return type
+      \( ([^)]*) \) -> (.*)                                                                                                                                       # closure  $1 argument types, $2 return type
       |                                                                                                                                                           #
       (?: string | record ) \s* \( \s* ([0-9]+) \s* \)                                                              (?: \s* (\*) | )                              # fixed record, fixed string $3, ponter $4
       |                                                                                                                                                           #
@@ -107,7 +107,10 @@ sub parse
   if(defined (my $at = $1))  # closure
   {
     my $rt = $2;
-    croak "todo";
+    return $self->types->{$name} = $self->create_type_closure(
+      $self->parse($rt),
+      map { $self->parse($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $at,
+    );
   }
 
   if(defined (my $size = $3))  # fixed record / fixed string

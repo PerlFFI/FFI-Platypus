@@ -4,76 +4,89 @@ use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
-my $ffi = FFI::Platypus->new;
-$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
-$ffi->type('float *' => 'float_p');
-$ffi->type('float [10]' => 'float_a');
-$ffi->type('float []' => 'float_a2');
-$ffi->type('(float)->float' => 'float_c');
+foreach my $api (0, 1)
+{
 
-$ffi->attach( [float_add => 'add'] => ['float', 'float'] => 'float');
-$ffi->attach( [float_inc => 'inc'] => ['float_p', 'float'] => 'float_p');
-$ffi->attach( [float_sum => 'sum'] => ['float_a'] => 'float');
-$ffi->attach( [float_sum2 => 'sum2'] => ['float_a2','size_t'] => 'float');
-$ffi->attach( [float_array_inc => 'array_inc'] => ['float_a'] => 'void');
-$ffi->attach( [pointer_null => 'null'] => [] => 'float_p');
-$ffi->attach( [pointer_is_null => 'is_null'] => ['float_p'] => 'int');
-$ffi->attach( [float_static_array => 'static_array'] => [] => 'float_a');
-$ffi->attach( [pointer_null => 'null2'] => [] => 'float_a');
+  subtest "api = $api" => sub {
 
-is add(1.5,2.5), 4, 'add(1.5,2.5) = 4';
-is eval { no warnings; add() }, 0.0, 'add() = 0.0';
+    local $SIG{__WARN__} = sub {
+        my $message = shift;
+        return if $message =~ /^Subroutine main::.* redefined/;
+        warn $message;
+    };
 
-my $i = 3.5;
-is ${inc(\$i, 4.25)}, 7.75, 'inc(\$i,4.25) = \7.75';
+    my $ffi = FFI::Platypus->new( api => $api, experimental => 1 );
+    $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+    $ffi->type('float *' => 'float_p');
+    $ffi->type('float [10]' => 'float_a');
+    $ffi->type('float []' => 'float_a2');
+    $ffi->type('(float)->float' => 'float_c');
 
-is $i, 3.5+4.25, "i=3.5+4.25";
+    $ffi->attach( [float_add => 'add'] => ['float', 'float'] => 'float');
+    $ffi->attach( [float_inc => 'inc'] => ['float_p', 'float'] => 'float_p');
+    $ffi->attach( [float_sum => 'sum'] => ['float_a'] => 'float');
+    $ffi->attach( [float_sum2 => 'sum2'] => ['float_a2','size_t'] => 'float');
+    $ffi->attach( [float_array_inc => 'array_inc'] => ['float_a'] => 'void');
+    $ffi->attach( [pointer_null => 'null'] => [] => 'float_p');
+    $ffi->attach( [pointer_is_null => 'is_null'] => ['float_p'] => 'int');
+    $ffi->attach( [float_static_array => 'static_array'] => [] => 'float_a');
+    $ffi->attach( [pointer_null => 'null2'] => [] => 'float_a');
 
-is ${inc(\3,4)}, 7, 'inc(\3,4) = \7';
+    is add(1.5,2.5), 4, 'add(1.5,2.5) = 4';
+    is eval { no warnings; add() }, 0.0, 'add() = 0.0';
 
-my @list = (1,2,3,4,5,6,7,8,9,10);
+    my $i = 3.5;
+    is ${inc(\$i, 4.25)}, 7.75, 'inc(\$i,4.25) = \7.75';
 
-is sum(\@list), 55, 'sum([1..10]) = 55';
-is sum2(\@list,scalar @list), 55, 'sum2([1..10],10) = 55';
+    is $i, 3.5+4.25, "i=3.5+4.25";
 
-array_inc(\@list);
-do { local $SIG{__WARN__} = sub {}; array_inc(); };
+    is ${inc(\3,4)}, 7, 'inc(\3,4) = \7';
 
-is_deeply \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
+    my @list = (1,2,3,4,5,6,7,8,9,10);
 
-is null(), undef, 'null() == undef';
-is is_null(undef), 1, 'is_null(undef) == 1';
-is is_null(), 1, 'is_null() == 1';
-is is_null(\22), 0, 'is_null(22) == 0';
+    is sum(\@list), 55, 'sum([1..10]) = 55';
+    is sum2(\@list,scalar @list), 55, 'sum2([1..10],10) = 55';
 
-is_deeply static_array(), [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5], 'static_array = [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5]';
+    array_inc(\@list);
+    do { local $SIG{__WARN__} = sub {}; array_inc(); };
 
-is null2(), undef, 'null2() == undef';
+    is_deeply \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
 
-my $closure = $ffi->closure(sub { $_[0]+2.25 });
-$ffi->attach( [float_set_closure => 'set_closure'] => ['float_c'] => 'void');
-$ffi->attach( [float_call_closure => 'call_closure'] => ['float'] => 'float');
+    is null(), undef, 'null() == undef';
+    is is_null(undef), 1, 'is_null(undef) == 1';
+    is is_null(), 1, 'is_null() == 1';
+    is is_null(\22), 0, 'is_null(22) == 0';
 
-set_closure($closure);
-is call_closure(2.5), 4.75, 'call_closure(2.5) = 4.75';
+    is_deeply static_array(), [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5], 'static_array = [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5]';
 
-$closure = $ffi->closure(sub { undef });
-set_closure($closure);
-is do { no warnings; call_closure(2.5) }, 0, 'call_closure(2.5) = 0';
+    is null2(), undef, 'null2() == undef';
 
-subtest 'custom type input' => sub {
-  $ffi->custom_type(type1 => { native_type => 'float', perl_to_native => sub { is $_[0], 1.25; $_[0]+0.25 } });
-  $ffi->attach( [float_add => 'custom_add'] => ['type1','float'] => 'float');
-  is custom_add(1.25,2.5), 4, 'custom_add(1.25,2.5) = 4';
-};
+    my $closure = $ffi->closure(sub { $_[0]+2.25 });
+    $ffi->attach( [float_set_closure => 'set_closure'] => ['float_c'] => 'void');
+    $ffi->attach( [float_call_closure => 'call_closure'] => ['float'] => 'float');
 
-subtest 'custom type output' => sub {
-  $ffi->custom_type(type2 => { native_type => 'float', native_to_perl => sub { is $_[0], 2.0; $_[0]+0.25 } });
-  $ffi->attach( [float_add => 'custom_add2'] => ['float','float'] => 'type2');
-  is custom_add2(1,1), 2.25, 'custom_add2(1,1) = 2.25';
-};
+    set_closure($closure);
+    is call_closure(2.5), 4.75, 'call_closure(2.5) = 4.75';
 
-$ffi->attach( [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => 'int');
-is closure_pointer_is_null(), 1, 'closure_pointer_is_null() = 1';
+    $closure = $ffi->closure(sub { undef });
+    set_closure($closure);
+    is do { no warnings; call_closure(2.5) }, 0, 'call_closure(2.5) = 0';
+
+    subtest 'custom type input' => sub {
+      $ffi->custom_type(type1 => { native_type => 'float', perl_to_native => sub { is $_[0], 1.25; $_[0]+0.25 } });
+      $ffi->attach( [float_add => 'custom_add'] => ['type1','float'] => 'float');
+      is custom_add(1.25,2.5), 4, 'custom_add(1.25,2.5) = 4';
+    };
+
+    subtest 'custom type output' => sub {
+      $ffi->custom_type(type2 => { native_type => 'float', native_to_perl => sub { is $_[0], 2.0; $_[0]+0.25 } });
+      $ffi->attach( [float_add => 'custom_add2'] => ['float','float'] => 'type2');
+      is custom_add2(1,1), 2.25, 'custom_add2(1,1) = 2.25';
+    };
+
+    $ffi->attach( [pointer_is_null => 'closure_pointer_is_null'] => ['()->void'] => 'int');
+    is closure_pointer_is_null(), 1, 'closure_pointer_is_null() = 1';
+  };
+}
 
 done_testing;
