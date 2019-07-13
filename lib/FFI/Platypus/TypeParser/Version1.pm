@@ -154,11 +154,6 @@ sub parse
 
   if(defined (my $unit_name = $7))  # basic type
   {
-    if($unit_name =~ /^string\s+ro$/)
-    {
-      croak "todo";
-    }
-
     if($self->global_types->{basic}->{$unit_name})
     {
       if(my $pointer = $8)
@@ -213,47 +208,52 @@ sub parse
       return $self->types->{$name} = $self->parse("$map_name");
     }
 
-    if(my $unit_type = $self->parse($unit_name))
+    if(my $pointer = $8)
     {
-
-      if(my $pointer = $8)
+      my $unit_type = $self->parse($unit_name);
+      my $basic_name = $self->global_types->{rev}->{$unit_type->type_code};
+      if($basic_name)
       {
-        my $basic_name = $self->global_types->{rev}->{$unit_type->type_code};
-        if($basic_name)
-        {
-          return $self->types->{$name} = $self->parse("$basic_name *");
-        }
-        else
-        {
-          croak "cannot make a pointer to $unit_name";
-        }
+        return $self->types->{$name} = $self->parse("$basic_name *");
       }
-
-      if(defined (my $size = $9))
+      else
       {
-        my $basic_name = $self->global_types->{rev}->{$unit_type->type_code};
-        if($basic_name)
-        {
-          if($size ne '')
-          {
-            croak "array size must be larger than 0" if $size < 1;
-            return $self->types->{$name} = $self->parse("$basic_name [$size]");
-          }
-          else
-          {
-            return $self->types->{$name} = $self->parse("$basic_name []");
-          }
-        }
-        else
-        {
-          croak "cannot make an array of $unit_name";
-        }
+        croak "cannot make a pointer to $unit_name";
       }
-
-      return $self->types->{$name} = $unit_type;
     }
 
-    croak "unknown type: $unit_name";
+    if(defined (my $size = $9))
+    {
+      my $unit_type = $self->parse($unit_name);
+      my $basic_name = $self->global_types->{rev}->{$unit_type->type_code};
+      if($basic_name)
+      {
+        if($size ne '')
+        {
+          croak "array size must be larger than 0" if $size < 1;
+          return $self->types->{$name} = $self->parse("$basic_name [$size]");
+        }
+        else
+        {
+          return $self->types->{$name} = $self->parse("$basic_name []");
+        }
+      }
+      else
+      {
+        croak "cannot make an array of $unit_name";
+      }
+    }
+
+    if($name eq 'string ro')
+    {
+      return $self->global_types->{basic}->{string};
+    }
+    elsif($name eq 'string rw')
+    {
+      return $self->global_types->{v2}->{string_rw} ||= $self->create_type_string(1);
+    }
+
+    return $self->types->{$name} || croak "unknown type: $unit_name";
   }
 
   croak "internal error parsing: $name";

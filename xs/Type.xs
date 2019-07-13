@@ -60,6 +60,15 @@ is_record(self)
   OUTPUT:
     RETVAL
 
+int
+is_ro(self)
+    ffi_pl_type *self
+  CODE:
+    RETVAL = self->type_code == FFI_PL_TYPE_STRING     &&
+             self->sub_type  == FFI_PL_TYPE_STRING_RO;
+  OUTPUT:
+    RETVAL
+
 void
 DESTROY(self)
     ffi_pl_type *self

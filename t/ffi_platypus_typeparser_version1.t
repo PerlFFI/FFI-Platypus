@@ -4,9 +4,20 @@ use Test::More;
 use FFI::Platypus;
 use FFI::Platypus::Internal;
 use FFI::Platypus::TypeParser::Version1;
+use Data::Dumper qw( Dumper );
 
 my $tp = FFI::Platypus::TypeParser::Version1->new;
 my $pointer_size = FFI::Platypus->new->sizeof('opaque');
+
+subtest 'bad types' => sub {
+
+  eval { $tp->parse("bogus") };
+  like "$@", qr/^unknown type: bogus/;
+
+  eval { $tp->parse("*(^^%*%I(*&&^") };
+  like "$@", qr/^bad type name:/;
+
+};
 
 subtest 'basic types' => sub {
 
@@ -64,6 +75,21 @@ subtest 'basic types' => sub {
       $tp->parse('string')->type_code,
       FFI_PL_TYPE_STRING,
     );
+
+    is($tp->parse('string')->is_ro, 1);
+
+    is(
+      $tp->parse('string rw')->type_code,
+      FFI_PL_TYPE_STRING,
+    );
+
+    is(
+      $tp->parse('string ro')->type_code,
+      FFI_PL_TYPE_STRING,
+    );
+
+    is($tp->parse('string ro')->is_ro, 1);
+    is($tp->parse('string rw')->is_ro, 0);
 
     is(
       $tp->parse('string*')->type_code,
