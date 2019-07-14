@@ -178,5 +178,14 @@ subtest 'void as arg should fail is arg count > 1' => sub {
 
 };
 
+subtest 'single void arg treated as no args' => sub {
+
+  my $ffi = FFI::Platypus->new;
+
+  eval { $ffi->function( 0 => ['void'] => 'void' ) };
+  is "$@", "";
+
+};
+
 done_testing;
 
