@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.91_01   2019-07-14 09:32:13 -0400
   - Add support for variadic functions (gh#136, gh#141)
   - Include Type Parser version 1.  This can be activated using
     the api => 1 when creating a FFI::Platypus instance (gh#135)
