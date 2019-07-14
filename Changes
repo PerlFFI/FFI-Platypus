@@ -13,6 +13,12 @@ Revision history for {{$dist->name}}
   - Fix bug where Math::LongDouble and Math::Complex detection
     wasn't being made for array and pointers of longdouble,
     complex_float and complex_double types. (gh#135)
+  - For functions: allow a single 'void' argument type to indicate
+    an empty list of arguments (a la old C style).  The 'void'
+    type is otherwise now illegal as an argument type (ie when
+    there is more than one argument) and will throw an exception
+    when the function is created.  Previously a warning would
+    be issued when the funtion was called. (gh#140, gh#142)
 
 0.90      2019-07-01 09:47:31 -0400
   - Documentation improvements (gh#137, et. al.)
