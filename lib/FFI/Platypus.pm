@@ -979,10 +979,10 @@ sub find_symbol
  $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
  $ffi->package;                  # autodetect
 
-If you have used L<Module::Build::FFI> to bundle C code with your
-distribution, you can use this method to tell the L<FFI::Platypus>
-instance to look for symbols that came with the dynamic library that was
-built when your distribution was installed.
+If you use L<FFI::Build> (or the older deprecated L<Module::Build::FFI>
+to bundle C code with your distribution, you can use this method to tell
+the L<FFI::Platypus> instance to look for symbols that came with the
+dynamic library that was built when your distribution was installed.
 
 =cut
 
