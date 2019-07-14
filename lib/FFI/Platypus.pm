@@ -664,6 +664,13 @@ sub function
   $var_args = shift if defined $_[0] && ref($_[0]) eq 'ARRAY';
   my $ret = shift;
 
+  # special case: treat a single void argument type as an empty list of
+  # arguments, a la olde timey C compilers.
+  if( (!defined $var_args) && @$fixed_args == 1 && $fixed_args->[0] eq 'void' )
+  {
+    $fixed_args = [];
+  }
+
   my $args = [@$fixed_args, @{ $var_args || [] } ];
   my $fixed_arg_count = defined $var_args ? scalar(@$fixed_args) : -1;
 
