@@ -169,5 +169,14 @@ subtest 'variadic' => sub {
 
 };
 
+subtest 'void as arg should fail is arg count > 1' => sub {
+
+  my $ffi = FFI::Platypus->new;
+
+  eval { $ffi->function( 0 => ['int','void'] => 'void' ) };
+  like "$@", qr/^void not allowed as argument type/;
+
+};
+
 done_testing;
 

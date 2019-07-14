@@ -42,6 +42,8 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
         croak("non-type parameter passed in as type");
       }
       arg_type = INT2PTR(ffi_pl_type*, SvIV((SV*) SvRV(arg)));
+      if(arg_type->type_code == FFI_PL_TYPE_VOID)
+        croak("void not allowed as argument type");
       if((arg_type->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
         extra_arguments += arg_type->extra[0].custom_perl.argument_count;
     }
