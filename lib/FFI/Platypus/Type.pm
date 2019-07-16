@@ -294,9 +294,10 @@ Opaque pointers are simply a pointer to a region of memory that you do
 not manage, and do not know the structure of. It is like a C<void *> in
 C.  These types are represented in Perl space as integers and get
 converted to and from pointers by L<FFI::Platypus>.  You may use
-C<pointer> as an alias for C<opaque>.  (The Platypus documentation uses
-the convention of using "pointer" to refer to pointers to known types
-(see below) and "opaque" as short hand for opaque pointer).
+C<pointer> as an alias for C<opaque>, although this is discouraged.
+(The Platypus documentation uses the convention of using "pointer"
+to refer to pointers to known types (see below) and "opaque" as short
+hand for opaque pointer).
 
 As an example, libarchive defines C<struct archive> type in its header
 files, but does not define its content.  Internally it is defined as a
@@ -318,6 +319,9 @@ As a special case, when you pass C<undef> into a function that takes an
 opaque type it will be translated into C<NULL> for C.  When a C function
 returns a NULL pointer, it will be translated back to C<undef>.
 
+There are a number of useful utility functions for dealing with opaque
+types in the L<FFI::Platypus::Memory> module.
+
 =head2 Strings
 
 From the CPU's perspective, strings are just pointers.  From Perl and
@@ -331,9 +335,109 @@ type.
  my $ffi = FFI::Platypus->new;
  $ffi->attach( puts => [ 'string' ] => 'int' );
 
-Currently strings are only supported as simple argument and return types
-and as argument (but not return types) for closures.  In the future pointers
-to strings or arrays of strings may be supported.
+The pointer passed into C (or other language) is to the content of the
+actual scalar, which means it can modify the content of a scalar.
+
+When used as a return type, the string is I<copied> into a new scalar
+rather than using the original address.  This is due to the ownership
+model of scalars in Perl, but it is also most of the time what you want.
+
+This can be problematic when a function returns a string that the callee
+is expected to free.  Consider the functions:
+
+ char *
+ get_string()
+ {
+   char *buffer;
+   buffer = malloc(20);
+   strcpy(buffer, "Perl");
+ }
+
+ void
+ free_string(char *buffer)
+ {
+   free(buffer);
+ }
+
+This API returns a string that you are expected to free when you are
+done with it.  (At least they have provided an API for freeing the
+string instead of expecting you to call libc free)!  A simple binding
+to get the string would be:
+
+ $ffi->attach( get_string => [] => 'string' );  # memory leak
+ my $str = get_string();
+
+Which will work to a point, but the memory allocated by get_string
+will leak.  Instead you need to get the opaque pointer, cast it to
+a string and then free it.
+
+ $ffi->attach( get_string => [] => 'opaque' );
+ $ffi->attach( free_string => ['opaque'] => 'void' );
+ my $ptr = get_string();
+ my $str = $ffi->cast( 'opaque' => 'string' );  # copies the string
+ free_string($ptr);
+
+If you are doing this sort of thing a lot, it can be worth adding a
+custom type:
+
+ $ffi->attach( free_string => ['opaque'] => 'void' );
+ $ffi->custom_type( 'my_string' => {
+   native_type => 'opaque',
+   native_to_perl => sub {
+     my($ptr) = @_;
+     my $str = $ffi->cast( 'opaque' => 'string' ); # copies the string
+     free_string($ptr);
+   }
+ });
+ 
+ $ffi->attach( get_string => [] => 'my_string' );
+ my $str = get_string();
+
+Since version 0.62, pointers and arrays to strings are supported as a
+first class type.  Prior to that L<FFI::Platypus::Type::StringArray>
+and L<FFI::Platypus::Type::StringPointer> could be used, though their
+use in new code is discouraged.
+
+Strings are not allowed as return types from closure.  This, again
+is due to the ownership model of scalars in Perl.  (There is no way
+for Perl to know when calling language is done with the memory allocated
+to the string).  Consider the API:
+
+ typedef const char *(*get_message_t)(void);
+
+ void
+ print_message(get_message_t get_message)
+ {
+   const char *str;
+   str = get_message();
+   printf("message = %s\n");
+ }
+
+It feels like this should be able to work:
+
+ $ffi->type('()->string' => 'get_message_t'); # not ok
+ $ffi->attach( print_message => ['get_message_t'] => 'void' );
+ my $get_message = $ffi->closure(sub {
+   return "my message";
+ });
+ print_message($get_message);
+
+If the type declaration for `get_message_t` were legal, then this
+script would likely segfault or in the very least corrupt memory.
+The problem is that once C<"my message"> is returned from the closure
+Perl doesn't have a reference to it anymore and will free it.
+To do this safely, you have to keep a reference to the scalar around
+and return an opaque pointer to the string using a cast.
+
+ $ffi->type('()->opaque' => 'get_message_t');
+ $ffi->attach( print_message => ['get_message_t'] => 'void' );
+ my $get_message => $ffi->closure(sub {
+   our $message = "my message";  # needs to be our so that it doesn't
+                                 # get free'd
+   my $ptr = $ffi->cast('string' => 'opaque');
+   return $ptr;
+ });
+ print_message($get_message);
 
 =head2 Pointer / References
 
@@ -468,6 +572,13 @@ Can be called from Perl like this:
 
 Another method might be to have a special value, such as 0 or NULL
 indicate the termination of the array.
+
+When a function returns a record type, the value is I<copied>.  This is
+due to the ownership rules of scalars in Perl, and is very similar to
+the way that strings work.  If the function expects you to free the
+record pointer it returns, then you need to use the opaque type, cast
+the pointer to a record type and free the pointer.  The technique is
+very similar to the example in the Strings section above.
 
 =head2 Closures
 

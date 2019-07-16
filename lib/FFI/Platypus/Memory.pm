@@ -26,7 +26,8 @@ use base qw( Exporter );
 
 This module provides an interface to common memory functions provided by 
 the standard C library.  They may be useful when constructing interfaces 
-to C libraries with FFI.
+to C libraries with FFI.  It works mostly with the C<opaque> type and it
+is worth reviewing the section on opaque pointers in L<FFI::Platypus::Type>.
 
 =head1 FUNCTIONS
 
