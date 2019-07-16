@@ -523,10 +523,10 @@ Return the address of the given symbol (usually function).
     $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
     $ffi->package;                  # autodetect
 
-If you have used [Module::Build::FFI](https://metacpan.org/pod/Module::Build::FFI) to bundle C code with your
-distribution, you can use this method to tell the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus)
-instance to look for symbols that came with the dynamic library that was
-built when your distribution was installed.
+If you use [FFI::Build](https://metacpan.org/pod/FFI::Build) (or the older deprecated [Module::Build::FFI](https://metacpan.org/pod/Module::Build::FFI)
+to bundle C code with your distribution, you can use this method to tell
+the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance to look for symbols that came with the
+dynamic library that was built when your distribution was installed.
 
 ## abis
 
