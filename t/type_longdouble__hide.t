@@ -14,8 +14,8 @@ BEGIN {
 
   plan skip_all => 'test requires support for long double'
     unless FFI::Platypus::TypeParser->have_type('longdouble');
-  plan skip_all => 'test requires Devel::Hide'
-    unless eval q{ use Devel::Hide qw( Math::LongDouble ); 1; };
+  plan skip_all => 'test requires Devel::Hide 0.0010'
+    unless eval q{ use Devel::Hide 0.0010 qw( Math::LongDouble ); 1; };
 }
 
 my $ffi = FFI::Platypus->new;
@@ -24,9 +24,8 @@ $ffi->lib(find_lib lib => 'test', libpath => 't/ffi');
 subtest 'Math::LongDouble is loaded when needed for return type' => sub {
   is($INC{'Math/LongDouble.pm'}, undef, 'not pre-loaded');
   $ffi->function( longdouble_add => ['longdouble','longdouble'] => 'longdouble' );
-  my $pm = $INC{'Math/LongDouble.pm'};
-  is($pm, undef);
-  is($INC{'Math/LongDouble.pm'}, undef);
+  my $loaded = Math::LongDouble->can("new");
+  ok !$loaded;
 };
 
 $ffi->type('longdouble*' => 'longdouble_p');
