@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Documentation improvements. (gh#139, gh#145, et. al)
+  - Fixed minor testing error introduced in 0.91_01 (gh#143, gh#144)
 
 0.91_01   2019-07-14 09:32:13 -0400
   - Add support for variadic functions (gh#136, gh#141)
