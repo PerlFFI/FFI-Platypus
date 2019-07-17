@@ -1,0 +1,47 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use lib 'inc';
+use lib 'lib';
+use FFI::Probe;
+use FFI::Probe::Runner;
+use FFI::Probe::Runner::Builder;
+use My::ShareConfig;
+use File::Temp qw( tempdir );
+use Path::Tiny qw( path );
+
+my $dir = tempdir( CLEANUP => 1 );
+my $data_filename = path( $dir, 'probe.pl' );
+my $log_filename  = path( $dir, 'config.log' );
+
+my $probe = FFI::Probe->new(
+  runner => do {
+    my $builder = FFI::Probe::Runner::Builder->new;
+    my $exe = $builder->exe;
+    FFI::Probe::Runner->new( exe => $exe );
+  },
+  log => "$log_filename",
+  data_filename => "$data_filename",
+  alien => [My::ShareConfig->new->get('alien')->{class}],
+  cflags => ['-Iinclude'],
+);
+
+my $name = shift @ARGV;
+$name ||= 'recordvalue'; # this is what I am strugling with right this minute.
+my $fn = "inc/probe/$name.c";
+my $code = do {
+  my $fh;
+  open $fh, '<', $fn;
+  local $/;
+  <$fh>;
+};
+
+my $value = $probe->check($name, $code);
+
+$probe->save;
+
+print "[log]\n";
+print $log_filename->slurp;
+print "[data]\n";
+print $data_filename->slurp;
