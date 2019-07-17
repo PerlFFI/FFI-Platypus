@@ -50,6 +50,8 @@ _Bool
 pointer
 uintptr_t
 intptr_t
+enum
+senum
 EOF
 
 my @extra_probe_types = split /\n/, <<EOF;
@@ -214,8 +216,6 @@ sub configure
 
   foreach my $type (@probe_types)
   {
-    my $ok;
-
     if($type =~ /^(float|double|long double)/)
     {
       if(my $basic = $probe->check_type_float($type))
@@ -228,6 +228,22 @@ sub configure
     {
       $probe->check_type_pointer;
       $align{pointer} = $probe->data->{type}->{pointer}->{align};
+    }
+    elsif($type eq 'enum')
+    {
+      if(my $basic = $probe->check_type_enum)
+      {
+        $type_map{enum} = $basic;
+        $align{$basic} ||= $probe->data->{type}->{enum}->{align};
+      }
+    }
+    elsif($type eq 'senum')
+    {
+      if(my $basic = $probe->check_type_signed_enum)
+      {
+        $type_map{senum} = $basic;
+        $align{$basic} ||= $probe->data->{type}->{senum}->{align};
+      }
     }
     else
     {
