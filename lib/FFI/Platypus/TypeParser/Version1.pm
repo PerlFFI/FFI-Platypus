@@ -46,6 +46,9 @@ our @CARP_NOT = qw( FFI::Platypus FFI::Platypus::TypeParser );
 
 my %reserved = map { $_ => 1 } qw(
   struct
+  record
+  string
+  senum
   enum
 );
 
