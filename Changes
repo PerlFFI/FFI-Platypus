@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.92      2019-07-17 18:16:40 -0400
+  - Production release identical to 0.91_02
+
 0.91_02   2019-07-16 19:31:40 -0400
   - Documentation improvements. (gh#139, gh#145, et. al)
   - Fixed minor testing error introduced in 0.91_01 (gh#143, gh#144)
