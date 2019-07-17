@@ -97,6 +97,7 @@ sub verify
   my($self) = @_;
   my $exe = $self->exe;
   my($out, $err, $ret) = capture {
+    $! = 0;
     system $exe, 'verify', 'self';
   };
   return 1 if $ret == 0 && $out =~ /dlrun verify self ok/;
@@ -122,6 +123,7 @@ sub run
   my $flags = $self->flags;
   my($out, $err, $ret) = capture {
     my @cmd = ($exe, $dll, $flags, @args);
+    $! = 0;
     system @cmd;
     $?;
   };
