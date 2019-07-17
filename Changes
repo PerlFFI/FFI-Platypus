@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add support for returning records pass-by-value (gh#89, gh#147)
 
 0.91_02   2019-07-16 19:31:40 -0400
   - Documentation improvements. (gh#139, gh#145, et. al)
