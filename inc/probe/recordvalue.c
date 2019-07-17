@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define is_signed(type)  ((((type)-1) < 0) ? 1 : 0)
+
 typedef struct {
   char name[13];
   int value;
@@ -29,7 +31,7 @@ dlmain(int argc, char *argv[])
   ffi_type_foo_t.elements = calloc(14, sizeof(ffi_type*));
 
   for(i=0; i<13; i++)
-    ffi_type_foo_t.elements[i] = &ffi_type_sint8;
+    ffi_type_foo_t.elements[i] = is_signed(char) ? &ffi_type_sint8 : &ffi_type_uint8;
   ffi_type_foo_t.elements[13] = &ffi_type_sint32;
 
   if(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 0, &ffi_type_foo_t, NULL) == FFI_OK)
