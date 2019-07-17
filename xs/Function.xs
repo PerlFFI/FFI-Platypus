@@ -27,6 +27,12 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
       croak("variadic functions are not supported by some combination of your libffi/compiler/platypus");
     }
 #endif
+#ifndef FFI_PL_PROBE_RECORDVALUE
+    if(return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
+    {
+      croak("returning record values is not supported by some combination of your libffi/compiler/platypus");
+    }
+#endif
     ffi_abi = abi == -1 ? FFI_DEFAULT_ABI : abi;
 
     for(i=0,extra_arguments=0; i<(items-6); i++)
