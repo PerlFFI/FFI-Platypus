@@ -24,7 +24,7 @@ subtest 'is a reference' => sub {
   $ffi->type("record(FooRecord)" => 'foo_record_t');
   my $get_name  = $ffi->function( foo_value_get_name    => [ 'foo_record_t' ] => 'string' );
   my $get_value = $ffi->function( foo_value_get_value   => [ 'foo_record_t' ] => 'sint32' );
-  #my $create    = $ffi->function( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' ); # todo
+  my $create    = $ffi->function( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' ); # todo
 
   subtest 'argument' => sub {
 
@@ -52,6 +52,14 @@ subtest 'is a reference' => sub {
 
       is $get_name->call($rv), "hello";
       is $get_value->call($rv), 42;
+
+    };
+
+    subtest 'return value' => sub {
+
+      my $rv = $create->call("laters", 47);
+      is $rv->name,  "laters\0\0\0\0\0\0\0\0\0\0";
+      is $rv->value, 47;
 
     };
   };

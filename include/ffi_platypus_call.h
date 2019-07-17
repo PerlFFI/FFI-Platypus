@@ -20,6 +20,8 @@
  * with XS tbh.
  */
 
+    ffi_pl_result result;
+    void *result_ptr;
     ffi_pl_heap *heap = NULL;
 
     {
@@ -636,14 +638,23 @@
 
     MY_CXT.current_argv = NULL;
 
+    if(self->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
+    {
+      Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, 1);
+    }
+    else
+    {
+      result_ptr = &result;
+    }
+
     if(self->address != NULL)
     {
-      ffi_call(&self->ffi_cif, self->address, &result, ffi_pl_arguments_pointers(arguments));
+      ffi_call(&self->ffi_cif, self->address, result_ptr, ffi_pl_arguments_pointers(arguments));
     }
     else
     {
       void *address = self->ffi_cif.nargs > 0 ? (void*) &cast1 : (void*) &cast0;
-      ffi_call(&self->ffi_cif, address, &result, ffi_pl_arguments_pointers(arguments));
+      ffi_call(&self->ffi_cif, address, result_ptr, ffi_pl_arguments_pointers(arguments));
     }
 
 /*
@@ -1097,7 +1108,15 @@
           }
           break;
         case FFI_PL_TYPE_RECORD_VALUE:
-          /* TODO */
+          {
+            SV *value, *ref;
+            value = sv_newmortal();
+            sv_setpvn(value, result_ptr, self->return_type->extra[0].record_value.size);
+            ref = ST(0) = newRV_inc(value);
+            sv_bless(ref, gv_stashpv(self->return_type->extra[0].record_value.class, GV_ADD));
+            XSRETURN(1);
+          }
+          break;
         default:
 
           switch(type_code & FFI_PL_SHAPE_MASK)

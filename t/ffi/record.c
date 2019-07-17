@@ -2,7 +2,7 @@
 #include "libtest.h"
 
 typedef struct {
-  const char name[16];
+  char name[16];
   int32_t value;
 } foo_record_t;
 
@@ -40,8 +40,12 @@ EXTERN foo_record_t *
 foo_create(const char *name, int32_t value)
 {
   static foo_record_t self;
+  int i;
 
-  strcpy((char*)self.name, name);
+  for(i=0; i<16; i++)
+    self.name[i] = '\0';
+
+  strcpy(self.name, name);
   self.value = value;
 
   return &self;
@@ -51,6 +55,10 @@ EXTERN foo_record_t
 foo_value_create(const char *name, int32_t value)
 {
   foo_record_t self;
+  int i;
+
+  for(i=0; i<16; i++)
+    self.name[i] = '\0';
 
   strcpy(self.name, name);
   self.value = value;
