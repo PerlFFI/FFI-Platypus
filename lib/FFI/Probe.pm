@@ -123,7 +123,7 @@ sub check_header
   $code .= "#include <$_>\n" for @{ $self->{headers} }, $header;
 
   my $build = FFI::Build->new("hcheck@{[ ++$self->{counter} ]}",
-    verbose => 1,
+    verbose => 2,
     dir     => $self->{dir},
     alien   => $self->{alien},
     cflags  => $self->{cflags},
@@ -161,7 +161,7 @@ sub check_cpp
   my($self, $code) = @_;
 
   my $build = FFI::Build->new("hcheck@{[ ++$self->{counter} ]}",
-    verbose => 1,
+    verbose => 2,
     dir     => $self->{dir},
     alien   => $self->{alien},
     cflags  => $self->{cflags},
@@ -243,7 +243,7 @@ sub check_eval
   $code =~ s/##EVAL##/$eval/;
 
   my $build = FFI::Build->new("eval@{[ ++$self->{counter} ]}",
-    verbose => 1,
+    verbose => 2,
     dir     => $self->{dir},
     alien   => $self->{alien},
     cflags  => $self->{cflags},
