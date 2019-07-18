@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.93_01   2019-07-17 20:21:47 -0400
   - Add support for returning records pass-by-value (gh#89, gh#147)
   - Add enum and senum (signed enum) types (gh#146)
 
