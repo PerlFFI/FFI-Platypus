@@ -6,7 +6,7 @@ make
 make test TEST_VERBOSE=1
 make install
 
-if perl -e 'exit ! ($] > 5.010)'; then
+if perl -e 'exit ! ($] > 5.016)'; then
 
   cpanm -n local::lib
 
