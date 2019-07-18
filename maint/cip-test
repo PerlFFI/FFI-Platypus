@@ -10,13 +10,6 @@ if perl -e 'exit ! ($] > 5.010)'; then
 
   cpanm -n local::lib
 
-  # workaround for rt128685.  These two lines
-  # can and should be removed once IO::Socket::SSL
-  # is unborked.  In so far as that is possible
-  # anyway.
-  cpanm -n Net::SSLeay
-  cpanm -n IO::Socket::SSL
-
   maint/cip-test-cpan FFI::Util
   maint/cip-test-cpan FFI::TinyCC
   maint/cip-test-cpan FFI::TinyCC::Inline
