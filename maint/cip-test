@@ -11,8 +11,8 @@ if perl -e 'exit ! ($] > 5.016)'; then
   cpanm -n local::lib
 
   maint/cip-test-cpan FFI::Util
-  maint/cip-test-cpan FFI::TinyCC
-  maint/cip-test-cpan FFI::TinyCC::Inline
+  #maint/cip-test-cpan FFI::TinyCC
+  #maint/cip-test-cpan FFI::TinyCC::Inline
   maint/cip-test-cpan FFI::ExtractSymbols
 
   maint/cip-test-cpan UUID::FFI
