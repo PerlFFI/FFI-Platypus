@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix complex test on 32bit (gh#148)
 
 0.93_01   2019-07-17 20:21:47 -0400
   - Add support for returning records pass-by-value (gh#89, gh#147)
