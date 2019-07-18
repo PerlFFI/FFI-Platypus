@@ -18,6 +18,7 @@ jobs:
   include:
     - env: CIP_TAG=5.31
     - env: CIP_TAG=5.30
+    - env: CIP_TAG=5.30.0-stretch32
     - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
     - env: CIP_TAG=5.30-threads
     - env: CIP_TAG=5.30-longdouble
@@ -33,16 +34,13 @@ jobs:
     - env: CIP_TAG=5.18
     - env: CIP_TAG=5.16
     - env: CIP_TAG=5.14
-    - env: CIP_TAG=5.14-threads
     - env: CIP_TAG=5.14-longdouble
     - env: CIP_TAG=5.12
     - env: CIP_TAG=5.10.1
-    - env: CIP_TAG=5.10.1-threads
     - env: CIP_TAG=5.10.0
     - env: CIP_TAG=5.10.0-threads
     - env: CIP_TAG=5.8.9
     - env: CIP_TAG=5.8.8
-    - env: CIP_TAG=5.8.8-threads
     - env: CIP_TAG=5.8.1
     - env: CIP_TAG=5.8.1-threads
   allow_failures:
