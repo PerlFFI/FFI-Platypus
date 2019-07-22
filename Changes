@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.93_03   2019-07-22 15:02:05 -0400
   - Reclaim some memory waste introduced in 0.93_01 (gh#149)
 
 0.93_02   2019-07-18 10:03:01 -0400
