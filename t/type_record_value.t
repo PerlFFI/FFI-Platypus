@@ -57,37 +57,41 @@ subtest 'is a reference' => sub {
 
     };
 
-    subtest 'return value' => sub {
+  };
 
-      plan skip_all => 'test requires working return records-by-value'
-        unless $return_ok;
+  subtest 'return value' => sub {
+
+    plan skip_all => 'test requires working return records-by-value'
+      unless $return_ok;
+
+    subtest 'function object' => sub {
 
       my $create    = $ffi->function( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' );
 
       my $rv = $create->call("laters", 47);
       is $rv->name,  "laters\0\0\0\0\0\0\0\0\0\0";
       is $rv->value, 47;
+    };
+
+    subtest 'attach' => sub {
+
+      my $create = $ffi->function( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' )->sub_ref;
+
+      my $rv = $create->("laters", 47);
+      is $rv->name,  "laters\0\0\0\0\0\0\0\0\0\0";
+      is $rv->value, 47;
 
     };
-  };
 
-  subtest 'attach' => sub {
+    subtest 'attach' => sub {
 
-    my $create = $ffi->function( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' )->sub_ref;
+      $ffi->attach( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' );
 
-    my $rv = $create->("laters", 47);
-    is $rv->name,  "laters\0\0\0\0\0\0\0\0\0\0";
-    is $rv->value, 47;
+      my $rv = foo_value_create("laters", 47);
+      is $rv->name,  "laters\0\0\0\0\0\0\0\0\0\0";
+      is $rv->value, 47;
 
-  };
-
-  subtest 'attach' => sub {
-
-    $ffi->attach( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' );
-
-    my $rv = foo_value_create("laters", 47);
-    is $rv->name,  "laters\0\0\0\0\0\0\0\0\0\0";
-    is $rv->value, 47;
+    };
 
   };
 
