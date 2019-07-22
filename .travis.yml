@@ -18,7 +18,7 @@ jobs:
   include:
     - env: CIP_TAG=5.31
     - env: CIP_TAG=5.30
-    - env: CIP_TAG=5.30.0-stretch32
+    - env: CIP_TAG=5.30-stretch32
     - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
     - env: CIP_TAG=5.30-threads
     - env: CIP_TAG=5.30-longdouble
