@@ -194,15 +194,20 @@ _attach(self, perl_name, path_name, proto)
     ffi_pl_string proto
   PREINIT:
     CV* cv;
+    int is_ret_rv;
+    ffi_pl_function *f;
   CODE:
     if(!(sv_isobject(self) && sv_derived_from(self, "FFI::Platypus::Function")))
       croak("self is not of type FFI::Platypus::Function");
+
+    f = INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
+    is_ret_rv = f->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE;
 
     if(path_name == NULL)
       path_name = "unknown";
 
     if(proto == NULL)
-      cv = newXS(perl_name, ffi_pl_sub_call, path_name);
+      cv = newXS(perl_name, is_ret_rv ? ffi_pl_sub_call_rv : ffi_pl_sub_call, path_name);
     else
     {
       /*
@@ -211,13 +216,13 @@ _attach(self, perl_name, path_name, proto)
        * remove this workaround (the ndef'd branch)
        */
 #ifdef newXS_flags
-      cv = newXSproto(perl_name, ffi_pl_sub_call, path_name, proto);
+      cv = newXSproto(perl_name, is_ret_rv ? ffi_pl_sub_call_rv : ffi_pl_sub_call, path_name, proto);
 #else
-      newXSproto(perl_name, ffi_pl_sub_call, path_name, proto);
+      newXSproto(perl_name, is_ret_rv ? ffi_pl_sub_call_rv : ffi_pl_sub_call, path_name, proto);
       cv = get_cv(perl_name,0);
 #endif
     }
-    CvXSUBANY(cv).any_ptr = (void *) INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
+    CvXSUBANY(cv).any_ptr = (void *) f;
     /*
      * No coresponding decrement !!
      * once attached, you can never free the function object, or the FFI::Platypus
@@ -232,8 +237,12 @@ _sub_ref(self, path_name)
   PREINIT:
     CV* cv;
     SV *ref;
+    int is_ret_rv;
+    ffi_pl_function *f;
   CODE:
-    cv =newXS(NULL, ffi_pl_sub_call, path_name);
+    f = INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
+    is_ret_rv = f->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE;
+    cv = newXS(NULL, is_ret_rv ? ffi_pl_sub_call_rv : ffi_pl_sub_call, path_name);
     CvXSUBANY(cv).any_ptr = (void *) INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
     /*
      * No coresponding decrement !!

@@ -49,8 +49,29 @@ XS(ffi_pl_sub_call)
 
   self = (ffi_pl_function*) CvXSUBANY(cv).any_ptr;
 
-#define EXTRA_ARGS 0
   {
+#define EXTRA_ARGS 0
+#define FFI_PL_CALL_NO_RECORD_VALUE 1
+#include "ffi_platypus_call.h"
+  }
+}
+
+XS(ffi_pl_sub_call_rv)
+{
+  ffi_pl_function *self;
+  int i,n, perl_arg_index;
+  SV *arg;
+  ffi_pl_arguments *arguments;
+  void **argument_pointers;
+
+  dMY_CXT;
+  dVAR; dXSARGS;
+
+  self = (ffi_pl_function*) CvXSUBANY(cv).any_ptr;
+
+  {
+#define EXTRA_ARGS 0
+#define FFI_PL_CALL_RET_NO_NORMAL 1
 #include "ffi_platypus_call.h"
   }
 }

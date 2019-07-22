@@ -71,6 +71,26 @@ subtest 'is a reference' => sub {
     };
   };
 
+  subtest 'attach' => sub {
+
+    my $create = $ffi->function( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' )->sub_ref;
+
+    my $rv = $create->("laters", 47);
+    is $rv->name,  "laters\0\0\0\0\0\0\0\0\0\0";
+    is $rv->value, 47;
+
+  };
+
+  subtest 'attach' => sub {
+
+    $ffi->attach( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' );
+
+    my $rv = foo_value_create("laters", 47);
+    is $rv->name,  "laters\0\0\0\0\0\0\0\0\0\0";
+    is $rv->value, 47;
+
+  };
+
 };
 
 done_testing;
