@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Reclaim some memory waste introduced in 0.93_01 (gh#149)
 
 0.93_02   2019-07-18 10:03:01 -0400
   - Fix complex test on 32bit
