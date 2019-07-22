@@ -20,9 +20,34 @@
  * with XS tbh.
  */
 
+    ffi_pl_heap *heap = NULL;
+
+
+/*
+#undef FFI_PL_CALL_NO_RECORD_VALUE
+#undef FFI_PL_CALL_RET_NO_NORMAL
+*/
+
+#if FFI_PL_CALL_NO_RECORD_VALUE
+#define RESULT &result
+    ffi_pl_result result;
+#elif FFI_PL_CALL_RET_NO_NORMAL
+#define RESULT result_ptr
+    void *result_ptr;
+    Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, 1);
+#else
+#define RESULT result_ptr
     ffi_pl_result result;
     void *result_ptr;
-    ffi_pl_heap *heap = NULL;
+    if(self->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
+    {
+      Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, 1);
+    }
+    else
+    {
+      result_ptr = &result;
+    }
+#endif
 
     {
       /* buffer contains the memory required for the arguments structure */
@@ -638,23 +663,14 @@
 
     MY_CXT.current_argv = NULL;
 
-    if(self->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
-    {
-      Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, 1);
-    }
-    else
-    {
-      result_ptr = &result;
-    }
-
     if(self->address != NULL)
     {
-      ffi_call(&self->ffi_cif, self->address, result_ptr, ffi_pl_arguments_pointers(arguments));
+      ffi_call(&self->ffi_cif, self->address, RESULT, ffi_pl_arguments_pointers(arguments));
     }
     else
     {
       void *address = self->ffi_cif.nargs > 0 ? (void*) &cast1 : (void*) &cast0;
-      ffi_call(&self->ffi_cif, address, result_ptr, ffi_pl_arguments_pointers(arguments));
+      ffi_call(&self->ffi_cif, address, RESULT, ffi_pl_arguments_pointers(arguments));
     }
 
 /*
@@ -944,6 +960,19 @@
  */
 
 
+#if ! FFI_PL_CALL_NO_RECORD_VALUE
+        case FFI_PL_TYPE_RECORD_VALUE:
+          {
+            SV *value, *ref;
+            value = sv_newmortal();
+            sv_setpvn(value, result_ptr, self->return_type->extra[0].record_value.size);
+            ref = ST(0) = newRV_inc(value);
+            sv_bless(ref, gv_stashpv(self->return_type->extra[0].record_value.class, GV_ADD));
+            XSRETURN(1);
+          }
+          break;
+#endif
+#if ! FFI_PL_CALL_RET_NO_NORMAL
         case FFI_PL_TYPE_VOID:
           XSRETURN_EMPTY;
           break;
@@ -1104,16 +1133,6 @@
             {
               ST(0) = value;
             }
-            XSRETURN(1);
-          }
-          break;
-        case FFI_PL_TYPE_RECORD_VALUE:
-          {
-            SV *value, *ref;
-            value = sv_newmortal();
-            sv_setpvn(value, result_ptr, self->return_type->extra[0].record_value.size);
-            ref = ST(0) = newRV_inc(value);
-            sv_bless(ref, gv_stashpv(self->return_type->extra[0].record_value.class, GV_ADD));
             XSRETURN(1);
           }
           break;
@@ -1478,6 +1497,7 @@
               XSRETURN_EMPTY;
               break;
           }
+#endif
       }
     }
 
@@ -1485,3 +1505,6 @@
     XSRETURN_EMPTY;
 
 #undef EXTRA_ARGS
+#undef FFI_PL_CALL_NO_RECORD_VALUE
+#undef FFI_PL_CALL_RET_NO_NORMAL
+#undef RESULT
