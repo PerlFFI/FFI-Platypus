@@ -7,6 +7,8 @@ ffi_pl_type_to_libffi_type(ffi_pl_type *type)
   int type_code = type->type_code;
   if((type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
     type_code = type_code & ~(FFI_PL_SHAPE_MASK);
+  if((type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_OBJECT)
+    type_code = type_code & ~(FFI_PL_SHAPE_MASK);
   switch(type_code)
   {
     case FFI_PL_TYPE_VOID:

@@ -610,6 +610,66 @@
               break;
 
 /*
+ * ARGUMENT IN - OBJECT
+ */
+
+            case FFI_PL_SHAPE_OBJECT:
+              {
+                if(sv_isobject(arg) && sv_derived_from(arg, self->argument_types[i]->extra[0].object.class))
+                {
+                  SV *arg2 = SvRV(arg);
+                  switch(type_code)
+                  {
+                    case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_uint8(arguments, i, SvUV(arg2) );
+                      break;
+                    case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_sint8(arguments, i, SvUV(arg2) );
+                      break;
+                    case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_uint16(arguments, i, SvUV(arg2) );
+                      break;
+                    case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_sint16(arguments, i, SvUV(arg2) );
+                      break;
+                    case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_uint32(arguments, i, SvUV(arg2) );
+                      break;
+                    case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_sint32(arguments, i, SvUV(arg2) );
+                      break;
+#ifdef HAVE_IV_IS_64
+                    case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_uint64(arguments, i, SvUV(arg2) );
+                      break;
+                    case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_sint64(arguments, i, SvUV(arg2) );
+                      break;
+#else
+                    case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_uint64(arguments, i, SvU64(arg2) );
+                      break;
+                    case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_sint64(arguments, i, SvU64(arg2) );
+                      break;
+#endif
+                    case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_OBJECT:
+                      ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg2) ? INT2PTR(void*, SvIV(arg2)) : NULL);
+                      break;
+                    default:
+                      ffi_pl_heap_free();
+                      croak("Object argument %d type not supported %d", i, type_code);
+                  }
+                }
+                else
+                {
+                  ffi_pl_heap_free();
+                  croak("Object argument %d must be an object of class %s", i, self->argument_types[i]->extra[0].object.class);
+                }
+              }
+              break;
+
+/*
  * ARGUMENT IN - UNSUPPORTED
  */
 
@@ -1136,6 +1196,21 @@
             XSRETURN(1);
           }
           break;
+        case FFI_PL_SHAPE_OBJECT | FFI_PL_TYPE_OPAQUE:
+          if(result.pointer == NULL)
+          {
+            XSRETURN_EMPTY;
+          }
+          else
+          {
+            SV *ref;
+            SV *value = sv_newmortal();
+            sv_setiv(value, PTR2IV(((void*)result.pointer)));
+            ref = ST(0) = newRV_inc(value);
+            sv_bless(ref, gv_stashpv(self->return_type->extra[0].object.class, GV_ADD));
+            XSRETURN(1);
+          }
+          break;
         default:
 
           switch(type_code & FFI_PL_SHAPE_MASK)
@@ -1489,6 +1564,85 @@
                   XSRETURN(1);
                 }
 
+              }
+              break;
+
+            case FFI_PL_SHAPE_OBJECT:
+              {
+                SV *ref;
+                SV *value = sv_newmortal();
+                switch(type_code)
+                {
+                  case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_OBJECT:
+#if defined FFI_PL_PROBE_BIGENDIAN
+                    sv_setiv(value, result.sint8_array[3]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+                    sv_setiv(value, result.sint8_array[7]);
+#else
+                    sv_setiv(value, result.sint8);
+#endif
+                    break;
+                  case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_OBJECT:
+#if defined FFI_PL_PROBE_BIGENDIAN
+                    sv_setuv(value, result.uint8_array[3]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+                    sv_setuv(value, result.uint8_array[7]);
+#else
+                    sv_setuv(value, result.uint8);
+#endif
+                    break;
+                  case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_OBJECT:
+#if defined FFI_PL_PROBE_BIGENDIAN
+                    sv_setiv(value, result.sint16_array[1]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+                    sv_setiv(value, result.sint16_array[3]);
+#else
+                    sv_setiv(value, result.sint16);
+#endif
+                    break;
+                  case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_OBJECT:
+#if defined FFI_PL_PROBE_BIGENDIAN
+                    sv_setiv(value, result.uint16_array[1]);
+#elif defined FFI_PL_PROBE_BIGENDIAN64
+                    sv_setuv(value, result.uint16_array[3]);
+#else
+                    sv_setuv(value, result.uint16);
+#endif
+                    break;
+                  case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_OBJECT:
+#if defined FFI_PL_PROBE_BIGENDIAN64
+                    sv_setiv(value, result.sint32_array[1]);
+#else
+                    sv_setiv(value, result.sint32);
+#endif
+                    break;
+                  case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_OBJECT:
+#if defined FFI_PL_PROBE_BIGENDIAN64
+                    sv_setuv(value, result.uint32_array[1]);
+#else
+                    sv_setuv(value, result.uint32);
+#endif
+                    break;
+                  case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_OBJECT:
+#ifdef HAVE_IV_IS_64
+                    sv_setiv(value, result.sint64);
+#else
+                    sv_seti64(value, result.sint64);
+#endif
+                    break;
+                  case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_OBJECT:
+#ifdef HAVE_IV_IS_64
+                    sv_setuv(value, result.uint64);
+#else
+                    sv_setu64(value, result.sint64);
+#endif
+                    break;
+                  default:
+                    break;
+                }
+                ref = ST(0) = newRV_inc(value);
+                sv_bless(ref, gv_stashpv(self->return_type->extra[0].object.class, GV_ADD));
+                XSRETURN(1);
               }
               break;
 
