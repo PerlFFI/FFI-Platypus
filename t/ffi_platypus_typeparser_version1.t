@@ -490,4 +490,24 @@ subtest 'use alias' => sub {
 
 };
 
+subtest 'object' => sub {
+
+  { package Roger; }
+
+  is(
+    $tp->parse('object(Roger)')->type_code,
+    FFI_PL_SHAPE_OBJECT | FFI_PL_TYPE_OPAQUE,
+  );
+
+  is(
+    $tp->parse('object(Roger,sint32)')->type_code,
+    FFI_PL_SHAPE_OBJECT | FFI_PL_TYPE_SINT32,
+  );
+
+  local $@ = '';
+  eval { $tp->parse('object(Roger,float)') };
+  like "$@", qr/^cannot make an object of float/;
+
+};
+
 done_testing;

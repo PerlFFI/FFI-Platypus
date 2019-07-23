@@ -82,6 +82,26 @@ create_type_record_value(self, size, class, ffi_type)
   OUTPUT:
     RETVAL
 
+ffi_pl_type*
+create_type_object(self, type_code, class)
+    SV *self
+    int type_code
+    ffi_pl_string class
+  PREINIT:
+    ffi_pl_type *type;
+    size_t class_name_size;
+  CODE:
+    (void)self;
+    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_object));
+    class_name_size = strlen(class)+1;
+    type->extra[0].object.class = malloc(class_name_size);
+    memcpy(type->extra[0].object.class, class, class_name_size);
+    type->type_code |= type_code;
+    type->type_code |= FFI_PL_SHAPE_OBJECT;
+    RETVAL = type;
+  OUTPUT:
+    RETVAL
+
 ffi_pl_type *
 create_type_string(self, rw)
     SV *self

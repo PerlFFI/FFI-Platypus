@@ -69,6 +69,23 @@ is_record_value(self)
     RETVAL
 
 int
+is_object_ok(self)
+    ffi_pl_type *self
+  PREINIT:
+    int shape;
+    int base;
+  CODE:
+    shape = self->type_code & FFI_PL_SHAPE_MASK;
+    base  = self->type_code & FFI_PL_BASE_MASK;
+    RETVAL = shape == FFI_PL_SHAPE_SCALAR
+           && (   base == FFI_PL_BASE_SINT
+               || base == FFI_PL_BASE_UINT
+               || base == FFI_PL_BASE_OPAQUE
+              );
+  OUTPUT:
+    RETVAL
+
+int
 is_ro(self)
     ffi_pl_type *self
   CODE:
@@ -90,18 +107,33 @@ DESTROY(self)
     {
       Safefree(self->extra[0].record_value.class);
     }
-    else if((self->type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
+    else
     {
-      ffi_pl_type_extra_custom_perl *custom;
+      switch(self->type_code & FFI_PL_SHAPE_MASK)
+      {
+        case FFI_PL_SHAPE_CUSTOM_PERL:
+          {
+            ffi_pl_type_extra_custom_perl *custom;
 
-      custom = &self->extra[0].custom_perl;
+            custom = &self->extra[0].custom_perl;
 
-      if(custom->perl_to_native != NULL)
-        SvREFCNT_dec(custom->perl_to_native);
-      if(custom->perl_to_native_post != NULL)
-        SvREFCNT_dec(custom->perl_to_native_post);
-      if(custom->native_to_perl != NULL)
-        SvREFCNT_dec(custom->native_to_perl);
+            if(custom->perl_to_native != NULL)
+              SvREFCNT_dec(custom->perl_to_native);
+            if(custom->perl_to_native_post != NULL)
+              SvREFCNT_dec(custom->perl_to_native_post);
+            if(custom->native_to_perl != NULL)
+              SvREFCNT_dec(custom->native_to_perl);
+          }
+          break;
+        case FFI_PL_SHAPE_OBJECT:
+          {
+            if(self->extra[0].object.class != NULL)
+              Safefree(self->extra[0].object.class);
+          }
+          break;
+        default:
+          break;
+      }
     }
     if(!PL_dirty)
       Safefree(self);

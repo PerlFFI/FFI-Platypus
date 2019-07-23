@@ -92,7 +92,10 @@ use constant type_regex =>
       ( (?: [A-Za-z_] [A-Za-z_0-9]* \s+ )* [A-Za-z_] [A-Za-z_0-9]* )         \s*                                                                                  # unit type name $7
                                                                                                                                                                   #
               (?:  (\*)  |   \[ ([0-9]*) \]  |  )                                                                                                                 # pointer $8,       array $9
-                                                                                                                                                                  #
+      |                                                                                                                                                           #
+      object                \s* \( \s* ( (?: [A-Za-z_] [A-Za-z_0-9]* :: )* [A-Za-z_] [A-Za-z_0-9]* )                                                              # object class $10
+                                   (?: \s*,\s* ( (?: [A-Za-z_] [A-Za-z_0-9]* \s+ )* [A-Za-z_] [A-Za-z_0-9]* ) )?                                                  #        type $11
+                                   \s*                                                                            \)                                              #
     )                                                                                                                                                             #
                                                                                                                                                                   #
     \s*                                                                                                                                                           # trailing white space
@@ -275,6 +278,23 @@ sub parse
     }
 
     return $self->types->{$name} || croak "unknown type: $unit_name";
+  }
+
+  if(defined (my $class = $10)) # object type
+  {
+    my $basic_name = $11 || 'opaque';
+    my $basic_type = $self->parse($basic_name);
+    if($basic_type->is_object_ok)
+    {
+      return $self->types->{$name} = $self->create_type_object(
+        $basic_type->type_code,
+        $class,
+      );
+    }
+    else
+    {
+      croak "cannot make an object of $basic_name";
+    }
   }
 
   croak "internal error parsing: $name";
