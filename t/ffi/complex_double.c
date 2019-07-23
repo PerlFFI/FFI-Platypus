@@ -53,4 +53,10 @@ complex_double_ptr_ret(double r, double i)
   return &f;
 }
 
+EXTERN double complex
+complex_double_array_get(double complex *f, int i)
+{
+  return f[i];
+}
+
 #endif

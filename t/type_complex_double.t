@@ -4,6 +4,7 @@ use Test::More;
 use FFI::Platypus;
 use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
+use Data::Dumper qw( Dumper );
 
 BEGIN {
   plan skip_all => 'Test requires support for double complex'
@@ -80,7 +81,6 @@ foreach my $api (0, 1)
       subtest 'values set on out (array)' => sub {
         my @c;
         complex_set(\\@c, 1.0, 2.0);
-        note "to_string(\\\@c) = ", to_string(\@c);
         is_deeply \@c, [ 1.0, 2.0 ];
       };
 
@@ -109,6 +109,21 @@ foreach my $api (0, 1)
       is_deeply(complex_ret(1.0,2.0),       [1.0,2.0], 'standard');
       is_deeply(complex_ptr_ret(1.0,2.0),  \[1.0,2.0], 'pointer');
       is_deeply([complex_null()],             [],     'null');
+
+    };
+
+    subtest 'complex array arg' => sub {
+
+      my $f = $ffi->function(complex_double_array_get => ['complex_double[]','int'] => 'complex_double' );
+
+      my @a = ([0.0,0.0], [1.0,2.0], [3.0,4.0]);
+      my $ret;
+      is_deeply( $ret = $f->call(\@a, 0), [0.0,0.0] )
+        or diag Dumper($ret);
+      is_deeply( $ret = $f->call(\@a, 1), [1.0,2.0] )
+        or diag Dumper($ret);
+      is_deeply( $ret = $f->call(\@a, 2), [3.0,4.0] )
+        or diag Dumper($ret);
 
     };
   };

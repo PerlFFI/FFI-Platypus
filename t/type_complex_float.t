@@ -110,6 +110,21 @@ foreach my $api (0, 1)
       is_deeply([complex_null()],             [],     'null');
 
     };
+
+    subtest 'complex array arg' => sub {
+
+      my $f = $ffi->function(complex_float_array_get => ['complex_float[]','int'] => 'complex_float' );
+
+      my @a = ([0.0,0.0], [1.0,2.0], [3.0,4.0]);
+      my $ret;
+      is_deeply( $ret = $f->call(\@a, 0), [0.0,0.0] )
+        or diag Dumper($ret);
+      is_deeply( $ret = $f->call(\@a, 1), [1.0,2.0] )
+        or diag Dumper($ret);
+      is_deeply( $ret = $f->call(\@a, 2), [3.0,4.0] )
+        or diag Dumper($ret);
+
+    };
   };
 }
 
