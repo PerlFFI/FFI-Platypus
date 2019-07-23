@@ -173,10 +173,8 @@ subtest 'object' => sub {
 
   subtest 'argument' => sub {
 
-    use Data::Dumper qw( Dumper );
-    note Dumper(bless(\$ptr, 'Roger'));
-
     is $ffi->cast('roger_t' => 'opaque', bless(\$ptr, 'Roger')), $ptr;
+    is $ffi->cast('roger2_t' => 'opaque', bless(\$ptr, 'Roger')), $ptr;
 
   };
 

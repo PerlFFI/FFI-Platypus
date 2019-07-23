@@ -624,33 +624,33 @@
                       ffi_pl_arguments_set_uint8(arguments, i, SvUV(arg2) );
                       break;
                     case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_OBJECT:
-                      ffi_pl_arguments_set_sint8(arguments, i, SvUV(arg2) );
+                      ffi_pl_arguments_set_sint8(arguments, i, SvIV(arg2) );
                       break;
                     case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_OBJECT:
                       ffi_pl_arguments_set_uint16(arguments, i, SvUV(arg2) );
                       break;
                     case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_OBJECT:
-                      ffi_pl_arguments_set_sint16(arguments, i, SvUV(arg2) );
+                      ffi_pl_arguments_set_sint16(arguments, i, SvIV(arg2) );
                       break;
                     case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_OBJECT:
                       ffi_pl_arguments_set_uint32(arguments, i, SvUV(arg2) );
                       break;
                     case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_OBJECT:
-                      ffi_pl_arguments_set_sint32(arguments, i, SvUV(arg2) );
+                      ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg2) );
                       break;
 #ifdef HAVE_IV_IS_64
                     case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_OBJECT:
                       ffi_pl_arguments_set_uint64(arguments, i, SvUV(arg2) );
                       break;
                     case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_OBJECT:
-                      ffi_pl_arguments_set_sint64(arguments, i, SvUV(arg2) );
+                      ffi_pl_arguments_set_sint64(arguments, i, SvIV(arg2) );
                       break;
 #else
                     case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_OBJECT:
                       ffi_pl_arguments_set_uint64(arguments, i, SvU64(arg2) );
                       break;
                     case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_OBJECT:
-                      ffi_pl_arguments_set_sint64(arguments, i, SvU64(arg2) );
+                      ffi_pl_arguments_set_sint64(arguments, i, SvI64(arg2) );
                       break;
 #endif
                     case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_OBJECT:

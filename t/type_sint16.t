@@ -94,4 +94,29 @@ foreach my $api (0, 1)
   };
 }
 
+subtest 'object' => sub {
+
+  { package Roger }
+
+  my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
+  $ffi->type('object(Roger,sint16)', 'roger_t');
+
+  my $int = -22;
+
+  subtest 'argument' => sub {
+
+    is $ffi->cast('roger_t' => 'sint16', bless(\$int, 'Roger')), $int;
+
+  };
+
+  subtest 'return value' => sub {
+
+    my $obj1 = $ffi->cast('sint16' => 'roger_t', $int);
+    isa_ok $obj1, 'Roger';
+    is $$obj1, $int;
+
+  };
+
+};
+
 done_testing;
