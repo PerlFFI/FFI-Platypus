@@ -499,6 +499,24 @@
                       }
                       break;
 #endif
+#ifdef FFI_PL_PROBE_COMPLEX
+                    case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_ARRAY:
+                      Newx(ptr, count, float complex);
+                      for(n=0; n<count; n++)
+                      {
+                        SV *sv = *av_fetch(av, n, 1);
+                        ffi_pl_perl_to_complex_float(sv, &((float*)ptr)[n*2]);
+                      }
+                      break;
+                    case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_ARRAY:
+                      Newx(ptr, count, double complex);
+                      for(n=0; n<count; n++)
+                      {
+                        SV *sv = *av_fetch(av, n, 1);
+                        ffi_pl_perl_to_complex_double(sv, &((double*)ptr)[n*2]);
+                      }
+                      break;
+#endif
                     case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_ARRAY:
                       Newx(ptr, count, char *);
                       for(n=0; n<count; n++)
@@ -909,8 +927,27 @@
                       }
                       break;
 #endif
+#ifdef FFI_PL_PROBE_COMPLEX
+                    case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_ARRAY:
+                      for(n=0; n<count; n++)
+                      {
+                        SV *sv;
+                        sv = *av_fetch(av, n, 1);
+                        ffi_pl_complex_double_to_perl(sv, &((double*)ptr)[n*2]);
+                      }
+                      break;
+                    case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_ARRAY:
+                      for(n=0; n<count; n++)
+                      {
+                        SV *sv;
+                        sv = *av_fetch(av, n, 1);
+                        ffi_pl_complex_float_to_perl(sv, &((float*)ptr)[n*2]);
+                      }
+                      break;
+#endif
                   }
                 }
+                Safefree(ptr);
               }
               break;
 

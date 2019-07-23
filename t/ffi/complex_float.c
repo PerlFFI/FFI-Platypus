@@ -53,4 +53,10 @@ complex_float_ptr_ret(float r, float i)
   return &f;
 }
 
+EXTERN float complex
+complex_float_array_get(float complex *f, int i)
+{
+  return f[i];
+}
+
 #endif
