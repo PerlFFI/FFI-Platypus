@@ -1634,7 +1634,7 @@
 #ifdef HAVE_IV_IS_64
                     sv_setuv(value, result.uint64);
 #else
-                    sv_setu64(value, result.sint64);
+                    sv_setu64(value, result.uint64);
 #endif
                     break;
                   default:
