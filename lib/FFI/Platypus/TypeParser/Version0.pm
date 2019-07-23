@@ -50,6 +50,10 @@ Instead you need to use the basic type in the second type definition:
  $ffi->type('opaque' => 'foo_t');    # ok!
  $ffi->type('opaque*' => 'foo_ptr'); # ok!
 
+=item objet types are not allowed
+
+ $ffi->type('object(Foo::Bar)');   # not ok! in version 0, ok! in version 1
+
 =back
 
 =head1 SEE ALSO

@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add support for "object" types. (gh#151)
   - You can now decorate record value types with * to get
     a record type using type parse 1 (gh#150)
 
