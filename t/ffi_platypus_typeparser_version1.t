@@ -362,7 +362,7 @@ subtest 'record class' => sub {
     package Foo::Bar5;
     use FFI::Platypus::Record;
     record_layout(qw(
-      int foo
+      string(67) foo
     ));
   }
 
@@ -379,6 +379,24 @@ subtest 'record class' => sub {
     }
 
   };
+
+  subtest 'alias' => sub {
+
+    local $@ = '';
+    my $check = eval { $tp->check_alias('foo_bar5_t') };
+    is "$@", "";
+    is $check, 1;
+
+    eval { $tp->set_alias('foo_bar5_t', $tp->parse('record(Foo::Bar5)') ) };
+    is "$@", "";
+
+    is $tp->parse('foo_bar5_t')->type_code, FFI_PL_TYPE_RECORD_VALUE;
+
+    is $tp->parse('foo_bar5_t*')->type_code, FFI_PL_TYPE_RECORD;
+    is $tp->parse('foo_bar5_t*')->sizeof, 67;
+
+  };
+
 
 };
 

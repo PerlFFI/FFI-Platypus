@@ -222,6 +222,16 @@ sub parse
     if(my $pointer = $8)
     {
       my $unit_type = $self->parse($unit_name, $opt);
+
+      if($unit_type->is_record_value)
+      {
+        my $meta = $unit_type->meta;
+        return $self->types->{$name} = $self->create_type_record(
+          $meta->{size},
+          $meta->{class},
+        );
+      }
+
       my $basic_name = $self->global_types->{rev}->{$unit_type->type_code};
       if($basic_name)
       {

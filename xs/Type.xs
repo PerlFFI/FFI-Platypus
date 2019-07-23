@@ -61,6 +61,14 @@ is_record(self)
     RETVAL
 
 int
+is_record_value(self)
+    ffi_pl_type *self
+  CODE:
+    RETVAL = self->type_code == FFI_PL_TYPE_RECORD_VALUE;
+  OUTPUT:
+    RETVAL
+
+int
 is_ro(self)
     ffi_pl_type *self
   CODE:
