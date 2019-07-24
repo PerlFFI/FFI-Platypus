@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Fix memory leak related to array in the case of bad type error (gh#154)
+  - Fix compiler warnings in record meta module (gh#153, gh155)
 
 0.95_01   2019-07-23 22:19:14 -0400
   - Add support for "object" types. (gh#49, gh#89, gh#151)
