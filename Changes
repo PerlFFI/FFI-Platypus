@@ -1,11 +1,15 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.95_01   2019-07-23 22:19:14 -0400
   - Add support for "object" types. (gh#49, gh#89, gh#151)
   - Fixed bug where 64 bit integer types could be truncated in a
     cast on 32 bit platform (gh#151)
   - You can now decorate record value types with * to get
     a record type using type parse 1 (gh#150)
+  - Add support for complex arrays on platforms where
+    complex types are supported (gh#89, gh#152)
 
 0.94      2019-07-23 09:53:46 -0400
   - Production release identical to 0.93_03
