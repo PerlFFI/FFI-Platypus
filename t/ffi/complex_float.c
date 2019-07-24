@@ -65,4 +65,16 @@ complex_float_array_set(float complex *f, int index, float r, float i)
   f[index] = r + i*I;
 }
 
+EXTERN float complex *
+complex_float_array_ret(void)
+{
+  static float complex ret[3];
+
+  ret[0] = 0.0 + 0.0*I;
+  ret[1] = 1.0 + 2.0*I;
+  ret[2] = 3.0 + 4.0*I;
+
+  return ret;
+}
+
 #endif
