@@ -29,7 +29,7 @@ ffi_platypus_record_meta__new(ffi_type *list[])
   t->top.size      = 0;
   t->top.alignment = 0;
   t->top.type      = FFI_TYPE_STRUCT;
-  t->top.elements  = &t->elements;
+  t->top.elements  = (ffi_type**) &t->elements;
 
 
   for(i=0; i<size+1; i++)
@@ -58,7 +58,7 @@ ffi_platypus_record_meta__alignment(meta_t *t)
   return t->top.alignment;
 }
 
-ffi_type *
+ffi_type **
 ffi_platypus_record_meta__element_pointers(meta_t *t)
 {
   return t->top.elements;
