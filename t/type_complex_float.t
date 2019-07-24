@@ -4,6 +4,7 @@ use Test::More;
 use FFI::Platypus;
 use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
+use Data::Dumper qw( Dumper );
 
 BEGIN {
   plan skip_all => 'Test requires support for float complex'
@@ -123,6 +124,16 @@ foreach my $api (0, 1)
         or diag Dumper($ret);
       is_deeply( $ret = $f->call(\@a, 2), [3.0,4.0] )
         or diag Dumper($ret);
+
+    };
+
+    subtest 'complex array arg set' => sub {
+
+      my $f = $ffi->function(complex_float_array_set => ['complex_float[]','int','float','float'] => 'void' );
+
+      my @a = ([0.0,0.0], [1.0,2.0], [3.0,4.0]);
+      $f->call(\@a, 1, 5.0, 6.0);
+      is_deeply(\@a, [[0.0,0.0], [5.0,6.0], [3.0,4.0]]);
 
     };
   };

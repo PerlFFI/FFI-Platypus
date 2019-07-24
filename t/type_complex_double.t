@@ -126,6 +126,16 @@ foreach my $api (0, 1)
         or diag Dumper($ret);
 
     };
+
+    subtest 'complex array arg set' => sub {
+
+      my $f = $ffi->function(complex_double_array_set => ['complex_double[]','int','double','double'] => 'void' );
+
+      my @a = ([0.0,0.0], [1.0,2.0], [3.0,4.0]);
+      $f->call(\@a, 1, 5.0, 6.0);
+      is_deeply(\@a, [[0.0,0.0], [5.0,6.0], [3.0,4.0]]);
+
+    };
   };
 }
 
