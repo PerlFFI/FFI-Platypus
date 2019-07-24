@@ -4,7 +4,7 @@ use Test::More;
 use FFI::Probe;
 use FFI::Probe::Runner;
 use Capture::Tiny qw( capture_merged );
-use File::Temp qw( tempdir );
+use FFI::Temp;
 use File::Basename qw( basename );
 use Config;
 
@@ -41,7 +41,7 @@ my $runner = do {
     my $exception;
     ($out, $exe, $exception) = capture_merged {
       my $exe = eval {
-        FFI::Probe::Runner::Builder->new( dir => File::Temp::tempdir( CLEANUP => 1, TEMPLATE => 'test-probe-XXXXXX', DIR => '.' ) )->build;
+        FFI::Probe::Runner::Builder->new( dir => FFI::Temp->newdir( CLEANUP => 1, TEMPLATE => 'test-probe-XXXXXX' ) )->build;
       };
       ($exe, $exception);
     };
@@ -57,7 +57,7 @@ my $runner = do {
 
 subtest 'check_header' => sub {
 
-  my $dir = tempdir( CLEANUP => 1 );
+  my $dir = FFI::Temp->newdir;
 
   my $probe = FFI::Probe->new(
     log           => "$dir/probe.log",
@@ -104,7 +104,7 @@ subtest 'check_header' => sub {
 
 subtest check_eval => sub {
 
-  my $dir = tempdir( CLEANUP => 1 );
+  my $dir = FFI::Temp->newdir;
 
   # make sure that we cache that data correctly.
   my $probe = FFI::Probe->new(

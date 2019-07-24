@@ -37,3 +37,4 @@ core
 /test-*
 tmpbuild.*
 /ffi-probe-*
+/.tmp
