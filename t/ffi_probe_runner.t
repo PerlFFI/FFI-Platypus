@@ -6,11 +6,12 @@ use FFI::Probe::Runner;
 use Capture::Tiny qw( capture_merged );
 use FFI::Build;
 use FFI::Build::File::C;
-use File::Temp qw( tempdir );
+use FFI::Temp;
 use lib 't/lib';
 use Test::Cleanup;
 
 my $runner;
+my $tempdir = FFI::Temp->newdir( TEMPLATE => 'test-probe-XXXXXX' );
 
 subtest basic => sub {
 
@@ -24,7 +25,7 @@ subtest basic => sub {
     my $exception;
     ($out, $exe, $exception) = capture_merged {
       my $exe = eval {
-        FFI::Probe::Runner::Builder->new( dir => File::Temp::tempdir( CLEANUP => 1, TEMPLATE => 'test-probe-XXXXXX', DIR => '.' ) )->build;
+        FFI::Probe::Runner::Builder->new( dir => $tempdir )->build;
       };
       ($exe, $exception);
     };
@@ -47,8 +48,9 @@ subtest basic => sub {
 
 subtest 'run not pass' => sub {
 
+  my $dir = FFI::Temp->newdir( TEMPLATE => 'test-probe-XXXXXX' ); 
+
   my $lib = do {
-    my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'test-probe-XXXXXX', DIR => '.' ); 
     my $build = FFI::Build->new(
       'frooble1',
       dir => $dir,
@@ -83,8 +85,9 @@ subtest 'run not pass' => sub {
 
 subtest 'run pass' => sub {
 
+  my $dir = FFI::Temp->newdir( TEMPLATE => 'test-probe-XXXXXX' ); 
+
   my $lib = do {
-    my $dir = tempdir( CLEANUP => 1, TEMPLATE => 'test-probe-XXXXXX', DIR => '.' ); 
     my $build = FFI::Build->new(
       'frooble2',
       verbose => 1,
