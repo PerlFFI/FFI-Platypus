@@ -182,8 +182,7 @@
             }
             else
             {
-              ffi_pl_heap_free();
-              croak("argument %d is not an instance of %s", i, record_class);
+              ffi_pl_croak("argument %d is not an instance of %s", i, record_class);
             }
           }
           break;
@@ -550,6 +549,7 @@
                   warn("passing non array reference into ffi/platypus array argument type");
                   Newxz(ptr, count*(1 << ((type_code & FFI_PL_SIZE_MASK)-1)), char);
                 }
+                ffi_pl_heap_add_ptr(ptr);
                 ffi_pl_arguments_set_pointer(arguments, i, ptr);
               }
               break;
@@ -675,14 +675,12 @@
                       ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg2) ? INT2PTR(void*, SvIV(arg2)) : NULL);
                       break;
                     default:
-                      ffi_pl_heap_free();
-                      croak("Object argument %d type not supported %d", i, type_code);
+                      ffi_pl_croak("Object argument %d type not supported %d", i, type_code);
                   }
                 }
                 else
                 {
-                  ffi_pl_heap_free();
-                  croak("Object argument %d must be an object of class %s", i, self->argument_types[i]->extra[0].object.class);
+                  ffi_pl_croak("Object argument %d must be an object of class %s", i, self->argument_types[i]->extra[0].object.class);
                 }
               }
               break;
@@ -1007,7 +1005,6 @@
 #endif
                   }
                 }
-                Safefree(ptr);
               }
               break;
 

@@ -335,6 +335,14 @@ typedef struct _ffi_pl_heap {
   heap = n;                                 \
 }
 
+#define ffi_pl_heap_add_ptr(ptr) {          \
+  ffi_pl_heap *n;                           \
+  Newx(n, 1, ffi_pl_heap);                  \
+  n->_this = ptr;                           \
+  n->_next = (void*) heap;                  \
+  heap = n;                                 \
+}
+
 #define ffi_pl_heap_free() {                \
   while(heap != NULL)                       \
   {                                         \
@@ -345,6 +353,9 @@ typedef struct _ffi_pl_heap {
   }                                         \
 }
 
+#define ffi_pl_croak                        \
+  ffi_pl_heap_free();                       \
+  croak
 
 #if defined(_MSC_VER)
 #define Newx_or_alloca(ptr, count, type) ptr = _alloca(sizeof(type)*count)
