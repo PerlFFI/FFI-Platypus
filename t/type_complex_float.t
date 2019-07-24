@@ -136,6 +136,20 @@ foreach my $api (0, 1)
       is_deeply(\@a, [[0.0,0.0], [5.0,6.0], [3.0,4.0]]);
 
     };
+
+    subtest 'complex array ret' => sub {
+
+      my $f = $ffi->function(complex_float_array_ret => [] => 'complex_float[3]' );
+
+      my @a = ([0.0,0.0], [1.0,2.0], [3.0,4.0]);
+      my $ret;
+
+      is_deeply(
+        $ret = $f->call( \@a ),
+        \@a,
+      ) or diag Dumper($ret);
+
+    };
   };
 }
 

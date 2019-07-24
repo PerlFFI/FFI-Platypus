@@ -1399,6 +1399,22 @@
                     }
                     break;
 #endif
+#ifdef FFI_PL_PROBE_COMPLEX
+                  case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSV(0);
+                      ffi_pl_complex_float_to_perl(sv[i], &((float*)result.pointer)[i*2]);
+                    }
+                    break;
+                  case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_ARRAY:
+                    for(i=0; i<count; i++)
+                    {
+                      sv[i] = newSV(0);
+                      ffi_pl_complex_double_to_perl(sv[i], &((double*)result.pointer)[i*2]);
+                    }
+                    break;
+#endif
                   default:
                     warn("return type not supported");
                     XSRETURN_EMPTY;
