@@ -150,6 +150,17 @@ sub probe
   $probe;
 }
 
+sub probe2
+{
+  my($self) = @_;
+
+  my $probe = $self->{probe2} ||= FFI::Probe->new(
+    runner => $self->probe_runner,
+    log => "config.log",
+    data_filename => "./_mm/probe.pl",
+  );
+}
+
 sub probe_runner
 {
   my($self) = @_;
@@ -169,9 +180,10 @@ sub probe_runner_build
 {
   my($self) = @_;
   my $probe = $self->probe;
+  my $probe2 = $self->probe2;
   my $builder = FFI::Probe::Runner::Builder->new;
   foreach my $key (qw( cc ccflags optimize ld ldflags ))
-  { @{ $builder->$key } = @{ $probe->data->{eumm}->{$key} } }
+  { @{ $builder->$key } = @{ $probe2->data->{eumm}->{$key} } }
   $builder->build unless -e $builder->exe;  
 }
 
@@ -374,9 +386,9 @@ sub platform
 {
   my($self) = @_;
   my %Config = %Config;
-  foreach my $key (keys %{ $self->probe->data->{eumm} })
+  foreach my $key (keys %{ $self->probe2->data->{eumm} })
   {
-    $Config{$key} = $self->probe->data->{eumm}->{$key};
+    $Config{$key} = $self->probe2->data->{eumm}->{$key};
   }
   require FFI::Build::Platform;
   FFI::Build::Platform->new(\%Config);
