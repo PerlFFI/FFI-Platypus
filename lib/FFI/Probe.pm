@@ -561,7 +561,11 @@ sub save
     ->Sortkeys(1)
     ->Dump;
 
-  mkpath( $dir, 0, 0755 ) unless -d $dir;
+  unless(-d $dir)
+  {
+    require File::Path;
+    File::Path::mkpath( $dir, 0, 0755 );
+  }
 
   my $fh;
   open($fh, '>', $self->{data_filename}) || die "error writing @{[ $self->{data_filename} ]}";
