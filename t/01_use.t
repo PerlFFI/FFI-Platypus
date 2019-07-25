@@ -38,6 +38,7 @@ require_ok 'FFI::Probe';
 require_ok 'FFI::Probe::Runner';
 require_ok 'FFI::Probe::Runner::Builder';
 require_ok 'FFI::Probe::Runner::Result';
+require_ok 'FFI::Temp';
 ok -f 't/ffi_build.t',                                        'test for FFI::Build';
 ok -f 't/ffi_build_file_base.t',                              'test for FFI::Build::File::Base';
 ok -f 't/ffi_build_file_c.t',                                 'test for FFI::Build::File::C';
@@ -74,5 +75,6 @@ ok -f 't/ffi_probe.t',                                        'test for FFI::Pro
 ok -f 't/ffi_probe_runner.t',                                 'test for FFI::Probe::Runner';
 ok -f 't/ffi_probe_runner_builder.t',                         'test for FFI::Probe::Runner::Builder';
 ok -f 't/ffi_probe_runner_result.t',                          'test for FFI::Probe::Runner::Result';
+ok -f 't/ffi_temp.t',                                         'test for FFI::Temp';
 done_testing;
 
