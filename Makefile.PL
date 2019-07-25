@@ -64,7 +64,8 @@ my %WriteMakefileArgs = (
     "lib/FFI/Probe.pm"                           => "\$(INST_LIB)/FFI/Probe.pm",
     "lib/FFI/Probe/Runner.pm"                    => "\$(INST_LIB)/FFI/Probe/Runner.pm",
     "lib/FFI/Probe/Runner/Builder.pm"            => "\$(INST_LIB)/FFI/Probe/Runner/Builder.pm",
-    "lib/FFI/Probe/Runner/Result.pm"             => "\$(INST_LIB)/FFI/Probe/Runner/Result.pm"
+    "lib/FFI/Probe/Runner/Result.pm"             => "\$(INST_LIB)/FFI/Probe/Runner/Result.pm",
+    "lib/FFI/Temp.pm"                            => "\$(INST_LIB)/FFI/Temp.pm"
   },
   "PREREQ_PM" => {
     "Capture::Tiny"       => 0,
@@ -79,7 +80,7 @@ my %WriteMakefileArgs = (
     "Capture::Tiny" => 0,
     "Test::More"    => "0.98"
   },
-  "VERSION" => "0.95_01",
+  "VERSION" => "0.95_02",
   "test"    => {
     "TESTS" => "t/*.t"
   }
