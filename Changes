@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Remove build dependent strings from deployment (gh#104, gh#110, gh#157, gh#159)
 
 0.95_02   2019-07-25 17:15:09 -0400
   - Fix memory leak related to array in the case of bad type error (gh#154)
