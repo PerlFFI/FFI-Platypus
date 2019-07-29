@@ -7,11 +7,13 @@ use File::Glob qw( bsd_glob );
 use ExtUtils::MakeMaker ();
 use IPC::Cmd ();
 use lib 'inc';
+use My::BuildConfig;
 use My::ShareConfig;
 
 sub myWriteMakefile
 {
   my %args = @_;
+  my $build_config = My::BuildConfig->new;
   my $share_config = My::ShareConfig->new;
   my %diag;
   my %alien;
@@ -21,7 +23,7 @@ sub myWriteMakefile
   if(eval { require Alien::FFI; Alien::FFI->VERSION('0.20'); 1 })
   {
     print "using already installed Alien::FFI (version @{[ Alien::FFI->VERSION ]})\n";
-    $share_config->set(alien => { class => 'Alien::FFI', mode => 'already-installed' });
+    $build_config->set(alien => { class => 'Alien::FFI', mode => 'already-installed' });
     require Alien::Base::Wrapper;
     Alien::Base::Wrapper->import( 'Alien::FFI', 'Alien::psapi', '!export' );
     %alien = Alien::Base::Wrapper->mm_args;
@@ -36,7 +38,7 @@ sub myWriteMakefile
     if($alien_install_type_unset && $^O eq 'MSWin32' && Alien::FFI::PkgConfigPP->exists)
     {
       print "using system libffia via PkgConfigPP\n";
-      $share_config->set(alien => { class => 'Alien::FFI::PkgConfigPP', mode => 'system' });
+      $build_config->set(alien => { class => 'Alien::FFI::PkgConfigPP', mode => 'system' });
       require Alien::Base::Wrapper;
       Alien::Base::Wrapper->import( 'Alien::FFI::PkgConfigPP', 'Alien::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
@@ -44,7 +46,7 @@ sub myWriteMakefile
     elsif($alien_install_type_unset && $^O ne 'MSWin32' && Alien::FFI::pkgconfig->exists)
     {
       print "using system libffi via @{[ Alien::FFI::pkgconfig->pkg_config_exe ]}\n";
-      $share_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
+      $build_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
       require Alien::Base::Wrapper;
       Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'Alien::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
@@ -52,7 +54,7 @@ sub myWriteMakefile
     else
     {
       print "requiring Alien::FFI in fallback mode.\n";
-    $share_config->set(alien => { class => 'Alien::FFI', mode => 'fallback' });
+    $build_config->set(alien => { class => 'Alien::FFI', mode => 'fallback' });
       %alien = (
         CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e cc --',
         LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e ld --',

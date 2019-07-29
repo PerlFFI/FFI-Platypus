@@ -12,7 +12,7 @@ FFI::Build->new(
   'test',
   source   => ['t/ffi/*.c'],
   verbose  => (!!$ENV{V} ? 2 : 1),
-  alien    => [$config->share_config->get('alien')->{class}],
+  alien    => [$config->build_config->get('alien')->{class}],
   cflags   => ['-Iinclude'],
   dir      => 't/ffi',
   platform => $config->platform,
