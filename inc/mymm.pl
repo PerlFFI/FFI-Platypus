@@ -113,7 +113,7 @@ sub myWriteMakefile
   # uniq'ify it
   @dlext = do { my %seen; grep { !$seen{$_}++ } @dlext };
 
-  $share_config->set(diag => \%diag);
+  $build_config->set(diag => \%diag);
   $share_config->set(config_dlext => \@dlext);
 
   ExtUtils::MakeMaker::WriteMakefile(%args);
