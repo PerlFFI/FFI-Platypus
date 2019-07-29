@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008001;
 use Carp ();
-use File::Temp     ();
+use FFI::Temp;
 use File::Basename ();
 use FFI::Build::Platform;
 use overload '""' => sub { $_[0]->path };
@@ -92,18 +92,19 @@ sub new
   }
   elsif(ref($content) eq 'SCALAR')
   {
-    my @args;
-    push @args, "${base}XXXXXX";
-    push @args, DIR => $dir if $dir;
-    push @args, SUFFIX => $self->default_suffix;
-    
-    my($fh, $filename) = File::Temp::tempfile(@args);
+    my %args;
+    $args{TEMPLATE} = "${base}XXXXXX";
+    $args{DIR}      = $dir if $dir;
+    $args{SUFFIX}   = $self->default_suffix;
+    $args{UNLINK}   = 0;
+
+    my $fh = $self->{fh} = FFI::Temp->new(%args);
     
     binmode( $fh, $self->default_encoding );
     print $fh $$content;
     close $fh;
     
-    $self->{path} = $filename;
+    $self->{path} = $fh->filename;
     $self->{temp} = 1;
   }
   elsif(ref($content) eq '')

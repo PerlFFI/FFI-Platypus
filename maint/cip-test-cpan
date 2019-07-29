@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use File::Temp qw( tempdir );
+use FFI::Temp;
 use File::Glob qw( bsd_glob );
 
 my $module = shift @ARGV;
@@ -23,8 +23,7 @@ if($skip)
 my $build_root = bsd_glob( "~/test-build-root-tmp");
 mkdir $build_root unless -d $build_root;
 
-mkdir '.tmp' unless -d '.tmp';
-my $lib = tempdir( CLEANUP => 1, DIR => $build_root );
+my $lib = FFI::Temp->newdir;
 
 my @cmd = ( 'cpanm', '-n', '-l' => $lib, '--installdeps', $module );
 

@@ -8,7 +8,7 @@ use FFI::Probe::Runner;
 use FFI::Build;
 use FFI::Build::File::C;
 use Capture::Tiny qw( capture_merged capture );
-use File::Temp qw( tempdir );
+use FFI::Temp;
 
 # ABSTRACT: System detection and probing for FFI extensions.
 # VERSION
@@ -85,7 +85,7 @@ sub new
     log           => $args{log},
     data_filename => $args{data_filename},
     data          => $data,
-    dir           => tempdir( CLEANUP => 1, TEMPLATE => 'ffi-probe-XXXXXX', DIR => '.' ),
+    dir           => FFI::Temp->newdir( TEMPLATE => 'ffi-probe-XXXXXX' ),
     counter       => 0,
     runner        => $args{runner},
     alien         => $args{alien} || [],
