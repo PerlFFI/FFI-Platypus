@@ -76,14 +76,14 @@ sub myWriteMakefile
     print "DEBUG_FAKE32:\n";
     print "  + making Math::Int64 a prereq\n";
     print "  + Using Math::Int64's C API to manipulate 64 bit values\n";
-    $share_config->set(config_debug_fake32 => 1);
+    $build_config->set(config_debug_fake32 => 1);
     $diag{config}->{config_debug_fake32} = 1;
   }
   if($ENV{FFI_PLATYPUS_NO_ALLOCA})
   {
     print "NO_ALLOCA:\n";
     print "  + alloca() will not be used, even if your platform supports it.\n";
-    $share_config->set(config_no_alloca => 1);
+    $build_config->set(config_no_alloca => 1);
     $diag{config}->{config_no_alloca} = 1;
   }
 

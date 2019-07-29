@@ -2,6 +2,7 @@ package My::ShareConfig;
 
 use strict;
 use warnings;
+use File::Spec ();
 use base qw( My::ConfigPl );
 
 sub dir  { File::Spec->catdir( qw( blib lib auto share dist FFI-Platypus )) }
