@@ -8,10 +8,10 @@ use FFI::Probe;
 use FFI::Probe::Runner;
 use FFI::Probe::Runner::Builder;
 use My::ShareConfig;
-use File::Temp qw( tempdir );
+use File::Temp;
 use Path::Tiny qw( path );
 
-my $dir = tempdir( CLEANUP => 1 );
+my $dir = FFI::Temp->newdir;
 my $data_filename = path( $dir, 'probe.pl' );
 my $log_filename  = path( $dir, 'config.log' );
 

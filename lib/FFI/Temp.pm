@@ -2,6 +2,7 @@ package FFI::Temp;
 
 use strict;
 use warnings;
+use Carp qw( croak );
 use File::Spec;
 use File::Temp qw( tempdir );
 
@@ -28,7 +29,12 @@ my %root;
 sub _root
 {
   my $root = File::Spec->rel2abs(File::Spec->catdir(".tmp"));
-  mkdir $root unless -d $root;
+  unless(-d $root)
+  {
+    mkdir $root or die "unable to create temp root $!";
+  }
+
+  # TODO: doesn't account for fork...
   my $lock = File::Spec->catfile($root, "l$$");
   unless(-f $lock)
   {
@@ -53,13 +59,15 @@ END {
 sub newdir
 {
   my $class = shift;
-  File::Temp->newdir(@_, DIR => _root);
+  croak "uneven" if @_ % 2;
+  File::Temp->newdir(DIR => _root, @_);
 }
 
 sub new
 {
   my $class = shift;
-  File::Temp->new(@_, DIR => _root);
+  croak "uneven" if @_ % 2;
+  File::Temp->new(DIR => _root, @_);
 }
 
 1;

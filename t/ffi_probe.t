@@ -36,7 +36,6 @@ my $runner = do {
   unless(-f $exe)
   {
     require FFI::Probe::Runner::Builder;
-    require File::Temp;
     my $out;
     my $exception;
     ($out, $exe, $exception) = capture_merged {

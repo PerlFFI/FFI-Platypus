@@ -127,7 +127,7 @@ subtest 'build c++' => sub {
   plan skip_all => 'Test requires C++ compiler'
     unless eval { FFI::Build::Platform->which(FFI::Build::Platform->cxx) };
 
-  my $tempdir = FFI::Temp->newdir( "tmpbuild.XXXXXX" );
+  my $tempdir = FFI::Temp->newdir( TEMPLATE => "tmpbuild.XXXXXX" );
 
   my $build = FFI::Build->new('foo', 
     dir       => $tempdir,
@@ -203,7 +203,7 @@ subtest 'alien' => sub {
     unless eval { require Acme::Alien::DontPanic; Acme::Alien::DontPanic->VERSION("1.03") };
 
 
-  my $tempdir = File::Temp->newdir( "tmpbuild.XXXXXX" );
+  my $tempdir = FFI::Temp->newdir( TEMPLATE => "tmpbuild.XXXXXX" );
   my $build = FFI::Build->new('bar',
     dir       => $tempdir,
     buildname => "tmpbuild.$$.@{[ time ]}",

@@ -6,7 +6,7 @@ use 5.008001;
 use Carp ();
 use Text::ParseWords ();
 use List::Util 1.45 ();
-use File::Temp ();
+use FFI::Temp;
 use Capture::Tiny ();
 
 # ABSTRACT: Platform specific configuration.
@@ -390,7 +390,7 @@ sub cc_mm_works
   {
     require FFI::Build::File::C;
     my $c = FFI::Build::File::C->new(\"#include \"foo.h\"\n");
-    my $dir = File::Temp::tempdir( CLEANUP => 1 );
+    my $dir = FFI::Temp->newdir;
     {
       open my $fh, '>', "$dir/foo.h";
       print $fh "\n";
