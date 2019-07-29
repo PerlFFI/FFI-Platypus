@@ -1,12 +1,16 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-  - Remove build dependent strings from deployment (gh#104, gh#110, gh#157, gh#159)
+
+0.95_03   2019-07-29 19:21:24 -0400
+  - Remove build dependent strings from deployment
+    (gh#104, gh#110, gh#157, gh#159)
 
 0.95_02   2019-07-25 17:15:09 -0400
   - Fix memory leak related to array in the case of bad type error (gh#154)
   - Fix compiler warnings in record meta module (gh#153, gh155)
-  - More consistent use of temp directories to work around noexec on /tmp (gh#156, gh#158)
+  - More consistent use of temp directories to work around noexec on /tmp
+    (gh#156, gh#158)
 
 0.95_01   2019-07-23 22:19:14 -0400
   - Add support for "object" types. (gh#49, gh#89, gh#151)
@@ -180,8 +184,8 @@ Revision history for {{$dist->name}}
 
 0.62_01   2019-01-01 04:23:23 -0500
   - New type: array of string "string [x]" and "string []" are supported
-  - NULL terminated arrays are supported as return types for string and opaque arrays
-    "opaque []" and "string []"
+  - NULL terminated arrays are supported as return types for string and opaque
+    arrays "opaque []" and "string []"
 
 0.61_01   2018-12-31 19:56:20 -0500
   - New type: pointers to string "string *" are supported.
@@ -297,8 +301,8 @@ Revision history for {{$dist->name}}
     This may improve startup performance.
 
 0.48      2018-02-20 09:37:32 -0500
-  - setting lib => undef is now the same as setting it to [undef] in the constructor
-    (previously lib => undef was ignored)
+  - setting lib => undef is now the same as setting it to [undef] in the
+    constructor (previously lib => undef was ignored)
 
 0.47      2017-03-23 18:26:01 -0400
   - Fix installer bug where My::ShareConfig was accidentally declared as a
@@ -308,15 +312,16 @@ Revision history for {{$dist->name}}
   - Remove some internal use of Module::Build with the intent of one day
     migrating to EUMM or some other installer
   - Remove Module::Build::FFI.  It now has its own distribution.
-  - Prefix the lang attribute with an equal '=' sign to indicate a fully qualified
-    class name instead of one under FFI::Platypus::Lang
+  - Prefix the lang attribute with an equal '=' sign to indicate a fully
+    qualified class name instead of one under FFI::Platypus::Lang
 
 0.45      2016-10-24 07:59:57 -0400
-  - Remove check for Threaded Perl / OpenBSD, as the issue there has been reported fixed
+  - Remove check for Threaded Perl / OpenBSD, as the issue there has been
+    reported fixed
 
 0.44      2016-10-20 14:31:23 -0400
-  - You can now control which implementation of strdup FFI::Platypus::Memory uses
-    via the FFI_PLATYPUS_MEMORY_STRDUP_IMPL environment variable.
+  - You can now control which implementation of strdup FFI::Platypus::Memory
+    uses via the FFI_PLATYPUS_MEMORY_STRDUP_IMPL environment variable.
 
 0.43      2016-07-08 03:28:57 -0400
   - Numerous fixes for systems with 64bit big-endian arch
@@ -336,8 +341,9 @@ Revision history for {{$dist->name}}
   - Closure declarations ignore white space between () and ->
 
 0.39      2015-08-24 03:23:10 -0400
-  - Fixed spurious warning: auto loading of record class (via FFI::Platypus::Record)
-    was ALWAYS warning, when it should have only been warning on load failure.
+  - Fixed spurious warning: auto loading of record class (via
+    FFI::Platypus::Record) was ALWAYS warning, when it should have only been
+    warning on load failure.
 
 0.38      2015-08-13 17:13:07 -0400
   - closure method now comes with a more useful diagnostic thinks to
@@ -368,7 +374,8 @@ Revision history for {{$dist->name}}
     in Perl 5.22)
 
 0.34      2015-05-07 09:27:04 -0400
-  - Require Alien::FFI which is more reliable at configure time on some platforms
+  - Require Alien::FFI which is more reliable at configure time on some
+    platforms
 
 0.33      2015-03-23 21:55:02 -0400
   - Additional fix for Microsoft Visual C++ that didn't get folded into
@@ -390,8 +397,8 @@ Revision history for {{$dist->name}}
   - You can now pass an opaque in place of a closure type (pipcet++ gh#40,gh#41)
   - FFI closures are now cached and can be reused if the same closure is passed
     repeatedly (pipcet++ gh#40,gh#42)
-  - Passing non-reference to scalar as a pointer argument will now issue a warning
-    (gh#5)
+  - Passing non-reference to scalar as a pointer argument will now issue a
+    warning (gh#5)
 
 0.29      2015-02-24 08:50:34 -0500
   - Delayed loading of Win32::ErrorMode to avoid build prereq failure on Windows
@@ -415,10 +422,11 @@ Revision history for {{$dist->name}}
 0.26      2015-02-18 17:47:43 -0500
   - Added support for pointers to longdouble (in C "long double *") type
   - Added support for array of longdouble (in C "long double []") type
-  - Added tied array interface for record array members (see FFI::Platypus::Record::TieArray)
-    Marked as EXPERIMENTAL
+  - Added tied array interface for record array members (see
+    FFI::Platypus::Record::TieArray) Marked as EXPERIMENTAL
   - Array members of records can now be accessed (set/get) by element
-  - Array members of records types are now documented (see FFI::Platypus::Record)
+  - Array members of records types are now documented (see
+    FFI::Platypus::Record)
   - Bugfix: array wasn't being updated on return for variable length
     array types
   - Should now build with an Alien::FFI that was built with ALIEN_FORCE=1
@@ -520,7 +528,8 @@ Revision history for {{$dist->name}}
   - Release candidate 1
   - Added custom Types API (see FFI::Platypus::API)
   - Added String Pointer custom type (FFI::Platypus::Type::StringPointer)
-  - Added Pointer / Size Buffer custom type (FFI::Platypus::Type::PointerSizeBuffer)
+  - Added Pointer / Size Buffer custom type
+    (FFI::Platypus::Type::PointerSizeBuffer)
 
 0.09      2015-01-19 03:01:48 -0500
   - Third beta
