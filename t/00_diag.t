@@ -50,7 +50,7 @@ $post_diag = sub {
     diag "my_configure             = ", $class->runtime_prop->{my_configure} if defined $class->runtime_prop->{my_configure};
     spacer();
     my %type_map = %{ $share_config->get('type_map') };
-    my $diag = $share_config->get('diag');
+    my $diag = $build_config->get('diag');
     foreach my $key (sort keys %{ $diag->{args} })
     {
       diag "mb.args.$key=", $diag->{args}->{$key};
