@@ -22,26 +22,20 @@
 
     ffi_pl_heap *heap = NULL;
 
-
-/*
-#undef FFI_PL_CALL_NO_RECORD_VALUE
-#undef FFI_PL_CALL_RET_NO_NORMAL
-*/
-
 #if FFI_PL_CALL_NO_RECORD_VALUE
 #define RESULT &result
     ffi_pl_result result;
 #elif FFI_PL_CALL_RET_NO_NORMAL
 #define RESULT result_ptr
     void *result_ptr;
-    Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, 1);
+    Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, char);
 #else
 #define RESULT result_ptr
     ffi_pl_result result;
     void *result_ptr;
     if(self->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
     {
-      Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, 1);
+      Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, char);
     }
     else
     {
@@ -138,7 +132,7 @@
         case FFI_PL_TYPE_COMPLEX_FLOAT:
           {
             float *ptr;
-            Newx_or_alloca(ptr, 2, float complex);
+            Newx_or_alloca(ptr, 2, float);
             argument_pointers[i] = ptr;
             ffi_pl_perl_to_complex_float(arg, ptr);
           }
@@ -1037,7 +1031,11 @@
 
       int type_code = self->return_type->type_code;
 
-      if((type_code & FFI_PL_SHAPE_MASK) != FFI_PL_SHAPE_CUSTOM_PERL)
+      /*
+       * TODO: This should always happen later if possible
+       */
+      if((type_code & FFI_PL_SHAPE_MASK) != FFI_PL_SHAPE_CUSTOM_PERL
+      &&  type_code != FFI_PL_TYPE_RECORD_VALUE)
         ffi_pl_heap_free();
 
       MY_CXT.current_argv = NULL;
@@ -1062,6 +1060,7 @@
             sv_setpvn(value, result_ptr, self->return_type->extra[0].record_value.size);
             ref = ST(0) = newRV_inc(value);
             sv_bless(ref, gv_stashpv(self->return_type->extra[0].record_value.class, GV_ADD));
+            ffi_pl_heap_free();
             XSRETURN(1);
           }
           break;

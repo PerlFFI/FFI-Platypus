@@ -199,7 +199,7 @@ sub configure
     }
   }
 
-  if(!$self->share_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
+  if(!$self->build_config->get('config_debug_fake32') && $Config{ivsize} >= 8)
   {
     $ch->define_var( HAVE_IV_IS_64 => 1 );
   }
@@ -285,6 +285,11 @@ sub configure
   {
     $probe{bigendian}   = 0;
     $probe{bigendian64} = 0;
+  }
+
+  if($self->build_config->get('config_no_alloca'))
+  {
+    $probe{alloca} = 0;
   }
 
   foreach my $cfile (bsd_glob 'inc/probe/*.c')

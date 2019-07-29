@@ -360,6 +360,7 @@ typedef struct _ffi_pl_heap {
 #if defined(_MSC_VER)
 #define Newx_or_alloca(ptr, count, type) ptr = _alloca(sizeof(type)*count)
 #elif defined(FFI_PL_PROBE_ALLOCA)
+#error "here"
 #define Newx_or_alloca(ptr, count, type) ptr = alloca(sizeof(type)*count)
 #else
 #define Newx_or_alloca(ptr, count, type) ffi_pl_heap_add(ptr, count, type)

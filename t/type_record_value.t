@@ -73,7 +73,7 @@ subtest 'is a reference' => sub {
       is $rv->value, 47;
     };
 
-    subtest 'attach' => sub {
+    subtest 'xsub_ref' => sub {
 
       my $create = $ffi->function( foo_value_create      => [ 'string', 'sint32' ] => 'foo_record_t' )->sub_ref;
 
