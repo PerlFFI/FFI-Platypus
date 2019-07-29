@@ -389,9 +389,6 @@ sub alien
   my $pm = "$class.pm";
   $pm =~ s/::/\//g;
   require $pm;
-  $self->share_config->set(extra_compiler_flags => [ shellwords($class->cflags) ]);
-  $self->share_config->set(extra_linker_flags   => [ shellwords($class->libs) ]);
-  $self->share_config->set(ccflags => $class->cflags);
 
   $self->build_config->get('alien')->{class};
 }
