@@ -138,7 +138,7 @@ sub probe
     runner => $self->probe_runner,
     log => "config.log",
     data_filename => "./blib/lib/auto/share/dist/FFI-Platypus/probe/probe.pl",
-    alien => [$self->share_config->get('alien')->{class}],
+    alien => [$self->build_config->get('alien')->{class}],
     cflags => ['-Iinclude'],
   );
 }
@@ -380,7 +380,7 @@ sub alien
 {
   my($self) = @_;
 
-  my $class = $self->share_config->get('alien')->{class};
+  my $class = $self->build_config->get('alien')->{class};
   my $pm = "$class.pm";
   $pm =~ s/::/\//g;
   require $pm;
@@ -388,7 +388,7 @@ sub alien
   $self->share_config->set(extra_linker_flags   => [ shellwords($class->libs) ]);
   $self->share_config->set(ccflags => $class->cflags);
 
-  $self->share_config->get('alien')->{class};
+  $self->build_config->get('alien')->{class};
 }
 
 1;
