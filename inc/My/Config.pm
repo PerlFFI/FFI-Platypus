@@ -6,6 +6,7 @@ use Config;
 use File::Spec;
 use FindBin;
 use Text::ParseWords qw( shellwords );
+use My::BuildConfig;
 use My::ShareConfig;
 use My::ConfigH;
 use My::ShareConfig;
@@ -123,6 +124,12 @@ sub share_config
   $self->{share_config} ||= My::ShareConfig->new;
 }
 
+sub build_config
+{
+  my($self) = @_;
+  $self->{build_config} ||= My::BuildConfig->new;
+}
+
 sub probe
 {
   my($self) = @_;
@@ -157,7 +164,7 @@ sub probe_runner_build
   my $probe = $self->probe;
   my $builder = FFI::Probe::Runner::Builder->new;
   foreach my $key (qw( cc ccflags optimize ld ldflags ))
-  { @{ $builder->$key } = @{ $probe->data->{eumm}->{$key} } }
+  { @{ $builder->$key } = @{ $self->build_config->get('eumm')->{$key} } }
   $builder->build unless -e $builder->exe;  
 }
 
@@ -360,9 +367,10 @@ sub platform
 {
   my($self) = @_;
   my %Config = %Config;
-  foreach my $key (keys %{ $self->probe->data->{eumm} })
+  my $eumm = $self->build_config->get('eumm');
+  foreach my $key (keys %$eumm)
   {
-    $Config{$key} = $self->probe->data->{eumm}->{$key};
+    $Config{$key} = $eumm->{$key};
   }
   require FFI::Build::Platform;
   FFI::Build::Platform->new(\%Config);
