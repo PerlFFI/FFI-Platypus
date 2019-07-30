@@ -174,6 +174,8 @@ sub _deps
   }
   else
   {
+    $out =~ s/^\+.*\n//; # remove the command line
+                         # which on windows could have an confusing :
     my(undef, $deps) = split /:/, $out, 2;
     $deps =~ s/^\s+//;
     $deps =~ s/\s+$//;
