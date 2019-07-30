@@ -48,19 +48,56 @@ sub _bundle
     );
   });
 
-  croak "unable to find bundle code for $package" unless $txtfn;
+  my $lib;
 
-  my $lib = do {
-    my $fh;
-    open($fh, '<', $txtfn) or die "unable to read $txtfn $!";
-    my $line = <$fh>;
-    close $fh;
-    $line =~ /^FFI::Build\@(.*)$/
-      ? "$incroot/$1"
-      : croak "bad format $txtfn";
-  };
-
-  croak "bundle code is missing: $lib" unless -f $lib;
+  if($txtfn)
+  {
+    $lib = do {
+      my $fh;
+      open($fh, '<', $txtfn) or die "unable to read $txtfn $!";
+      my $line = <$fh>;
+      close $fh;
+      $line =~ /^FFI::Build\@(.*)$/
+        ? "$incroot/$1"
+        : croak "bad format $txtfn";
+    };
+    croak "bundle code is missing: $lib" unless -f $lib;
+  }
+  elsif(-d "$incroot/../ffi")
+  {
+    require FFI::Build::MM;
+    require Capture::Tiny;
+    require Cwd;
+    require File::Spec;
+    my $save = Cwd::getcwd();
+    chdir "$incroot/..";
+    my($output, $error) = Capture::Tiny::capture_merged(sub {
+      $lib = eval {
+        my $dist_name = $package;
+        $dist_name =~ s/::/-/;
+        my $fbmm = FFI::Build::MM->new;
+        $fbmm->mm_args( DISTNAME => $dist_name );
+        my $build = $fbmm->load_build('ffi', undef, 'ffi/_build');
+        $build->build;
+      };
+      $@;
+    });
+    if($error)
+    {
+      chdir $save;
+      print STDERR $output;
+      die $error;
+    }
+    else
+    {
+      $lib = File::Spec->rel2abs($lib);
+      chdir $save;
+    }
+  }
+  else
+  {
+    croak "unable to find bundle code for $package";
+  }
 
   my $handle = FFI::Platypus::DL::dlopen($lib, FFI::Platypus::DL::RTLD_PLATYPUS_DEFAULT())
     or croak "error loading bundle code: $lib @{[ FFI::Platypus::DL::dlerror() ]}";
