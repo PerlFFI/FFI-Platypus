@@ -806,13 +806,10 @@ subtest '->package is only allowed for api = 0' => sub {
   };
 
   subtest 'api = 1' => sub {
-    TODO: {
-    local $TODO = 'need an alternative';
     my $ffi = FFI::Platypus->new( api => 1 );
     local $@ = '';
     eval { $ffi->package };
-    like "$@", qr/^xxx/;
-    }
+    like "$@", qr/^package method only available with api => 0/;
   };
 
 };

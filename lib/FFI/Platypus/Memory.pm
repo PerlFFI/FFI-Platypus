@@ -102,7 +102,7 @@ our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup strndup );
 
 my $ffi = FFI::Platypus->new( api => 1, experimental => 1);
 $ffi->lib(undef);
-$ffi->package;
+$ffi->bundle;
 sub _ffi { $ffi }
 
 $ffi->attach(malloc  => ['size_t']                     => 'opaque' => '$');
