@@ -19,10 +19,10 @@ This class is private to L<FFI::Platypus>.
   $ffi->bundle;
 
   $ffi->type( 'opaque'                       => 'ffi_pl_bundle_t' );
-  $ffi->type( '(string,string,string)->void' => 'set_str_t'       );
-  $ffi->type( '(string,string,sint64)->void' => 'set_sint_t'      );
-  $ffi->type( '(string,string,uint64)->void' => 'set_uint_t'      );
-  $ffi->type( '(string,string,double)->void' => 'set_double_t'    );
+  $ffi->type( '(string,string)->void' => 'set_str_t'       );
+  $ffi->type( '(string,sint64)->void' => 'set_sint_t'      );
+  $ffi->type( '(string,uint64)->void' => 'set_uint_t'      );
+  $ffi->type( '(string,double)->void' => 'set_double_t'    );
 
   $ffi->mangler(sub {
     my($name) = @_;
@@ -33,9 +33,12 @@ This class is private to L<FFI::Platypus>.
   $ffi->attach( new => [ 'set_str_t', 'set_sint_t', 'set_uint_t', 'set_double_t' ] => 'opaque' => sub {
     my($xsub, $class, $default_package) = @_;
     my $f = $ffi->closure(sub {
-      my($package, $name, $value) = @_;
-      $package = $default_package unless defined $package;
-      constant->import(join('::', $package, $name), $value);
+      my($name, $value) = @_;
+      if($name !~ /::/)
+      {
+        $name = join('::', $default_package, $name);
+      }
+      constant->import($name, $value);
     });
 
     bless {
