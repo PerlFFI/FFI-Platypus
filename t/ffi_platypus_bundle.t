@@ -39,7 +39,7 @@ EOF
   note $build_out;
 
   spew("$root/lib/auto/Foo/Bar1/Bar1.txt",
-       'FFI::Build@' . File::Spec->abs2rel($lib, "$root/lib"));
+       'FFI::Build@' . File::Spec->abs2rel("$lib", "$root/lib"));
 
   ok( !  FFI::Platypus->can('_bundle') );
 
@@ -85,7 +85,7 @@ EOF
   note $build_out;
 
   spew("$root/arch/auto/Foo/Bar2/Bar2.txt",
-       'FFI::Build@' . File::Spec->abs2rel($lib, "$root/lib"));
+       'FFI::Build@' . File::Spec->abs2rel("$lib", "$root/lib"));
 
   unshift @INC, "$root/lib";
   local $@ = '';
@@ -121,7 +121,7 @@ EOF
   note $build_out;
 
   spew("$root/lib/auto/Foo/Bar3/Bar3.txt",
-       'FFI::Build@' . File::Spec->abs2rel($lib, "$root/lib"));
+       'FFI::Build@' . File::Spec->abs2rel("$lib", "$root/lib"));
 
   unshift @INC, "$root/lib";
 
