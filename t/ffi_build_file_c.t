@@ -48,7 +48,7 @@ subtest 'headers' => sub {
 
   foreach my $dep (@deps)
   {
-    ok -f "$dep", "dep is afile: $dep";
+    ok -f "$dep", "dep is a file: $dep";
   }
   
 };
