@@ -988,7 +988,7 @@ dynamic library that was built when your distribution was installed.
 
 sub package
 {
-  #croak "package method only available with api => 0" if $self->{api} > 0;
+  croak "package method only available with api => 0" if $_[0]->{api} > 0;
   require FFI::Platypus::Legacy;
   goto &_package;
 }
@@ -1017,7 +1017,7 @@ sub bundle
     # if the module is already loaded, we can use %INC
     # otherwise we can go through @INC and find the first .pm
     # this doesn't handle all edge cases, but probably enough
-    List::Util::first { defined $_ && -f $_ } ($INC{$pm}, map { "$_/$pm" } @INC)
+    List::Util::first(sub { (defined $_) && (-f $_) }, ($INC{$pm}, map { "$_/$pm" } @INC));
   };
 
   croak "unable to find module $package" unless $pm;
@@ -1029,14 +1029,14 @@ sub bundle
     $incroot =~ s![\\/][^\\/]+$!! while $c--;
   }
 
-  my $txtfn = List::Util::first { -f $_ } do {
+  my $txtfn = List::Util::first(sub { -f $_ }, do {
     my $dir  = join '/', @parts;
     my $file = $parts[-1] . ".txt";
     (
       "$incroot/auto/$dir/$file",
       "$incroot/../arch/auto/$dir/$file",
     );
-  };
+  });
 
   croak "unable to find bundle code for $package" unless $txtfn;
 
@@ -1056,6 +1056,10 @@ sub bundle
     or croak "error loading bundle code: $lib @{[ FFI::Platypus::DL::dlerror() ]}";
 
   $self->{handles}->{$lib} =  $handle;
+
+  $self->lib($lib);
+
+  $self;
 }
 
 =head2 abis

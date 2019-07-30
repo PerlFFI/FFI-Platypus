@@ -19,7 +19,7 @@ the public interface to Platypus records.
     api          => 1,
     experimental => 1,  # okay if used internally
   );
-  $ffi->package;
+  $ffi->bundle;
   $ffi->mangler(sub {
     my($name) = @_;
     $name =~ s/^/ffi_platypus_record_meta__/;
