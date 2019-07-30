@@ -32,11 +32,11 @@ EOF
 #include <ffi_platypus_bundle.h>
     void ffi_pl_bundle_init(ffi_pl_bundle_t *b)
     {
-      b->set_str(NULL, "FOO1", "VAL1");
-      b->set_str("Foo::Bar1::Baz", "FOO2", "VAL2");
-      b->set_sint(NULL, "FOO3", -42);
-      b->set_uint(NULL, "FOO4", 512);
-      b->set_double(NULL, "FOO5", 2.5);
+      b->set_str("FOO1", "VAL1");
+      b->set_str("Foo::Bar1::Baz::FOO2", "VAL2");
+      b->set_sint("FOO3", -42);
+      b->set_uint("FOO4", 512);
+      b->set_double("FOO5", 2.5);
     }
 EOF
 

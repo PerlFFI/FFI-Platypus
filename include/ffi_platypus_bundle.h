@@ -13,10 +13,10 @@
 #include <stdlib.h>
 #endif
 
-typedef void (*set_str_t)    (const char *package, const char *name, const char *value);
-typedef void (*set_sint_t)   (const char *package, const char *name, int64_t value    );
-typedef void (*set_uint_t)   (const char *package, const char *name, uint64_t value   );
-typedef void (*set_double_t) (const char *package, const char *name, double value     );
+typedef void (*set_str_t)    (const char *name, const char *value);
+typedef void (*set_sint_t)   (const char *name, int64_t value    );
+typedef void (*set_uint_t)   (const char *name, uint64_t value   );
+typedef void (*set_double_t) (const char *name, double value     );
 
 typedef struct _ffi_pl_bundle_t {
 
