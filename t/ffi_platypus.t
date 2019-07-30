@@ -790,4 +790,31 @@ subtest 'api 1 warning' => sub {
   ok $api_warning;
 };
 
+subtest '->package is only allowed for api = 0' => sub {
+
+  my @warnings;
+  local $SIG{__WARN__} = sub {
+    note "[warning]\n", $_[0];
+    push @warnings, $_[0];
+  };
+
+  subtest 'api = 0' => sub {
+    my $ffi = FFI::Platypus->new( api => 0 );
+    local $@ = '';
+    eval { $ffi->package };
+    is "$@", "";
+  };
+
+  subtest 'api = 1' => sub {
+    TODO: {
+    local $TODO = 'need an alternative';
+    my $ffi = FFI::Platypus->new( api => 1 );
+    local $@ = '';
+    eval { $ffi->package };
+    like "$@", qr/^xxx/;
+    }
+  };
+
+};
+
 done_testing;

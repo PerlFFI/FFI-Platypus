@@ -988,56 +988,74 @@ dynamic library that was built when your distribution was installed.
 
 sub package
 {
-  my($self, $module, $modlibname) = @_;
+  #croak "package method only available with api => 0" if $self->{api} > 0;
+  require FFI::Platypus::Legacy;
+  goto &_package;
+}
 
-  ($module, $modlibname) = caller() unless defined $modlibname;
-  my @modparts = split /::/, $module;
-  my $modfname = $modparts[-1];
-  my $modpname = join('/',@modparts);
-  my $c = @modparts;
-  $modlibname =~ s,[\\/][^\\/]+$,, while $c--;    # Q&D basename
+=head2 bundle
 
+[version 0.96]
+
+ $ffi->bundle($package);
+ $ffi->bundle;
+
+TBD
+
+=cut
+
+sub bundle
+{
+  my($self, $package) = @_;
+  $package = caller unless defined $package;
+
+  require List::Util;
+
+  my($pm) = do {
+    my $pm = "$package.pm";
+    $pm =~ s{::}{/}g;
+    # if the module is already loaded, we can use %INC
+    # otherwise we can go through @INC and find the first .pm
+    # this doesn't handle all edge cases, but probably enough
+    List::Util::first { defined $_ && -f $_ } ($INC{$pm}, map { "$_/$pm" } @INC)
+  };
+
+  croak "unable to find module $package" unless $pm;
+
+  my @parts = split /::/, $package;
+  my $incroot = $pm;
   {
-    my @maybe = (
-      "$modlibname/auto/$modpname/$modfname.txt",
-      "$modlibname/../arch/auto/$modpname/$modfname.txt",
+    my $c = @parts;
+    $incroot =~ s![\\/][^\\/]+$!! while $c--;
+  }
+
+  my $txtfn = List::Util::first { -f $_ } do {
+    my $dir  = join '/', @parts;
+    my $file = $parts[-1] . ".txt";
+    (
+      "$incroot/auto/$dir/$file",
+      "$incroot/../arch/auto/$dir/$file",
     );
-    foreach my $file (@maybe)
-    {
-      if(-f $file)
-      {
-        open my $fh, '<', $file;
-        my $line = <$fh>;
-        close $fh;
-        if($line =~ /^FFI::Build\@(.*)$/)
-        {
-          $self->lib("$modlibname/$1");
-          return $self;
-        }
-      }
-    }
-  }
+  };
 
-  require FFI::Platypus::ShareConfig;
-  my @dlext = @{ FFI::Platypus::ShareConfig->get("config_dlext") };
+  croak "unable to find bundle code for $package" unless $txtfn;
 
-  foreach my $dlext (@dlext)
-  {
-    my $file = "$modlibname/auto/$modpname/$modfname.$dlext";
-    unless(-e $file)
-    {
-      $modlibname =~ s,[\\/][^\\/]+$,,;
-      $file = "$modlibname/arch/auto/$modpname/$modfname.$dlext";
-    }
+  my $lib = do {
+    my $fh;
+    open($fh, '<', $txtfn) or die "unable to read $txtfn $!";
+    my $line = <$fh>;
+    close $fh;
+    $line =~ /^FFI::Build\@(.*)$/
+      ? "$incroot/$1"
+      : croak "bad format $txtfn";
+  };
 
-    if(-e $file)
-    {
-      $self->lib($file);
-      return $self;
-    }
-  }
+  croak "bundle code is missing: $lib" unless -f $lib;
 
-  $self;
+  my $handle = FFI::Platypus::DL::dlopen($lib, FFI::Platypus::DL::RTLD_PLATYPUS_DEFAULT())
+    or croak "error loading bundle code: $lib @{[ FFI::Platypus::DL::dlerror() ]}";
+
+  $self->{handles}->{$lib} =  $handle;
 }
 
 =head2 abis
