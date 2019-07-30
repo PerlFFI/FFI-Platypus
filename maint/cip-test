@@ -6,7 +6,7 @@ make
 make test TEST_VERBOSE=1
 make install
 
-if [ "$CIP_ENV" = "FFI_PLATYPUS_NO_EXTRA_TYPES=1" ]; then
+if [ "$FFI_PLATYPUS_NO_EXTRA_TYPES" = "1" ]; then
   exit 0;
 fi;
 
