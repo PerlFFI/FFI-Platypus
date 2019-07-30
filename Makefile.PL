@@ -40,6 +40,7 @@ my %WriteMakefileArgs = (
     "lib/FFI/Platypus.pm"                        => "\$(INST_LIB)/FFI/Platypus.pm",
     "lib/FFI/Platypus/API.pm"                    => "\$(INST_LIB)/FFI/Platypus/API.pm",
     "lib/FFI/Platypus/Buffer.pm"                 => "\$(INST_LIB)/FFI/Platypus/Buffer.pm",
+    "lib/FFI/Platypus/Bundle.pm"                 => "\$(INST_LIB)/FFI/Platypus/Bundle.pm",
     "lib/FFI/Platypus/Closure.pm"                => "\$(INST_LIB)/FFI/Platypus/Closure.pm",
     "lib/FFI/Platypus/DL.pm"                     => "\$(INST_LIB)/FFI/Platypus/DL.pm",
     "lib/FFI/Platypus/Declare.pm"                => "\$(INST_LIB)/FFI/Platypus/Declare.pm",
