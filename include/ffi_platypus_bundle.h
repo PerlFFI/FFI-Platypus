@@ -3,6 +3,9 @@
 
 #include "ffi_platypus_config.h"
 
+#ifdef HAVE_STDDEF_H
+#include <stddef.h>
+#endif
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif

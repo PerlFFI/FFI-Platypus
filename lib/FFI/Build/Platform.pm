@@ -8,6 +8,8 @@ use Text::ParseWords ();
 use List::Util 1.45 ();
 use FFI::Temp;
 use Capture::Tiny ();
+use File::Spec;
+use FFI::Platypus::ShareConfig;
 
 # ABSTRACT: Platform specific configuration.
 # VERSION
@@ -331,6 +333,8 @@ sub ccflags
   push @ccflags, $self->shellwords($self->{config}->{cccdlflags});
   push @ccflags, $self->shellwords($self->{config}->{ccflags});
   push @ccflags, $self->shellwords($self->{config}->{optimize});
+  my $dist_include = eval { File::Spec->catdir(FFI::Platypus::ShareConfig::dist_dir('FFI-Platypus'), 'include') };
+  push @ccflags, "-I$dist_include" unless $@;
   \@ccflags;
 }
 

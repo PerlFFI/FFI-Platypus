@@ -106,7 +106,7 @@ sub _bundle
 
   $self->lib($lib);
 
-  my $init = eval { $self->function( 'ffi_pl_bundle_init' => 'opaque' ) };
+  my $init = eval { $self->function( 'ffi_pl_bundle_init' => [ 'opaque' ] => 'void' ) };
   if($init)
   {
     require FFI::Platypus::Bundle::API;
