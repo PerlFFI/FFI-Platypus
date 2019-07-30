@@ -17,6 +17,12 @@ foreach my $h (qw( ffi_platypus_config.h ffi_platypus_bundle.h ))
 {
   my $from = "include/$h";
   my $to   = "$include/$h";
+
+  if(-f $to)
+  {
+    next if slurp($from) eq slurp($to);
+  }
+
   copy($from => $to) || die "unable to copy $from => $to $!";
 }
 
@@ -41,4 +47,15 @@ foreach my $dir ( 'FFI/Platypus/Memory','FFI/Platypus/Record/Meta', 'FFI/Platypu
   open($fh, '>', $txtfile) || die "unable to write to $txtfile $!";
   print $fh "FFI::Build\@auto/share/dist/FFI-Platypus/lib/$name\n";
   close $fh;
+}
+
+sub slurp
+{
+  my($filename) = @_;
+  my $fh;
+  open $fh, '<', $filename;
+  binmode $fh;
+  my $content = do { local $/; <$fh> };
+  close $fh;
+  $content;
 }
