@@ -6,6 +6,10 @@ make
 make test TEST_VERBOSE=1
 make install
 
+if [ "$CIP_ENV" = "FFI_PLATYPUS_NO_EXTRA_TYPES=1" ]; then
+  exit 0;
+fi;
+
 if perl -e 'exit ! ($] > 5.016)'; then
 
   cpanm -n local::lib
