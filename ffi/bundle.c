@@ -14,7 +14,7 @@ ffi_platypus_bundle_api__new(set_str_t set_str,
   return self;
 }
 
-ffi_pl_bundle_t *
+void
 ffi_platypus_bundle_api__DESTROY(ffi_pl_bundle_t *self)
 {
   free(self);
