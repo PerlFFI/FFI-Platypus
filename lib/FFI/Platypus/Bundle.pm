@@ -69,6 +69,16 @@ sub _bundle
 
   $self->lib($lib);
 
+  my $init = eval { $self->function( 'ffi_pl_bundle_init' => 'opaque' ) };
+  if($init)
+  {
+    require FFI::Platypus::Bundle::API;
+    my $api = FFI::Platypus::Bundle::API->new($package);
+    $init->call($api->ptr);
+  }
+
+  # TODO: fini
+
   $self;
 }
 
