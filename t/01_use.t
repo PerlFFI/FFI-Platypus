@@ -13,6 +13,7 @@ require_ok 'FFI::Build::Platform';
 require_ok 'FFI::Platypus';
 require_ok 'FFI::Platypus::API';
 require_ok 'FFI::Platypus::Buffer';
+require_ok 'FFI::Platypus::Bundle';
 require_ok 'FFI::Platypus::Closure';
 require_ok 'FFI::Platypus::DL';
 require_ok 'FFI::Platypus::Declare';
@@ -51,6 +52,7 @@ ok -f 't/ffi_build_platform.t',                               'test for FFI::Bui
 ok -f 't/ffi_platypus.t',                                     'test for FFI::Platypus';
 ok -f 't/ffi_platypus_api.t',                                 'test for FFI::Platypus::API';
 ok -f 't/ffi_platypus_buffer.t',                              'test for FFI::Platypus::Buffer';
+ok -f 't/ffi_platypus_bundle.t',                              'test for FFI::Platypus::Bundle';
 ok -f 't/ffi_platypus_closure.t',                             'test for FFI::Platypus::Closure';
 ok -f 't/ffi_platypus_dl.t',                                  'test for FFI::Platypus::DL';
 ok -f 't/ffi_platypus_declare.t',                             'test for FFI::Platypus::Declare';

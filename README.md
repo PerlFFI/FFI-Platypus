@@ -518,7 +518,7 @@ Return the address of the given symbol (usually function).
 
 ## package
 
-\[version 0.15\]
+\[version 0.15 api = 0\]
 
     $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
     $ffi->package;                  # autodetect
@@ -527,6 +527,15 @@ If you use [FFI::Build](https://metacpan.org/pod/FFI::Build) (or the older depre
 to bundle C code with your distribution, you can use this method to tell
 the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance to look for symbols that came with the
 dynamic library that was built when your distribution was installed.
+
+## bundle
+
+\[version 0.96 api = 1+\]
+
+    $ffi->bundle($package);
+    $ffi->bundle;
+
+TBD
 
 ## abis
 
