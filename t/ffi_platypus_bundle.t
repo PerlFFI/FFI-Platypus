@@ -211,12 +211,10 @@ void ffi_pl_bundle_init(const char *package, int c, void **args)
 
 void ffi_pl_bundle_fini(const char *package)
 {
-/*
   logit("ffi_pl_bundle_fini (enter)");
   sprintf(buffer, "package = %s", package);
   logit(buffer);
   logit("ffi_pl_bundle_fini (leave)");
-*/
 }
 
 EOF
@@ -246,6 +244,16 @@ EOF
   }
 
   note "log:$_" for @log;
+
+  is_deeply(
+    \@log,
+    [
+      'ffi_pl_bundle_fini (enter)',
+      'package = Foo::Bar5',
+      'ffi_pl_bundle_fini (leave)',
+    ],
+  );
+
   @log = ();
 
 };
