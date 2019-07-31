@@ -19,6 +19,7 @@ sub myWriteMakefile
   my %alien;
 
   ExtUtils::MakeMaker->VERSION('7.12');
+  $build_config->set(version => [ $args{VERSION} =~ /^([0-9]+)\.([0-9]{2})/ ]);
 
   if(eval { require Alien::FFI; Alien::FFI->VERSION('0.20'); 1 })
   {
