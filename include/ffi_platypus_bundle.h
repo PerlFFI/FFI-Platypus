@@ -18,17 +18,15 @@ typedef void (*set_sint_t)   (const char *name, int64_t value    );
 typedef void (*set_uint_t)   (const char *name, uint64_t value   );
 typedef void (*set_double_t) (const char *name, double value     );
 
-typedef struct _ffi_pl_bundle_t {
-
-  char *package;
+typedef struct {
   set_str_t    set_str;
   set_sint_t   set_sint;
   set_uint_t   set_uint;
   set_double_t set_double;
+} ffi_pl_bundle_constant_t;
 
-} ffi_pl_bundle_t;
-
-void ffi_pl_bundle_init(ffi_pl_bundle_t *);
-void ffi_pl_bundle_fini(ffi_pl_bundle_t *);
+void ffi_pl_bundle_init(const char *, int, void **);
+void ffi_pl_bundle_constant(const char *, ffi_pl_bundle_constant_t *);
+void ffi_pl_bundle_fini(const char *);
 
 #endif

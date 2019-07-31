@@ -30,13 +30,14 @@ EOF
 
   spew("$root/ffi/bar1.c", <<'EOF');
 #include <ffi_platypus_bundle.h>
-    void ffi_pl_bundle_init(ffi_pl_bundle_t *b)
+    void ffi_pl_bundle_constant(const char *package, ffi_pl_bundle_constant_t *b)
     {
       b->set_str("FOO1", "VAL1");
       b->set_str("Foo::Bar1::Baz::FOO2", "VAL2");
       b->set_sint("FOO3", -42);
       b->set_uint("FOO4", 512);
       b->set_double("FOO5", 2.5);
+      b->set_str("FOO6", package);
     }
 EOF
 
@@ -51,6 +52,7 @@ EOF
   is( Foo::Bar1::FOO3(), -42 );
   is( Foo::Bar1::FOO4(), 512 );
   is( Foo::Bar1::FOO5(), 2.5 );
+  is( Foo::Bar1::FOO6(), "Foo::Bar1" );
 
 };
 
