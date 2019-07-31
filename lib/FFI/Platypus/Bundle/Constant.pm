@@ -5,7 +5,7 @@ use warnings;
 use constant 1.32 ();
 use FFI::Platypus;
 
-# ABSTRACT: Platypus Bundle code
+# ABSTRACT: Platypus Bundle Constant code
 # VERSION
 
 =head1 DESCRIPTION

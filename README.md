@@ -535,7 +535,9 @@ dynamic library that was built when your distribution was installed.
     $ffi->bundle($package);
     $ffi->bundle;
 
-TBD
+This is a new experimental interface for bundling compiled code with your
+distribution intended to eventually replace the `package` method documented
+above.
 
 ## abis
 

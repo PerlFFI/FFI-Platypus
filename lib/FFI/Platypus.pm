@@ -1001,7 +1001,9 @@ sub package
  $ffi->bundle($package);
  $ffi->bundle;
 
-TBD
+This is a new experimental interface for bundling compiled code with your
+distribution intended to eventually replace the C<package> method documented
+above.
 
 =cut
 
