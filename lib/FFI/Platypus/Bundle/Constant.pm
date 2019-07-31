@@ -1,4 +1,4 @@
-package FFI::Platypus::Bundle::API;
+package FFI::Platypus::Bundle::Constant;
 
 use strict;
 use warnings;

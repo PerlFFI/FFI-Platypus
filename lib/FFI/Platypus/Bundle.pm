@@ -109,8 +109,8 @@ sub _bundle
   my $init = eval { $self->function( 'ffi_pl_bundle_init' => [ 'opaque' ] => 'void' ) };
   if($init)
   {
-    require FFI::Platypus::Bundle::API;
-    my $api = FFI::Platypus::Bundle::API->new($package);
+    require FFI::Platypus::Bundle::Constant;
+    my $api = FFI::Platypus::Bundle::Constant->new($package);
     $init->call($api->ptr);
   }
 
