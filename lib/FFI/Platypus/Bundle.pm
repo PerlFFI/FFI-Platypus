@@ -2,6 +2,7 @@ package FFI::Platypus::Bundle;
 
 use strict;
 use warnings;
+use Carp ();
 
 # ABSTRACT: Platypus Bundle code
 # VERSION
@@ -39,7 +40,7 @@ sub _bundle
     List::Util::first(sub { (defined $_) && (-f $_) }, ($INC{$pm}, map { "$_/$pm" } @INC));
   };
 
-  croak "unable to find module $package" unless $pm;
+  Carp::croak "unable to find module $package" unless $pm;
 
   my @parts = split /::/, $package;
   my $incroot = $pm;
@@ -68,9 +69,9 @@ sub _bundle
       close $fh;
       $line =~ /^FFI::Build\@(.*)$/
         ? "$incroot/$1"
-        : croak "bad format $txtfn";
+        : Carp::croak "bad format $txtfn";
     };
-    croak "bundle code is missing: $lib" unless -f $lib;
+    Carp::croak "bundle code is missing: $lib" unless -f $lib;
   }
   elsif(-d "$incroot/../ffi")
   {
@@ -105,11 +106,11 @@ sub _bundle
   }
   else
   {
-    croak "unable to find bundle code for $package";
+    Carp::croak "unable to find bundle code for $package";
   }
 
   my $handle = FFI::Platypus::DL::dlopen($lib, FFI::Platypus::DL::RTLD_PLATYPUS_DEFAULT())
-    or croak "error loading bundle code: $lib @{[ FFI::Platypus::DL::dlerror() ]}";
+    or Carp::croak "error loading bundle code: $lib @{[ FFI::Platypus::DL::dlerror() ]}";
 
   $self->{handles}->{$lib} =  $handle;
 
