@@ -234,6 +234,7 @@ sub new
     abi              => -1,
     api              => $api,
     tp               => $tp->new,
+    fini             => [],
     ignore_not_found => defined $args{ignore_not_found} ? $args{ignore_not_found} : 0,
   }, $class;
 
@@ -1066,6 +1067,10 @@ sub abi
 sub DESTROY
 {
   my($self) = @_;
+  foreach my $fini (@{ $self->{fini} })
+  {
+    $fini->($self);
+  }
   foreach my $handle (values %{ $self->{handles} })
   {
     next unless $handle;

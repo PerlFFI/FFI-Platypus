@@ -23,6 +23,8 @@ sub _bundle
     @arg_ptrs = @{ pop @_ };
   }
 
+  push @arg_ptrs, undef;
+
   my($self, $package) = @_;
   $package = caller unless defined $package;
 
@@ -113,9 +115,9 @@ sub _bundle
 
   $self->lib($lib);
 
-  if(my $init = eval { $self->function( 'ffi_pl_bundle_init' => [ 'string', 'int', 'opaque[]' ] => 'void' ) })
+  if(my $init = eval { $self->function( 'ffi_pl_bundle_init' => [ 'string', 'sint32', 'opaque[]' ] => 'void' ) })
   {
-    $init->call($package, scalar(@arg_ptrs), \@arg_ptrs);
+    $init->call($package, scalar(@arg_ptrs)-1, \@arg_ptrs);
   }
 
   if(my $init = eval { $self->function( 'ffi_pl_bundle_constant' => [ 'string', 'opaque' ] => 'void' ) })
@@ -123,6 +125,15 @@ sub _bundle
     require FFI::Platypus::Bundle::Constant;
     my $api = FFI::Platypus::Bundle::Constant->new($package);
     $init->call($package, $api->ptr);
+  }
+
+  if(my $address = $self->find_symbol( 'ffi_pl_bundle_fini' ))
+  {
+    push @{ $self->{fini} }, sub {
+      my $self = shift;
+      $self->function( $address => [ 'string' ] => 'void' )
+           ->call( $package );
+    };
   }
 
   # TODO: fini
