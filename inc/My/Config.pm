@@ -188,6 +188,20 @@ sub configure
 
   $ch->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin|msys)$/;
 
+  {
+    my($major, $minor, $patch) = $] =~ /^(5)\.([0-9]{3})([0-9]{3})/;
+    $ch->define_var( FFI_PL_PERL_VERSION_MAJOR => int $major );
+    $ch->define_var( FFI_PL_PERL_VERSION_MINOR => int $minor );
+    $ch->define_var( FFI_PL_PERL_VERSION_PATCH => int $patch );
+  }
+
+  {
+    my($major, $minor, $patch) = (@{ $self->build_config->get('version') }, 0);
+    $ch->define_var( FFI_PL_VERSION_MAJOR => int $major );
+    $ch->define_var( FFI_PL_VERSION_MINOR => int $minor );
+    $ch->define_var( FFI_PL_VERSION_PATCH => int $patch );
+  }
+
   foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool complex ))
   {
     if($probe->check_header("$header.h"))
