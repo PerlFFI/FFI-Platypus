@@ -16,6 +16,13 @@ package FFI::Platypus;
 
 sub _bundle
 {
+  my @arg_ptrs;
+
+  if(defined $_[-1] && ref($_[-1]) eq 'ARRAY')
+  {
+    @arg_ptrs = @{ pop @_ };
+  }
+
   my($self, $package) = @_;
   $package = caller unless defined $package;
 
@@ -106,12 +113,16 @@ sub _bundle
 
   $self->lib($lib);
 
-  my $init = eval { $self->function( 'ffi_pl_bundle_init' => [ 'opaque' ] => 'void' ) };
-  if($init)
+  if(my $init = eval { $self->function( 'ffi_pl_bundle_init' => [ 'string', 'int', 'opaque[]' ] => 'void' ) })
+  {
+    $init->call($package, scalar(@arg_ptrs), \@arg_ptrs);
+  }
+
+  if(my $init = eval { $self->function( 'ffi_pl_bundle_constant' => [ 'string', 'opaque' ] => 'void' ) })
   {
     require FFI::Platypus::Bundle::Constant;
     my $api = FFI::Platypus::Bundle::Constant->new($package);
-    $init->call($api->ptr);
+    $init->call($package, $api->ptr);
   }
 
   # TODO: fini
