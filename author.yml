@@ -138,7 +138,7 @@ pod_coverage:
     - FFI::Platypus::Closure#add_data
     - FFI::Probe
     - FFI::Platypus::Bundle
-    - FFI::Platypus::Bundle::API
+    - FFI::Platypus::Bundle::Constant
     - App::fbx#main
     - FFI::Build::File::Object#default_suffix
     - FFI::Build::File::Library#default_suffix

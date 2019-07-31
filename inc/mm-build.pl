@@ -38,7 +38,7 @@ my $lib = FFI::Build->new(
 
 my $name = basename($lib->basename);
 
-foreach my $dir ( 'FFI/Platypus/Memory','FFI/Platypus/Record/Meta', 'FFI/Platypus/Bundle/API' )
+foreach my $dir ( 'FFI/Platypus/Memory','FFI/Platypus/Record/Meta', 'FFI/Platypus/Bundle/Constant' )
 {
   my($file) = $dir =~ m{/([^/]+)$};
   mkpath("blib/arch/auto/$dir", 0, 0755);
