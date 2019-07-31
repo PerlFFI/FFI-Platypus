@@ -166,6 +166,13 @@ subtest 'entry points' => sub {
   my $root = FFI::Temp->newdir;
 
   our @log;
+  our $log_closure = do {
+    my $ffi = FFI::Platypus->new;
+    $ffi->closure(sub {
+      my($str) = @_;
+      push @log, $str;
+    });
+  };
 
   spew("$root/lib/Foo/Bar5.pm", <<'EOF');
     package Foo::Bar5;
@@ -173,11 +180,7 @@ subtest 'entry points' => sub {
     use warnings;
     use FFI::Platypus;
     our $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
-    my $f = $ffi->closure(sub {
-      my($str) = @_;
-      push @main::log, $str;
-    });
-    $ffi->bundle([$ffi->cast('(string)->void' => 'opaque', $f)]);
+    $ffi->bundle([$ffi->cast('(string)->void' => 'opaque', $main::log_closure)]);
     1;
 EOF
 
@@ -211,6 +214,7 @@ void ffi_pl_bundle_fini(const char *package)
 /*
   logit("ffi_pl_bundle_fini (enter)");
   sprintf(buffer, "package = %s", package);
+  logit(buffer);
   logit("ffi_pl_bundle_fini (leave)");
 */
 }
@@ -236,7 +240,10 @@ EOF
 
   ok 1;
 
-  undef $Foo::Bar5::ffi;
+  {
+    no warnings 'once';
+    undef $Foo::Bar5::ffi;
+  }
 
   note "log:$_" for @log;
   @log = ();
