@@ -161,6 +161,88 @@ EOF
 
 };
 
+subtest 'entry points' => sub {
+
+  my $root = FFI::Temp->newdir;
+
+  our @log;
+
+  spew("$root/lib/Foo/Bar5.pm", <<'EOF');
+    package Foo::Bar5;
+    use strict;
+    use warnings;
+    use FFI::Platypus;
+    our $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
+    my $f = $ffi->closure(sub {
+      my($str) = @_;
+      push @main::log, $str;
+    });
+    $ffi->bundle([$ffi->cast('(string)->void' => 'opaque', $f)]);
+    1;
+EOF
+
+  spew("$root/ffi/foo.c", <<'EOF');
+#include <ffi_platypus_bundle.h>
+#include <stdio.h>
+
+typedef void (*log_t)(const char *);
+log_t logit;
+char buffer[1024];
+
+void ffi_pl_bundle_init(const char *package, int c, void **args)
+{
+  int i;
+  logit = (log_t) args[0];
+  logit("ffi_pl_bundle_init (enter)");
+  sprintf(buffer, "package = %s", package);
+  logit(buffer);
+  sprintf(buffer, "c = %d", c);
+  logit(buffer);
+  for(i=0; args[i] != NULL; i++)
+  {
+    sprintf(buffer, "args[%d] = %d", i, args[i]);
+    logit(buffer);
+  }
+  logit("ffi_pl_bundle_init (leave)");
+}
+
+void ffi_pl_bundle_fini(const char *package)
+{
+/*
+  logit("ffi_pl_bundle_fini (enter)");
+  sprintf(buffer, "package = %s", package);
+  logit("ffi_pl_bundle_fini (leave)");
+*/
+}
+
+EOF
+
+  unshift @INC, "$root/lib";
+
+  local $@ = '';
+  eval " require Foo::Bar5; ";
+  is "$@", '';
+
+  note "log:$_" for @log;
+
+  is(scalar(@log), 5);
+  is($log[0], 'ffi_pl_bundle_init (enter)');
+  is($log[1], 'package = Foo::Bar5');
+  is($log[2], 'c = 1');
+  like($log[3], qr/^args\[0\] = -?[0-9]+$/);
+  is($log[4], 'ffi_pl_bundle_init (leave)');
+
+  @log = ();
+
+  ok 1;
+
+  undef $Foo::Bar5::ffi;
+
+  note "log:$_" for @log;
+  @log = ();
+
+};
+
 done_testing;
 
 sub spew
