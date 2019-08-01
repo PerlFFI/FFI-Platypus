@@ -2,6 +2,12 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.95_04   2019-07-31 21:18:30 -0400
+  - New interface for bundling code with dist (see bundle method)
+    experimental, requires api = 1 (gh#160, gh#162)
+  - Bundle API provides a way to define Perl constants from C
+    (gh#138)
+
 0.95_03   2019-07-29 19:21:24 -0400
   - Remove build dependent strings from deployment
     (gh#104, gh#110, gh#157, gh#159)
