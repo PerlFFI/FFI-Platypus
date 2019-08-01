@@ -955,8 +955,8 @@ sub find_symbol
     my $handle = do { no warnings; $self->{handles}->{$path||0} } || FFI::Platypus::DL::dlopen($path, FFI::Platypus::DL::RTLD_PLATYPUS_DEFAULT());
     unless($handle)
     {
-      warn "error loading $path: ", FFI::Platypus::DL::dlerror()
-        if $ENV{FFI_PLATYPUS_DLERROR};
+      warn "warning: error loading $path: ", FFI::Platypus::DL::dlerror()
+        if $self->{api} > 0 || $ENV{FFI_PLATYPUS_DLERROR};
       next;
     }
     my $address = FFI::Platypus::DL::dlsym($handle, $self->{mangler}->($name));
