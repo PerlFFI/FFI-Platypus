@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.95_05   2019-08-01 16:18:41 -0400
   - Under api = 1, a warning will be issued when Platypus tries to load
     a file that is not a dnyamic library.  Previously, and under api = 0
     this warning was only issued if the environment variable
