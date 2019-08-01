@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Under api = 1, a warning will be issued when Platypus tries to load
+    a file that is not a dnyamic library.  Previously, and under api = 0
+    this warning was only issued if the environment variable
+    FFI_PLATYPUS_DLERROR is set to a true value (gh#161, gh#163)
 
 0.95_04   2019-07-31 21:18:30 -0400
   - New interface for bundling code with dist (see bundle method)
