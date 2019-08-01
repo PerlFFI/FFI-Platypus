@@ -249,8 +249,9 @@ sub _lang_class ($)
   my $class = $lang =~ m/^=(.*)$/ ? $1 : "FFI::Platypus::Lang::$lang";
   unless($class->can('native_type_map'))
   {
-    eval qq{ use $class };
-    croak "unable to load $class: $@" if $@;
+    my $pm = "$class.pm";
+    $pm =~ s/::/\//g;
+    require $pm;
   }
   croak "$class does not provide native_type_map method"
     unless $class->can("native_type_map");
@@ -486,7 +487,9 @@ sub load_custom_type
 
   unless($name->can("ffi_custom_type_api_1"))
   {
-    eval qq{ use $name () };
+    my $pm = "$name.pm";
+    $pm =~ s/::/\//g;
+    eval { require $pm };
     warn $@ if $@;
   }
 
