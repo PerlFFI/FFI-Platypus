@@ -368,9 +368,14 @@ sub lang
 
     {
       my %type_map;
-      foreach my $key (keys %{ $class->native_type_map })
+      my $map = $class->native_type_map(
+        $self->{api} > 0
+          ? (api => $self->{api})
+          : ()
+      );
+      foreach my $key (keys %$map)
       {
-        my $value = $class->native_type_map->{$key};
+        my $value = $map->{$key};
         next unless $self->{tp}->have_type($value);
         $type_map{$key} = $value;
       }

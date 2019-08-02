@@ -841,4 +841,33 @@ subtest 'warning defaults' => sub {
 
 };
 
+subtest 'language plugin api version' => sub {
+
+  my %args;
+
+  my $native_type_map = sub
+  {
+    my $class = shift;
+    %args = @_;
+    {};
+  };
+
+  {
+    package FFI::Platypus::Lang::Frooble;
+    no warnings 'once';
+    *native_type_map = $native_type_map;
+  }
+
+  subtest 'api = 0' => sub {
+    my $ffi = FFI::Platypus->new( lang => 'Frooble' );
+    is $args{api}, undef;
+  };
+
+  subtest 'api = 1' => sub {
+    my $ffi = FFI::Platypus->new( lang => 'Frooble', api => 1, experimental => 1 );
+    is $args{api}, 1;
+  };
+
+};
+
 done_testing;
