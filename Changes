@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Platypus now passes the api version (if > 0) into language plugins
+    class native_type_map method (gh#165, gh#166)
 
 0.95_05   2019-08-01 16:18:41 -0400
   - Under api = 1, a warning will be issued when Platypus tries to load
