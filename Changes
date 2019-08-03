@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.95_06   2019-08-03 08:51:46 -0400
   - Platypus now passes the api version (if > 0) into language plugins
     class native_type_map method (gh#165, gh#166)
 
