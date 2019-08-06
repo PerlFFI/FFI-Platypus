@@ -40,7 +40,7 @@ subtest 'basic' => dont_save_prop {
 
   my $mm = FFI::Build::MM->new;
   isa_ok $mm, 'FFI::Build::MM';
-  
+
   $mm->mm_args( DISTNAME => 'Foo-Bar-Baz' );
 
   is( $mm->distname, 'Foo-Bar-Baz' );
@@ -58,14 +58,14 @@ subtest 'basic' => dont_save_prop {
     isa_ok $build, 'FFI::Build';
     is_deeply [sort map { $_->basename } $build->source], ['hello1.c','hello2.c']
   };
-  
+
   my $postamble = $mm->mm_postamble;
   ok $postamble;
   note "[postamble]\n$postamble\n";
-  
+
   $mm->sharedir('share');
   is( $mm->sharedir, 'share' );
-  
+
   $mm->archdir(0);
   ok( !$mm->archdir );
 };
@@ -80,12 +80,20 @@ subtest 'with a build!' => sub {
     ok( ! main->can($_), "$_ not imported yet" ) for qw( fbx_build fbx_test fbx_clean );
   };
 
+  subtest 'do not save on request' => sub {
+
+    my $mm = FFI::Build::MM->new( save => 0 );
+    $mm->mm_args( DISTNAME => 'Crock-O-Stimpy' );
+    ok !-f 'fbx.json';
+
+  };
+
   subtest 'perl Makefile.PL' => sub {
-  
+
     my $mm = FFI::Build::MM->new;
     $mm->mm_args( DISTNAME => 'Crock-O-Stimpy' );
     ok -f 'fbx.json';
-  
+
   };
 
   subtest 'import' => sub {
@@ -100,7 +108,7 @@ subtest 'with a build!' => sub {
     };
     note $out;
     is $err, '';
-    
+
     is slurp 'blib/arch/auto/Crock/O/Stimpy/Stimpy.txt', "FFI::Build\@auto/share/dist/Crock-O-Stimpy/lib/@{[ FFI::Build::Platform->library_prefix ]}Crock-O-Stimpy@{[ scalar FFI::Build::Platform->library_suffix]}\n";
 
     platypus 1 => sub {
@@ -112,7 +120,7 @@ subtest 'with a build!' => sub {
       );
     };
   };
-  
+
   subtest 'make test' => sub {
     my($out, $err) = capture_merged {
       eval { fbx_test() };
@@ -121,13 +129,13 @@ subtest 'with a build!' => sub {
     note $out;
     is $err, '';
   };
-  
+
   subtest 'make clean' => sub {
     fbx_clean();
     ok !-f 'fbx.json';
   };
   File::Path::rmtree('blib', 0, 0755);
-  
+
   chdir(File::Spec->updir) for 1..3;
 
 };
