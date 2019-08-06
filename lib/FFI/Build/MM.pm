@@ -61,9 +61,11 @@ Create a new instance of L<FFI::Build::MM>.
 
 sub new
 {
-  my($class) = @_;
+  my($class, %opt) = @_;
+
+  my $save = defined $opt{save} ? $opt{save} : 1;
   
-  my $self = bless {}, $class;
+  my $self = bless { save => $save }, $class;
   $self->load_prop;
   
   $self;
@@ -206,6 +208,7 @@ sub test
 sub save_prop
 {
   my($self) = @_;
+  return unless $self->{save};
   open my $fh, '>', 'fbx.json';
   print $fh JSON::PP::encode_json($self->{prop});
   close $fh;
@@ -214,6 +217,7 @@ sub save_prop
 sub load_prop
 {
   my($self) = @_;
+  return unless $self->{save};
   unless(-f 'fbx.json')
   {
     $self->{prop} = {};

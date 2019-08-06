@@ -85,7 +85,7 @@ sub _bundle
       $lib = eval {
         my $dist_name = $package;
         $dist_name =~ s/::/-/;
-        my $fbmm = FFI::Build::MM->new;
+        my $fbmm = FFI::Build::MM->new( save => 0 );
         $fbmm->mm_args( DISTNAME => $dist_name );
         my $build = $fbmm->load_build('ffi', undef, 'ffi/_build');
         $build->build;
