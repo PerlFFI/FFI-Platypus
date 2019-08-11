@@ -4,8 +4,28 @@ use strict;
 use warnings;
 use Carp ();
 
-# ABSTRACT: Platypus Bundle code
+# ABSTRACT: Bundle foreign code with your Perl module
 # VERSION
+
+=head1 SYNOPSIS
+
+ffi/color.c
+
+ #include <ffi_platypus_bundle.h>
+ 
+ typedef struct {
+   uint8_t r, b, g;
+ } color_t;
+
+ color_t *
+ color__new(const char *class, uint8_t r, uint8_t g, uint8_t b)
+ {
+   color_t *self = malloc( sizeof( color_t ) );
+   self->r = r;
+   self->b = b;
+   self->g = g;
+   return self;
+ }
 
 =head1 DESCRIPTION
 
