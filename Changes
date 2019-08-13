@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.95_07   2019-08-13 13:38:30 -0400
   - Minor tweak to bundle interface: do not create fbx.json file when
     running on-demand (gh#167)
   - Document bundle interface (see FFI::Platypus::Bundle) (gh#160, gh#168)
