@@ -32,9 +32,7 @@ or C<dist.ini>:
  ...
 
  [FFI::Build]
- [PruneFiles]
- filename = fbx.json
- match    = ^ffi/_build/
+ version = 1.04
 
 =head1 DESCRIPTION
 
@@ -220,12 +218,10 @@ L<Dist::Zilla::Plugin::FFI::Build> plugin to simplify your life if you are
 using L<Dist::Zilla>:
 
  [FFI::Build]
- [PruneFiles]
- filename = fbx.json
- match    = ^ffi/_build/
+ version = 1.04
 
-The above incantation for L<Dist::Zilla::Plugin::PruneFiles> will clean up
-any files that are built using C<prove>, etc. outside of MakeMaker.
+Specifying version 1.04 will ensure that any C<.o> or C<.so> files are pruned
+from your build tree and not distributed by mistake.
 
 =cut
 
