@@ -335,8 +335,8 @@ sub _bundle
 
   if(my $init = eval { $self->function( 'ffi_pl_bundle_constant' => [ 'string', 'opaque' ] => 'void' ) })
   {
-    require FFI::Platypus::Bundle::Constant;
-    my $api = FFI::Platypus::Bundle::Constant->new($package);
+    require FFI::Platypus::Constant;
+    my $api = FFI::Platypus::Constant->new($package);
     $init->call($package, $api->ptr);
   }
 
