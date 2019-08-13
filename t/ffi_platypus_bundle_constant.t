@@ -30,7 +30,7 @@ EOF
 
   spew("$root/ffi/bar1.c", <<'EOF');
 #include <ffi_platypus_bundle.h>
-    void ffi_pl_bundle_constant(const char *package, ffi_pl_bundle_constant_t *b)
+    void ffi_pl_bundle_constant(const char *package, ffi_platypus_constant_t *b)
     {
       b->set_str("FOO1", "VAL1");
       b->set_str("Foo::Bar1::Baz::FOO2", "VAL2");
