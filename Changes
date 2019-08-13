@@ -3,6 +3,7 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - Minor tweak to bundle interface: do not create fbx.json file when
     running on-demand (gh#167)
+  - Document bundle interface (see FFI::Platypus::Bundle) (gh#160, gh#168)
 
 0.95_06   2019-08-03 08:51:46 -0400
   - Platypus now passes the api version (if > 0) into language plugins
