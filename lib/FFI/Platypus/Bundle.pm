@@ -49,13 +49,13 @@ Perl module to make a tight loop faster.  The bundling interface has you covered
 
 =head2 Basic example
 
-To illustrate we will go through the files provided in the synopsis and explain
+To illustrate we will go through the files in the synopsis and explain
 how and why they work.  To start with we have some C code which emulates object
-oriented code using C<foo__> as a prefix.  We use a C type that we define
-C<foo_t> to store our object data.  On the C level the type acts as a class, along
-with its functions act as a class.  The constructor just allocates the memory
-it needs for the C<foo_t> instance, fills in the appropriate fields and returns
-the pointer:
+oriented code using C<foo__> as a prefix.  We use a C struct that we call
+C<foo_t> to store our object data.  On the C level the struct acts as a class,
+when combined with its functions that act as methods.  The constructor just
+allocates the memory it needs for the C<foo_t> instance, fills in the
+appropriate fields and returns the pointer:
 
  foo_t*
  foo__new(const char *class_name, const char *name, int value)
@@ -68,7 +68,8 @@ the pointer:
  }
 
 We include a class name as the first argument, because Perl will include that
-when calling the constructor, but we do not use it here.
+when calling the constructor, but we do not use it here.  An exercise for the
+reader would be to add hierarchical inheritance.
 
 There are also some methods which return member values.  This class has only
 read only members, but you could have read/write or other methods depending
@@ -104,7 +105,8 @@ associate it with the Perl class C<Foo>.
 
 As object type is a blessed reference to an opaque (default) or integer type which
 can be used as a Perl object.  Platypus does the translating of Perl object to and
-from the foo_t pointers that the C code understands.
+from the foo_t pointers that the C code understands.  For more details on Platypus
+types see L<FFI::Platypus::Type>.
 
 Next we set the mangler on the Platypus instance so that we can refer to function
 names without the C<foo__> prefix.  You could just not use the prefix in your C
@@ -124,7 +126,7 @@ Finally we let Platypus know that we will be bundling code.
 
 By default, this searches for the appropriate place for your dynamic libraries using
 the current package.  In some cases you may need to override this, for example if your
-dist is named C<Foo-Bar> but your specific class is named C<Foo::Bar::Baz>, you'd have
+dist is named C<Foo-Bar> but your specific class is named C<Foo::Bar::Baz>, you'd
 want something like this:
 
  package Foo::Bar::Baz;
@@ -135,16 +137,16 @@ want something like this:
 
 Now, finally we can attach the methods for our class:
 
- $ffi->attach( new =>     [ 'string', 'value' ] => 'foo_t'  );
- $ffi->attach( name =>    [ 'foo_t' ]           => 'string' );
- $ffi->attach( value =>   [ 'foo_t' ]           => 'int'    );
- $ffi->attach( DESTROY => [ 'foo_t' ]           => 'void'   );
+ $ffi->attach( new =>     [ 'string', 'int' ] => 'foo_t'  );
+ $ffi->attach( name =>    [ 'foo_t' ]         => 'string' );
+ $ffi->attach( value =>   [ 'foo_t' ]         => 'int'    );
+ $ffi->attach( DESTROY => [ 'foo_t' ]         => 'void'   );
 
 Note that we do not have to include the C<foo__> prefix because of the way we set up
 the mangler.  If we hadn't done that then we could instead attach with the full names:
 
- $ffi->attach( [ 'foo__new'  => 'new' ]  => [ 'string', 'value' ] => 'foo_t'  );
- $ffi->attach( [ 'foo__name' => 'name' ] => [ 'foo_t' ]           => 'string' );
+ $ffi->attach( [ 'foo__new'  => 'new' ]  => [ 'string', 'int' ] => 'foo_t'  );
+ $ffi->attach( [ 'foo__name' => 'name' ] => [ 'foo_t' ]         => 'string' );
  ...
 
 You're done!  You can now use this class.  Lets write a test to make sure it works,
@@ -174,24 +176,26 @@ and use C<prove> to check that it works:
  Files=1, Tests=3,  0 wallclock secs ( 0.02 usr  0.00 sys +  0.14 cusr  0.03 csys =  0.19 CPU)
  Result: PASS
 
-The C code is automatically compiled and linked into a dynamic library for you:
+Platypus automatically compiles and links the dynamic library for you:
 
  % ls ffi/_build
  foo.c.o  libFoo.so
 
-The C code will be rebuilt if the source code is newer than the object or dynamic libraries
-files.  If you are using the code without MakeMaker, or another build system you are responsible
-for cleaning up these files.  This is intended as a convenience to allow you to test your code
-without having to invoke MakeMaker, or C<dzil> or whatever build system you are using.
+The C code will be rebuilt next time if the source code is newer than the object or dynamic libraries
+files.  If the source files are not changed, then it won't be rebuilt to save time.  If you are using
+the code without MakeMaker, or another build system you are responsible for cleaning up these files. 
+This is intended as a convenience to allow you to test your code without having to invoke MakeMaker,
+or C<dzil> or whatever build system you are using.
 
 When you distribute your module though, you will want the dynamic library built just once
-and build time and installed correctly so that it can be found at run-time.  You don't need
+at build-time and installed correctly so that it can be found at run-time.  You don't need
 to make any changes to your C or Perl code, but you do need to tell MakeMaker to build and
 install the appropriate files using L<FFI::Build::MM>:
 
 # EXAMPLE: examples/bundle-foo/Makefile.PL
 
-And we can invoke all the normal MakeMaker style stuff.
+And we can invoke all the normal MakeMaker style stuff and our C code will be compiled, linked
+and installed at the appropriate steps.
 
  % perl Makefile.PL
  Generating a Unix-style Makefile
