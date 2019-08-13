@@ -1,11 +1,11 @@
-package FFI::Platypus::Bundle::Constant;
+package FFI::Platypus::Constant;
 
 use strict;
 use warnings;
 use constant 1.32 ();
 use FFI::Platypus;
 
-# ABSTRACT: Platypus Bundle Constant code
+# ABSTRACT: Platypus Constant code
 # VERSION
 
 =head1 DESCRIPTION
@@ -18,7 +18,7 @@ This class is private to L<FFI::Platypus>.
   my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
   $ffi->bundle;
 
-  $ffi->type( 'opaque'                       => 'ffi_pl_bundle_t' );
+  $ffi->type( 'opaque'                => 'ffi_pl_bundle_t' );
   $ffi->type( '(string,string)->void' => 'set_str_t'       );
   $ffi->type( '(string,sint64)->void' => 'set_sint_t'      );
   $ffi->type( '(string,uint64)->void' => 'set_uint_t'      );
@@ -26,7 +26,7 @@ This class is private to L<FFI::Platypus>.
 
   $ffi->mangler(sub {
     my($name) = @_;
-    $name =~ s/^/ffi_platypus_bundle_api__/;
+    $name =~ s/^/ffi_platypus_constant__/;
     $name;
   });
 
