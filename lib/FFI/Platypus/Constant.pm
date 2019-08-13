@@ -18,7 +18,7 @@ This class is private to L<FFI::Platypus>.
   my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
   $ffi->bundle;
 
-  $ffi->type( 'opaque'                => 'ffi_pl_bundle_t' );
+  $ffi->type( 'opaque'                => 'ffi_platypus_constant_t' );
   $ffi->type( '(string,string)->void' => 'set_str_t'       );
   $ffi->type( '(string,sint64)->void' => 'set_sint_t'      );
   $ffi->type( '(string,uint64)->void' => 'set_uint_t'      );
@@ -30,7 +30,7 @@ This class is private to L<FFI::Platypus>.
     $name;
   });
 
-  $ffi->attach( new => [ 'set_str_t', 'set_sint_t', 'set_uint_t', 'set_double_t' ] => 'opaque' => sub {
+  $ffi->attach( new => [ 'set_str_t', 'set_sint_t', 'set_uint_t', 'set_double_t' ] => 'ffi_platypus_constant_t' => sub {
     my($xsub, $class, $default_package) = @_;
     my $f = $ffi->closure(sub {
       my($name, $value) = @_;
@@ -47,7 +47,7 @@ This class is private to L<FFI::Platypus>.
     }, $class;
   });
 
-  $ffi->attach( DESTROY => ['opaque'] => 'void' => sub {
+  $ffi->attach( DESTROY => ['ffi_platypus_constant_t'] => 'void' => sub {
     my($xsub, $self) = @_;
     $xsub->($self->ptr);
   });
