@@ -1,10 +1,10 @@
 #include <ffi_platypus_bundle.h>
 
 ffi_platypus_constant_t *
-ffi_platypus_constant__new(set_str_t set_str,
-                             set_sint_t set_sint,
-                             set_uint_t set_uint,
-                             set_double_t set_double)
+ffi_platypus_constant__new(void* set_str,
+                           void* set_sint,
+                           void* set_uint,
+                           void* set_double)
 {
   ffi_platypus_constant_t *self = malloc(sizeof(ffi_platypus_constant_t));
   self->set_str    = set_str;

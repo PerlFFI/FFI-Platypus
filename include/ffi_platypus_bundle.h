@@ -13,16 +13,11 @@
 #include <stdlib.h>
 #endif
 
-typedef void (*set_str_t)    (const char *name, const char *value);
-typedef void (*set_sint_t)   (const char *name, int64_t value    );
-typedef void (*set_uint_t)   (const char *name, uint64_t value   );
-typedef void (*set_double_t) (const char *name, double value     );
-
 typedef struct {
-  set_str_t    set_str;
-  set_sint_t   set_sint;
-  set_uint_t   set_uint;
-  set_double_t set_double;
+  void (*set_str)    (const char *name, const char *value);
+  void (*set_sint)   (const char *name, int64_t value    );
+  void (*set_uint)   (const char *name, uint64_t value   );
+  void (*set_double) (const char *name, double value     );
 } ffi_platypus_constant_t;
 
 void ffi_pl_bundle_init(const char *, int, void **);
