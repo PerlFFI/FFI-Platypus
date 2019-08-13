@@ -14,7 +14,7 @@ require_ok 'FFI::Platypus';
 require_ok 'FFI::Platypus::API';
 require_ok 'FFI::Platypus::Buffer';
 require_ok 'FFI::Platypus::Bundle';
-require_ok 'FFI::Platypus::Bundle::Constant';
+require_ok 'FFI::Platypus::Constant';
 require_ok 'FFI::Platypus::Closure';
 require_ok 'FFI::Platypus::DL';
 require_ok 'FFI::Platypus::Declare';
