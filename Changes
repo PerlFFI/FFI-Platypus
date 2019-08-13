@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Document constant interface (see FFI::Platypus::Constant) (gh#169)
 
 0.95_07   2019-08-13 13:38:30 -0400
   - Minor tweak to bundle interface: do not create fbx.json file when
