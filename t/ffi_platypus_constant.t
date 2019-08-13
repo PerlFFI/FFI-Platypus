@@ -1,15 +1,15 @@
 use strict;
 use warnings;
 use Test::More;
-use FFI::Platypus::Bundle::Constant;
+use FFI::Platypus::Constant;
 use File::Path qw( mkpath );
 use File::Basename qw( dirname );
 use FFI::Temp;
 
 subtest 'very very basic...' => sub {
 
-  my $api = FFI::Platypus::Bundle::Constant->new;
-  isa_ok $api, 'FFI::Platypus::Bundle::Constant';
+  my $api = FFI::Platypus::Constant->new;
+  isa_ok $api, 'FFI::Platypus::Constant';
   undef $api;
   ok 'did not appear to crash :tada:';
 
