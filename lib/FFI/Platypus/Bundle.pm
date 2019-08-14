@@ -223,6 +223,70 @@ using L<Dist::Zilla>:
 Specifying version 1.04 will ensure that any C<.o> or C<.so> files are pruned
 from your build tree and not distributed by mistake.
 
+=head2 Initialization example
+
+The bundle interface also gives you entry points which will be called automatically
+when your code is loaded and unloaded if they are found.
+
+=over 4
+
+=item C<ffi_pl_bundle_init>
+
+ void ffi_pl_bundle_init(const char *package, int argc, void *argv[]);
+
+Called when the dynamic library is loaded.  C<package> is the Perl package
+that called C<bundle> from Perl space.  C<argc> and C<argv> represents an
+array of opaque pointers that can be passed as an array to bundle as the
+last argument.  (the count C<argc> is a little redundant because C<argv>
+is also NULL terminated).
+
+=item C<ffi_pl_bundle_constant>
+
+ void ffi_pl_bundle_constant(const char *package, ffi_platypus_constant_t *c);
+
+Called immediately after C<ffi_pl_bundle_init>, and is intended to allow
+you to set Perl constants from C space.  For details on how this works
+and what methods you can call on the C<ffi_platypus_constant_t> instance,
+see L<FFI::Platypus::Constant>.
+
+=item C<ffi_pl_bundle_fini>
+
+ void ffi_pl_bundle_fini(const char *package);
+
+Called when the dynamic library is unloaded.  C<package> is the Perl
+package that called C<bundle> from Perl space when the library was
+loaded.  B<CAVEAT>: if you attach any functions then this will
+never be called, because attaching functions locks the Platypus
+instance into memory along with the libraries which it is using.
+
+=back
+
+Here is an example that passes the version and a callback back into Perl
+space that emulates the Perl 5.10 C<say> feature.
+
+C<ffi/init.c>:
+
+# EXAMPLE: examples/bundle-init/ffi/init.c
+
+C<lib/Init.pm>:
+
+# EXAMPLE: examples/bundle-init/lib/Init.pm
+
+The deinitialization order for the C<$say> callback and the C<$ffi>
+instance is essential here, so we do it manually with C<undef>:
+
+ undef $ffi;
+ undef $say;
+
+First we deallocate C<$ffi> which calls C<ffi_pl_bundle_fini>,
+which calls C<$say>, so we want to make sure the latter is still
+allocated.  Once C<ffi_pl_bundle_fini> is done, we can safely
+deallocate C<$say>.
+
+If C<ffi_pl_bundle_fini> didn't call back into Perl space like
+this then we don't have to be as careful about deallocating
+things in Perl space.
+
 =cut
 
 package FFI::Platypus;
@@ -330,7 +394,7 @@ sub _bundle
 
   if(my $init = eval { $self->function( 'ffi_pl_bundle_init' => [ 'string', 'sint32', 'opaque[]' ] => 'void' ) })
   {
-    $init->call($package, scalar(@arg_ptrs)-1, \@arg_ptrs);
+     $init->call($package, scalar(@arg_ptrs)-1, \@arg_ptrs);
   }
 
   if(my $init = eval { $self->function( 'ffi_pl_bundle_constant' => [ 'string', 'opaque' ] => 'void' ) })
@@ -348,8 +412,6 @@ sub _bundle
            ->call( $package );
     };
   }
-
-  # TODO: fini
 
   $self;
 }
