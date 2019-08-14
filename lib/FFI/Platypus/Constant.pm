@@ -5,12 +5,75 @@ use warnings;
 use constant 1.32 ();
 use FFI::Platypus;
 
-# ABSTRACT: Platypus Constant code
+# ABSTRACT: Define constants in C space for Perl
 # VERSION
+
+=head1 SYNOPSIS
+
+ #include <ffi_platypus_bundle.h>
+ 
+ void
+ ffi_pl_bundle_constant(const char *package, ffi_platypus_constant_t *c)
+ {
+   c->set_str("FOO", "BAR");       /* sets $package::FOO to "BAR" */
+   c->set_str("ABC::DEF", "GHI");  /* sets ABC::DEF to GHI        */
+ }
 
 =head1 DESCRIPTION
 
-This class is private to L<FFI::Platypus>.
+The Platypus bundle interface (see L<FFI::Platypus::Bundle>) has an entry point
+C<ffi_pl_bundle_constant> that lets you define constants in Perl space from C.
+
+ C<void ffi_pl_bundle_constant(const char *package, ffi_platypus_constant_t *c);>
+
+The first argument C<package> is the name of the Perl package.  The second argument
+C<c> is a struct with function pointers that lets you define constants of different
+types.  The first argument for each function is the name of the constant and the
+second is the value.  If C<::> is included in the constant name then it will be
+defined in that package space.  If it isn't then the constant will be defined in
+whichever package called C<bundle>.
+
+=over 4
+
+=item set_str
+
+ c->set_str(name, value);
+
+Sets a string constant.
+
+=item set_sint
+
+ c->set_sint(name, value);
+
+Sets a 64-bit signed integer constant.
+
+=item set_uint
+
+ c->set_uint(name, value);
+
+Sets a 64-bit unsigned integer constant.
+
+=item set_double
+
+ c->set_double(name, value);
+
+Sets a double precision floating point constant.
+
+=back
+
+=head2 Example
+
+Suppose you have a header file C<myheader.h>:
+
+# EXAMPLE: examples/bundle-const/ffi/myheader.h
+
+You can define these constants from C:
+
+# EXAMPLE: examples/bundle-const/ffi/const.c
+
+Your Perl code doesn't have to do anything when calling bundle:
+
+# EXAMPLE: examples/bundle-const/lib/Const.pm
 
 =cut
 
