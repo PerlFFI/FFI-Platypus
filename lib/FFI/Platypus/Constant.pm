@@ -24,7 +24,7 @@ use FFI::Platypus;
 The Platypus bundle interface (see L<FFI::Platypus::Bundle>) has an entry point
 C<ffi_pl_bundle_constant> that lets you define constants in Perl space from C.
 
- C<void ffi_pl_bundle_constant(const char *package, ffi_platypus_constant_t *c);>
+ void ffi_pl_bundle_constant(const char *package, ffi_platypus_constant_t *c);
 
 The first argument C<package> is the name of the Perl package.  The second argument
 C<c> is a struct with function pointers that lets you define constants of different
