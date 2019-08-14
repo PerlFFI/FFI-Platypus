@@ -120,6 +120,8 @@ pod_spelling_system:
     - Anwar
     - MANWAR
     - api
+    - deallocating
+    - deinitialization
 
 pod_coverage:
   skip: 0

@@ -1006,12 +1006,14 @@ sub package
 
 [version 0.96 api = 1+]
 
+ $ffi->bundle($package, \@args);
+ $ffi->bundle(\@args);
  $ffi->bundle($package);
  $ffi->bundle;
 
 This is a new experimental interface for bundling compiled code with your
 distribution intended to eventually replace the C<package> method documented
-above.
+above.  See L<FFI::Platypus::Bundle> for details on how this works.
 
 =cut
 
