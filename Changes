@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.95_08   2019-08-14 09:18:10 -0400
   - Document constant interface (see FFI::Platypus::Constant) (gh#169)
 
 0.95_07   2019-08-13 13:38:30 -0400
