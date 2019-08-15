@@ -24,7 +24,7 @@ use Capture::Tiny qw( capture_merged );
       system $^X, $badcheck;
       $?;
     };
-    if($?)
+    if($ret)
     {
       if($out ne '')
       {
