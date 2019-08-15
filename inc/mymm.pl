@@ -7,8 +7,38 @@ use File::Glob qw( bsd_glob );
 use ExtUtils::MakeMaker ();
 use IPC::Cmd ();
 use lib 'inc';
+use File::Spec;
 use My::BuildConfig;
 use My::ShareConfig;
+use Capture::Tiny qw( capture_merged );
+
+{
+  my $dh;
+  opendir $dh, 'inc';
+  my @files = map { File::Spec->catfile('inc', $_) } grep /^bad-.*\.pl$/, readdir $dh;
+  close $dh;
+
+  foreach my $badcheck (@files)
+  {
+    my($out, $ret) = capture_merged {
+      system $^X, $badcheck;
+      $?;
+    };
+    if($?)
+    {
+      if($out ne '')
+      {
+        print $out;
+        exit;
+      }
+      else
+      {
+        print "bad check $badcheck failed\n";
+        exit;
+      }
+    }
+  }
+}
 
 sub myWriteMakefile
 {
