@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.95_09   2019-08-15 10:37:41 -0400
   - Daignostic release
 
 0.95_08   2019-08-14 09:18:10 -0400
