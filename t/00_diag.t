@@ -24,6 +24,7 @@ $modules{$_} = $_ for qw(
   PkgConfig
   Test::More
   constant
+  forks
 );
 
 $post_diag = sub {

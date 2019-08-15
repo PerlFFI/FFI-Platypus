@@ -1,9 +1,23 @@
 use strict;
 use warnings;
 use Test::More;
-BEGIN { plan skip_all => 'Test requires forks' unless eval q{ use forks; 1 } }
 use FFI::CheckLib;
 use FFI::Platypus;
+use File::Spec;
+
+BEGIN
+{
+  my $path;
+  foreach my $inc (@INC)
+  {
+    $path = File::Spec->catfile($inc, 'forks.pm');
+    last if -f $path;
+  }
+
+  plan skip_all => 'Test requires forks' unless defined $path && -f $path;
+}
+
+use forks;
 
 my $ffi = FFI::Platypus->new(lib => find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi' ));
 
