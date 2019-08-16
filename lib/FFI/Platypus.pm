@@ -768,8 +768,6 @@ will be thrown.
 
 =cut
 
-#my $inner_counter=0;
-
 sub attach
 {
   my $wrapper;
@@ -778,7 +776,8 @@ sub attach
   my $self = shift;
   my $name = shift;
   my $args = shift;
-  my $varargs = shift if defined $_[0] && ref($_[0]) eq 'ARRAY';
+  my $varargs;
+  $varargs = shift if defined $_[0] && ref($_[0]) eq 'ARRAY';
   my $ret = shift;
   my $proto = shift;
 

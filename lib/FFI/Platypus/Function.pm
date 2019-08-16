@@ -56,12 +56,10 @@ than using the C<call> method above.
 use overload '&{}' => sub {
   my $ffi = shift;
   sub { $ffi->call(@_) };
-};
-
-use overload 'bool' => sub {
+}, 'bool' => sub {
   my $ffi = shift;
   return $ffi;
-};
+}, fallback => 1;
 
 package FFI::Platypus::Function::Function;
 

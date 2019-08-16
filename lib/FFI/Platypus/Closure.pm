@@ -8,7 +8,7 @@ use Carp qw( croak );
 use overload '&{}' => sub {
   my $self = shift;
   sub { $self->{code}->(@_) };
-};
+}, bool => sub { 1 }, fallback => 1;
 
 # ABSTRACT: Platypus closure object
 # VERSION
