@@ -16,7 +16,6 @@ script:
 
 jobs:
   include:
-  include:
     - before_install:
         - curl https://raw.githubusercontent.com/plicease/cip/master/bin/travis-bootstrap | bash
       install:
