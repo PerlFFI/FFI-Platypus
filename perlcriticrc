@@ -1,0 +1,7 @@
+theme = freenode
+severity = 1
+
+[Freenode::StrictWarnings]
+extra_importers = Test2::V0
+[-Freenode::Prototypes]
+[-Freenode::EmptyReturn]

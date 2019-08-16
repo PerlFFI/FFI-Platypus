@@ -73,11 +73,11 @@ foreach my $api (0, 1)
       };
 
       subtest 'pointer' => sub {
-        my $a = Math::LongDouble->new(1.5);
-        my $b = Math::LongDouble->new(2.5);
-        ok longdouble_pointer_test(\$a, \$b);
-        ok $a == $ld40;
-        ok $b == $ld80;
+        my $x = Math::LongDouble->new(1.5);
+        my $y = Math::LongDouble->new(2.5);
+        ok longdouble_pointer_test(\$x, \$y);
+        ok $x == $ld40;
+        ok $y == $ld80;
         ok pointer_is_null(undef);
 
         my $c = longdouble_pointer_return_test($ld15);
@@ -127,11 +127,11 @@ foreach my $api (0, 1)
       };
 
       subtest 'pointer' => sub {
-        my $a = 1.5;
-        my $b = 2.5;
-        ok longdouble_pointer_test(\$a, \$b);
-        ok $a == 4.0;
-        ok $b == 8.0;
+        my $x = 1.5;
+        my $y = 2.5;
+        ok longdouble_pointer_test(\$x, \$y);
+        ok $x == 4.0;
+        ok $y == 8.0;
         ok pointer_is_null(undef);
 
         my $c = longdouble_pointer_return_test(1.5);

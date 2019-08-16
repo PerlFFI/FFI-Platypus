@@ -64,8 +64,9 @@ $post_diag = sub {
     diag "ffi.platypus.memory.strndup_impl=@{[ FFI::Platypus::Memory->_strndup_impl ]}";
     spacer();
     my %r;
-    while(my($k,$v) = each %type_map)
+    foreach my $k (keys %type_map)
     {
+      my $v = $type_map{$k};
       push @{ $r{$v} }, $k;
     }
     diag "Types:";
