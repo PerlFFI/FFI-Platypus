@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.95_10   2019-08-16 16:14:54 -0400
+  - Detect bad forks.pm  (gh#170)
+
 0.95_09   2019-08-15 10:37:41 -0400
   - Daignostic release
 
