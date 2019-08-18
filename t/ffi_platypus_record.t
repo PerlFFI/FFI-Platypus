@@ -182,12 +182,13 @@ subtest 'same name' => sub {
     package
       Foo3;
       
-    use FFI::Platypus::Record;
+    require FFI::Platypus::Record;
+    FFI::Platypus::Record->import;
     
-    record_layout
+    record_layout(
       int => 'foo',
       int => 'foo',
-    ;
+    );
   };
   
   isnt $@, '', 'two members of the same name not allowed';
