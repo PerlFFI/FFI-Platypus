@@ -283,7 +283,7 @@ sub _file_classes
     foreach my $inc (@INC)
     {
       push @file_classes,
-        map { $_ =~ s/\.pm$//; "FFI::Build::File::$_" }
+        map { my $f = $_; $f =~ s/\.pm$//; "FFI::Build::File::$f" }
         grep !/^Base\.pm$/,
         map { File::Basename::basename($_) } 
         File::Glob::bsd_glob(
