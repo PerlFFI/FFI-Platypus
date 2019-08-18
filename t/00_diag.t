@@ -29,7 +29,8 @@ $modules{$_} = $_ for qw(
 
 $post_diag = sub {
   eval {
-    use lib 'inc';
+    require lib;
+    lib->import('inc');
     require FFI::Platypus::ShareConfig;
     require My::BuildConfig;
     my $build_config = My::BuildConfig->new;
@@ -40,8 +41,8 @@ $post_diag = sub {
     require $pm;
     $Alien::FFI::pkgconfig::VERBOSE =
     $Alien::FFI::pkgconfig::VERBOSE = 0;
-    use FFI::Platypus;
-    use FFI::Platypus::Memory;
+    require FFI::Platypus;
+    require FFI::Platypus::Memory;
     diag "mode : ", $build_config->get('alien')->{mode};
     diag "$class->VERSION      = ", $class->VERSION;
     diag "$class->install_type = ", $class->install_type;
