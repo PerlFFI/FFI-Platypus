@@ -152,11 +152,8 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
 
     if(ffi_status != FFI_OK)
     {
-      if(!PL_dirty)
-      {
-        Safefree(self);
-        Safefree(ffi_argument_types);
-      }
+      Safefree(self);
+      Safefree(ffi_argument_types);
       if(ffi_status == FFI_BAD_TYPEDEF)
         croak("bad typedef");
       else if(ffi_status == FFI_BAD_ABI)
