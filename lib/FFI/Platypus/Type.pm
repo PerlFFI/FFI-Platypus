@@ -374,7 +374,7 @@ a string and then free it.
  $ffi->attach( get_string => [] => 'opaque' );
  $ffi->attach( free_string => ['opaque'] => 'void' );
  my $ptr = get_string();
- my $str = $ffi->cast( 'opaque' => 'string' );  # copies the string
+ my $str = $ffi->cast( 'opaque' => 'string', $ptr );  # copies the string
  free_string($ptr);
 
 If you are doing this sort of thing a lot, it can be worth adding a
@@ -385,7 +385,7 @@ custom type:
    native_type => 'opaque',
    native_to_perl => sub {
      my($ptr) = @_;
-     my $str = $ffi->cast( 'opaque' => 'string' ); # copies the string
+     my $str = $ffi->cast( 'opaque' => 'string', $ptr ); # copies the string
      free_string($ptr);
    }
  });
