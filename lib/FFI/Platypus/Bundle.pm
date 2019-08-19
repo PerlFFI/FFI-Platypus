@@ -30,7 +30,7 @@ or C<dist.ini>:
  name    = Foo
  version = 0.01
  ...
-
+ 
  [FFI::Build]
  version = 1.04
 
@@ -181,7 +181,7 @@ Platypus automatically compiles and links the dynamic library for you:
 
 The C code will be rebuilt next time if the source code is newer than the object or dynamic libraries
 files.  If the source files are not changed, then it won't be rebuilt to save time.  If you are using
-the code without MakeMaker, or another build system you are responsible for cleaning up these files. 
+the code without MakeMaker, or another build system you are responsible for cleaning up these files.
 This is intended as a convenience to allow you to test your code without having to invoke MakeMaker,
 or C<dzil> or whatever build system you are using.
 

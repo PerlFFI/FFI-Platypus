@@ -25,11 +25,11 @@ subtest 'arg pass out' => sub {
   my $string = '';
   string_pointer_pointer_set(\$string, "hi there");
   is $string, "hi there", "not null string = $string";
-  
+
   my $string2;
   string_pointer_pointer_set(\$string2, "and another");
-  is $string2, "and another", "not null string = $string2";  
-  
+  is $string2, "and another", "not null string = $string2";
+
 };
 
 subtest 'return value' => sub {

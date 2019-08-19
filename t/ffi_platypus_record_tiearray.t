@@ -5,14 +5,14 @@ use Test::More;
 do {
   package
     Foo;
-  
+
   use FFI::Platypus::Record;
   use FFI::Platypus::Record::TieArray;
-  
+
   record_layout(qw(
     int[20] _bar
   ));
-  
+
   sub bar
   {
     my($self) = @_;

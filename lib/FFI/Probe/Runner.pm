@@ -11,7 +11,7 @@ use FFI::Probe::Runner::Result;
 =head1 SYNOPSIS
 
  use FFI::Probe::Runner;
-
+ 
  my $runner = FFI::Probe::Runner->new;
  $runner->run('foo.so');
 

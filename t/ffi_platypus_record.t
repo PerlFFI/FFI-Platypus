@@ -8,9 +8,9 @@ use Data::Dumper;
 do {
   package
     Foo1;
-  
+
   use FFI::Platypus::Record;
-  
+
   record_layout(
     uint8 => 'first',
     uint32 => 'second',
@@ -29,7 +29,7 @@ sub xdump_meta ($)
 subtest 'integer accessor' => sub {
   my $foo = Foo1->new( first => 1, second => 2 );
   isa_ok $foo, 'Foo1';
-  
+
   my $size = $foo->_ffi_record_size;
   like $size, qr{^[0-9]+$}, "foo._record_size = $size";
 
@@ -38,12 +38,12 @@ subtest 'integer accessor' => sub {
 
   $foo->first(22);
   is $foo->first, 22, 'foo.first   = 22';
-  
+
   $foo->second(42);
   is $foo->second, 42, 'foo.second = 42';
 
   $foo = Foo1->new( { first => 3, second => 4 } );
-  
+
   is $foo->first,  3, 'foo.first   = 3';
   is $foo->second, 4, 'foo.second  = 4';
 
@@ -55,19 +55,19 @@ subtest 'integer accessor' => sub {
 do {
   package
     Color;
-  
+
   use FFI::Platypus;
   use FFI::Platypus::Record;
-  
+
   my $ffi = FFI::Platypus->new;
   $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
-  
+
   record_layout($ffi, qw(
     uint8 red
     uint8 green
     uint8 blue
   ));
-  
+
   $ffi->type('record(Color)' => 'Color');
   $ffi->attach( [ color_get_red   => 'get_red'   ] => [ 'Color' ] => 'int' );
   $ffi->attach( [ color_get_green => 'get_green' ] => [ 'Color' ] => 'int' );
@@ -80,13 +80,13 @@ subtest 'values match in C' => sub {
     green => 100,
     blue  => 150,
   );
-  
+
   isa_ok $color, 'Color';
-  
+
   is $color->get_red,    50, "color.get_red   =  50";
   is $color->get_green, 100, "color.get_green = 100";
   is $color->get_blue,  150, "color.get_blue  = 150";
-  
+
 };
 
 do {
@@ -94,7 +94,7 @@ do {
     Foo2;
 
   use FFI::Platypus::Record;
-  
+
   record_layout(qw(
     char     :
     uint64_t uint64
@@ -117,15 +117,15 @@ do {
     char     :
     float    float
     char     :
-    double   double 
+    double   double
 
     char     :
     opaque   opaque
   ));
-  
+
   my $ffi = FFI::Platypus->new;
   $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
-  
+
   $ffi->attach(["align_get_$_" => "get_$_"] => [ 'record(Foo2)' ] => $_)
     for qw( uint8 sint8 uint16 sint16 uint32 sint32 uint64 sint64 float double opaque );
 };
@@ -136,25 +136,25 @@ subtest 'complex alignment' => sub {
 
   $foo->uint64(512);
   is $foo->get_uint64, 512, "uint64 = 512";
-  
+
   $foo->sint64(-512);
   is $foo->get_sint64, -512, "sint64 = -512";
 
   $foo->uint32(1024);
   is $foo->get_uint32, 1024, "uint32 = 1024";
-  
+
   $foo->sint32(-1024);
   is $foo->get_sint32, -1024, "sint32 = -1024";
 
   $foo->uint16(2048);
   is $foo->get_uint16, 2048, "uint16 = 2048";
-  
+
   $foo->sint16(-2048);
   is $foo->get_sint16, -2048, "sint16 = -2048";
 
   $foo->uint8(48);
   is $foo->get_uint8, 48, "uint8 = 48";
-  
+
   $foo->sint8(-48);
   is $foo->get_sint8, -48, "sint8 = -48";
 
@@ -165,7 +165,7 @@ subtest 'complex alignment' => sub {
   is $foo->get_double, -1.5, "double = -1.5";
 
   my $ptr = malloc 32;
-  
+
   $foo->opaque($ptr);
   is $foo->get_opaque, $ptr, "get_opaque = $ptr";
   is $foo->opaque, $ptr, "opaque = $ptr";
@@ -173,7 +173,7 @@ subtest 'complex alignment' => sub {
   $foo->opaque(undef);
   is $foo->get_opaque, undef,  "get_opaque = undef";
   is $foo->opaque, undef,  "opaque = undef";
-  
+
   free $ptr;
 };
 
@@ -181,16 +181,16 @@ subtest 'same name' => sub {
   eval {
     package
       Foo3;
-      
+
     require FFI::Platypus::Record;
     FFI::Platypus::Record->import;
-    
+
     record_layout(
       int => 'foo',
       int => 'foo',
     );
   };
-  
+
   isnt $@, '', 'two members of the same name not allowed';
   note $@ if $@;
 };
@@ -200,7 +200,7 @@ do {
     Foo4;
 
   use FFI::Platypus::Record;
-  
+
   record_layout(qw(
     char        :
     uint64_t[3] uint64
@@ -223,15 +223,15 @@ do {
     char        :
     float[3]    float
     char        :
-    double[3]   double 
+    double[3]   double
 
     char        :
     opaque[3]   opaque
   ));
-  
+
   my $ffi = FFI::Platypus->new;
   $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
-  
+
   $ffi->attach(["align_array_get_$_" => "get_$_"] => [ 'record(Foo4)' ] => "${_}[3]" )
     for qw( uint8 sint8 uint16 sint16 uint32 sint32 uint64 sint64 float double opaque );
 };
@@ -252,7 +252,7 @@ subtest 'array alignment' => sub {
       $foo->$acc1(1,20);
       is_deeply $foo->$acc1, [1,20,3], "$acc1 = 1,20,3";
     };
-    
+
     subtest "signed $bits integer" => sub {
       my $acc1 = "sint$bits";
       my $acc2 = "get_sint$bits";
@@ -284,7 +284,7 @@ subtest 'array alignment' => sub {
 
     $foo->opaque([$ptr1,undef,$ptr2]);
     is_deeply $foo->opaque, [$ptr1,undef,$ptr2], "opaque     = $ptr1,undef,$ptr2";
-    
+
     $foo->opaque(1,$ptr1);
     is_deeply $foo->opaque, [$ptr1,$ptr1,$ptr2], "opaque     = $ptr1,$ptr1,$ptr2";
 
@@ -294,7 +294,7 @@ subtest 'array alignment' => sub {
     is $foo->opaque(0), undef;
     is $foo->opaque(1), $ptr1;
     is $foo->opaque(2), $ptr2;
-  
+
     free $ptr1;
     free $ptr2;
   };
@@ -314,14 +314,14 @@ do {
     char   :
     string value
   ));
-  
+
   my $ffi = FFI::Platypus->new;
   $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
-  
-  $ffi->attach( 
+
+  $ffi->attach(
     [align_string_get_value => 'get_value'] => ['record(Foo5)'] => 'string',
   );
-  
+
   $ffi->attach(
     [align_string_set_value => 'set_value']  => ['record(Foo5)','string'] => 'void',
   );
@@ -335,7 +335,7 @@ subtest 'string ro' => sub {
   is $foo->get_value, undef, 'foo.get_value = undef';
 
   $foo->set_value("my value");
-  
+
   is $foo->value, 'my value', 'foo.value = my value';
   is $foo->get_value, 'my value', 'foo.get_value = my value';
 
@@ -372,13 +372,13 @@ subtest 'fixed string' => sub {
 
   is $foo->value, "\0\0\0\0\0\0\0\0\0\0", 'foo.value = "\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0"';
   is $foo->get_value, "", 'foo.get_value = ""';
-  
+
   $foo->value("one two three four five six seven eight");
 
   is $foo->value, "one two th", 'foo.value = "one two th"';
-  
+
   $foo->value("123456789\0");
-  
+
   is $foo->value, "123456789\0", "foo.value = 123456789\\0";
   is $foo->get_value, "123456789", "foo.get_value = 123456789";
 };
@@ -401,7 +401,7 @@ do {
     [align_string_get_value => 'get_value'] =>
     ['record(Foo7)'] => 'string'
   );
-  
+
 };
 
 subtest 'string rw' => sub {
@@ -411,7 +411,7 @@ subtest 'string rw' => sub {
   $foo->value('hi there');
   is $foo->value, "hi there", "foo.value = hi there";
   is $foo->get_value, 'hi there', 'foo.get_value = hi there';
-  
+
   $foo->value(undef);
   is $foo->value, undef, 'foo.value = undef';
   is $foo->get_value, undef, 'foo.get_value = undef';

@@ -576,9 +576,9 @@ same prefix.  Example:
    my($symbol) = @_;
    return "foo_$symbol";
  });
-
+ 
  $ffi->function( get_bar => [] => 'int' );  # attaches foo_get_bar
-
+ 
  my $f = $ffi->function( set_baz => ['int'] => 'void' );
  $f->call(22); # calls foo_set_baz
 

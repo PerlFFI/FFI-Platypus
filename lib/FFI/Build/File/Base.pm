@@ -29,7 +29,7 @@ Use it:
  # generate a temp file with provided content
  # file will be deletd when $file falls out of scope.
  my $file = FFI::Build::File::Foo->new(\'content for a temp foo');
- 
+
 
 =head1 DESCRIPTION
 
@@ -81,7 +81,7 @@ sub new
     platform => $platform,
     build    => $build,
   }, $class;
-  
+
   if(!defined $content)
   {
     Carp::croak("content is required");
@@ -99,11 +99,11 @@ sub new
     $args{UNLINK}   = 0;
 
     my $fh = $self->{fh} = FFI::Temp->new(%args);
-    
+
     binmode( $fh, $self->default_encoding );
     print $fh $$content;
     close $fh;
-    
+
     $self->{path} = $fh->filename;
     $self->{temp} = 1;
   }
@@ -111,13 +111,13 @@ sub new
   {
     $self->{path} = $content;
   }
-  
+
   if($self->platform->osname eq 'MSWin32')
   {
     $self->{native} = File::Spec->catfile($self->{path});
     $self->{path} =~ s{\\}{/}g;
   }
-  
+
   $self;
 }
 
@@ -290,7 +290,7 @@ sub ld
 sub DESTROY
 {
   my($self) = @_;
-  
+
   if($self->{temp})
   {
     unlink($self->path);

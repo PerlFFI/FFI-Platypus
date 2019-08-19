@@ -12,7 +12,7 @@ subtest 'only load as needed' => sub {
   $ffi->package;
 
   ok( !! FFI::Platypus->can('_package') );
-  
+
 };
 
 done_testing;

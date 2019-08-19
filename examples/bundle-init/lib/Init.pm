@@ -13,7 +13,7 @@ our $VERSION = '1.00';
     my $string = shift;
     print "$string\n";
   });
-  
+
   $ffi->bundle([
     $ffi->cast( 'string' => 'opaque', $VERSION ),
     $ffi->cast( '(string)->void' => 'opaque', $say ),

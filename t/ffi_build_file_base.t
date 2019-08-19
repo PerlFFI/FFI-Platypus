@@ -4,7 +4,7 @@ use Test::More;
 use FFI::Build::File::Base;
 
 {
-  package 
+  package
     FFI::Build::File::Foo;
   use base qw( FFI::Build::File::Base );
   use constant default_suffix    => '.foo';
@@ -14,16 +14,16 @@ use FFI::Build::File::Base;
 subtest 'basic' => sub {
 
   subtest 'basic usage' => sub {
-  
+
     eval { FFI::Build::File::Foo->new };
     my $error = $@;
     like $error, qr/content is required/;
     note "error = $error";
-  
+
   };
-  
+
   subtest 'array filename' => sub {
-  
+
     my $file = FFI::Build::File::Foo->new(['corpus', 'ffi_build_file_base', 'basic.foo']);
     isa_ok $file, 'FFI::Build::File::Base';
     isa_ok $file, 'FFI::Build::File::Foo';
@@ -47,7 +47,7 @@ subtest 'basic' => sub {
   };
 
   subtest 'string filename' => sub {
-  
+
     my $file = FFI::Build::File::Foo->new("corpus/ffi_build_file_base/basic.foo");
     isa_ok $file, 'FFI::Build::File::Base';
     isa_ok $file, 'FFI::Build::File::Foo';
@@ -56,9 +56,9 @@ subtest 'basic' => sub {
     unlike $file->path, qr/\\/, "No forward slashes!";
 
   };
-  
+
   subtest 'string ref' => sub {
-  
+
     my $file = FFI::Build::File::Foo->new(\"Something different!\n");
     isa_ok $file, 'FFI::Build::File::Base';
     isa_ok $file, 'FFI::Build::File::Foo';
@@ -71,11 +71,11 @@ subtest 'basic' => sub {
     ok(-f $path, "file exists");
     undef $file;
     ok(!-f $path, "file is removed after destroy");
-  
+
   };
-  
+
   subtest 'string ref keep' => sub {
-  
+
     my $file = FFI::Build::File::Foo->new(\"Again\n");
     $file->keep;
     my $path = $file->path;
@@ -87,7 +87,7 @@ subtest 'basic' => sub {
     unlink $path;
 
   };
-  
+
 };
 
 done_testing;

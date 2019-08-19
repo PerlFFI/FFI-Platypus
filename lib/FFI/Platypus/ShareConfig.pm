@@ -9,10 +9,10 @@ use File::Spec;
 sub dist_dir ($)
 {
   my($dist_name) = @_;
-  
+
   my @pm = split /-/, $dist_name;
   $pm[-1] .= ".pm";
-  
+
   foreach my $inc (@INC)
   {
     if(-f File::Spec->catfile($inc, @pm))
@@ -45,7 +45,7 @@ sub get
       die "bad or missing config file $fn";
     };
   }
-  
+
   defined $name ? $config->{$name} : $config;
 }
 

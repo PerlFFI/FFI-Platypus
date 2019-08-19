@@ -47,7 +47,7 @@ subtest basic => sub {
 
 subtest 'run not pass' => sub {
 
-  my $dir = FFI::Temp->newdir( TEMPLATE => 'test-probe-XXXXXX' ); 
+  my $dir = FFI::Temp->newdir( TEMPLATE => 'test-probe-XXXXXX' );
 
   my $lib = do {
     my $build = FFI::Build->new(
@@ -84,7 +84,7 @@ subtest 'run not pass' => sub {
 
 subtest 'run pass' => sub {
 
-  my $dir = FFI::Temp->newdir( TEMPLATE => 'test-probe-XXXXXX' ); 
+  my $dir = FFI::Temp->newdir( TEMPLATE => 'test-probe-XXXXXX' );
 
   my $lib = do {
     my $build = FFI::Build->new(

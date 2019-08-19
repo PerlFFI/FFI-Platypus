@@ -352,7 +352,7 @@ is expected to free.  Consider the functions:
    buffer = malloc(20);
    strcpy(buffer, "Perl");
  }
-
+ 
  void
  free_string(char *buffer)
  {
@@ -404,7 +404,7 @@ for Perl to know when calling language is done with the memory allocated
 to the string).  Consider the API:
 
  typedef const char *(*get_message_t)(void);
-
+ 
  void
  print_message(get_message_t get_message)
  {

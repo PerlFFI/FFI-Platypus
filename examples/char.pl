@@ -6,8 +6,8 @@ my $ffi = FFI::Platypus->new;
 $ffi->lib(undef);
 $ffi->type('int' => 'character');
 
-my @list = qw( 
-  alnum alpha ascii blank cntrl digit lower print punct 
+my @list = qw(
+  alnum alpha ascii blank cntrl digit lower print punct
   space upper xdigit
 );
 

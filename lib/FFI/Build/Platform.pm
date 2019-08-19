@@ -141,7 +141,7 @@ The library prefix for the platform.  On Unix this is usually C<lib>, as in C<li
 sub library_prefix
 {
   my $self = _self(shift);
-  
+
   # this almost certainly requires refinement.
   if($self->osname eq 'cygwin')
   {
@@ -204,7 +204,7 @@ sub cxx
   my $self = _self(shift);
 
   my @cc = @{ $self->cc };
-  
+
   if($self->{config}->{ccname} eq 'gcc')
   {
     if($cc[0] =~ /gcc$/)
@@ -251,7 +251,7 @@ sub for
   my $self = _self(shift);
 
   my @cc = @{ $self->cc };
-  
+
   if($self->{config}->{ccname} eq 'gcc')
   {
     if($cc[0] =~ /gcc$/)
@@ -389,7 +389,7 @@ sub cc_mm_works
   my $self = _self(shift);
   my $verbose = shift;
   $verbose ||= 0;
-  
+
   unless(defined $self->{cc_mm_works})
   {
     require FFI::Build::File::C;
@@ -408,7 +408,7 @@ sub cc_mm_works
       '-MM',
       $c->path,
     );
-    
+
     my($out, $exit) = Capture::Tiny::capture_merged(sub {
       $self->run(@cmd);
     });
@@ -421,8 +421,8 @@ sub cc_mm_works
     {
       print "CC (checkfor -MM)\n";
     }
-    
-    
+
+
     if(!$exit && $out =~ /foo\.h/)
     {
       $self->{cc_mm_works} = '-MM';
@@ -432,7 +432,7 @@ sub cc_mm_works
       $self->{cc_mm_works} = 0;
     }
   }
-  
+
   $self->{cc_mm_works};
 }
 
@@ -529,7 +529,7 @@ sub diag
 {
   my $self = _self(shift);
   my @diag;
-  
+
   push @diag, "osname            : ". _c($self->osname);
   push @diag, "cc                : ". _l($self->cc);
   push @diag, "cxx               : ". (eval { _l($self->cxx) } || '---' );

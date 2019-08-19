@@ -15,8 +15,8 @@ use Config;
 
 =head1 DESCRIPTION
 
-This module provides the Windows datatypes used by the Windows API.  
-This means that you can use things like C<DWORD> as an alias for 
+This module provides the Windows datatypes used by the Windows API.
+This means that you can use things like C<DWORD> as an alias for
 C<uint32>.
 
 =head1 METHODS
@@ -52,7 +52,7 @@ sub native_type_map
   {
     require FFI::Platypus::ShareConfig;
     %map = %{ FFI::Platypus::ShareConfig->get('type_map') };
-    
+
     my %win32_map = qw(
       BOOL                      int
       BOOLEAN                   BYTE
@@ -142,9 +142,9 @@ sub native_type_map
       VOID                      void
       WORD                      uint16
       WPARAM                    UINT_PTR
-      
+
     );
-    
+
     if($Config{ptrsize} == 4)
     {
       $win32_map{HALF_PTR}  = 'sint16';
@@ -167,7 +167,7 @@ sub native_type_map
     {
       die "interesting word size you have";
     }
-    
+
     foreach my $alias (keys %win32_map)
     {
       my $type = $alias;
@@ -191,12 +191,12 @@ sub native_type_map
         die "unable to resolve $alias => ... => $type";
       }
     }
-    
+
     # stuff we are not yet dealing with
     # LPCTSTR is unicode string, not currently supported
     # LPWSTR 16 bit unicode string
     # TBYTE TCHAR UNICODE_STRING WCHAR
-    # Not supported: POINTER_32 POINTER_64 POINTER_SIGNED POINTER_UNSIGNED    
+    # Not supported: POINTER_32 POINTER_64 POINTER_SIGNED POINTER_UNSIGNED
   }
   \%map;
 }

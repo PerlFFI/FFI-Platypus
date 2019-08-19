@@ -22,7 +22,7 @@ use Carp qw( croak );
  {
    my($self, $arg) = @_;
    $self->_bar($arg) if ref($arg) eq ' ARRAY';
-   tie my @list, 'FFI::Platypus::Record::TieArray', 
+   tie my @list, 'FFI::Platypus::Record::TieArray',
      $self, '_bar', 20;
  }
  
@@ -34,23 +34,23 @@ use Carp qw( croak );
  $foo->bar->[5] = 10;        # set the 5th element of the bar array
  @{ $foo->bar } = ();        # set all elements in bar to 0
  @{ $foo->bar } = (1..5);    # set the first five elements of the bar array
- 
+
 =head1 DESCRIPTION
 
-B<WARNING>: This module is considered EXPERIMENTAL.  It may go away or 
-be changed in incompatible ways, possibly without notice, but not 
+B<WARNING>: This module is considered EXPERIMENTAL.  It may go away or
+be changed in incompatible ways, possibly without notice, but not
 without a good reason.
 
 This class provides a tie interface for record array members.
 
-In the future a short cut for using this with L<FFI::Platypus::Record> 
+In the future a short cut for using this with L<FFI::Platypus::Record>
 directly may be provided.
 
 =cut
 
 sub TIEARRAY
 {
-  my $class = shift;  
+  my $class = shift;
   bless [ @_ ], $class;
 }
 
@@ -78,7 +78,7 @@ sub CLEAR
 {
   my($self) = @_;
   my($obj, $member) = @$self;
-  
+
   $obj->$member([]);
 }
 

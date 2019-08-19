@@ -17,12 +17,12 @@ print "\n Found libgtop in :", $lib_path;
 my $ffi = FFI::Platypus->new();
 $ffi->lib($lib_path);
 
-#Create Convert::Binary::C object to import the structures 
+#Create Convert::Binary::C object to import the structures
 my $c_struct = Convert::Binary::C->new();
 $c_struct->configure( 'Alignment' => 0 );
 
 #import glibtop_uptime struct using Convert::Binary::C
-#Note: guint64 is unsigned long as per 
+#Note: guint64 is unsigned long as per
 #http://www.freedesktop.org/software/gstreamer-sdk/data/docs/latest/glib/glib-Basic-Types.html#guint64
 
 $c_struct->parse(<<ENDC);
