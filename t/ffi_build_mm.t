@@ -134,7 +134,7 @@ subtest 'with a build!' => sub {
     fbx_clean();
     ok !-f 'fbx.json';
   };
-  File::Path::rmtree('blib', 0, 0755);
+  File::Path::rmtree('blib', 0, oct(755));
 
   chdir(File::Spec->updir) for 1..3;
 

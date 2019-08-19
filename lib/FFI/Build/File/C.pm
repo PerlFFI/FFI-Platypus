@@ -49,7 +49,7 @@ sub build_item
   
   return $object if -f $object->path && !$object->needs_rebuild($self->_deps);
   
-  File::Path::mkpath($object->dirname, { verbose => 0, mode => 0700 });
+  File::Path::mkpath($object->dirname, { verbose => 0, mode => oct(700) });
 
   my @cmd = (
     $self->_base_args,
@@ -121,7 +121,7 @@ sub build_item_cpp
     build    => $self->build,
   );
 
-  File::Path::mkpath($ifile->dirname, { verbose => 0, mode => 0700 });
+  File::Path::mkpath($ifile->dirname, { verbose => 0, mode => oct(700) });
 
   my @cmd = (
     $self->_base_args_cpp,

@@ -303,7 +303,7 @@ sub action_build
     my $lib = $build->build;
     if($self->archdir)
     {
-      File::Path::mkpath($self->archdir, 0, 0755);
+      File::Path::mkpath($self->archdir, 0, oct(755));
       my $archfile = File::Spec->catfile($self->archdir, File::Basename::basename($self->archdir) . ".txt");
       open my $fh, '>', $archfile;
       my $lib_path = $lib->path;
