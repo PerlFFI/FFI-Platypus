@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.96      2019-08-19 18:33:58 -0400
+  - Production release identical to 0.95_11
+
 0.95_11   2019-08-19 09:41:56 -0400
   - Documentation fixes (hakonhagland++ gh#173)
   - Increased Perl::Critic criticism and associated fixes (gh#172)
