@@ -23,7 +23,7 @@ subtest 'basic' => sub {
   isa_ok $build->platform, 'FFI::Build::Platform';
 
   $build->source('corpus/ffi_build/source/*.c');
-  
+
   my($cfile) = $build->source;
   isa_ok $cfile, 'FFI::Build::File::C';
 
@@ -50,12 +50,12 @@ subtest 'build' => sub {
 
   foreach my $type (qw( name object array ))
   {
-  
+
     subtest $type => sub {
 
       my $tempdir = FFI::Temp->newdir;
 
-      my $build = FFI::Build->new('foo', 
+      my $build = FFI::Build->new('foo',
         dir       => $tempdir,
         buildname => "tmpbuild.tmpbuild.$$.@{[ time ]}",
         verbose   => 2,
@@ -99,18 +99,18 @@ subtest 'build' => sub {
       platypus 2 => sub {
         my $ffi = shift;
         $ffi->lib($dll);
-  
+
         is(
           $ffi->function(foo1 => [] => 'int')->call,
           42,
         );
- 
+
         is(
           $ffi->function(foo2 => [] => 'string')->call,
           "42",
         );
       };
-  
+
       $build->clean;
 
       cleanup(
@@ -129,12 +129,12 @@ subtest 'build c++' => sub {
 
   my $tempdir = FFI::Temp->newdir( TEMPLATE => "tmpbuild.XXXXXX" );
 
-  my $build = FFI::Build->new('foo', 
+  my $build = FFI::Build->new('foo',
     dir       => $tempdir,
     buildname => "tmpbuild.$$.@{[ time ]}",,
     verbose   => 2,
   );
-  
+
   $build->source('corpus/ffi_build/project-cxx/*.cxx');
   $build->source('corpus/ffi_build/project-cxx/*.cpp');
   note "$_" for $build->source;
@@ -210,7 +210,7 @@ subtest 'alien' => sub {
     verbose   => 2,
     alien     => ['Acme::Alien::DontPanic'],
   );
-  
+
   $build->source('corpus/ffi_build/project2/*.c');
   note "$_" for $build->source;
 

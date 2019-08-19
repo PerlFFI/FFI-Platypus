@@ -152,7 +152,7 @@ sub new
     libs     => [],
     alien    => [],
   }, $class;
-  
+
   my $platform  = $self->{platform}  = $args{platform}  || FFI::Build::Platform->default;
   my $file      = $self->{file}      = $args{file}      || FFI::Build::File::Library->new([$args{dir} || '.', $self->_native_name($name)], platform => $self->platform);
   my $buildname = $self->{buildname} = $args{buildname} || '_build';
@@ -164,14 +164,14 @@ sub new
     push @{ $self->{cflags}   }, grep !/^-I/, @flags;
     push @{ $self->{cflags_I} }, grep  /^-I/, @flags;
   }
-  
+
   if(defined $args{libs})
   {
     my @flags = ref $args{libs} ? @{ $args{libs} } : $self->platform->shellwords($args{libs});
     push @{ $self->{libs} },   grep !/^-L/, @flags;
     push @{ $self->{libs_L} }, grep  /^-L/, @flags;
   }
-  
+
   if(defined $args{alien})
   {
     my @aliens = ref $args{alien} ? @{ $args{alien} } : ($args{alien});
@@ -190,7 +190,7 @@ sub new
       push @{ $self->{libs_L}   }, grep  /^-L/, $self->platform->shellwords($alien->libs);
     }
   }
-  
+
   $self->source(ref $args{source} ? @{ $args{source} } : ($args{source})) if $args{source};
 
   $self;
@@ -285,7 +285,7 @@ sub _file_classes
       push @file_classes,
         map { my $f = $_; $f =~ s/\.pm$//; "FFI::Build::File::$f" }
         grep !/^Base\.pm$/,
-        map { File::Basename::basename($_) } 
+        map { File::Basename::basename($_) }
         File::Glob::bsd_glob(
           File::Spec->catfile($inc, 'FFI', 'Build', 'File', '*.pm')
         );
@@ -323,7 +323,7 @@ The format is the same as with the C<source> attribute above.
 sub source
 {
   my($self, @file_spec) = @_;
-  
+
   foreach my $file_spec (@file_spec)
   {
     if(eval { $file_spec->isa('FFI::Build::File::Base') })
@@ -366,7 +366,7 @@ path:
       Carp::croak("Unknown file type: $path");
     }
   }
-  
+
   @{ $self->{source} };
 }
 
@@ -386,9 +386,9 @@ sub build
   my($self) = @_;
 
   my @objects;
-  
+
   my $ld = $self->platform->ld;
-  
+
   foreach my $source ($self->source)
   {
     $ld = $source->ld if $source->ld;
@@ -400,7 +400,7 @@ sub build
     }
     push @objects, $output;
   }
-  
+
   my $needs_rebuild = sub {
     my(@objects) = @_;
     return 1 unless -f $self->file->path;
@@ -412,11 +412,11 @@ sub build
     }
     return 0;
   };
-  
+
   return $self->file unless $needs_rebuild->(@objects);
-  
+
   File::Path::mkpath($self->file->dirname, 0, oct(755));
-  
+
   my @cmd = (
     $ld,
     $self->libs_L,
@@ -425,11 +425,11 @@ sub build
     $self->libs,
     $self->platform->flag_library_output($self->file->path),
   );
-  
+
   my($out, $exit) = Capture::Tiny::capture_merged(sub {
     $self->platform->run(@cmd);
   });
-  
+
   if($exit || !-f $self->file->path)
   {
     print $out;
@@ -443,7 +443,7 @@ sub build
   {
     print "LD @{[ $self->file->path ]}\n";
   }
-  
+
   $self->file;
 }
 

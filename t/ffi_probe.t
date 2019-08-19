@@ -51,7 +51,7 @@ my $runner = do {
   FFI::Probe::Runner->new(
     exe => $exe,
   );
-  
+
 };
 
 subtest 'check_header' => sub {

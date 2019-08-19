@@ -165,7 +165,7 @@ sub probe_runner_build
   my $builder = FFI::Probe::Runner::Builder->new;
   foreach my $key (qw( cc ccflags optimize ld ldflags ))
   { @{ $builder->$key } = @{ $self->build_config->get('eumm')->{$key} } }
-  $builder->build unless -e $builder->exe;  
+  $builder->build unless -e $builder->exe;
 }
 
 sub configure

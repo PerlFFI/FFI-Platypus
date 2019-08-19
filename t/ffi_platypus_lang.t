@@ -10,7 +10,7 @@ my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 subtest 'Foo constructor' => sub {
   my $ffi = FFI::Platypus->new(lang => 'Foo');
   $ffi->lib($libtest);
-  
+
   eval { $ffi->type('int') };
   isnt $@, '', 'int is not an okay type';
   note $@;
@@ -18,19 +18,19 @@ subtest 'Foo constructor' => sub {
   is $@, '', 'foo_t is an okay type';
   eval { $ffi->type('sint16') };
   is $@, '', 'sint16 is an okay type';
-  
+
   is $ffi->sizeof('foo_t'), 2, 'sizeof foo_t = 2';
   is $ffi->sizeof('bar_t'), 4, 'sizeof foo_t = 4';
 
   is $ffi->function('UnMangled::Name(int i)' => ['myint'] => 'myint')->call(22), 22;
-  
+
 };
 
 subtest 'Foo attribute' => sub {
   my $ffi = FFI::Platypus->new;
   $ffi->lib($libtest);
   $ffi->lang('Foo');
-  
+
   eval { $ffi->type('int') };
   isnt $@, '', 'int is not an okay type';
   note $@;
@@ -38,10 +38,10 @@ subtest 'Foo attribute' => sub {
   is $@, '', 'foo_t is an okay type';
   eval { $ffi->type('sint16') };
   is $@, '', 'sint16 is an okay type';
-  
+
   is $ffi->sizeof('foo_t'), 2, 'sizeof foo_t = 2';
   is $ffi->sizeof('bar_t'), 4, 'sizeof foo_t = 4';
-  
+
   is $ffi->function('UnMangled::Name(int i)' => ['myint'] => 'myint')->call(22), 22;
 };
 
@@ -49,11 +49,11 @@ subtest 'MyLang::Roger' => sub {
 
   my $ffi = FFI::Platypus->new;
   $ffi->lang('=MyLang::Roger');
-  
+
   eval { $ffi->type('int') };
   isnt $@, '', 'int is not an okay type';
   note $@;
-  
+
   is $ffi->sizeof('foo_t'), 4, 'sizeof foo_t = 4';
 
 };
@@ -92,7 +92,7 @@ sub mangler
   my %mangle = (
     'UnMangled::Name(int i)' => 'f0',
   );
-  
+
   sub {
     defined $mangle{$_[0]} ? $mangle{$_[0]} : $_[0];
   };

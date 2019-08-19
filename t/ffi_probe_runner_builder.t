@@ -18,7 +18,7 @@ my $builder = FFI::Probe::Runner::Builder->new(
 
 foreach my $lib (@{ $builder->libs })
 {
-  note "libs=" . join(' ', @$lib) 
+  note "libs=" . join(' ', @$lib)
 }
 
 isa_ok $builder, 'FFI::Probe::Runner::Builder';

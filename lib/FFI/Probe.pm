@@ -16,7 +16,7 @@ use FFI::Temp;
 =head1 SYNOPSIS
 
  use FFI::Probe;
-
+ 
  my $probe = FFI::Probe->new;
  $probe->check_header('foo.h');
  ...

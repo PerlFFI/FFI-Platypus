@@ -18,12 +18,12 @@ exit 2 if $?;
 do {
 
   local $CWD = 'examples';
-  
+
   foreach my $cfile (bsd_glob '*.c')
   {
     my $sofile = $cfile;
     $sofile =~ s{\.c$}{.so};
-    
+
     my @cmd = ('cc', '-fPIC', '-shared', -o => $sofile, $cfile);
     print "+ @cmd\n";
     system @cmd;

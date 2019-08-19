@@ -39,13 +39,13 @@ used it much, generally finding function wrappers to be a more powerful
 tested as much as the rest of Platypus.  If you feel the need to use
 this interface please coordinate with the Platypus developers.
 
-The custom types API for L<FFI::Platypus> allows you to set multiple C 
-arguments from a single Perl argument as a common type.  This is 
-sometimes useful for pointer / size pairs which are a common pattern in 
-C, but are usually represented by a single value (a string scalar) in 
+The custom types API for L<FFI::Platypus> allows you to set multiple C
+arguments from a single Perl argument as a common type.  This is
+sometimes useful for pointer / size pairs which are a common pattern in
+C, but are usually represented by a single value (a string scalar) in
 Perl.
 
-The custom type API is somewhat experimental, and you should expect some 
+The custom type API is somewhat experimental, and you should expect some
 changes as needs arise (I won't break compatibility lightly, however).
 
 =head1 FUNCTIONS
@@ -176,7 +176,7 @@ Get the double precision floating point argument from position I<$i>.
 
  arguments_set_double $i, $double;
 
-Set the double precision floating point argument at position I<$i> to 
+Set the double precision floating point argument at position I<$i> to
 I<$double>
 
 =head2 arguments_get_pointer

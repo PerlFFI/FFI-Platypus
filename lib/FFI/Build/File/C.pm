@@ -46,9 +46,9 @@ sub build_item
     platform => $self->platform,
     build    => $self->build,
   );
-  
+
   return $object if -f $object->path && !$object->needs_rebuild($self->_deps);
-  
+
   File::Path::mkpath($object->dirname, { verbose => 0, mode => oct(700) });
 
   my @cmd = (
@@ -74,7 +74,7 @@ sub build_item
   {
     print "CC @{[ $self->path ]}\n";
   }
-  
+
   $object;
 }
 
@@ -152,7 +152,7 @@ sub build_item_cpp
 sub _deps
 {
   my($self) = @_;
-  
+
   return $self->path unless $self->platform->cc_mm_works;
 
   my @cmd = (
@@ -160,11 +160,11 @@ sub _deps
     '-MM',
     $self->path,
   );
-  
+
   my($out,$err,$exit) = Capture::Tiny::capture(sub {
     $self->platform->run(@cmd);
   });
-  
+
   if($exit)
   {
     print $out;

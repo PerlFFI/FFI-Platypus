@@ -14,7 +14,7 @@ plan skip_all => 'Test requires C++ compiler'
 subtest 'basic' => sub {
 
   my $file = FFI::Build::File::CXX->new(['corpus','ffi_build_file_cxx','basic.cxx']);
-  
+
   isa_ok $file, 'FFI::Build::File::CXX';
   isa_ok $file, 'FFI::Build::File::C';
   isa_ok $file, 'FFI::Build::File::Base';
@@ -28,7 +28,7 @@ subtest 'compile' => sub {
   my $file = FFI::Build::File::CXX->new([qw( corpus ffi_build_file_cxx foo1.cxx )]);
   my $object = $file->build_item;
   isa_ok $object, 'FFI::Build::File::Object';
-  
+
   is_deeply
     [ $object->build_item ],
     [];
@@ -47,7 +47,7 @@ subtest 'headers' => sub {
   note "cflags=$_" for @{ $build->cflags };
 
   my $file = FFI::Build::File::C->new([qw( corpus ffi_build_file_cxx foo2.cpp )], build => $build );
-  
+
   my @deps = eval { $file->_deps };
   is $@, '', 'no die';
 
@@ -55,7 +55,7 @@ subtest 'headers' => sub {
   {
     ok -f "$dep", "dep is afile: $dep";
   }
-  
+
 };
 
 done_testing;

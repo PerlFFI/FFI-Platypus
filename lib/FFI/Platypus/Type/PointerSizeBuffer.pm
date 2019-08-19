@@ -3,7 +3,7 @@ package FFI::Platypus::Type::PointerSizeBuffer;
 use strict;
 use warnings;
 use FFI::Platypus;
-use FFI::Platypus::API qw( 
+use FFI::Platypus::API qw(
   arguments_set_pointer
   arguments_set_uint32
   arguments_set_uint64
@@ -37,17 +37,17 @@ In your Platypus::FFI code:
 
 =head1 DESCRIPTION
 
-A common pattern in C code is to pass in a region of memory as a buffer, 
-consisting of a pointer and a size of the memory region.  In Perl, 
-string scalars also point to a contiguous series of bytes that has a 
-size, so when interfacing with C libraries it is handy to be able to 
+A common pattern in C code is to pass in a region of memory as a buffer,
+consisting of a pointer and a size of the memory region.  In Perl,
+string scalars also point to a contiguous series of bytes that has a
+size, so when interfacing with C libraries it is handy to be able to
 pass in a string scalar as a pointer / size buffer pair.
 
 =cut
 
 my @stack;
 
-*arguments_set_size_t 
+*arguments_set_size_t
   = FFI::Platypus->new->sizeof('size_t') == 4
   ? \&arguments_set_uint32
   : \&arguments_set_uint64;

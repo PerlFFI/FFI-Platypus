@@ -15,13 +15,13 @@ subtest basic => sub {
 subtest 'cc mm works' => sub {
 
   my $platform = FFI::Build::Platform->new;
-  
+
   my($out, $cc_mm_works) = capture_merged {
     $platform->cc_mm_works(1);
   };
-  
+
   note $out;
-  
+
   ok(defined $cc_mm_works);
   note "cc_mm_works = $cc_mm_works";
 

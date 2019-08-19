@@ -8,7 +8,7 @@ use Convert::Binary::C;
 
 #Get the system time using Kernel32.dll
 
-#find the Kernel32.dll 
+#find the Kernel32.dll
 my $libPath = find_lib(lib=>'Kernel32');
 #Create FFI Object
 my $ffiObj = FFI::Platypus->new();
@@ -20,7 +20,7 @@ $ffiObj->attach('GetLocalTime',['record(16)'],'void');
 #Define SYSTEMTIME Struct as per https://msdn.microsoft.com/en-us/library/windows/desktop/ms724950(v=vs.85).aspx
 #As per, C:\MinGW\include\windef.h, WORD id unsigned short
 my $c = Convert::Binary::C->new->parse(<<ENDC);
-  
+
 struct SYSTEMTIME {
   unsigned short wYear;
   unsigned short wMonth;
@@ -31,7 +31,7 @@ struct SYSTEMTIME {
   unsigned short wSecond;
   unsigned short wMilliseconds;
   };
-  
+
 ENDC
 
 
@@ -53,7 +53,7 @@ GetLocalTime($packed);
 
 if (defined ($packed))
 {
-  #Unpack the structure 
+  #Unpack the structure
   my $sysDate = $c->unpack('SYSTEMTIME', $packed);
   print "\n WINDOWS SYSTEM TIME: ",$$sysDate{'wHour'},':',$$sysDate{'wMinute'},':',$$sysDate{'wSecond'},'.',$$sysDate{'wMilliseconds'},' ',$$sysDate{'wDay'},'/',$$sysDate{'wMonth'},'/',$$sysDate{'wYear'}, "\n";
 }

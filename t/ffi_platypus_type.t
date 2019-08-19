@@ -60,7 +60,7 @@ subtest 'record' => sub {
     is $type->sizeof, 4;
     is $type->is_record, 0;
     note Dumper($type->meta);
-  
+
   };
 
   subtest 'record class (pass by reference)' => sub {

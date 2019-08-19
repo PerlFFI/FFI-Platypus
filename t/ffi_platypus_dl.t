@@ -9,7 +9,7 @@ my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 subtest 'flags' => sub {
 
   ok(FFI::Platypus::DL->can('RTLD_PLATYPUS_DEFAULT'), "RTLD_PLATYPUS_DEFAULT is defined");
-  
+
   note sprintf "%-25s %04x %s", $_, FFI::Platypus::DL->can($_)->(), FFI::Platypus::DL->can($_)->() for sort { FFI::Platypus::DL->can($a)->() <=> FFI::Platypus::DL->can($b)->() } grep /^RTLD_/, keys %main::;
 
 };
@@ -39,13 +39,13 @@ subtest 'dlsym' => sub {
     ok $address, 'returns an address';
     note "address = $address";
   };
-  
+
   subtest 'bad symbol' => sub {
     my $address = dlsym $h, 'bogus';
     is $address, undef, 'bad symbol returns undef';
     note "dlerror = @{[ dlerror ]}";
   };
-  
+
   dlclose $h;
 
 };

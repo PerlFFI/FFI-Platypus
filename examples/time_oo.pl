@@ -54,7 +54,7 @@ $ffi->attach( [ localtime => '_new' ] => ['time_t*'] => 'tm' );
 # the constructor needs to be wrapped in a Perl sub,
 # because localtime is expecting the time_t (if provided)
 # to come in as the first argument, not the second.
-# We could also acomplish something similar using 
+# We could also acomplish something similar using
 # custom types.
 sub new { _new(\($_[1] || time)) }
 

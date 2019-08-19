@@ -125,7 +125,7 @@ glibc 2.3.4 extension.
 
 This looks up the given C<$symbol> in the library pointed to by C<$handle>.  If the symbol is found,
 the address for that symbol is returned as an opaque pointer.  This pointer can be passed into
-the L<FFI::Platypus> C<function> and C<attach> methods instead of a function name.  
+the L<FFI::Platypus> C<function> and C<attach> methods instead of a function name.
 
 If the symbol cannot be found then C<undef> will be returned and the diagnostic for the failure can
 be retrieved with C<dlerror> as described below.
@@ -134,7 +134,7 @@ be retrieved with C<dlerror> as described below.
 
  my $status = dlclose($handle);
 
-On success, C<dlclose> returns 0; on error, it returns a nonzero value, and the diagnostic for the 
+On success, C<dlclose> returns 0; on error, it returns a nonzero value, and the diagnostic for the
 failure can be retrieved with C<dlerror> as described below.
 
 =head2 dlerror

@@ -8,7 +8,7 @@ my $o = FFI::Build::Platform->object_suffix;
 subtest 'basic' => sub {
 
   my $file = FFI::Build::File::Object->new(['corpus',"basic$o"]);
-  
+
   is($file->default_suffix, $o);
   is($file->default_encoding, ':raw');
   note "path = @{[ $file->path ]}";

@@ -29,7 +29,7 @@ foreach my $bits (qw( 16 32 64 ))
   {
     my $new = $orig;
     $new =~ s/8/$bits/;
-    
+
     open my $in, '<', $orig;
     open my $out, '>', $new;
 
@@ -51,13 +51,13 @@ foreach my $bits (qw( 16 32 64 ))
                             "#",
                             "";
     }
-    
+
     while(<$in>)
     {
       s/int8/"int$bits"/eg;
       print $out $_;
     }
-    
+
     close $out;
     close $in;
   }
@@ -69,7 +69,7 @@ foreach my $type (qw( double ))
   {
     my $new = $orig;
     $new =~ s/float/$type/;
-    
+
     open my $in, '<', $orig;
     open my $out, '>', $new;
 
@@ -91,13 +91,13 @@ foreach my $type (qw( double ))
                             "#",
                             "";
     }
-    
+
     while(<$in>)
     {
       s/float/$type/eg;
       print $out $_;
     }
-    
+
     close $out;
     close $in;
   }
