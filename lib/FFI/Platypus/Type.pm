@@ -434,7 +434,7 @@ and return an opaque pointer to the string using a cast.
  my $get_message => $ffi->closure(sub {
    our $message = "my message";  # needs to be our so that it doesn't
                                  # get free'd
-   my $ptr = $ffi->cast('string' => 'opaque');
+   my $ptr = $ffi->cast('string' => 'opaque', $message);
    return $ptr;
  });
  print_message($get_message);
