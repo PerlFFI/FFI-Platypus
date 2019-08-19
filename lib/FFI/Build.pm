@@ -294,7 +294,7 @@ sub _file_classes
     # also anything already loaded, that might not be in the
     # @INC path (for testing ususally)
     push @file_classes,
-      map { s/::$//; "FFI::Build::File::$_" }
+      map { my $f = $_; $f =~ s/::$//; "FFI::Build::File::$f" }
       grep !/Base::/,
       grep /::$/,
       keys %{FFI::Build::File::};
@@ -415,7 +415,7 @@ sub build
   
   return $self->file unless $needs_rebuild->(@objects);
   
-  File::Path::mkpath($self->file->dirname, 0, 0755);
+  File::Path::mkpath($self->file->dirname, 0, oct(755));
   
   my @cmd = (
     $ld,

@@ -98,7 +98,7 @@ sub dir
   unless(-d $dir)
   {
     require File::Path;
-    File::Path::mkpath($dir, 0, 0755);
+    File::Path::mkpath($dir, 0, oct(755));
   }
   $dir;
 }

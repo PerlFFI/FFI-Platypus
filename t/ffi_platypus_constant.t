@@ -67,7 +67,7 @@ sub spew
   note "spew(end)\n";
 
   my $dir = dirname $fn;
-  mkpath $dir, 0, 0755 unless -d $dir;
+  mkpath $dir, 0, oct(755) unless -d $dir;
   open my $fh, '>', $fn;
   print $fh $content;
   close $fh;
