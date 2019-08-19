@@ -122,6 +122,9 @@ pod_spelling_system:
     - api
     - deallocating
     - deinitialization
+    - HAKONH
+    - hakonhagland
+    - kon
 
 pod_coverage:
   skip: 0

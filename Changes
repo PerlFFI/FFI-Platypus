@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Documentation fixes (hakonhagland++ gh#173)
 
 0.95_10   2019-08-16 16:14:54 -0400
   - Detect bad forks.pm  (gh#170)
