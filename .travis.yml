@@ -16,12 +16,7 @@ script:
 
 jobs:
   include:
-    - before_install:
-        - curl https://raw.githubusercontent.com/plicease/cip/master/bin/travis-bootstrap | bash
-      install:
-        - /bin/true
-      script:
-        - cip check
+    - env: CIP_TAG=static
     - env: CIP_TAG=5.31
     - env: CIP_TAG=5.30
     - env: CIP_TAG=5.30-stretch32
