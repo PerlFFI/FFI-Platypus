@@ -125,7 +125,7 @@ sub parse
 
   if($name =~ m/^ \( (.*) \) \s* -\> \s* (.*) \s* $/x)
   {
-    my @argument_types = map { $self->parse($_) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $1;
+    my @argument_types = map { $self->parse($_) } map { my $t = $_; $t =~ s/^\s+//; $t =~ s/\s+$//; $t } split /,/, $1;
     my $return_type = $self->parse($2);
     return $self->types->{$name} = $self->create_type_closure($return_type, @argument_types);
   }

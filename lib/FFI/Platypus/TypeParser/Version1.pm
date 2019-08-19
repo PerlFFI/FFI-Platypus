@@ -117,7 +117,7 @@ sub parse
     my $rt = $2;
     return $self->types->{$name} = $self->create_type_closure(
       $self->parse($rt, $opt),
-      map { $self->parse($_, $opt) } map { s/^\s+//; s/\s+$//; $_ } split /,/, $at,
+      map { $self->parse($_, $opt) } map { my $t = $_; $t =~ s/^\s+//; $t =~ s/\s+$//; $t } split /,/, $at,
     );
   }
 
