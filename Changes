@@ -1,7 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.95_11   2019-08-19 09:41:56 -0400
   - Documentation fixes (hakonhagland++ gh#173)
+  - Increased Perl::Critic criticism and associated fixes (gh#172)
 
 0.95_10   2019-08-16 16:14:54 -0400
   - Detect bad forks.pm  (gh#170)
