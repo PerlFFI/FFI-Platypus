@@ -304,9 +304,9 @@ same prefix.  Example:
       my($symbol) = @_;
       return "foo_$symbol";
     });
-
+    
     $ffi->function( get_bar => [] => 'int' );  # attaches foo_get_bar
-
+    
     my $f = $ffi->function( set_baz => ['int'] => 'void' );
     $f->call(22); # calls foo_set_baz
 
@@ -732,7 +732,7 @@ structured data records).
     my $uuid = "\0" x 16;  # uuid_t
     uuid_generate($uuid);
     
-    my $string = "\0" x 37; # 36 bytes to store a UUID string 
+    my $string = "\0" x 37; # 36 bytes to store a UUID string
                             # + NUL termination
     uuid_unparse($uuid, $string);
     
