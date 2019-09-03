@@ -68,12 +68,17 @@ MODULE = FFI::Platypus PACKAGE = FFI::Platypus
 
 BOOT:
 {
+  HV *stash;
   MY_CXT_INIT;
   MY_CXT.current_argv           = NULL;
   MY_CXT.loaded_math_longdouble = 0;
 #ifndef HAVE_IV_IS_64
   PERL_MATH_INT64_LOAD_OR_CROAK;
 #endif
+
+  stash = gv_stashpv("FFI::Platypus", TRUE);
+  newCONSTSUB(stash, "_cast0", newSVuv(PTR2UV(cast0)));
+  newCONSTSUB(stash, "_cast1", newSVuv(PTR2UV(cast1)));
 }
 
 void

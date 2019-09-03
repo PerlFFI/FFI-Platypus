@@ -733,15 +733,7 @@
 
     MY_CXT.current_argv = NULL;
 
-    if(self->address != NULL)
-    {
-      ffi_call(&self->ffi_cif, self->address, RESULT, ffi_pl_arguments_pointers(arguments));
-    }
-    else
-    {
-      void *address = self->ffi_cif.nargs > 0 ? (void*) &cast1 : (void*) &cast0;
-      ffi_call(&self->ffi_cif, address, RESULT, ffi_pl_arguments_pointers(arguments));
-    }
+    ffi_call(&self->ffi_cif, self->address, RESULT, ffi_pl_arguments_pointers(arguments));
 
 /*
  * ARGUMENT OUT
