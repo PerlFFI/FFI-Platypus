@@ -81,6 +81,7 @@ subtest 'alignof' => sub {
     {
       my $align = $ffi->alignof($type);
       like $align, qr{^[0-9]$}, "alignof $type = $align";
+      is(FFI::Platypus->alignof($type), $align);
 
       next if $type eq 'string';
 
@@ -281,6 +282,19 @@ subtest 'sizeof' => sub {
     is $ffi->sizeof('sint16'), 2, 'sizeof sint16 = 2';
     is $ffi->sizeof('sint32'), 4, 'sizeof sint32 = 4';
     is $ffi->sizeof('sint64'), 8, 'sizeof sint64 = 8';
+  };
+
+  subtest 'class methods' => sub {
+    my $class = 'FFI::Platypus';
+    is $class->sizeof('uint8'), 1, 'sizeof uint8 = 1';
+    is $class->sizeof('uint16'), 2, 'sizeof uint16 = 2';
+    is $class->sizeof('uint32'), 4, 'sizeof uint32 = 4';
+    is $class->sizeof('uint64'), 8, 'sizeof uint64 = 8';
+
+    is $class->sizeof('sint8'), 1, 'sizeof sint8 = 1';
+    is $class->sizeof('sint16'), 2, 'sizeof sint16 = 2';
+    is $class->sizeof('sint32'), 4, 'sizeof sint32 = 4';
+    is $class->sizeof('sint64'), 8, 'sizeof sint64 = 8';
   };
 
   subtest floats => sub {
