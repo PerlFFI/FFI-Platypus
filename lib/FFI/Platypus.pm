@@ -863,6 +863,7 @@ sub attach_cast
 =head2 sizeof
 
  my $size = $ffi->sizeof($type);
+ my $size = FFI::Platypus->sizeof($type);
 
 Returns the total size of the given type in bytes.  For example to get
 the size of an integer:
@@ -889,7 +890,9 @@ iterations.
 sub sizeof
 {
   my($self,$name) = @_;
-  $self->{tp}->parse($name)->sizeof;
+  ref $self
+    ? $self->{tp}->parse($name)->sizeof
+    : $self->new->sizeof($name);
 }
 
 =head2 alignof
@@ -905,7 +908,9 @@ Returns the alignment of the given type in bytes.
 sub alignof
 {
   my($self, $name) = @_;
-  $self->{tp}->parse($name)->alignof;
+  ref $self
+    ? $self->{tp}->parse($name)->alignof
+    : $self->new->alignof($name);
 }
 
 =head2 find_lib
