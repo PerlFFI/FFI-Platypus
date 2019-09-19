@@ -468,6 +468,7 @@ faster and may be useful if you are calling a particular cast a lot.
 ## sizeof
 
     my $size = $ffi->sizeof($type);
+    my $size = FFI::Platypus->sizeof($type);
 
 Returns the total size of the given type in bytes.  For example to get
 the size of an integer:
