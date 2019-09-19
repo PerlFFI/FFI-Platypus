@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.97_01   2019-09-18 20:56:59 -0600
   - Pre-compute cast functions when they are created to save time each time
     they are called (gh#178, #179)
   - sizeof and alignof can now be used as class methods (gh#183)
