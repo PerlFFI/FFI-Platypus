@@ -1224,6 +1224,86 @@ will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the
 wrapper function will be returned back to the original caller.
 
+## bundle your own code
+
+`ffi/foo.c`:
+
+    #include <ffi_platypus_bundle.h>
+    #include <string.h>
+    
+    typedef struct {
+      char *name;
+      int value;
+    } foo_t;
+    
+    foo_t*
+    foo__new(const char *class_name, const char *name, int value)
+    {
+      (void)class_name;
+      foo_t *self = malloc( sizeof( foo_t ) );
+      self->name = strdup(name);
+      self->value = value;
+      return self;
+    }
+    
+    const char *
+    foo__name(foo_t *self)
+    {
+      return self->name;
+    }
+    
+    int
+    foo__value(foo_t *self)
+    {
+      return self->value;
+    }
+    
+    void
+    foo__DESTROY(foo_t *self)
+    {
+      free(self->name);
+      free(self);
+    }
+
+`lib/Foo.pm`:
+
+    package Foo;
+    
+    use strict;
+    use warnings;
+    use FFI::Platypus;
+    
+    {
+      my $ffi = FFI::Platypus->new( api => 1 );
+    
+      $ffi->type('object(Foo)' => 'foo_t');
+      $ffi->mangler(sub {
+        my $name = shift;
+        $name =~ s/^/foo__/;
+        $name;
+      });
+    
+      $ffi->bundle;
+    
+      $ffi->attach( new =>     [ 'string', 'string', 'int' ] => 'foo_t'  );
+      $ffi->attach( name =>    [ 'foo_t' ]                   => 'string' );
+      $ffi->attach( value =>   [ 'foo_t' ]                   => 'int'    );
+      $ffi->attach( DESTROY => [ 'foo_t' ]                   => 'void'   );
+    }
+    
+    1;
+
+You can bundle your own C (or other compiled language) code with your
+Perl extension.  Sometimes this is helpful for smoothing over the
+interface of a C library which is not very FFI friendly.  Sometimes
+you may want to write some code in C for a tight loop.  Either way,
+you can do this with the Platypus bundle interface.  See
+[FFI::Platypus::Bundle](https://metacpan.org/pod/FFI::Platypus::Bundle) for more details.
+
+Also related is the bundle constant interface, which allows you to
+define Perl constants in C space.  See [FFI::Platypus::Constant](https://metacpan.org/pod/FFI::Platypus::Constant)
+for details.
+
 # FAQ
 
 ## How do I get constants defined as macros in C header files

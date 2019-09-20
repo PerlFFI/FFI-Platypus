@@ -1354,6 +1354,27 @@ will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the
 wrapper function will be returned back to the original caller.
 
+=head2 bundle your own code
+
+C<ffi/foo.c>:
+
+# EXAMPLE: examples/bundle-foo/ffi/foo.c
+
+C<lib/Foo.pm>:
+
+# EXAMPLE: examples/bundle-foo/lib/Foo.pm
+
+You can bundle your own C (or other compiled language) code with your
+Perl extension.  Sometimes this is helpful for smoothing over the
+interface of a C library which is not very FFI friendly.  Sometimes
+you may want to write some code in C for a tight loop.  Either way,
+you can do this with the Platypus bundle interface.  See
+L<FFI::Platypus::Bundle> for more details.
+
+Also related is the bundle constant interface, which allows you to
+define Perl constants in C space.  See L<FFI::Platypus::Constant>
+for details.
+
 =head1 FAQ
 
 =head2 How do I get constants defined as macros in C header files
