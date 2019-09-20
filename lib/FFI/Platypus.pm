@@ -30,7 +30,8 @@ use FFI::Platypus::Type;
 
  use FFI::Platypus;
  
- my $ffi = FFI::Platypus->new;
+ # for all new code you should use api => 1
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->lib(undef); # search libc
  
  # call dynamically
@@ -132,7 +133,7 @@ XSLoader::load(
 
 =head2 new
 
- my $ffi = FFI::Platypus->new(%options);
+ my $ffi = FFI::Platypus->new( api => 1, %options);
 
 Create a new instance of L<FFI::Platypus>.
 
@@ -163,6 +164,9 @@ on the differences.
 Enable the next generation type parser which allows pass-by-value records
 and type decoration on basic types.  Using API level 1 prior to Platypus
 version 1.00 will trigger a (noisy) warning.
+
+All new code should be written with C<api => 1>!  The Platypus documentation
+assumes this api level is set.
 
 =back
 
@@ -404,9 +408,9 @@ definitions.
 
 Examples:
 
- $ffi->type('sint32'); # oly checks to see that sint32 is a valid type
+ $ffi->type('sint32');            # oly checks to see that sint32 is a valid type
  $ffi->type('sint32' => 'myint'); # creates an alias myint for sint32
- $ffi->type('bogus'); # dies with appropriate diagnostic
+ $ffi->type('bogus');             # dies with appropriate diagnostic
 
 =cut
 
@@ -1178,6 +1182,11 @@ specific layout.  For more details see L<FFI::Platypus::Record>.
 (L<FFI::Platypus::Type> includes some other ways of manipulating
 structured data records).
 
+The C C<localtime> function takes a pointer to a record, hence we suffix
+the type with a star: C<record(My::UnixTime)*>.  If the function takes
+a record in pass-by-value mode then we'd just say C<record(My::UnixTime)>
+with no star suffix.
+
 =head2 libuuid
 
 # EXAMPLE: examples/uuid.pl
@@ -1265,7 +1274,7 @@ implemented using FFI called L<ZMQ::FFI>.
 
 =head2 libarchive
 
-# EXAMPLE: examples/archive.pl
+# EXAMPLE: examples/archive_object.pl
 
 B<Discussion>: libarchive is the implementation of C<tar> for FreeBSD
 provided as a library and available on a number of platforms.
@@ -1275,26 +1284,34 @@ object oriented interface via opaque pointers.  This example creates an
 abstract class C<Archive>, and concrete classes C<ArchiveWrite>,
 C<ArchiveRead> and C<ArchiveEntry>.  The concrete classes can even be
 inherited from and extended just like any Perl classes because of the
-way the custom types are implemented.  For more details on custom types
-see L<FFI::Platypus::Type> and L<FFI::Platypus::API>.
+way the custom types are implemented.  We use Platypus's C<object>
+type for this implementation, which is a wrapper around an C<opaque>
+(can also be an integer) type that is blessed into a particular class.
 
-Another advanced feature of this example is that we extend the
-L<FFI::Platypus> class to define our own find_symbol method that
-prefixes the symbol names depending on the class in which they are
-defined. This means we can do this when we define a method for Archive:
+Another advanced feature of this example is that we define a mangler
+to modify the symbol resolution for each class.  This means we can do
+this when we define a method for Archive:
 
- $ffi->attach( support_filter_all => ['archive'] => 'int' );
+ $ffi->attach( support_filter_all => ['archive_t'] => 'int' );
 
 Rather than this:
 
  $ffi->attach(
    [ archive_read_support_filter_all => 'support_read_filter_all' ] =>
-   ['archive'] => 'int' );
+   ['archive_t'] => 'int' );
  );
 
-If you didn't want to create an entire new class just for this little
-trick you could also use something like L<Object::Method> to extend
-C<find_symbol>.
+=head2 unix open
+
+# EXAMPLE: examples/file_handle.pl
+
+B<Discussion>: The Unix file system calls use an integer handle for
+each open file.  We can use the same C<object> type that we used
+for libarchive above, except we let platypus know that the underlying
+type is C<int> instead of C<opaque> (the latter being the default for
+the C<object> type).  Mainly just for demonstration since Perl has much
+better IO libraries, but now we have an OO interface to the Unix IO
+functions.
 
 =head2 bzip2
 

@@ -3,7 +3,7 @@ use warnings;
 use FFI::Platypus;
 use FFI::CheckLib;
 
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
 $ffi->attach(puts => ['string'] => 'int');
 $ffi->attach(fdim => ['double','double'] => 'double');

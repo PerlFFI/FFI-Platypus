@@ -19,10 +19,10 @@ record_layout(qw(
     string tm_zone
 ));
 
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
 # define a record class My::UnixTime and alias it to "tm"
-$ffi->type("record(My::UnixTime)" => 'tm');
+$ffi->type("record(My::UnixTime)*" => 'tm');
 
 # attach the C localtime function as a constructor
 $ffi->attach( localtime => ['time_t*'] => 'tm', sub {

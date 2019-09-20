@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use FFI::Platypus;
 
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
 
 $ffi->attach(puts => ['string'] => 'int');
