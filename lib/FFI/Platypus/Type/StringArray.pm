@@ -27,7 +27,7 @@ In your L<Platypus::FFI> code:
 
  use FFI::Platypus;
  
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->load_custom_type('::StringArray' => 'string_array');
  $ffi->load_custom_type('::StringArray' => 'string_5' => 5);
  
@@ -62,7 +62,7 @@ use constant _incantation =>
   $^O eq 'MSWin32' && $Config::Config{archname} =~ /MSWin32-x64/
   ? 'Q'
   : 'L!';
-use constant _size_of_pointer => FFI::Platypus->new->sizeof('opaque');
+use constant _size_of_pointer => FFI::Platypus->new( api => 1, experimental => 1 )->sizeof('opaque');
 use constant _pointer_buffer => "P" . _size_of_pointer;
 
 my @stack;
@@ -146,7 +146,7 @@ sub ffi_custom_type_api_1
       $array_pointer;
     };
 
-    my $pointer_buffer = "P@{[ FFI::Platypus->new->sizeof('opaque') * $count ]}";
+    my $pointer_buffer = "P@{[ FFI::Platypus->new( api => 1, experimental => 1 )->sizeof('opaque') * $count ]}";
     my $incantation_count = _incantation.$count;
 
     $config->{native_to_perl} = sub {

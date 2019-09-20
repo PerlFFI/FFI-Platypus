@@ -19,7 +19,7 @@ push @EXPORT, grep /RTLD_/, keys %FFI::Platypus::DL::;
  
  my $handle = dlopen("./libfoo.so", RTLD_PLATYPUS_DEFAULT);
  my $address = dlsym($handle, "my_function_named_foo");
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->function($address => [] => 'void')->call;
  dlclose($handle);
 

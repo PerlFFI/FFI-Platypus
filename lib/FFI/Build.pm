@@ -27,7 +27,7 @@ use File::Path ();
  # $lib is an instance of FFI::Build::File::Library
  my $lib = $build->build;
  
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  # The filename will be platform dependant, but something like libfrooble.so or frooble.dll
  $ffi->lib($lib->path);
  

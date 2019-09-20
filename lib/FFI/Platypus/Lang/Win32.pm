@@ -10,7 +10,7 @@ use Config;
 =head1 SYNOPSIS
 
  use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->lang('Win32');
 
 =head1 DESCRIPTION
