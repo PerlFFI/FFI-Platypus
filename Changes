@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.97_02   2019-09-20 04:03:59 -0600
   - FFI::Platypus::Record record_layout may now take FFI::Platypus
     constructor arguments as a array reference as the first argument
     (gh#185)
