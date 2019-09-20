@@ -92,6 +92,17 @@ to Platypus or FFI, you may want to skip down to the
 Platypus has extensive documentation of types at [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type)
 and its custom types API at [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
 
+You are **strongly** encouraged to use API level 1 for all new code.
+There are a number of improvements and design fixes that you get
+for free.  You should even consider updating existing modules to
+use API level 1 where feasible.  How do I do that you might ask?
+Simply pass in the API level to the platypus constructor.
+
+    my $ffi = FFI::Platypus->new( api => 1 );
+
+The Platypus documentation has already been updated to assume API
+level 1.
+
 # CONSTRUCTORS
 
 ## new

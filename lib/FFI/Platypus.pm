@@ -120,6 +120,17 @@ L<EXAMPLES|/EXAMPLES> to get a taste of what you can do with Platypus.
 Platypus has extensive documentation of types at L<FFI::Platypus::Type>
 and its custom types API at L<FFI::Platypus::API>.
 
+You are B<strongly> encouraged to use API level 1 for all new code.
+There are a number of improvements and design fixes that you get
+for free.  You should even consider updating existing modules to
+use API level 1 where feasible.  How do I do that you might ask?
+Simply pass in the API level to the platypus constructor.
+
+ my $ffi = FFI::Platypus->new( api => 1 );
+
+The Platypus documentation has already been updated to assume API
+level 1.
+
 =cut
 
 our @CARP_NOT = qw( FFI::Platypus::Declare FFI::Platypus::Record );
