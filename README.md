@@ -522,18 +522,6 @@ prerequisites appropriately.
 
 Return the address of the given symbol (usually function).
 
-## package
-
-\[version 0.15 api = 0\]
-
-    $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
-    $ffi->package;                  # autodetect
-
-If you use [FFI::Build](https://metacpan.org/pod/FFI::Build) (or the older deprecated [Module::Build::FFI](https://metacpan.org/pod/Module::Build::FFI)
-to bundle C code with your distribution, you can use this method to tell
-the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance to look for symbols that came with the
-dynamic library that was built when your distribution was installed.
-
 ## bundle
 
 \[version 0.96 api = 1+\]
@@ -543,9 +531,24 @@ dynamic library that was built when your distribution was installed.
     $ffi->bundle($package);
     $ffi->bundle;
 
-This is a new experimental interface for bundling compiled code with your
+This is an interface for bundling compiled code with your
 distribution intended to eventually replace the `package` method documented
 above.  See [FFI::Platypus::Bundle](https://metacpan.org/pod/FFI::Platypus::Bundle) for details on how this works.
+
+## package
+
+\[version 0.15 api = 0\]
+
+    $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
+    $ffi->package;                  # autodetect
+
+**Note**: This method is officially discouraged in favor of `bundle`
+described above.
+
+If you use [FFI::Build](https://metacpan.org/pod/FFI::Build) (or the older deprecated [Module::Build::FFI](https://metacpan.org/pod/Module::Build::FFI)
+to bundle C code with your distribution, you can use this method to tell
+the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) instance to look for symbols that came with the
+dynamic library that was built when your distribution was installed.
 
 ## abis
 
@@ -963,7 +966,7 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
     # the ArchiveWrite class that could be used for writing archive formats
     # supported by libarchive
     
-    my $ffi = FFI::Platypus->new( api => 1, experimental => 1);
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(find_lib_or_exit lib => 'archive');
     $ffi->type('object(Archive)'      => 'archive_t');
     $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
@@ -1093,7 +1096,7 @@ Rather than this:
       use constant OUT => bless \do { my $out=1 }, __PACKAGE__;
       use constant ERR => bless \do { my $err=2 }, __PACKAGE__;
     
-      my $ffi = FFI::Platypus->new( api => 1, experimental => 1, lib => [undef]);
+      my $ffi = FFI::Platypus->new( api => 1, lib => [undef]);
     
       $ffi->type('object(FD,int)' => 'fd');
     
