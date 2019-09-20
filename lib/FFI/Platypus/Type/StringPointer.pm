@@ -28,7 +28,7 @@ In your Platypus::FFI code:
 
  use FFI::Platypus;
  
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->load_custom_type('::StringPointer' => 'string_pointer');
  
  $ffi->attach(string_pointer_argument => ['string_pointer'] => 'void');
@@ -57,7 +57,7 @@ use constant _incantation =>
   $^O eq 'MSWin32' && $Config::Config{archname} =~ /MSWin32-x64/
   ? 'Q'
   : 'L!';
-use constant _pointer_buffer => "P" . FFI::Platypus->new->sizeof('opaque');
+use constant _pointer_buffer => "P" . FFI::Platypus->new( api => 1, experimental => 1 )->sizeof('opaque');
 
 my @stack;
 

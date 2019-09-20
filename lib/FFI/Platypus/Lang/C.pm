@@ -9,7 +9,7 @@ use warnings;
 =head1 SYNOPSIS
 
  use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->lang('C'); # the default
 
 =head1 DESCRIPTION

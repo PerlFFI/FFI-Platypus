@@ -23,7 +23,7 @@ create closure with OO interface
 create closure from Platypus object
 
  use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  my $closure = $ffi->closure(sub { print "hello world\n" });
 
 use closure
