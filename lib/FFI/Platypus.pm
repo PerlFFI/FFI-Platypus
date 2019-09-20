@@ -1349,6 +1349,21 @@ a tool (L<Convert::Binary::C> can do this) that can extract the constants for yo
 
 See also the "Integer constants" example in L<FFI::Platypus::Type>.
 
+You can also use the new Platypus bundle interface to define Perl constants
+from C space.  This is more reliable, but does require a compiler.  It is
+recommended mainly for writing bindings against libraries that have constants
+that can vary widely from platform to platform.  See L<FFI::Platypus::Constant>
+for details.
+
+=head2 What about enums?
+
+The C enum types are integers.  The underlying type is up to the platform, so
+Platypus provides C<enum> and C<senum> types for unsigned and singed enums
+respectively.  At least some compilers treat signed and unsigned enums as
+different types.  The enum I<values> are essentially the same as macro constants
+described above from an FFI perspective.  Thus the process of defining enum values
+is identical to the process of defining macro constants in Perl.
+
 =head2 I get seg faults on some platforms but not others with a library using pthreads.
 
 On some platforms, Perl isn't linked with C<libpthreads> if Perl threads are not

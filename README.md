@@ -1192,6 +1192,21 @@ a tool ([Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C) can do
 
 See also the "Integer constants" example in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type).
 
+You can also use the new Platypus bundle interface to define Perl constants
+from C space.  This is more reliable, but does require a compiler.  It is
+recommended mainly for writing bindings against libraries that have constants
+that can vary widely from platform to platform.  See [FFI::Platypus::Constant](https://metacpan.org/pod/FFI::Platypus::Constant)
+for details.
+
+## What about enums?
+
+The C enum types are integers.  The underlying type is up to the platform, so
+Platypus provides `enum` and `senum` types for unsigned and singed enums
+respectively.  At least some compilers treat signed and unsigned enums as
+different types.  The enum _values_ are essentially the same as macro constants
+described above from an FFI perspective.  Thus the process of defining enum values
+is identical to the process of defining macro constants in Perl.
+
 ## I get seg faults on some platforms but not others with a library using pthreads.
 
 On some platforms, Perl isn't linked with `libpthreads` if Perl threads are not

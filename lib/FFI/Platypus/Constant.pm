@@ -10,6 +10,8 @@ use FFI::Platypus;
 
 =head1 SYNOPSIS
 
+C<ffi/foo.c>:
+
  #include <ffi_platypus_bundle.h>
  
  void
@@ -18,6 +20,21 @@ use FFI::Platypus;
    c->set_str("FOO", "BAR");       /* sets $package::FOO to "BAR" */
    c->set_str("ABC::DEF", "GHI");  /* sets ABC::DEF to GHI        */
  }
+
+C<lib/Foo.pm>:
+
+ package Foo;
+ 
+ use strict;
+ use warnings;
+ use FFI::Platypus;
+ use base qw( Exporter );
+ 
+ my $ffi = FFI::Platypus->new;
+ # sets constatns Foo::FOO and ABC::DEF from C
+ $ffi->bundle;
+ 
+ 1;
 
 =head1 DESCRIPTION
 
