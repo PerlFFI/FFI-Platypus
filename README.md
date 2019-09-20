@@ -6,7 +6,8 @@ Write Perl bindings to non-Perl libraries with FFI. No XS required.
 
     use FFI::Platypus;
     
-    my $ffi = FFI::Platypus->new;
+    # for all new code you should use api => 1
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(undef); # search libc
     
     # call dynamically
@@ -95,7 +96,7 @@ and its custom types API at [FFI::Platypus::API](https://metacpan.org/pod/FFI::P
 
 ## new
 
-    my $ffi = FFI::Platypus->new(%options);
+    my $ffi = FFI::Platypus->new( api => 1, %options);
 
 Create a new instance of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
 
@@ -122,6 +123,9 @@ the [lib](#lib) attribute.
         Enable the next generation type parser which allows pass-by-value records
         and type decoration on basic types.  Using API level 1 prior to Platypus
         version 1.00 will trigger a (noisy) warning.
+
+        All new code should be written with `api =` 1>!  The Platypus documentation
+        assumes this api level is set.
 
 - lib
 
@@ -227,9 +231,9 @@ definitions.
 
 Examples:
 
-    $ffi->type('sint32'); # oly checks to see that sint32 is a valid type
+    $ffi->type('sint32');            # oly checks to see that sint32 is a valid type
     $ffi->type('sint32' => 'myint'); # creates an alias myint for sint32
-    $ffi->type('bogus'); # dies with appropriate diagnostic
+    $ffi->type('bogus');             # dies with appropriate diagnostic
 
 ## custom\_type
 
@@ -574,7 +578,7 @@ that are related to types.
 
     use FFI::Platypus;
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(undef);
     
     $ffi->attach(puts => ['string'] => 'int');
@@ -598,7 +602,7 @@ includes the standard c library.
     # in the old version, and am not really familiar with the libnotify API to
     # say what is the cause.  Patches welcome to fix it.
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(find_lib_or_exit lib => 'notify');
     
     $ffi->attach(notify_init   => ['string'] => 'void');
@@ -651,7 +655,7 @@ We are really calling the C function `notify_notification_new`.
     use FFI::Platypus;
     use FFI::Platypus::Memory qw( malloc free memcpy );
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     my $buffer = malloc 12;
     
     memcpy $buffer, $ffi->cast('string' => 'opaque', "hello there"), length "hello there\0";
@@ -685,10 +689,10 @@ these and other memory related functions are provided by the
         string tm_zone
     ));
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(undef);
     # define a record class My::UnixTime and alias it to "tm"
-    $ffi->type("record(My::UnixTime)" => 'tm');
+    $ffi->type("record(My::UnixTime)*" => 'tm');
     
     # attach the C localtime function as a constructor
     $ffi->attach( localtime => ['time_t*'] => 'tm', sub {
@@ -717,16 +721,21 @@ specific layout.  For more details see [FFI::Platypus::Record](https://metacpan.
 ([FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) includes some other ways of manipulating
 structured data records).
 
+The C `localtime` function takes a pointer to a record, hence we suffix
+the type with a star: `record(My::UnixTime)*`.  If the function takes
+a record in pass-by-value mode then we'd just say `record(My::UnixTime)`
+with no star suffix.
+
 ## libuuid
 
     use FFI::CheckLib;
     use FFI::Platypus;
     use FFI::Platypus::Memory qw( malloc free );
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(find_lib_or_exit lib => 'uuid');
-    $ffi->type('string(37)' => 'uuid_string');
-    $ffi->type('record(16)' => 'uuid_t');
+    $ffi->type('string(37)*' => 'uuid_string');
+    $ffi->type('record(16)*' => 'uuid_t');
     
     $ffi->attach(uuid_generate => ['uuid_t'] => 'void');
     $ffi->attach(uuid_unparse  => ['uuid_t','uuid_string'] => 'void');
@@ -753,7 +762,7 @@ this case it is simply 16 bytes).  We also know that the strings
 
     use FFI::Platypus;
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(undef);
     
     $ffi->attach(puts => ['string'] => 'int');
@@ -769,7 +778,7 @@ this case it is simply 16 bytes).  We also know that the strings
     use FFI::Platypus;
     use FFI::CheckLib;
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(undef);
     $ffi->attach(puts => ['string'] => 'int');
     $ffi->attach(fdim => ['double','double'] => 'double');
@@ -822,7 +831,7 @@ handled seamlessly by Platypus.
     use FFI::TinyCC;
     use FFI::Platypus;
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     my $tcc = FFI::TinyCC->new;
     
     $tcc->compile_string(q{
@@ -862,7 +871,7 @@ just-in-time (JIT) compilation service for FFI.
     use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
     
     my $endpoint = "ipc://zmq-ffi-$$";
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     
     $ffi->lib(undef); # for puts
     $ffi->attach(puts => ['string'] => 'int');
@@ -947,82 +956,71 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
 ## libarchive
 
     use FFI::Platypus      ();
-    use FFI::Platypus::API ();
-    use FFI::CheckLib      ();
+    use FFI::CheckLib      qw( find_lib_or_exit );
     
     # This example uses FreeBSD's libarchive to list the contents of any
     # archive format that it suppors.  We've also filled out a part of
     # the ArchiveWrite class that could be used for writing archive formats
     # supported by libarchive
     
-    my $ffi = My::Platypus->new;
-    $ffi->lib(FFI::CheckLib::find_lib_or_exit lib => 'archive');
-    
-    $ffi->custom_type(archive => {
-      native_type    => 'opaque',
-      perl_to_native => sub { ${$_[0]} },
-      native_to_perl => sub {
-        # this works because archive_read_new ignores any arguments
-        # and we pass in the class name which we can get here.
-        my $class = FFI::Platypus::API::arguments_get_string(0);
-        bless \$_[0], $class;
-      },
-    });
-    
-    $ffi->custom_type(archive_entry => {
-      native_type => 'opaque',
-      perl_to_native => sub { ${$_[0]} },
-      native_to_perl => sub {
-        # works likewise for archive_entry objects
-        my $class = FFI::Platypus::API::arguments_get_string(0);
-        bless \$_[0], $class,
-      },
-    });
-    
-    package My::Platypus;
-    
-    use base qw( FFI::Platypus );
-    
-    sub find_symbol
-    {
-      my($self, $name) = @_;
-      my $prefix = lcfirst caller(2);
-      $prefix =~ s{([A-Z])}{"_" . lc $1}eg;
-      $self->SUPER::find_symbol(join '_', $prefix, $name);
-    }
+    my $ffi = FFI::Platypus->new( api => 1, experimental => 1);
+    $ffi->lib(find_lib_or_exit lib => 'archive');
+    $ffi->type('object(Archive)'      => 'archive_t');
+    $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
+    $ffi->type('object(ArchiveWrite)' => 'archive_write_t');
+    $ffi->type('object(ArchiveEntry)' => 'archive_entry_t');
     
     package Archive;
     
     # base class is "abstract" having no constructor or destructor
     
-    $ffi->attach( error_string => ['archive'] => 'string' );
+    $ffi->mangler(sub {
+      my($name) = @_;
+      "archive_$name";
+    });
+    $ffi->attach( error_string => ['archive_t'] => 'string' );
     
     package ArchiveRead;
     
     our @ISA = qw( Archive );
     
-    $ffi->attach( new                   => ['string']                    => 'archive' );
-    $ffi->attach( [ free => 'DESTROY' ] => ['archive']                   => 'void' );
-    $ffi->attach( support_filter_all    => ['archive']                   => 'int' );
-    $ffi->attach( support_format_all    => ['archive']                   => 'int' );
-    $ffi->attach( open_filename         => ['archive','string','size_t'] => 'int' );
-    $ffi->attach( next_header2          => ['archive', 'archive_entry' ] => 'int' );
-    $ffi->attach( data_skip             => ['archive']                   => 'int' );
+    $ffi->mangler(sub {
+      my($name) = @_;
+      "archive_read_$name";
+    });
+    
+    $ffi->attach( new                   => ['string']                        => 'archive_read_t' );
+    $ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                     => 'void' );
+    $ffi->attach( support_filter_all    => ['archive_t']                     => 'int' );
+    $ffi->attach( support_format_all    => ['archive_t']                     => 'int' );
+    $ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int' );
+    $ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int' );
+    $ffi->attach( data_skip             => ['archive_t']                     => 'int' );
     # ... define additional read methods
     
     package ArchiveWrite;
     
     our @ISA = qw( Archive );
     
-    $ffi->attach( new                   => ['string'] => 'archive' );
-    $ffi->attach( [ free => 'DESTROY' ] => ['archive'] => 'void' );
+    $ffi->mangler(sub {
+      my($name) = @_;
+      "archive_write_$name";
+    });
+    
+    $ffi->attach( new                   => ['string'] => 'archive_write_t' );
+    $ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] => 'void' );
     # ... define additional write methods
     
     package ArchiveEntry;
     
-    $ffi->attach( new => ['string']     => 'archive_entry' );
-    $ffi->attach( [ free => 'DESTROY' ] => ['archive_entry'] => 'void' );
-    $ffi->attach( pathname              => ['archive_entry'] => 'string' );
+    $ffi->mangler(sub {
+      my($name) = @_;
+      "archive_entry_$name";
+    });
+    
+    $ffi->attach( new => ['string']     => 'archive_entry_t' );
+    $ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] => 'void' );
+    $ffi->attach( pathname              => ['archive_entry_t'] => 'string' );
     # ... define additional entry methods
     
     package main;
@@ -1063,26 +1061,72 @@ object oriented interface via opaque pointers.  This example creates an
 abstract class `Archive`, and concrete classes `ArchiveWrite`,
 `ArchiveRead` and `ArchiveEntry`.  The concrete classes can even be
 inherited from and extended just like any Perl classes because of the
-way the custom types are implemented.  For more details on custom types
-see [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) and [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API).
+way the custom types are implemented.  We use Platypus's `object`
+type for this implementation, which is a wrapper around an `opaque`
+(can also be an integer) type that is blessed into a particular class.
 
-Another advanced feature of this example is that we extend the
-[FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) class to define our own find\_symbol method that
-prefixes the symbol names depending on the class in which they are
-defined. This means we can do this when we define a method for Archive:
+Another advanced feature of this example is that we define a mangler
+to modify the symbol resolution for each class.  This means we can do
+this when we define a method for Archive:
 
-    $ffi->attach( support_filter_all => ['archive'] => 'int' );
+    $ffi->attach( support_filter_all => ['archive_t'] => 'int' );
 
 Rather than this:
 
     $ffi->attach(
       [ archive_read_support_filter_all => 'support_read_filter_all' ] =>
-      ['archive'] => 'int' );
+      ['archive_t'] => 'int' );
     );
 
-If you didn't want to create an entire new class just for this little
-trick you could also use something like [Object::Method](https://metacpan.org/pod/Object::Method) to extend
-`find_symbol`.
+## unix open
+
+    use FFI::Platypus;
+    
+    {
+      package FD;
+    
+      use constant O_RDONLY => 0;
+      use constant O_WRONLY => 1;
+      use constant O_RDWR   => 2;
+    
+      use constant IN  => bless \do { my $in=0  }, __PACKAGE__;
+      use constant OUT => bless \do { my $out=1 }, __PACKAGE__;
+      use constant ERR => bless \do { my $err=2 }, __PACKAGE__;
+    
+      my $ffi = FFI::Platypus->new( api => 1, experimental => 1, lib => [undef]);
+    
+      $ffi->type('object(FD,int)' => 'fd');
+    
+      $ffi->attach( [ 'open' => 'new' ] => [ 'string', 'int', 'mode_t' ] => 'fd' => sub {
+        my($xsub, $class, $fn, @rest) = @_;
+        my $fd = $xsub->($fn, @rest);
+        die "error opening $fn $!" if $$fd == -1;
+        $fd;
+      });
+    
+      $ffi->attach( write => ['fd', 'string', 'size_t' ] => 'ssize_t' );
+      $ffi->attach( read  => ['fd', 'string', 'size_t' ] => 'ssize_t' );
+      $ffi->attach( close => ['fd'] => 'int' );
+    }
+    
+    my $fd = FD->new("$0", FD::O_RDONLY);
+    
+    my $buffer = "\0" x 10;
+    
+    while(my $br = $fd->read($buffer, 10))
+    {
+      FD::OUT->write($buffer, $br);
+    }
+    
+    $fd->close;
+
+**Discussion**: The Unix file system calls use an integer handle for
+each open file.  We can use the same `object` type that we used
+for libarchive above, except we let platypus know that the underlying
+type is `int` instead of `opaque` (the latter being the default for
+the `object` type).  Mainly just for demonstration since Perl has much
+better IO libraries, but now we have an OO interface to the Unix IO
+functions.
 
 ## bzip2
 
@@ -1091,7 +1135,7 @@ trick you could also use something like [Object::Method](https://metacpan.org/po
     use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
     use FFI::Platypus::Memory qw( malloc free );
     
-    my $ffi = FFI::Platypus->new;
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib(find_lib_or_die lib => 'bz2');
     
     $ffi->attach(

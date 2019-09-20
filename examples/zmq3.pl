@@ -10,7 +10,7 @@ use FFI::Platypus::Memory qw( malloc );
 use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
 
 my $endpoint = "ipc://zmq-ffi-$$";
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 
 $ffi->lib(undef); # for puts
 $ffi->attach(puts => ['string'] => 'int');

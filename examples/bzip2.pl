@@ -5,7 +5,7 @@ use FFI::CheckLib qw( find_lib_or_die );
 use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
 use FFI::Platypus::Memory qw( malloc free );
 
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(find_lib_or_die lib => 'bz2');
 
 $ffi->attach(

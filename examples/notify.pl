@@ -8,7 +8,7 @@ use FFI::Platypus;
 # in the old version, and am not really familiar with the libnotify API to
 # say what is the cause.  Patches welcome to fix it.
 
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(find_lib_or_exit lib => 'notify');
 
 $ffi->attach(notify_init   => ['string'] => 'void');
