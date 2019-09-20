@@ -77,11 +77,27 @@ L<FFI::Platypus>, though it may have other applications.
 =head2 record_layout
 
  record_layout($ffi, $type => $name, ... );
+ record_layout(\@ffi_args, $type => $name, ... );
  record_layout($type => $name, ... );
 
 Define the layout of the record.  You may optionally provide an instance
 of L<FFI::Platypus> as the first argument in order to use its type
-aliases.  Then you provide members as type/name pairs.
+aliases.  Alternatively you may provide constructor arguments that will
+be passed to the internal platypus instance.  Thus this is the same:
+
+ my $ffi = FFI::Platypus->new( lang => 'Rust' );
+ record_layout( $ffi, ... );
+ # same as:
+ record_layout( [ lang => 'Rust' ], ... );
+
+and this is the same:
+
+ my $ffi = FFI::Platypus->new;
+ record_layout( $ffi, ... );
+ # same as:
+ record_layout( ... );
+
+Then you provide members as type/name pairs.
 
 For each member you declare, C<record_layout> will create an accessor
 which can be used to read and write its value. For example imagine a
@@ -203,7 +219,23 @@ Arrays of integer, floating points and opaque pointers are supported.
 
 sub record_layout
 {
-  my $ffi = ref($_[0]) ? shift : FFI::Platypus->new;
+  my $ffi;
+
+  if(defined $_[0])
+  {
+    if(ref($_[0]) eq 'ARRAY')
+    {
+      my @args = @{ shift() };
+      $ffi = FFI::Platypus->new(@args);
+    }
+    elsif(eval { $_[0]->isa('FFI::Platypus') })
+    {
+      $ffi = shift;
+    }
+  }
+
+  $ffi ||= FFI::Platypus->new;
+
   my $offset = 0;
   my $record_align = 0;
 

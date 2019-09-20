@@ -421,4 +421,56 @@ subtest 'string rw' => sub {
   is $foo->get_value, 'starscream!!!', 'foo.get_value = starscream!!!';
 };
 
+subtest 'record with custom ffi' => sub {
+
+  {
+    package
+      Foo8;
+
+    use FFI::Platypus::Record;
+
+    my $ffi = FFI::Platypus->new;
+    $ffi->type('string rw' => 'foo_t');
+
+    record_layout($ffi, qw(
+      foo_t foo
+    ));
+  }
+
+  my $foo8 = Foo8->new;
+  isa_ok $foo8, 'Foo8';
+
+  $foo8->foo("yo this is a string");
+  is( $foo8->foo, "yo this is a string" );
+
+};
+
+subtest 'record with ffi args' => sub {
+
+  { package
+      FFI::Platypus::Lang::Foo9;
+    sub native_type_map
+    {
+      return { foo_t => 'sint32' };
+    }
+  }
+
+  { package
+      Foo9;
+
+    use FFI::Platypus::Record;
+
+    record_layout
+      [ lang => 'Foo9', api => 1, experimental => 1 ],
+      foo_t => 'foo'
+    ;
+  }
+
+  my $foo8 = Foo8->new;
+  isa_ok $foo8, 'Foo8';
+
+  $foo8->foo(-42);
+  is( $foo8->foo, -42 );
+};
+
 done_testing;
