@@ -991,12 +991,37 @@ sub find_symbol
   return;
 }
 
+=head2 bundle
+
+[version 0.96 api = 1+]
+
+ $ffi->bundle($package, \@args);
+ $ffi->bundle(\@args);
+ $ffi->bundle($package);
+ $ffi->bundle;
+
+This is an interface for bundling compiled code with your
+distribution intended to eventually replace the C<package> method documented
+above.  See L<FFI::Platypus::Bundle> for details on how this works.
+
+=cut
+
+sub bundle
+{
+  croak "bundle method only available with api => 1 or better" if $_[0]->{api} < 1;
+  require FFI::Platypus::Bundle;
+  goto &_bundle;
+}
+
 =head2 package
 
 [version 0.15 api = 0]
 
  $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
  $ffi->package;                  # autodetect
+
+B<Note>: This method is officially discouraged in favor of C<bundle>
+described above.
 
 If you use L<FFI::Build> (or the older deprecated L<Module::Build::FFI>
 to bundle C code with your distribution, you can use this method to tell
@@ -1010,28 +1035,6 @@ sub package
   croak "package method only available with api => 0" if $_[0]->{api} > 0;
   require FFI::Platypus::Legacy;
   goto &_package;
-}
-
-=head2 bundle
-
-[version 0.96 api = 1+]
-
- $ffi->bundle($package, \@args);
- $ffi->bundle(\@args);
- $ffi->bundle($package);
- $ffi->bundle;
-
-This is a new experimental interface for bundling compiled code with your
-distribution intended to eventually replace the C<package> method documented
-above.  See L<FFI::Platypus::Bundle> for details on how this works.
-
-=cut
-
-sub bundle
-{
-  croak "bundle method only available with api => 1 or better" if $_[0]->{api} < 1;
-  require FFI::Platypus::Bundle;
-  goto &_bundle;
 }
 
 =head2 abis

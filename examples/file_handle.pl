@@ -13,7 +13,7 @@ use FFI::Platypus;
   use constant OUT => bless \do { my $out=1 }, __PACKAGE__;
   use constant ERR => bless \do { my $err=2 }, __PACKAGE__;
 
-  my $ffi = FFI::Platypus->new( api => 1, experimental => 1, lib => [undef]);
+  my $ffi = FFI::Platypus->new( api => 1, lib => [undef]);
 
   $ffi->type('object(FD,int)' => 'fd');
 

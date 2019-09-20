@@ -8,7 +8,7 @@ use FFI::CheckLib      qw( find_lib_or_exit );
 # the ArchiveWrite class that could be used for writing archive formats
 # supported by libarchive
 
-my $ffi = FFI::Platypus->new( api => 1, experimental => 1);
+my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(find_lib_or_exit lib => 'archive');
 $ffi->type('object(Archive)'      => 'archive_t');
 $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
