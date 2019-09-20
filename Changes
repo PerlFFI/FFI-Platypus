@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - FFI::Platypus::Record record_layout may now take FFI::Platypus
+    constructor arguments as a array reference as the first argument
+    (gh#185)
 
 0.97_01   2019-09-18 20:56:59 -0600
   - Pre-compute cast functions when they are created to save time each time
