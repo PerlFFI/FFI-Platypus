@@ -437,6 +437,7 @@ will be thrown.
 ## closure
 
     my $closure = $ffi->closure($coderef);
+    my $closure = FFI::Platypus->closure($coderef);
 
 Prepares a code reference so that it can be used as a FFI closure (a
 Perl subroutine that can be called from C code).  For details on
