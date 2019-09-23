@@ -423,7 +423,7 @@ It feels like this should be able to work:
  });
  print_message($get_message);
 
-If the type declaration for `get_message_t` were legal, then this
+If the type declaration for C<get_message_t> were legal, then this
 script would likely segfault or in the very least corrupt memory.
 The problem is that once C<"my message"> is returned from the closure
 Perl doesn't have a reference to it anymore and will free it.
