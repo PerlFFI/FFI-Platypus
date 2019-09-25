@@ -42,11 +42,11 @@ my $tm_size = tcc_eval qq{
 # be defined before you try to define it as a type.
 sub _ffi_record_size { $tm_size };
 
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
 # define a record class My::UnixTime and alias it
 # to "tm"
-$ffi->type("record(My::UnixTime)" => 'tm');
+$ffi->type("record(My::UnixTime)*" => 'tm');
 
 # attach the C localtime function as a constructor
 $ffi->attach( [ localtime => '_new' ] => ['time_t*'] => 'tm' );

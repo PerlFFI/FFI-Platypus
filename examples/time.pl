@@ -35,9 +35,9 @@ my $tm_size = $c->sizeof("tm");
 
 # create the Platypus instance and create the appropriate
 # types and functions
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
-$ffi->type("record($tm_size)" => 'tm');
+$ffi->type("record($tm_size)*" => 'tm');
 $ffi->attach( [ localtime => 'my_localtime' ] => ['time_t*'] => 'tm'     );
 $ffi->attach( [ time      => 'my_time'      ] => ['tm']      => 'time_t' );
 
