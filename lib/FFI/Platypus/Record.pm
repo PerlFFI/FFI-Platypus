@@ -7,7 +7,7 @@ use FFI::Platypus;
 use base qw( Exporter );
 use constant 1.32 ();
 
-our @EXPORT = qw( record_layout );
+our @EXPORT = qw( record_layout record_layout_1 );
 
 # ABSTRACT: FFI support for structured records data
 # VERSION
@@ -361,6 +361,45 @@ sub record_layout
     *{"${caller}::DESTROY"} = $destroy_sub;
   };
   ();
+}
+
+=head2 record_layout_1
+
+ record_layout_1($ffi, $type => $name, ... );
+ record_layout_1(\@ffi_args, $type => $name, ... );
+ record_layout_1($type => $name, ... );
+
+This function works like C<record_layout> except that
+C<api =E<gt> 1> is used instead of the legacy API.
+
+=cut
+
+# TODO: maybe we should invert this so that record_layout calls record_layout_1
+
+sub record_layout_1
+{
+  if(@_ % 2 == 0)
+  {
+    $DB::single = 1;
+    my $ffi = FFI::Platypus->new( api => 1 );
+    unshift @_, $ffi;
+    goto &record_layout;
+  }
+  elsif(defined $_[0] && ref($_[0]) eq 'ARRAY')
+  {
+    my @args = @{ shift @_ };
+    unshift @args, api => 1;
+    unshift @_, \@args;
+    goto &record_layout;
+  }
+  elsif(defined $_[0] && eval { $_[0]->isa('FFI::Platypus') })
+  {
+    goto &record_layout;
+  }
+  else
+  {
+    croak "odd number of arguments, but first argument is not either an array reference or Platypus instance";
+  }
 }
 
 1;

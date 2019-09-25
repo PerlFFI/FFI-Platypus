@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - FFI::Platypus::Record has a record_layout_1 function which
+    uses api => 1 by default. (gh#187)
 
 0.97_02   2019-09-20 04:03:59 -0600
   - FFI::Platypus::Record record_layout may now take FFI::Platypus
