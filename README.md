@@ -1345,6 +1345,8 @@ different types.  The enum _values_ are essentially the same as macro constants
 described above from an FFI perspective.  Thus the process of defining enum values
 is identical to the process of defining macro constants in Perl.
 
+For more details on enumerated types see ["Enum types" in FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type#Enum-types).
+
 ## I get seg faults on some platforms but not others with a library using pthreads.
 
 On some platforms, Perl isn't linked with `libpthreads` if Perl threads are not

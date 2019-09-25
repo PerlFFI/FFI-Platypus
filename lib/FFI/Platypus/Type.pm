@@ -56,28 +56,32 @@ tm
 OO Interface:
 
  use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->type('int' => 'my_int');
 
 =head1 DESCRIPTION
+
+B<Note>: This document assumes that you are using C<api =E<gt> 1>,
+which you should be using for all new code.
 
 This document describes how to define types using L<FFI::Platypus>.
 Types may be "defined" ahead of time, or simply used when defining or
 attaching functions.
 
- # OO example of defining types
+ # Example of defining types
  use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->type('int');
  $ffi->type('string');
  
- # OO example of simply using types in function declaration or attachment
+ # Example of simply using types in function declaration or attachment
  my $f = $ffi->function(puts => ['string'] => 'int');
  $ffi->attach(puts => ['string'] => 'int');
 
 Unless you are using aliases the L<FFI::Platypus#type> method is not
 necessary, but they will throw an exception if the type is incorrectly
-specified or not supported, which may be helpful.
+specified or not supported, which may be helpful for determining if
+the types are available or not.
 
 Note: This document sometimes uses the term "C Function" as short hand
 for function implemented in a compiled language.  Unless the term is
@@ -88,9 +92,8 @@ it should also work with another compiled language.
 
 You can get the size of a type using the L<FFI::Platypus#sizeof> method.
 
- # OO interface
- my $intsize = $ffi->sizeof('int');
- my intarraysize = $ffi->sizeof('int[64]');
+ my $intsize = $ffi->sizeof('int');           # usually 4
+ my $intarraysize = $ffi->sizeof('int[64]');  # usually 256
 
 =head2 converting types
 
@@ -100,9 +103,19 @@ this purpose the L<FFI::Platypus#cast> method is provided.  It needs to
 be used with care though, because not all type combinations are
 supported.  Here are some useful ones:
 
- # OO interface
  my $address = $ffi->cast('string' => 'opaque', $string);
+
+This converts a Perl string to a pointer address that can be used
+by functions that take an C<opaque> type.  Be carefully though that
+the Perl string is not resized or free'd while in use from C code.
+
  my $string  = $ffi->cast('opaque' => 'string', $pointer);
+
+This does the opposite, converting a null terminated string (the
+type of strings used by C) into a Perl string.  In this case the
+string is copied, so the other language is free to deallocate or
+otherwise manipulate the string after the conversion without adversely
+affecting the Perl.
 
 =head2 aliases
 
@@ -112,9 +125,8 @@ second argument to the L<FFI::Platypus#type> method can be used to
 define a type alias that can later be used by function declaration
 and attachment.
 
- # OO style
  use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->type('int'    => 'myint');
  $ffi->type('string' => 'mystring');
  my $f = $ffi->function( puts => ['mystring'] => 'myint' );
@@ -122,7 +134,22 @@ and attachment.
 
 Aliases are contained without the L<FFI::Platypus> object, so feel free
 to define your own crazy types without stepping on the toes of other
-CPAN Platypus developers.
+CPAN developers using Platypus.
+
+One useful application of an alias is when you know types are different
+on two different platforms:
+
+ if($^O eq 'MSWin32')
+ {
+   $type->type('sint16' => 'foo_t');
+ } elsif($^O eq 'linux')
+ {
+   $type->type('sint32' => 'foo_t');
+ }
+
+ # function foo takes 16 bit signed integer on Windows
+ # and a 32 bit signed integer on Linux.
+ $ffi->attach( foo => [ 'foo_t' ] => 'void' );
 
 =head1 TYPE CATEGORIES
 
@@ -138,6 +165,27 @@ include void, integers, floats and pointers.
 
 This can be used as a return value to indicate a function does not
 return a value (or if you want the return value to be ignored).
+
+ $ffi->type( foo => [] => 'void' );
+
+Newer versions of Platypus also allow you to omit the return type and
+C<void> is assumed.
+
+ $ffi->type( foo => [] );
+
+It doesn't really make sense to use C<void> in any other context.  However,
+because of historical reasons involving older versions of Perl.
+
+It doesn't really make sense for C<void> to be passed in as an argument.
+However, because C functions that take no arguments frequently are specified
+as taking C<void> as this was required by older C compilers, as a special
+case you can specify a function's arguments as taking a single C<void> to
+mean it takes no arguments.
+
+ # C: void foo(void);
+ $ffi->type( foo => ['void'] );
+ # same (but probably better)
+ $ffi->type( foo => [] );
 
 =head3 integer types
 
@@ -206,7 +254,6 @@ type functions:
 This is usually an C<unsigned long>, but it is up to the compiler to
 decide.  The C<malloc> function is defined in terms of C<size_t>:
 
- my $ffi = FFI::Platypus->new;
  $ffi->attach( malloc => ['size_t'] => 'opaque';
 
 (Note that you can get C<malloc> from L<FFI::Platypus::Memory>).
@@ -224,6 +271,67 @@ they are implemented.
 If you need a common system type that is not provided, please open a
 ticket in the Platypus project's GitHub issue tracker.  Be sure to
 include the usual header file the type can be found in.
+
+=head3 Enum types
+
+C provides enumerated types, which are typically implemented as integer
+types.
+
+ enum {
+   BAR = 1,
+   BAZ = 2
+ } foo_t;
+ 
+ void f(enum foo_t foo);
+
+Platypus provides C<enum> and C<senum> types for the integer types used
+to represent enum and signed enum types respectively.
+
+ use constant BAR => 1;
+ use constant BAZ => 2;
+ $ffi->attach( f => [ 'enum' ] => 'void' );
+ f(BAR);
+ f(BAZ);
+
+When do you use C<senum>?  Anytime the enum has negative values:
+
+ enum {
+   BAR = -1;
+   BAZ = 2;
+ } foo_t;
+ 
+ void f(enum foo_t foo);
+
+Perl:
+
+ use constant BAR => -1;
+ use constant BAZ => 2;
+ $ffi->attach( f => [ 'senum' ] => 'void' );
+ f(BAR);
+ f(BAZ);
+
+See the main FAQ (L<FFI::Platypus/FAQ>) for details on the best way to
+specify value constants when there are lots of possible values.
+
+=head3 Boolean types
+
+At install time Platypus attempts to detect the correct type for C<bool>
+for your platform, and you can use that.  C<bool> is really an integer
+type, but the type used varies from platform to platform.
+
+C header:
+
+ #include <stdbool.h>
+ bool foo();
+
+Platypus
+
+ $ffi->attach( foo => [] => 'bool' );
+
+If you get an exception when trying to use this type it means you either
+have a very old version of Platypus, or for some reason it was unable to
+detect the correct type at install time.  Please open a ticket if that is
+the case.
 
 =head3 floating point types
 
@@ -272,28 +380,12 @@ the latest libffi version in git on x86_64.
 
 =back
 
-Support for C<complex_float>, C<complex_double> and C<longdouble> are
-limited at the moment.  Complex types can only be used as simple
-arguments (not return types, pointers, arrays or record members) and the
-C<longdouble> can only be used as simple argument or return values (not
-pointers, arrays or record members).  Adding support for these is not
-difficult, but time consuming, so if you are in need of these features
-please do not hesitate to open a support ticket on the project's github
-issue tracker:
-
-L<https://github.com/Perl5-FFI/FFI-Platypus/issues>
-
-In particular I am hesitant to implementing complex return types, as
-there are performance and interface ramifications, and I would
-appreciate talking to someone who is actually going to use these
-features.
-
 =head3 opaque pointers
 
 Opaque pointers are simply a pointer to a region of memory that you do
-not manage, and do not know the structure of. It is like a C<void *> in
-C.  These types are represented in Perl space as integers and get
-converted to and from pointers by L<FFI::Platypus>.  You may use
+not manage, and do not know or care about its structure. It is like
+a C<void *> in C.  These types are represented in Perl space as integers
+and get converted to and from pointers by L<FFI::Platypus>.  You may use
 C<pointer> as an alias for C<opaque>, although this is discouraged.
 (The Platypus documentation uses the convention of using "pointer"
 to refer to pointers to known types (see below) and "opaque" as short
@@ -307,13 +399,30 @@ C<archive_write_new> functions to create a new instance of this opaque
 object and C<archive_read_free> and C<archive_write_free> to destroy
 this objects when you are done.
 
- use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
+C header:
+
+ struct archive;
+ struct archive *archive_read_new(void);
+ struct archive *archive_write_new(void);
+ int archive_free(struct archive *);
+ int archive_write_free(struct archive *);
+
+Perl code:
+
  $lib->find_lib( lib => 'archive' );
  $ffi->attach(archive_read_new   => []         => 'opaque');
  $ffi->attach(archive_write_new  => []         => 'opaque');
  $ffi->attach(archive_read_free  => ['opaque'] => 'int');
  $ffi->attach(archive_write_free => ['opaque'] => 'int');
+
+It is often useful to alias an C<opaque> type like this so that you know
+what the object represents:
+
+ $lib->find_lib( lib => 'archive' );
+ $ffi->type('opaque' => 'archive');
+ $ffi->attach('archive_read_new => [] => 'archive');
+ $ffi->attach(archive_read_free  => ['archive'] => 'int');
+ ...
 
 As a special case, when you pass C<undef> into a function that takes an
 opaque type it will be translated into C<NULL> for C.  When a C function
@@ -331,16 +440,15 @@ where they differ.  Basically when you see C<char *> or C<const char *>
 used in a C header file you can expect to be able to use the C<string>
 type.
 
- use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
  $ffi->attach( puts => [ 'string' ] => 'int' );
 
 The pointer passed into C (or other language) is to the content of the
 actual scalar, which means it can modify the content of a scalar.
 
-When used as a return type, the string is I<copied> into a new scalar
-rather than using the original address.  This is due to the ownership
-model of scalars in Perl, but it is also most of the time what you want.
+B<NOTE>: When used as a return type, the string is I<copied> into a
+new scalar rather than using the original address.  This is due to
+the ownership model of scalars in Perl, but it is also most of the
+time what you want.
 
 This can be problematic when a function returns a string that the callee
 is expected to free.  Consider the functions:
@@ -399,6 +507,13 @@ first class type.  Prior to that L<FFI::Platypus::Type::StringArray>
 and L<FFI::Platypus::Type::StringPointer> could be used, though their
 use in new code is discouraged.
 
+ $ffi->attach( foo => ['string[]'] => 'void' );
+ foo( [ 'array', 'of', 'strings' ] );
+ 
+ $ffi->attach( bar => ['string*'] => 'void' );
+ my $string = 'baz';
+ bar( \$string );  # $string may be modified.
+
 Strings are not allowed as return types from closure.  This, again
 is due to the ownership model of scalars in Perl.  (There is no way
 for Perl to know when calling language is done with the memory allocated
@@ -447,11 +562,12 @@ accomplish the task of pass by reference.  In Perl the same is task is
 accomplished by passing a reference (although you can also modify the
 argument stack thus Perl supports proper pass by reference as well).
 
-With L<FFI::Platypus> you can define a pointer types to any of the
-native types described above (that is all the types we have covered so
-far except for strings).  When using this you must make sure to pass in
-a reference to a scalar, or C<undef> (C<undef> will be translated into
-C<NULL>).
+With L<FFI::Platypus> you can define a pointer to any native, string
+or record type.  You cannot (at least not yet) define a pointer to
+a pointer or a pointer to an array or any other type not otherwise
+supported.  When passing in a pointer to something you must make sure
+to pass in a reference to a scalar, or C<undef> (C<undef> will be
+translated int C<NULL>).
 
 If the C code makes a change to the value pointed to by the pointer, the
 scalar will be updated before returning to Perl space.  Example, with C
@@ -468,7 +584,7 @@ code.
  
  # foo.pl
  use FFI::Platypus;
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->lib('libfoo.so'); # change to reflect the dynamic lib
                          # that contains foo.c
  $ffi->type('int*' => 'int_p');
@@ -478,6 +594,8 @@ code.
  increment_int(\$i);   # $i == 2
  increment_int(\$i);   # $i == 3
  increment_int(undef); # prints "NULL pointer!\n"
+
+Older versions of Platypus did not support pointers to strings or records.
 
 =head2 Records
 
@@ -514,7 +632,7 @@ when blessed into that class as an argument passed into a C function,
 and when it is returned from a C function it will be blessed into that
 class.  Basically:
 
- $ffi->type( 'record(My::Class)' => 'my_class' );
+ $ffi->type( 'record(My::Class)*' => 'my_class' );
  $ffi->attach( my_function1 => [ 'my_class' ] => 'void' );
  $ffi->attach( my_function2 => [ ] => 'my_class' );
 
@@ -540,15 +658,65 @@ Opaque pointers should be used when you do not know the size of the
 object that you are using, or if the objects are created and free'd
 through an API interface other than C<malloc> and C<free>.
 
+The examples in this section actually use pointers to records (note
+the trailing star C<*> in the declarations).  Most programming languages
+allow you to pass or return a record as either pass-by-value or as a
+pointer (pass-by-reference).
+
+C code:
+
+ struct { int a; } foo_t;
+ void pass_by_value_example( struct foo_t foo );
+ void pass_by_reference_example( struct foo_t *foo );
+
+Perl code:
+
+ {
+   package Foo;
+   use FFI::Platypus::Record;
+   record_layout( int => 'a' );
+ }
+ $ffi->type( 'Record(Foo)' => 'foo_t' );
+ $ffi->attach( pass_by_value_example => [ 'foo_t' ] => 'void' );
+ $ffi->attach( pass_by_reference_example => [ 'foo_t*' ] => 'void' );
+
+As with strings, functions that return a pointer to a record are actually
+copied.
+
+C code:
+
+ struct foo_t *return_struct_pointer_example();
+
+Perl code:
+
+ $ffi->attach( return_struct_pointer_example => [] => 'foo_t*' );
+ my $foo = return_struct_pointer_example();
+ # $foo is a copy of the record returned by the function.
+
+As with strings, if the API expects you to free the record it returns
+(it is misbehaving a little, but lets set that aside), then you can
+work around this by returning an C<opaque> type, casting to the
+record, and finally freeing the original pointer.
+
+ use FFI::Platypus::Memory qw( free );
+ $ffi->attach( return_struct_pointer_example => [] => 'opaque' );
+ my $foo_ptr = return_struct_pointer_example();
+ my $foo = $ffi->cast( 'opaque' => 'foo_t*', $foo_ptr );
+ free $foo_ptr;
+
 =head2 Fixed length arrays
 
-Fixed length arrays of native types are supported by L<FFI::Platypus>.
-Like pointers, if the values contained in the array are updated by the C
-function these changes will be reflected when it returns to Perl space.
-An example of using this is the Unix C<pipe> command which returns a
-list of two file descriptors as an array.
+Fixed length arrays of native types and strings are supported by
+L<FFI::Platypus>.  Like pointers, if the values contained in the
+array are updated by the C function these changes will be reflected
+when it returns to Perl space.  An example of using this is the
+Unix C<pipe> command which returns a list of two file descriptors
+as an array.
 
 # EXAMPLE: examples/pipe.pl
+
+Because of the way records are implemented, an array of records
+does not make sense and is not currently supported.
 
 =head2 Variable length arrays
 
@@ -574,12 +742,8 @@ Can be called from Perl like this:
 Another method might be to have a special value, such as 0 or NULL
 indicate the termination of the array.
 
-When a function returns a record type, the value is I<copied>.  This is
-due to the ownership rules of scalars in Perl, and is very similar to
-the way that strings work.  If the function expects you to free the
-record pointer it returns, then you need to use the opaque type, cast
-the pointer to a record type and free the pointer.  The technique is
-very similar to the example in the Strings section above.
+Because of the way records are implemented, an array of records
+does not make sense and is not currently supported.
 
 =head2 Closures
 
@@ -687,7 +851,7 @@ constants in your Perl module, like this:
  use constant FOO_DYNAMIC => 2;
  use constant FOO_OTHER   => 3;
  
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->attach(foo     => ['int'] => 'void');
  $ffi->attach(get_foo => []      => 'int');
 
@@ -713,7 +877,7 @@ function, like this:
  );
  my %foo_types_reverse = reverse %foo_types;
  
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->custom_type(foo_t => {
    native_type    => 'int',
    native_to_perl => sub {
@@ -758,7 +922,7 @@ interface like this:
  use FFI::Platypus;
  use FFI::Platypus::API qw( arguments_get_string );
  
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->custom_type(foo_t => {
    native_type    => 'opaque',
    native_to_perl => sub {
@@ -811,13 +975,6 @@ application).
 
 A good example and pattern to follow is
 L<FFI::Platypus::Type::StringArray>.
-
-=head3 Custom Types in C/XS
-
-Custom types written in C or XS are a future goal of the
-L<FFI::Platypus> project.  They should allow some of the flexibility of
-custom types written in Perl, with potential performance improvements of
-native code.
 
 =head1 SEE ALSO
 
