@@ -473,4 +473,75 @@ subtest 'record with ffi args' => sub {
   is( $foo8->foo, -42 );
 };
 
+subtest 'api_1' => sub {
+
+  my $api;
+  my $ffi = FFI::Platypus->new;
+
+  no warnings 'once';
+  no warnings 'redefine';
+  local *FFI::Platypus::new = do {
+    my $orig = FFI::Platypus->can('new');
+    sub {
+      my $class = shift;
+      my %args = @_;
+      $api = $args{api};
+      $api = 0 unless defined $args{api};
+      $class->$orig(@_, experimental => 1);
+    };
+  };
+
+  subtest 'no $ffi or args' => sub {
+
+    local $@;
+    undef $api;
+
+    eval q{
+      package Foo10;
+      use FFI::Platypus::Record;
+      record_layout_1(
+        string => 'a',
+      );
+    };
+
+    is "$@", '';
+    is( $api, 1 );
+  };
+
+  subtest 'args' => sub {
+
+    local $@;
+    undef $api;
+
+    eval q{
+      package Foo11;
+      use FFI::Platypus::Record;
+      record_layout_1( [],
+        string => 'a',
+      );
+    };
+
+    is "$@", '';
+    is( $api, 1 );
+  };
+
+  subtest '$ffi' => sub {
+
+    local $@;
+    undef $api;
+
+    eval q{
+      package Foo12;
+      use FFI::Platypus::Record;
+      record_layout_1( $ffi,
+        string => 'a',
+      );
+    };
+
+    is "$@", '';
+    is( $api, undef );
+  };
+
+};
+
 done_testing;
