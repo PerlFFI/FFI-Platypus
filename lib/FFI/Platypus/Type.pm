@@ -431,6 +431,25 @@ returns a NULL pointer, it will be translated back to C<undef>.
 There are a number of useful utility functions for dealing with opaque
 types in the L<FFI::Platypus::Memory> module.
 
+=head2 Objects
+
+Object types are thin wrappers around two native types: integer and
+C<opaque> types.  They are just blessed references around either of
+those two types so that methods can be defined on them, but when they
+get passed to a Platypus xsub they are converted into the native
+integer or C<opaque> types.  This type is most useful when a API
+provides an OO style interface with an integer or C<opaque> value
+acting as an instance of a class.  There are two detailed examples
+in the main Platypus documentation using libarchive and unix open:
+
+=over 4
+
+=item L<FFI::Platypus/libarchive>
+
+=item L<FFI::Platypus/"unix open">
+
+=back
+
 =head2 Strings
 
 From the CPU's perspective, strings are just pointers.  From Perl and
