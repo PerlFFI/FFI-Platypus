@@ -387,6 +387,7 @@ custom type:
      my($ptr) = @_;
      my $str = $ffi->cast( 'opaque' => 'string', $ptr ); # copies the string
      free_string($ptr);
+     $str;
    }
  });
  
