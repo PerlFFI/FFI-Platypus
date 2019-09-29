@@ -85,8 +85,6 @@ sub types
     $store{rev}->{$type_code} = $name;
   }
 
-  $store{$_}->{pointer} = $store{$_}->{opaque} for qw( basic ptr );
-
   sub global_types
   {
     \%store;
