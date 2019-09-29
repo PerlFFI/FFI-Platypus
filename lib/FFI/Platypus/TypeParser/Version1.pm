@@ -45,9 +45,13 @@ The API C<0.02> type parser.
 our @CARP_NOT = qw( FFI::Platypus FFI::Platypus::TypeParser );
 
 my %reserved = map { $_ => 1 } qw(
+  string
+  object
+  class
   struct
   record
   string
+  array
   senum
   enum
 );
