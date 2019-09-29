@@ -382,7 +382,7 @@ sub lang
       $type_map{$_} = $_ for grep { $self->{tp}->have_type($_) }
         qw( void sint8 uint8 sint16 uint16 sint32 uint32 sint64 uint64 float double string opaque
             longdouble complex_float complex_double );
-      $type_map{pointer} = 'opaque';
+      $type_map{pointer} = 'opaque' if $self->{tp}->isa('FFI::Platypus::TypeParser::Version0');
       $self->{tp}->type_map(\%type_map);
     }
   }
