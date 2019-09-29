@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - pointer is no longer an alias for opaque with api => 1 (gh#189)
+  - Added several reserved words for the type parser when api => 1 (gh#189)
 
 0.97_03   2019-09-25 18:03:13 -0600
   - FFI::Platypus::Record has a record_layout_1 function which
