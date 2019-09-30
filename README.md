@@ -1539,6 +1539,8 @@ Mohammad S Anwar (MANWAR)
 
 Håkon Hægland (hakonhagland, HAKONH)
 
+Meredith (merrilymeredith, MHOWARD)
+
 # COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2015,2016,2017,2018,2019 by Graham Ollis.
