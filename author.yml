@@ -4,6 +4,7 @@ pod_spelling_system:
   # list of words that are spelled correctly
   # (regardless of what spell check thinks)
   stopwords:
+    - merrilymeredith
     - longdouble
     - sint
     - uint
