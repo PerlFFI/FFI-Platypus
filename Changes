@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.97_04   2019-10-05 12:31:32 -0600
   - pointer is no longer an alias for opaque with api => 1 (gh#189)
   - Added several reserved words for the type parser when api => 1 (gh#189)
 
