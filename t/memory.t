@@ -12,6 +12,9 @@ plan skip_all => 'tested only in CI -debug' if $Config{ccflags} !~ /-DDEBUG_LEAK
 
 my %exfail = map { $_ => 1 } qw( attach.pl );
 
+# you can run this on just one (or more) test file in corpus/memory by
+#  perl -Mblib t/memory.t foo.pl
+
 my @list = @ARGV ? @ARGV : do {
   my $dh;
   opendir $dh, 'corpus/memory';
@@ -37,8 +40,8 @@ foreach my $name (@list)
       '--leak-check=yes',
       "--log-file=$log",
       '--error-exitcode=2',
-      #'--gen-suppressions=all',
-      #'-v',
+      '--gen-suppressions=all',
+      '-v',
       @supp,
       $^X,
       '-Mblib',
