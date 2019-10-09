@@ -1,0 +1,17 @@
+{
+   <basic_type_cache1>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:Perl_safesysmalloc
+   fun:ffi_pl_type_new
+   fun:XS_FFI__Platypus__TypeParser_create_type_basic
+   fun:Perl_pp_entersub
+   fun:Perl_runops_debug
+   fun:Perl_call_sv
+   fun:Perl_call_list
+   fun:S_process_special_blocks
+   fun:Perl_newATTRSUB_x
+   fun:Perl_utilize
+   fun:Perl_yyparse
+}
