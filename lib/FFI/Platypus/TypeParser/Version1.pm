@@ -152,7 +152,7 @@ sub parse
 
   if(defined (my $class = $5))  # class record
   {
-    my $size_method = $class->can('ffi_record_size') || $class->can('_ffi_record_size') || croak "$class has no ffi_record_size or _ffi_record_size_ method";
+    my $size_method = $class->can('ffi_record_size') || $class->can('_ffi_record_size') || croak "$class has no ffi_record_size or _ffi_record_size method";
     if(my $pointer = $6)
     {
       return $self->types->{$name} = $self->create_type_record(

@@ -353,7 +353,7 @@ subtest 'record class' => sub {
     foreach my $bad (@bad)
     {
       eval { $tp->parse($bad) };
-      like "$@", qr/^Foo::Bar[34] has no ffi_record_size or _ffi_record_size_ method/;
+      like "$@", qr/^Foo::Bar[34] has no ffi_record_size or _ffi_record_size method/;
     }
 
   };
