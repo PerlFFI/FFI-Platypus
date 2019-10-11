@@ -18,6 +18,7 @@ sub import
     if $INC{'FFI/Platypus/Function.pm'};
   require FFI::Platypus::Function;
 
+  no warnings 'redefine';
   *FFI::Platypus::Function::Function::_sub_ref = sub {
     my($self, $location) = @_;
     push @funcs, $self;
