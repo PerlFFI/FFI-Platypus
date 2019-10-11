@@ -74,7 +74,6 @@ subtest 'string/opaque' => sub {
 foreach my $type (qw( complex_float[2] complex_double[2] ))
 {
   subtest $type => sub {
-    plan skip_all => 'todo';
     my $ffi = FFI::Platypus->new( lib => [undef] );
     my $malloc = $ffi->function( 'malloc' => [ 'size_t'                      ] => 'opaque' );
     my $free   = $ffi->function( 'free'   => [ 'opaque'                      ] => 'void'   );
@@ -88,7 +87,7 @@ foreach my $type (qw( complex_float[2] complex_double[2] ))
       $ffi->cast( 'opaque' => $type, $ptr );
     };
 
-    is_deeply $ffi->cast( 'opaque' => $type, $ptr ), [1,2];
+    is_deeply $ffi->cast( 'opaque' => $type, $ptr ), [[1.0,2.0],[3.0,4.0]];
 
     $free->call($ptr);
   };

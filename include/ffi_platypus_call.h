@@ -1466,15 +1466,23 @@
                   case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = sv_2mortal(newSV(0));
-                      ffi_pl_complex_float_to_perl(sv[i], &((float*)result.pointer)[i*2]);
+                      SV *c[2];
+                      AV *av;
+                      c[0] = sv_2mortal(newSVnv(((float*)result.pointer)[i*2]));
+                      c[1] = sv_2mortal(newSVnv(((float*)result.pointer)[i*2+1]));
+                      av = av_make(2, c);
+                      sv[i] = sv_2mortal(newRV_noinc((SV*)av));
                     }
                     break;
                   case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-                      sv[i] = sv_2mortal(newSV(0));
-                      ffi_pl_complex_double_to_perl(sv[i], &((double*)result.pointer)[i*2]);
+                      SV *c[2];
+                      AV *av;
+                      c[0] = sv_2mortal(newSVnv(((double*)result.pointer)[i*2]));
+                      c[1] = sv_2mortal(newSVnv(((double*)result.pointer)[i*2+1]));
+                      av = av_make(2, c);
+                      sv[i] = sv_2mortal(newRV_noinc((SV*)av));
                     }
                     break;
 #endif
