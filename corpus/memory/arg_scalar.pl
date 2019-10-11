@@ -47,9 +47,16 @@ subtest 'complex' => sub {
     subtest $type => sub {
       my $ffi = FFI::Platypus->new;
       my $f = $ffi->function(0 => [ $type ] => 'void' );
-      my $c = Math::Complex->make(1.0,2.0);
-      no_leaks_ok { $f->call([1.0,2.0]) };
-      no_leaks_ok { $f->call($c) };
+
+      {
+        my $c = [1.0,2.0];
+        no_leaks_ok { $f->call($c) };
+      }
+
+      {
+        my $c = Math::Complex->make(1.0,2.0);
+        no_leaks_ok { $f->call($c) };
+      }
     };
   }
 
