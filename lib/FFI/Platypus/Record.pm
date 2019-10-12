@@ -221,7 +221,6 @@ sub record_layout_1
 {
   if(@_ % 2 == 0)
   {
-    $DB::single = 1;
     my $ffi = FFI::Platypus->new( api => 1 );
     unshift @_, $ffi;
     goto &record_layout;
