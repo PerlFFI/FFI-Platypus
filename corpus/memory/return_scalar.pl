@@ -8,7 +8,7 @@ use Math::Complex;
 use Test::LeakTrace qw( no_leaks_ok );
 use FFI::Platypus::Record::Meta;
 
-my @types = ( 'float', 'double', 'longdouble',
+my @types = ( 'void', 'float', 'double', 'longdouble',
             map { ( "sint$_" , "uint$_" ) }
             qw( 8 16 32 64 ));
 
@@ -16,8 +16,8 @@ foreach my $type (@types)
 {
   subtest $type => sub {
     my $ffi = FFI::Platypus->new;
-    my $f = $ffi->function(0 => [ $type ] => 'void' );
-    no_leaks_ok { $f->call(129) };
+    my $f = $ffi->function(0 => [] => $type );
+    no_leaks_ok { $f->call };
   }
 }
 
@@ -26,7 +26,7 @@ subtest 'opaque' => sub {
   my $malloc = $ffi->function( malloc => [ 'size_t' ] => 'opaque' );
   my $free   = $ffi->function( free => [ 'opaque' ] => 'void' );
   my $ptr    = $malloc->call(200);
-  my $f      = $ffi->function(0 => [ 'opaque' ] => 'void' );
+  my $f      = $ffi->function(0 => [ 'opaque' ] => 'opaque' );
 
   no_leaks_ok { $f->call($ptr) };
   $free->call($ptr);
@@ -35,7 +35,7 @@ subtest 'opaque' => sub {
 
 subtest 'string' => sub {
   my $ffi = FFI::Platypus->new;
-  my $f = $ffi->function(0 => [ 'string' ] => 'void' );
+  my $f = $ffi->function(0 => [ 'string' ] => 'string' );
   no_leaks_ok { $f->call("hello world") };
   no_leaks_ok { $f->call(undef) };
 };
@@ -46,7 +46,7 @@ subtest 'complex' => sub {
   {
     subtest $type => sub {
       my $ffi = FFI::Platypus->new;
-      my $f = $ffi->function(0 => [ $type ] => 'void' );
+      my $f = $ffi->function(0 => [ $type ] => $type );
 
       {
         my $c = [1.0,2.0];
@@ -85,40 +85,17 @@ subtest 'record' => sub {
   foreach my $type (qw( foo_t foo_t* ))
   {
     subtest $type => sub {
-      my $f = $ffi->function(0 => [ $type ] => 'void' );
+      my $f = $ffi->function(0 => [ $type ] => $type );
       no_leaks_ok { $f->call($foo) };
     }
   }
 
   subtest 'record(4)*' => sub {
-    my $f = $ffi->function(0 => [ 'record(4)*' ] => 'void' );
-    my $str = "\0" x 4;
-    no_leaks_ok { $f->call($str) };
+    my $f = $ffi->function(0 => [ 'foo_t' ] => 'record(4)*' );
+    no_leaks_ok { $f->call($foo) };
   };
 
   undef $meta;
-
-};
-
-subtest 'closure' => sub {
-
-  my $ffi = FFI::Platypus->new;
-  $ffi->type('()->void' => 'closure_t');
-  my $f = $ffi->function(0 => [ 'closure_t' ] => 'void' );
-
-  no_leaks_ok { $f->call(undef) };
-  no_leaks_ok {
-    my $closure = $ffi->closure(sub {});
-    $f->call($closure);
-  };
-
-  {
-    my $closure = $ffi->closure(sub {});
-    $f->call($closure);
-    no_leaks_ok {
-      $f->call($closure);
-    }
-  };
 
 };
 

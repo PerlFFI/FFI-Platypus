@@ -1048,9 +1048,9 @@
         case FFI_PL_TYPE_RECORD_VALUE:
           {
             SV *value, *ref;
-            value = sv_newmortal();
+            value = newSV(0);
             sv_setpvn(value, result_ptr, self->return_type->extra[0].record_value.size);
-            ref = ST(0) = newRV_inc(value);
+            ref = ST(0) = sv_2mortal(newRV_noinc(value));
             sv_bless(ref, gv_stashpv(self->return_type->extra[0].record_value.class, GV_ADD));
             ffi_pl_heap_free();
             XSRETURN(1);
@@ -1185,17 +1185,25 @@
 #ifdef FFI_PL_PROBE_COMPLEX
         case FFI_PL_TYPE_COMPLEX_FLOAT:
           {
-            SV *sv = sv_newmortal();
-            ffi_pl_complex_float_to_perl(sv, (float*)&result.complex_float);
-            ST(0) = sv;
+            SV *c[2];
+            AV *av;
+
+            c[0] = sv_2mortal(newSVnv( ((float*)&result.complex_float)[0]) );
+            c[1] = sv_2mortal(newSVnv( ((float*)&result.complex_float)[1]) );
+            av = av_make(2,c);
+            ST(0) = sv_2mortal(newRV_noinc((SV*) av));
             XSRETURN(1);
           }
           break;
         case FFI_PL_TYPE_COMPLEX_DOUBLE:
           {
-            SV *sv = sv_newmortal();
-            ffi_pl_complex_double_to_perl(sv, (double*)&result.complex_double);
-            ST(0) = sv;
+            SV *c[2];
+            AV *av;
+
+            c[0] = sv_2mortal(newSVnv( ((double*)&result.complex_double)[0]) );
+            c[1] = sv_2mortal(newSVnv( ((double*)&result.complex_double)[1]) );
+            av = av_make(2,c);
+            ST(0) = sv_2mortal(newRV_noinc((SV*) av));
             XSRETURN(1);
           }
           break;
@@ -1207,16 +1215,16 @@
           }
           else
           {
-            SV *value = sv_newmortal();
+            SV *value = newSV(0);
             sv_setpvn(value, result.pointer, self->return_type->extra[0].record.size);
             if(self->return_type->extra[0].record.stash)
             {
-              SV *ref = ST(0) = newRV_inc(value);
+              SV *ref = ST(0) = sv_2mortal(newRV_noinc(value));
               sv_bless(ref, self->return_type->extra[0].record.stash);
             }
             else
             {
-              ST(0) = value;
+              ST(0) = sv_2mortal(value);
             }
             XSRETURN(1);
           }
@@ -1229,9 +1237,9 @@
           else
           {
             SV *ref;
-            SV *value = sv_newmortal();
+            SV *value = newSV(0);
             sv_setiv(value, PTR2IV(((void*)result.pointer)));
-            ref = ST(0) = newRV_inc(value);
+            ref = ST(0) = sv_2mortal(newRV_noinc(value));
             sv_bless(ref, gv_stashpv(self->return_type->extra[0].object.class, GV_ADD));
             XSRETURN(1);
           }
@@ -1619,7 +1627,7 @@
             case FFI_PL_SHAPE_OBJECT:
               {
                 SV *ref;
-                SV *value = sv_newmortal();
+                SV *value = newSV(0);
                 switch(type_code)
                 {
                   case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_OBJECT:
@@ -1689,7 +1697,7 @@
                   default:
                     break;
                 }
-                ref = ST(0) = newRV_inc(value);
+                ref = ST(0) = sv_2mortal(newRV_noinc(value));
                 sv_bless(ref, gv_stashpv(self->return_type->extra[0].object.class, GV_ADD));
                 XSRETURN(1);
               }
