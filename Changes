@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.97_05   2019-10-12 13:09:12 -0600
   - Fixed several memory leaks on some return types and complex type
     arguments (gh#190, gh#191)
 
