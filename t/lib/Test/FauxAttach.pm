@@ -30,7 +30,7 @@ sub import
     my($self, $perl_name, $location, $proto) = @_;
     note "  attaching: $perl_name";
     my $xsub = $self->_sub_ref($location);
-    FFI::Platypus::Function::Function::Wrapper::_set_prototype($xsub, $proto) if defined $proto;
+    FFI::Platypus::Function::Wrapper::_set_prototype($proto, $xsub) if defined $proto;
     no strict 'refs';
     *{"$perl_name"} = $xsub;
   };

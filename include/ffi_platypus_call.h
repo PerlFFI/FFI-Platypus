@@ -1264,31 +1264,31 @@
                 switch(type_code)
                 {
                   case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     sv_setuv(value, *((uint8_t*) result.pointer));
                     break;
                   case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     sv_setiv(value, *((int8_t*) result.pointer));
                     break;
                   case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     sv_setuv(value, *((uint16_t*) result.pointer));
                     break;
                   case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     sv_setiv(value, *((int16_t*) result.pointer));
                     break;
                   case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     sv_setuv(value, *((uint32_t*) result.pointer));
                     break;
                   case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     sv_setiv(value, *((int32_t*) result.pointer));
                     break;
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
 #ifdef HAVE_IV_IS_64
                     sv_setuv(value, *((uint64_t*) result.pointer));
 #else
@@ -1296,7 +1296,7 @@
 #endif
                     break;
                   case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
 #ifdef HAVE_IV_IS_64
                     sv_setiv(value, *((int64_t*) result.pointer));
 #else
@@ -1304,38 +1304,52 @@
 #endif
                     break;
                   case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     sv_setnv(value, *((float*) result.pointer));
                     break;
                   case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     sv_setnv(value, *((double*) result.pointer));
                     break;
                   case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
                     if( *((void**)result.pointer) == NULL )
                       value = &PL_sv_undef;
                     else
+                    {
+                      value = newSV(0);
                       sv_setiv(value, PTR2IV(*((void**)result.pointer)));
+                    }
                     break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
                   case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     ffi_pl_long_double_to_perl(value, (long double*)result.pointer);
                     break;
 #endif
 #ifdef FFI_PL_PROBE_COMPLEX
                   case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
-                    ffi_pl_complex_float_to_perl(value, (float*)result.pointer);
+                    {
+                      SV *c[2];
+                      AV *av;
+                      c[0] = sv_2mortal(newSVnv( ((float*)result.pointer)[0] ));
+                      c[1] = sv_2mortal(newSVnv( ((float*)result.pointer)[1] ));
+                      av = av_make(2, c);
+                      value = newRV_noinc((SV*)av);
+                    }
                     break;
                   case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
-                    ffi_pl_complex_double_to_perl(value, (double*)result.pointer);
+                    {
+                      SV *c[2];
+                      AV *av;
+                      c[0] = sv_2mortal(newSVnv( ((double*)result.pointer)[0] ));
+                      c[1] = sv_2mortal(newSVnv( ((double*)result.pointer)[1] ));
+                      av = av_make(2, c);
+                      value = newRV_noinc((SV*)av);
+                    }
                     break;
 #endif
                   case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
-                    value = sv_newmortal();
+                    value = newSV(0);
                     if( *((void**)result.pointer) == NULL )
                       value = &PL_sv_undef;
                     else
@@ -1345,7 +1359,7 @@
                     warn("return type not supported");
                     XSRETURN_EMPTY;
                 }
-                ST(0) = newRV_inc(value);
+                ST(0) = sv_2mortal(newRV_noinc(value));
                 XSRETURN(1);
               }
               break;
