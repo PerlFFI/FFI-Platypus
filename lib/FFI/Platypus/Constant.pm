@@ -95,7 +95,7 @@ Your Perl code doesn't have to do anything when calling bundle:
 =cut
 
 {
-  my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
+  my $ffi = FFI::Platypus->new( api => 1 );
   $ffi->bundle;
 
   $ffi->type( 'opaque'                => 'ffi_platypus_constant_t' );

@@ -16,7 +16,7 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => 1 );
+    my $ffi = FFI::Platypus->new( api => $api );
     $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
     $ffi->attach( [pointer_null => 'null']           => []          => 'opaque');
@@ -165,7 +165,7 @@ subtest 'object' => sub {
 
   { package Roger }
 
-  my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
+  my $ffi = FFI::Platypus->new( api => 1 );
   $ffi->type('object(Roger)', 'roger_t');
   $ffi->type('object(Roger,opaque)', 'roger2_t');
 

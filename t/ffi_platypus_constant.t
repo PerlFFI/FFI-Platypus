@@ -23,7 +23,7 @@ subtest 'create constants' => sub {
     use strict;
     use warnings;
     use FFI::Platypus;
-    my $ffi = FFI::Platypus->new( api => 1, experimental => 1, lang => 'ASM' );
+    my $ffi = FFI::Platypus->new( api => 1, lang => 'ASM' );
     $ffi->bundle;
     1;
 EOF

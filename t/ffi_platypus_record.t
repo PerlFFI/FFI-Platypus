@@ -461,7 +461,7 @@ subtest 'record with ffi args' => sub {
     use FFI::Platypus::Record;
 
     record_layout
-      [ lang => 'Foo9', api => 1, experimental => 1 ],
+      [ lang => 'Foo9', api => 1 ],
       foo_t => 'foo'
     ;
   }
@@ -487,7 +487,7 @@ subtest 'api_1' => sub {
       my %args = @_;
       $api = $args{api};
       $api = 0 unless defined $args{api};
-      $class->$orig(@_, experimental => 1);
+      $class->$orig(@_);
     };
   };
 

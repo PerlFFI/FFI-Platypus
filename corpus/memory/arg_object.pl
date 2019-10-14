@@ -21,7 +21,7 @@ my @types = map { ( "sint$_" , "uint$_" ) }
 foreach my $type (@types)
 {
   subtest $type => sub {
-    my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
+    my $ffi = FFI::Platypus->new( api => 1 );
     my $f = $ffi->function(0 => [ "object(Foo,$type)" ] => 'void' );
     my $foo = Foo->new(129);
     no_leaks_ok { $f->call($foo) };
@@ -29,7 +29,7 @@ foreach my $type (@types)
 }
 
 subtest 'opaque' => sub {
-  my $ffi    = FFI::Platypus->new( api => 1, experimental => 1, lib => [undef] );
+  my $ffi    = FFI::Platypus->new( api => 1, lib => [undef] );
   my $malloc = $ffi->function( malloc => [ 'size_t' ] => 'opaque' );
   my $free   = $ffi->function( free => [ 'opaque' ] => 'void' );
   my $ptr    = $malloc->call(200);

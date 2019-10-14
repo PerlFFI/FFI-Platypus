@@ -228,16 +228,33 @@ sub new
     }
   }
 
-  my $api = $args{api} || 0;
+  my $api          = $args{api} || 0;
+  my $experimental = $args{experimental} || 0;
 
-  if(defined $api && $api > 0 && ($args{experimental}||0) != $api)
+  if($experimental == 1)
+  {
+    Carp::croak("Please do not use the experimental version of api = 1, instead require FFI::Platypus 1.00 or better");
+  }
+
+  if(defined $api && $api > 1 && $experimental != $api)
   {
     Carp::cluck("Enabling development API version $api prior to FFI::Platypus $api.00");
   }
 
-  my $tp = $api < 1
-    ? 'Version0'
-    : 'Version1';
+  my $tp;
+
+  if($api == 0)
+  {
+    $tp = 'Version0';
+  }
+  elsif($api == 1)
+  {
+    $tp = 'Version1';
+  }
+  else
+  {
+    Carp::croak("API version $api not (yet) implemented");
+  }
 
   require "FFI/Platypus/TypeParser/$tp.pm";
   $tp = "FFI::Platypus::TypeParser::$tp";

@@ -789,21 +789,6 @@ subtest 'customer mangler' => sub {
   is($ffi->function(bar => [] => 'int')->call, 42 );
 };
 
-subtest 'api 1 warning' => sub {
-
-  my @warnings;
-  local $SIG{__WARN__} = sub {
-    note "[warning]\n", $_[0];
-    push @warnings, $_[0];
-  };
-
-  my $ffi = FFI::Platypus->new( api => 1 );
-  is $ffi->{api}, 1;
-
-  my $api_warning = grep /^Enabling development API version 1 prior to FFI::Platypus 1.00/, @warnings;
-  ok $api_warning;
-};
-
 subtest '->package is only allowed for api = 0' => sub {
 
   my @warnings;
@@ -846,7 +831,7 @@ subtest 'warning defaults' => sub {
 
   subtest 'api = 1' => sub {
     @warnings = ();
-    my $ffi = FFI::Platypus->new( api => 1, experimental => 1);
+    my $ffi = FFI::Platypus->new( api => 1 );
     $ffi->lib('corpus/bogus.so');
     local $@ = '';
     is $ffi->find_symbol('foo'), undef;
@@ -878,7 +863,7 @@ subtest 'language plugin api version' => sub {
   };
 
   subtest 'api = 1' => sub {
-    my $ffi = FFI::Platypus->new( lang => 'Frooble', api => 1, experimental => 1 );
+    my $ffi = FFI::Platypus->new( lang => 'Frooble', api => 1 );
     is $args{api}, 1;
   };
 
