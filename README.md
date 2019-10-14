@@ -1347,6 +1347,31 @@ is identical to the process of defining macro constants in Perl.
 
 For more details on enumerated types see ["Enum types" in FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type#Enum-types).
 
+## Memory leaks
+
+There are a couple places where memory is allocated, but never deallocated that may
+look like memory leaks by tools designed to find memory leaks like valgrind.  This
+memory is intended to be used for the lifetime of the perl process so there normally
+this isn't a problem unless you are embedding a Perl interpreter which doesn't closely
+match the lifetime of your overall application.
+
+Specifically:
+
+- type cache
+
+    some types are cached and not freed.  These are needed as long as there are FFI
+    functions that could be called.
+
+- attached functions
+
+    Attaching a function as an xsub will definitely allocate memory that won't be freed
+    because the xsub could be called at any time, including in `END` blocks.
+
+The Platypus team plans on adding a hook to free some of this "leaked" memory
+for use cases where Perl and Platypus are embedded in a larger application
+where the lifetime of the Perl process is significantly smaller than the
+overall lifetime of the whole process.
+
 ## I get seg faults on some platforms but not others with a library using pthreads.
 
 On some platforms, Perl isn't linked with `libpthreads` if Perl threads are not
