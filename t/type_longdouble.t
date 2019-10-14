@@ -12,7 +12,7 @@ BEGIN {
 }
 
 subtest 'Math::LongDouble is loaded when needed for return type' => sub {
-  my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
+  my $ffi = FFI::Platypus->new( api => 1 );
   $ffi->lib(find_lib lib => 'test', libpath => 't/ffi');
   is($INC{'Math/LongDouble.pm'}, undef, 'not pre-loaded');
   $ffi->function( longdouble_add => ['longdouble','longdouble'] => 'longdouble' );
@@ -42,7 +42,7 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => 1 );
+    my $ffi = FFI::Platypus->new( api => $api );
     $ffi->lib(find_lib lib => 'test', libpath => 't/ffi');
 
     $ffi->type('longdouble*' => 'longdouble_p');

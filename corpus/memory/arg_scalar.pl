@@ -64,7 +64,7 @@ subtest 'complex' => sub {
 
 subtest 'record' => sub {
 
-  my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
+  my $ffi = FFI::Platypus->new( api => 1 );
 
   our $meta = FFI::Platypus::Record::Meta->new(['sint32']);
 

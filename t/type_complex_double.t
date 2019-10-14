@@ -22,7 +22,7 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => 1 );
+    my $ffi = FFI::Platypus->new( api => $api );
     $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
     $ffi->attach(['complex_double_get_real' => 'creal'] => ['complex_double'] => 'double');

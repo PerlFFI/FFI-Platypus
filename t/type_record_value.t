@@ -21,7 +21,7 @@ my $return_ok = FFI::Platypus::ShareConfig->get('probe')->{recordvalue};
 }
 
 subtest 'is a reference' => sub {
-  my $ffi = FFI::Platypus->new( api => 1, experimental => 1 );
+  my $ffi = FFI::Platypus->new( api => 1 );
   $ffi->lib($libtest);
 
   $ffi->type("record(FooRecord)" => 'foo_record_t');

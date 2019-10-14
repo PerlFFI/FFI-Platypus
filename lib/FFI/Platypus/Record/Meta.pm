@@ -17,7 +17,6 @@ the public interface to Platypus records.
   require FFI::Platypus;
   my $ffi = FFI::Platypus->new(
     api          => 1,
-    experimental => 1,  # okay if used internally
   );
   $ffi->bundle;
   $ffi->mangler(sub {

@@ -15,7 +15,7 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => 1 );
+    my $ffi = FFI::Platypus->new( api => $api );
     $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
     $ffi->type('float *' => 'float_p');
     $ffi->type('float [10]' => 'float_a');

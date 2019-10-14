@@ -17,7 +17,7 @@ foreach my $api (0, 1)
 
     my $p = $api == 1 ? '*' : '';
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => 1 );
+    my $ffi = FFI::Platypus->new( api => $api );
     $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
     $ffi->type("string(10)$p" => 'string_10');
     $ffi->type("string(5)$p"  => 'string_5');

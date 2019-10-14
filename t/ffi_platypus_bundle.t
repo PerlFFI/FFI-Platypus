@@ -20,7 +20,7 @@ subtest 'from installed' => sub {
     use strict;
     use warnings;
     use FFI::Platypus;
-    my $ffi = FFI::Platypus->new( api => 1, experimental => 1, lang => 'ASM' );
+    my $ffi = FFI::Platypus->new( api => 1, lang => 'ASM' );
     $ffi->bundle;
     $ffi->attach("bar1" => [] => 'sint32');
     1;
@@ -66,7 +66,7 @@ subtest 'from blib' => sub {
     use strict;
     use warnings;
     use FFI::Platypus;
-    my $ffi = FFI::Platypus->new( api => 1, experimental => 1, lang => 'ASM' );
+    my $ffi = FFI::Platypus->new( api => 1, lang => 'ASM' );
     $ffi->bundle;
     $ffi->attach("bar2" => [] => 'sint32');
     1;
@@ -125,7 +125,7 @@ EOF
 
   unshift @INC, "$root/lib";
 
-  my $ffi = FFI::Platypus->new( api => 1, experimental => 1, lang => 'ASM' );
+  my $ffi = FFI::Platypus->new( api => 1, lang => 'ASM' );
   $ffi->bundle('Foo::Bar3');
   $ffi->attach("bar3" => [] => 'sint32');
   is( bar3(), 44 );
@@ -145,7 +145,7 @@ subtest 'with a ffi dir' => sub {
     use strict;
     use warnings;
     use FFI::Platypus;
-    my $ffi = FFI::Platypus->new( api => 1, experimental => 1, lang => 'ASM' );
+    my $ffi = FFI::Platypus->new( api => 1, lang => 'ASM' );
     $ffi->bundle;
     $ffi->attach("bar4" => [] => 'sint32');
     1;
@@ -179,7 +179,7 @@ subtest 'entry points' => sub {
     use strict;
     use warnings;
     use FFI::Platypus;
-    our $ffi = FFI::Platypus->new( api => 1, experimental => 1, lang => 'ASM' );
+    our $ffi = FFI::Platypus->new( api => 1, lang => 'ASM' );
     $ffi->bundle([$ffi->cast('(string)->void' => 'opaque', $main::log_closure)]);
     1;
 EOF

@@ -212,7 +212,7 @@ subtest 'closure' => sub {
 
 subtest 'api = 1 fixed string' => sub {
 
-  my $ffi = FFI::Platypus->new( api => 1, experimental => 1);
+  my $ffi = FFI::Platypus->new( api => 1 );
   $ffi->lib($libtest);
 
   {
