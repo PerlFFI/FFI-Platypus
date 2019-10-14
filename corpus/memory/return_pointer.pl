@@ -40,7 +40,7 @@ subtest 'string' => sub {
   my $f = $ffi->function(0 => [ 'opaque' ] => 'string*' );
 
   my $ptr = strdup("hello world");
-  
+
   no_leaks_ok { $f->call($ptr) };
   no_leaks_ok { $f->call(undef) };
 

@@ -146,7 +146,7 @@ on two different platforms:
  {
    $type->type('sint32' => 'foo_t');
  }
-
+ 
  # function foo takes 16 bit signed integer on Windows
  # and a 32 bit signed integer on Linux.
  $ffi->attach( foo => [ 'foo_t' ] => 'void' );
