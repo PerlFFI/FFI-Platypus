@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+0.99_03   2019-10-24 10:46:02 -0700
+  - Documentation
+
 0.99_02   2019-10-14 16:16:16 -0600
   - api = 1 is no longer experimental (gh#193)
 
