@@ -51,7 +51,7 @@ sub myWriteMakefile
   ExtUtils::MakeMaker->VERSION('7.12');
   $build_config->set(version => [ $args{VERSION} =~ /^([0-9]+)\.([0-9]{2})/ ]);
 
-  if(eval { require Alien::FFI; Alien::FFI->VERSION('0.20'); 1 })
+  if(eval { require Alien::FFI; Alien::FFI->VERSION('0.2401'); 1 })
   {
     print "using already installed Alien::FFI (version @{[ Alien::FFI->VERSION ]})\n";
     $build_config->set(alien => { class => 'Alien::FFI', mode => 'already-installed' });
@@ -66,7 +66,7 @@ sub myWriteMakefile
 
     my $alien_install_type_unset = !defined $ENV{ALIEN_INSTALL_TYPE};
 
-    if($alien_install_type_unset && $^O eq 'MSWin32' && Alien::FFI::PkgConfigPP->exists)
+    if(0 && $alien_install_type_unset && $^O eq 'MSWin32' && Alien::FFI::PkgConfigPP->exists)
     {
       print "using system libffia via PkgConfigPP\n";
       $build_config->set(alien => { class => 'Alien::FFI::PkgConfigPP', mode => 'system' });
@@ -74,7 +74,7 @@ sub myWriteMakefile
       Alien::Base::Wrapper->import( 'Alien::FFI::PkgConfigPP', 'Alien::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
     }
-    elsif($alien_install_type_unset && $^O ne 'MSWin32' && Alien::FFI::pkgconfig->exists)
+    elsif(0 && $alien_install_type_unset && $^O ne 'MSWin32' && Alien::FFI::pkgconfig->exists)
     {
       print "using system libffi via @{[ Alien::FFI::pkgconfig->pkg_config_exe ]}\n";
       $build_config->set(alien => { class => 'Alien::FFI::pkgconfig', mode => 'system' });
@@ -90,7 +90,7 @@ sub myWriteMakefile
         CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e cc --',
         LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e ld --',
       );
-      $args{BUILD_REQUIRES}->{'Alien::FFI'} = '0.20';
+      $args{BUILD_REQUIRES}->{'Alien::FFI'} = '0.2401';
     }
   }
   $alien{INC} = defined $alien{INC} ? "-Iinclude $alien{INC}" : "-Iinclude";
