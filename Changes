@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add FFI::Build support for build_all method (gh#195)
 
 0.99_03   2019-10-24 10:46:02 -0700
   - Documentation

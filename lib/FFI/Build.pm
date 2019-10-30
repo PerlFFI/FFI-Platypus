@@ -391,6 +391,19 @@ sub build
 
   foreach my $source ($self->source)
   {
+    if($source->can('build_all'))
+    {
+      my $count = scalar $self->source;
+      if($count == 1)
+      {
+        return $source->build_all($self->file);
+      }
+      else
+      {
+        die "@{[ ref $source ]} has build_all method, but there is not exactly one source";
+      }
+    }
+
     $ld = $source->ld if $source->ld;
     my $output;
     while(my $next = $source->build_item)
