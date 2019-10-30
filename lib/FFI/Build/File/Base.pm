@@ -256,6 +256,14 @@ sub build_item
   Carp::croak("Not implemented!");
 }
 
+=head2 build_all
+
+ $file->build_all;
+
+If implemented the file in question can directly create a shared or dynamic library
+without needing a link step.  This is useful for languages that have their own build
+systems.
+
 =head2 needs_rebuild
 
  my $bool = $file->needs_rebuild
