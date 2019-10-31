@@ -22,7 +22,7 @@ In your Makefile.PL:
  use ExtUtils::MakeMaker;
  use FFI::Build::MM;
  
- my $fbmm = Alien::Build::MM->new;
+ my $fbmm = FFI::Build::MM->new;
  
  WriteMakefile($fbmm->mm_args(
    ABSTRACT     => 'My FFI extension',
