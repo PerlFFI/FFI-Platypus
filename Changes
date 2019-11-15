@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.00      2019-11-15 13:46:15 -0500
+  - Production release identical to 0.99_06
+
 0.99_06   2019-11-12 21:08:23 -0500
   - Detect Rust or Go modules according to Cargo.toml or go.mod files (gh#197)
 
