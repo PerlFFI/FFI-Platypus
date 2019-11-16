@@ -1419,10 +1419,10 @@ a tool (L<Convert::Binary::C> can do this) that can extract the constants for yo
 See also the "Integer constants" example in L<FFI::Platypus::Type>.
 
 You can also use the new Platypus bundle interface to define Perl constants
-from C space.  This is more reliable, but does require a compiler.  It is
-recommended mainly for writing bindings against libraries that have constants
-that can vary widely from platform to platform.  See L<FFI::Platypus::Constant>
-for details.
+from C space.  This is more reliable, but does require a compiler at install
+time.  It is recommended mainly for writing bindings against libraries that
+have constants that can vary widely from platform to platform.  See
+L<FFI::Platypus::Constant> for details.
 
 =head2 What about enums?
 

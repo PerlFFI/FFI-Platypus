@@ -1331,10 +1331,10 @@ a tool ([Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C) can do
 See also the "Integer constants" example in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type).
 
 You can also use the new Platypus bundle interface to define Perl constants
-from C space.  This is more reliable, but does require a compiler.  It is
-recommended mainly for writing bindings against libraries that have constants
-that can vary widely from platform to platform.  See [FFI::Platypus::Constant](https://metacpan.org/pod/FFI::Platypus::Constant)
-for details.
+from C space.  This is more reliable, but does require a compiler at install
+time.  It is recommended mainly for writing bindings against libraries that
+have constants that can vary widely from platform to platform.  See
+[FFI::Platypus::Constant](https://metacpan.org/pod/FFI::Platypus::Constant) for details.
 
 ## What about enums?
 
