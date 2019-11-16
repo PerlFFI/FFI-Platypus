@@ -176,7 +176,7 @@ Enable the next generation type parser which allows pass-by-value records
 and type decoration on basic types.  Using API level 1 prior to Platypus
 version 1.00 will trigger a (noisy) warning.
 
-All new code should be written with C<api => 1>!  The Platypus documentation
+All new code should be written with this set to 1!  The Platypus documentation
 assumes this api level is set.
 
 =back
