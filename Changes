@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.01      2019-11-16 07:16:20 -0700
+  - Documentation fixes only (gh#198, gh#199, gh#200)
+
 1.00      2019-11-15 13:46:15 -0500
   - Production release identical to 0.99_06
 
