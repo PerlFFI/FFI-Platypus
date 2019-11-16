@@ -26,7 +26,6 @@ jobs:
     - env: CIP_TAG=5.30-longdouble
     - env: CIP_TAG=5.30-quadmath
     - env: CIP_TAG=5.30-ffimaster
-    - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_DEBUG_FAKE32=1
     - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
     - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_NO_EXTRA_TYPES=1
     - env: CIP_TAG=5.28
