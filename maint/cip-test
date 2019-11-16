@@ -15,8 +15,6 @@ if perl -e 'exit ! ($] > 5.016)'; then
   cpanm -n local::lib
 
   maint/cip-test-cpan FFI::Util
-  #maint/cip-test-cpan FFI::TinyCC
-  #maint/cip-test-cpan FFI::TinyCC::Inline
   maint/cip-test-cpan FFI::ExtractSymbols
 
   maint/cip-test-cpan UUID::FFI
@@ -28,7 +26,6 @@ if perl -e 'exit ! ($] > 5.016)'; then
   maint/cip-test-cpan FFI::Platypus::Lang::Fortran
   maint/cip-test-cpan FFI::Platypus::Lang::Pascal
   cpanm -n Test::Script IPC::Run3
-  maint/cip-test-cpan FFI::Platypus::Lang::Rust
 
   ##cpanm -n Convert::Binary::C
   ##perl maint/cip-test-examples
