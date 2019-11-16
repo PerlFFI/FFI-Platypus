@@ -693,7 +693,7 @@ Perl code:
  {
    package Foo;
    use FFI::Platypus::Record;
-   record_layout( int => 'a' );
+   record_layout_1( int => 'a' );
  }
  $ffi->type( 'Record(Foo)' => 'foo_t' );
  $ffi->attach( pass_by_value_example => [ 'foo_t' ] => 'void' );
@@ -968,7 +968,7 @@ class name that we pass in as the first argument.  If you have a C
 "constructor" like this that takes arguments you'd have to write a
 wrapper for new.
 
-I good example of a C library that uses this pattern, including
+A good example of a C library that uses this pattern, including
 inheritance is C<libarchive>. Platypus comes with a more extensive
 example in C<examples/archive.pl> that demonstrates this.
 
