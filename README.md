@@ -689,7 +689,7 @@ these and other memory related functions are provided by the
     
     use FFI::Platypus::Record;
     
-    record_layout(qw(
+    record_layout_1(qw(
         int    tm_sec
         int    tm_min
         int    tm_hour
