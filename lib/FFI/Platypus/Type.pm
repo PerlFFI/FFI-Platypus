@@ -310,8 +310,17 @@ Perl:
  f(BAR);
  f(BAZ);
 
-See the main FAQ (L<FFI::Platypus/FAQ>) for details on the best way to
-specify value constants when there are lots of possible values.
+Dealing with enumerated values with FFI can be tricky because these are
+usually defined in C header files and cannot be found in dynamic libraries.
+For trivial usage you can do as illustrated above, simply define your own
+Perl constants.  For more complicated usage, or where the values might vary
+from platform to platform you may want to consider the new Platypus bundle
+interface to define Perl constants (essentially the same as an enumerated
+value) from C space.  This is more reliable, but does require a compiler
+at install time.  See L<FFI::Platypus::Constant> for details.
+
+The main FAQ (L<FFI::Platypus/FAQ>) also has a discussion on dealing
+with constants and enumerated types.
 
 =head3 Boolean types
 
