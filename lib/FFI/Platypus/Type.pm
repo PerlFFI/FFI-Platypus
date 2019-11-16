@@ -420,7 +420,7 @@ what the object represents:
 
  $lib->find_lib( lib => 'archive' );
  $ffi->type('opaque' => 'archive');
- $ffi->attach('archive_read_new => [] => 'archive');
+ $ffi->attach(archive_read_new   => [] => 'archive');
  $ffi->attach(archive_read_free  => ['archive'] => 'int');
  ...
 
