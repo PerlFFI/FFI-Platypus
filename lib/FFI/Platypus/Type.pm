@@ -545,7 +545,7 @@ to the string).  Consider the API:
  {
    const char *str;
    str = get_message();
-   printf("message = %s\n");
+   printf("message = %s\n", str);
  }
 
 It feels like this should be able to work:
