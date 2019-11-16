@@ -577,7 +577,7 @@ and return an opaque pointer to the string using a cast.
 =head2 Pointer / References
 
 In C you can pass a pointer to a variable to a function in order
-accomplish the task of pass by reference.  In Perl the same is task is
+accomplish the task of pass by reference.  In Perl the same task is
 accomplished by passing a reference (although you can also modify the
 argument stack thus Perl supports proper pass by reference as well).
 
