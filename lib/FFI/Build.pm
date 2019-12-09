@@ -35,9 +35,6 @@ use File::Path ();
 
 =head1 DESCRIPTION
 
-B<WARNING>: Alpha quality software, expect a somewhat unstable API until it stabilizes.  Documentation
-may be missing or inaccurate.
-
 Using libffi based L<FFI::Platypus> is a great alternative to XS for writing library bindings for Perl.
 Sometimes, however, you need to bundle a little C code with your FFI module, but this has never been
 that easy to use.  L<Module::Build::FFI> was an early attempt to address this use case, but it uses
