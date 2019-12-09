@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.02      2019-12-09 03:07:41 -0700
+  - FFI::Build is no longer described as "alpha"
+  - Documentation fixes.
+
 1.01      2019-11-16 07:16:20 -0700
   - Documentation fixes only (gh#198, gh#199, gh#200)
 
