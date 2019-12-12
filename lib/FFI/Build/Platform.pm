@@ -360,7 +360,6 @@ sub ldflags
   }
   elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
   {
-    # TODO: test.
     push @ldflags, qw( -dll );
     @ldflags = grep !/^-nodefaultlib$/, @ldflags;
   }
@@ -379,7 +378,7 @@ sub ldflags
 
 =head2 cc_mm_works
 
- my $flags = $platform->cc_mm_works;
+ my $bool = $platform->cc_mm_works;
 
 Returns the flags that can be passed into the C compiler to compute dependencies.
 
@@ -439,7 +438,7 @@ sub cc_mm_works
 
 =head2 flag_object_output
 
- my $flag = $platform->flag_object_output($object_filename);
+ my @flags = $platform->flag_object_output($object_filename);
 
 Returns the flags that the compiler recognizes as being used to write out to a specific object filename.
 
@@ -461,7 +460,7 @@ sub flag_object_output
 
 =head2 flag_library_output
 
- my $flag = $platform->flag_library_output($library_filename);
+ my @flags = $platform->flag_library_output($library_filename);
 
 Returns the flags that the compiler recognizes as being used to write out to a specific library filename.
 
@@ -487,7 +486,7 @@ sub flag_library_output
 
 =head2 flag_exe_output
 
- my $flag = $platform->flag_exe_output($library_filename);
+ my @flags = $platform->flag_exe_output($library_filename);
 
 Returns the flags that the compiler recognizes as being used to write out to a specific exe filename.
 
@@ -508,6 +507,20 @@ sub flag_exe_output
   }
 }
 
+=head2 flag_export
+
+ my @flags = $platform->flag_export(@symbols);
+
+Returns the flags that the linker recognizes for exporting functions.
+
+=cut
+
+sub flag_export
+{
+  my $self = _self(shift);
+  return () unless $self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl';
+  return map { "/EXPORT:$_" } @_;
+}
 
 =head2 which
 

@@ -248,6 +248,7 @@ sub check_eval
     alien   => $self->{alien},
     cflags  => $self->{cflags},
     libs    => $self->{libs},
+    export  => ['dlmain'],
   );
   $build->source(
     FFI::Build::File::C->new(
