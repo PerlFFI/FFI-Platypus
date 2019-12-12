@@ -56,6 +56,7 @@ subtest 'run not pass' => sub {
       buildname => "test-probe-$$-@{[ time ]}",
       verbose => 1,
       source => 'corpus/ffi_probe_runner/foo.c',
+      export => ['dlmain'],
     );
     note capture_merged {
       $build->build;
@@ -93,6 +94,7 @@ subtest 'run pass' => sub {
       dir => $dir,
       buildname => "test-probe-$$-@{[ time ]}",
       source => 'corpus/ffi_probe_runner/bar.c',
+      export => ['dlmain'],
     );
     note capture_merged {
       $build->build;
