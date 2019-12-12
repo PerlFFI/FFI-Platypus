@@ -259,6 +259,10 @@ sub configure
         $type_map{$type} = $basic;
         $align{$basic} ||= $probe->data->{type}->{$type}->{align};
       }
+      elsif($type =~ /^(unsigned |signed )?(char|short|int|long)$/)
+      {
+        die "unable to perform basic type check for: \"$type\"";
+      }
     }
   }
 
