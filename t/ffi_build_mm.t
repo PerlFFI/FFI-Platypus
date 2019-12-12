@@ -113,7 +113,8 @@ subtest 'with a build!' => sub {
 
     platypus 1 => sub {
       my $ffi = shift;
-      $ffi->lib(bsd_glob 'blib/lib/auto/share/dist/Crock-O-Stimpy/lib/*');
+      $ffi->lib(grep !/\.pdb$/, bsd_glob 'blib/lib/auto/share/dist/Crock-O-Stimpy/lib/*');
+      note "lib=$_" for $ffi->lib;
       is(
         $ffi->function('frooble_runtime' => [] => 'int')->call,
         47,
