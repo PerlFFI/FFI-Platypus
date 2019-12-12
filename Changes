@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.03_01   2019-12-11 20:53:40 -0700
   - Restore support for Visual C++ Perl build (gh#202)
   - C++ support on Visual C++ Perl is not supported at this time (gh#203)
 
