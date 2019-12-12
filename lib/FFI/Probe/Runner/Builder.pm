@@ -305,19 +305,54 @@ sub build
   my($self) = @_;
   $self->extract;
 
+  # this should really be done in `new` but the build
+  # scripts for FFI-Platypus edit the ldfalgs from there
+  # so.  Also this may actually belong in FFI::Build::Platform
+  # which would resolve the problem.
+  if($^O eq 'MSWin32' && $Config{ccname} eq 'cl')
+  {
+    $self->{ldflags} = [
+      grep !/^-nodefaultlib$/i,
+      @{ $self->{ldflags} }
+    ];
+  }
+
   my $cfn = $self->file('src', 'dlrun.c');
   my $ofn = $self->file('src', "dlrun$Config{obj_ext}");
   my $xfn = $self->exe;
 
   # compile
   print "CC src/dlrun.c\n" unless $VERBOSE;
-  $self->run(compile => $self->cc, $self->ccflags, $self->optimize, '-c', '-o' => $ofn, $cfn);
+  $self->run(
+    compile =>
+      $self->cc,
+      $self->ccflags,
+      $self->optimize,
+      '-c',
+      $self->{platform}->flag_object_output($ofn),
+      $cfn,
+  );
 
   # link
   print "LD src/dlrun$Config{obj_ext}\n" unless $VERBOSE;
   $self->run_list(link =>
-    map { [$self->ld, $self->ldflags, '-o' => $xfn, $ofn, @$_ ] } @{ $self->libs },
+    map { [
+      $self->ld,
+      $self->ldflags,
+      $self->{platform}->flag_exe_output($xfn),
+      $ofn,
+      @$_
+    ] } @{ $self->libs },
   );
+
+  ## FIXME
+  if($^O eq 'MSWin32' && $Config{ccname} eq 'cl')
+  {
+    if(-f 'dlrun.exe' && ! -f $xfn)
+    {
+      rename 'dlrun.exe', $xfn;
+    }
+  }
 
   # verify
   print "VV bin/dlrun$Config{exe_ext}\n" unless $VERBOSE;

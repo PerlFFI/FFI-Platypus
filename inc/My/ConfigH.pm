@@ -2,6 +2,7 @@ package My::ConfigH;
 
 use strict;
 use warnings;
+use Carp qw( croak );
 use File::Basename qw( basename );
 
 sub new
@@ -21,6 +22,7 @@ sub new
 sub define_var
 {
   my($self, $key, $value) = @_;
+  croak "value is not defined" unless defined $value;
   $self->{content} .= "#define $key $value\n";
 }
 
