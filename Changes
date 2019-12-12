@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Restore support for Visual C++ Perl build (gh#202)
+  - C++ support on Visual C++ Perl is not supported at this time (gh#203)
 
 1.02      2019-12-09 03:07:41 -0700
   - FFI::Build is no longer described as "alpha"
