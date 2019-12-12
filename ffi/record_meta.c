@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _MSC_VER
+#define EXPORT __declspec(dllexport)
+#endif
+
 typedef struct meta_t {
   ffi_type top;
   ffi_type *elements[0];
@@ -13,6 +17,7 @@ typedef struct meta_t {
  * to the members, can we use that instead?
  */
 
+EXPORT
 meta_t *
 ffi_platypus_record_meta__new(ffi_type *list[])
 {
@@ -40,36 +45,42 @@ ffi_platypus_record_meta__new(ffi_type *list[])
   return t;
 }
 
+EXPORT
 ffi_type *
 ffi_platypus_record_meta__ffi_type(meta_t *t)
 {
   return &t->top;
 }
 
+EXPORT
 size_t
 ffi_platypus_record_meta__size(meta_t *t)
 {
   return t->top.size;
 }
 
+EXPORT
 unsigned short
 ffi_platypus_record_meta__alignment(meta_t *t)
 {
   return t->top.alignment;
 }
 
+EXPORT
 ffi_type **
 ffi_platypus_record_meta__element_pointers(meta_t *t)
 {
   return t->top.elements;
 }
 
+EXPORT
 void
 ffi_platypus_record_meta__DESTROY(meta_t *t)
 {
   free(t);
 }
 
+EXPORT
 ffi_type *
 ffi_platypus_record_meta___find_symbol(const char *name)
 {

@@ -41,6 +41,13 @@ EOF
     }
 EOF
 
+  spew("$root/ffi/foo.fbx", <<'EOF');
+use strict;
+use warnings;
+our $DIR;
+{ export => ['ffi_pl_bundle_constant'], source => ["$DIR/*.c"] };
+EOF
+
   local @INC = @INC;
   unshift @INC, "$root/lib";
   local $@ = '';
