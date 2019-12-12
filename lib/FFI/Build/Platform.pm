@@ -361,7 +361,8 @@ sub ldflags
   elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
   {
     # TODO: test.
-    push @ldflags, qw( -link -dll );
+    push @ldflags, qw( -dll );
+    @ldflags = grep !/^-nodefaultlib$/, @ldflags;
   }
   elsif($self->osname eq 'MSWin32')
   {
