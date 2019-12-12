@@ -275,7 +275,9 @@ sub postamble {
     "clean :: mm-clean\n" .
     "mm-clean :\n" .
     "\t$noecho\$(FULLPERL) inc${sep}mm-clean.pl\n" .
-    "\t$noecho\$(RM_RF) _mm ffi-probe-*\n\n";
+    "\t$noecho\$(RM_RF) _mm ffi-probe-*\n" .
+    "\t$noecho\$(RM_RF) .tmp\n" .
+    "\t$noecho\$(RM_RF) corpus${sep}*${sep}*${sep}tmpbuild*\n\n";
 
   # Workaround for the tireless testers out there
   # who want to make -jX a thing.  For some reason.
