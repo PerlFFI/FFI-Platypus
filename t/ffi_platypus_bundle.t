@@ -31,6 +31,7 @@ EOF
     source => [ [ C => \"int bar1(void) { return 42; }\n" ]],
     verbose => 2,
     dir => "$root/lib/auto/share/dist/Foo-Bar1",
+    export => ["bar1"],
   );
 
   my($build_out,$lib) = capture_merged {
@@ -77,6 +78,7 @@ EOF
     source => [ [ C => \"int bar2(void) { return 43; }\n" ]],
     verbose => 2,
     dir => "$root/lib/auto/share/dist/Foo-Bar2",
+    export => ['bar2'],
   );
 
   my($build_out,$lib) = capture_merged {
@@ -113,6 +115,7 @@ EOF
     source => [ [ C => \"int bar3(void) { return 44; }\n" ]],
     verbose => 2,
     dir => "$root/lib/auto/share/dist/Foo-Bar3",
+    export => ['bar3'],
   );
 
   my($build_out,$lib) = capture_merged {
@@ -152,6 +155,12 @@ subtest 'with a ffi dir' => sub {
 EOF
 
   spew("$root/ffi/foo.c", "int bar4(void) { return 45; }" );
+  spew("$root/ffi/foo.fbx", <<'EOF');
+use strict;
+use warnings;
+our $DIR;
+{ export => ['bar4'], source => ["$DIR/*.c"] };
+EOF
 
   unshift @INC, "$root/lib";
 
@@ -192,7 +201,8 @@ typedef void (*log_t)(const char *);
 log_t logit;
 char buffer[1024];
 
-void ffi_pl_bundle_init(const char *package, int c, void **args)
+void
+ffi_pl_bundle_init(const char *package, int c, void **args)
 {
   int i;
   logit = (log_t) args[0];
@@ -209,7 +219,8 @@ void ffi_pl_bundle_init(const char *package, int c, void **args)
   logit("ffi_pl_bundle_init (leave)");
 }
 
-void ffi_pl_bundle_fini(const char *package)
+void
+ffi_pl_bundle_fini(const char *package)
 {
   logit("ffi_pl_bundle_fini (enter)");
   sprintf(buffer, "package = %s", package);
@@ -217,6 +228,13 @@ void ffi_pl_bundle_fini(const char *package)
   logit("ffi_pl_bundle_fini (leave)");
 }
 
+EOF
+
+  spew("$root/ffi/foo.fbx", <<'EOF');
+use strict;
+use warnings;
+our $DIR;
+{ export => ['ffi_pl_bundle_init','ffi_pl_bundle_fini'], source => ["$DIR/*.c"] };
 EOF
 
   unshift @INC, "$root/lib";

@@ -1,5 +1,10 @@
 #include <ffi_platypus_bundle.h>
 
+#ifdef _MSC_VER
+#define EXPORT __declspec(dllexport)
+#endif
+
+EXPORT
 ffi_platypus_constant_t *
 ffi_platypus_constant__new(void* set_str,
                            void* set_sint,
@@ -14,6 +19,7 @@ ffi_platypus_constant__new(void* set_str,
   return self;
 }
 
+EXPORT
 void
 ffi_platypus_constant__DESTROY(ffi_platypus_constant_t *self)
 {
