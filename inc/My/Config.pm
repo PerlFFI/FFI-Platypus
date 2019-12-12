@@ -261,7 +261,9 @@ sub configure
       }
       elsif($type =~ /^(unsigned |signed )?(char|short|int|long)$/)
       {
-        die "unable to perform basic type check for: \"$type\"";
+        print "Unable to perform basic type check for: \"$type\"\n";
+        print "Please check config.log for detailed diagnostics.\n";
+        die "unable to configure Platypus";
       }
     }
   }
