@@ -232,7 +232,8 @@ sub cxx
   }
   elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
   {
-    return \@cc;
+    # TODO: see https://github.com/Perl5-FFI/FFI-Platypus/issues/203
+    #return \@cc;
   }
 
   Carp::croak("unable to detect corresponding C++ compiler");
