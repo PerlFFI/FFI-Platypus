@@ -484,6 +484,30 @@ sub flag_library_output
   }
 }
 
+=head2 flag_exe_output
+
+ my $flag = $platform->flag_exe_output($library_filename);
+
+Returns the flags that the compiler recognizes as being used to write out to a specific exe filename.
+
+=cut
+
+sub flag_exe_output
+{
+  my $self = _self(shift);
+  my $file = shift;
+  if($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
+  {
+    my $file = File::Spec->rel2abs($file);
+    return ("/Fe:$file");
+  }
+  else
+  {
+    return ('-o' => $file);
+  }
+}
+
+
 =head2 which
 
  my $path = $platform->which($command);
