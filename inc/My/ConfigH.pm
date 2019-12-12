@@ -22,7 +22,7 @@ sub new
 sub define_var
 {
   my($self, $key, $value) = @_;
-  croak "value is not defined" unless defined $value;
+  croak "value for $key is not defined" unless defined $value;
   $self->{content} .= "#define $key $value\n";
 }
 
