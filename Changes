@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.04_01   2019-12-12 19:05:54 -0700
   - Some additional testing fixes for Visual C++ Perl build (gh#206)
 
 1.03_01   2019-12-11 20:53:40 -0700
