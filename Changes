@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.05      2019-12-13 09:27:50 -0700
   - ffi_platypus_bundle.h provides an EXPORT macro which allows
     you to decorate functions/data for export under Visual C++ Perl (gh#207)
   - ffi_pl_bundle_init, ffi_pl_bundle_constant and ffi_pl_bundle_fini
