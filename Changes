@@ -1,6 +1,11 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - ffi_platypus_bundle.h provides an EXPORT macro which allows
+    you to decorate functions/data for export under Visual C++ Perl (gh#207)
+  - ffi_pl_bundle_init, ffi_pl_bundle_constant and ffi_pl_bundle_fini
+    are now properly marked as EXPORT.  No code changes needed as long
+    as you are using the header file (gh#207)
 
 1.03_01   2019-12-11 20:53:40 -0700
   - Restore support for Visual C++ Perl build (gh#202)
