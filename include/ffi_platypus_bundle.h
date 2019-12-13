@@ -20,8 +20,14 @@ typedef struct {
   void (*set_double) (const char *name, double value     );
 } ffi_platypus_constant_t;
 
-void ffi_pl_bundle_init(const char *, int, void **);
-void ffi_pl_bundle_constant(const char *, ffi_platypus_constant_t *);
-void ffi_pl_bundle_fini(const char *);
+#ifdef _MSC_VER
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+
+EXPORT void ffi_pl_bundle_init(const char *, int, void **);
+EXPORT void ffi_pl_bundle_constant(const char *, ffi_platypus_constant_t *);
+EXPORT void ffi_pl_bundle_fini(const char *);
 
 #endif
