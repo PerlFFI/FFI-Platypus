@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.06      2019-12-14 07:49:54 -0700
   - Visual C++ Perl build probe for ssize_t (gh#208, gh#209)
 
 1.05      2019-12-13 09:27:50 -0700
