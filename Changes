@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Visual C++ Perl build probe for ssize_t (gh#208)
 
 1.05      2019-12-13 09:27:50 -0700
   - ffi_platypus_bundle.h provides an EXPORT macro which allows

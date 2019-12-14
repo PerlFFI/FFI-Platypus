@@ -40,6 +40,7 @@ uint64_t
 int64_t
 size_t
 ssize_t
+SSIZE_T
 float
 double
 long double
@@ -266,6 +267,16 @@ sub configure
         die "unable to configure Platypus";
       }
     }
+  }
+
+  # Visual C++ uses SSIZE_T instead of ssize_t
+  if($^O eq 'MSWin32' && $Config{ccname} eq 'cl' && defined $type_map{SSIZE_T})
+  {
+    $type_map{ssize_t} = delete $type_map{SSIZE_T};
+  }
+  elsif(defined $type_map{SSIZE_T})
+  {
+    delete $type_map{SSIZE_T};
   }
 
   $ch->define_var( SIZEOF_VOIDP => $probe->data->{type}->{pointer}->{size} );
