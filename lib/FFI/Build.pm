@@ -288,16 +288,26 @@ sub _file_classes
 {
   unless(@file_classes)
   {
-
-    foreach my $inc (@INC)
+    if(defined $FFI::Build::VERSION)
     {
-      push @file_classes,
-        map { my $f = $_; $f =~ s/\.pm$//; "FFI::Build::File::$f" }
-        grep !/^Base\.pm$/,
-        map { File::Basename::basename($_) }
-        File::Glob::bsd_glob(
-          File::Spec->catfile($inc, 'FFI', 'Build', 'File', '*.pm')
-        );
+      foreach my $inc (@INC)
+      {
+        push @file_classes,
+          map { my $f = $_; $f =~ s/\.pm$//; "FFI::Build::File::$f" }
+          grep !/^Base\.pm$/,
+          map { File::Basename::basename($_) }
+          File::Glob::bsd_glob(
+            File::Spec->catfile($inc, 'FFI', 'Build', 'File', '*.pm')
+          );
+      }
+    }
+    else
+    {
+      # When building out of git without dzil, $VERSION will not
+      # usually be defined and any file plugins that require a
+      # specific version will break, so we only use core file
+      # classes for that.
+      push @file_classes, map { "FFI::Build::File::$_" } qw( C CXX Library Object );
     }
 
     # also anything already loaded, that might not be in the
