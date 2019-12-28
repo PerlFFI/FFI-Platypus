@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.07      2019-12-28 08:44:36 -0700
   - Fix bug in variadic argument count (gh#210, gh#211)
 
 1.06      2019-12-14 07:49:54 -0700
