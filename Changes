@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix bug in variadic argument count (gh#210, gh#211)
 
 1.06      2019-12-14 07:49:54 -0700
   - Visual C++ Perl build probe for ssize_t (gh#208, gh#209)

@@ -143,7 +143,7 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
         &self->ffi_cif,                           /* ffi_cif     | */
         ffi_abi,                                  /* ffi_abi     | */
         var_fixed_args,                           /* int         | fixed argument count */
-        items-6+extra_arguments-var_fixed_args,   /* int         | var argument count */
+        items-6+extra_arguments,                  /* int         | total argument count */
         ffi_return_type,                          /* ffi_type *  | return type */
         ffi_argument_types                        /* ffi_type ** | argument types */
       );
