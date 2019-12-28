@@ -45,7 +45,7 @@ ffi_test()
   void *ptrvalues[8]  = { &values[0], &values[1], &values[2], &values[3], &values[4], &values[5], &values[6], &values[7] };
   int answer = -1;
 
-  if(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 7, &ffi_type_sint32, args) == FFI_OK)
+  if(ffi_prep_cif_var(&cif, FFI_DEFAULT_ABI, 1, 8, &ffi_type_sint32, args) == FFI_OK)
   {
     ffi_call(&cif, (void*) return_arg, &answer, ptrvalues);
     if(answer != 40)
