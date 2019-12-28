@@ -173,6 +173,25 @@ subtest 'variadic' => sub {
 
   };
 
+  subtest 'examples' => sub {
+
+    is(
+      $ffi->function( xprintf => ['string'] => ['int'] => 'string' )->call("print integer %d\n", 42),
+      "print integer 42\n",
+    );
+
+    is(
+      $ffi->function( xprintf => ['string'] => ['string'] => 'string' )->call("print string %s\n", 'platypus'),
+      "print string platypus\n",
+    );
+
+    is(
+      $ffi->function( xprintf => ['string'] => ['int','string'] => 'string' )->call("print integer %d and string %s\n", 42, 'platypus'),
+      "print integer 42 and string platypus\n",
+    );
+
+  };
+
 };
 
 subtest 'void as arg should fail is arg count > 1' => sub {
@@ -194,4 +213,3 @@ subtest 'single void arg treated as no args' => sub {
 };
 
 done_testing;
-
