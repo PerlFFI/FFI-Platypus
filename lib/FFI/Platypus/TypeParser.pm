@@ -46,9 +46,13 @@ sub create_type_custom
 {
   my($self, $basic_type_name, @rest) = @_;
 
-  my $basic = $self->global_types->{basic}->{
-    $self->type_map->{$basic_type_name||'opaque'}
-  } || croak "not basic type $basic_type_name";
+  my $tm = $self->type_map->{$basic_type_name||'opaque'};
+
+  croak "$basic_type_name is not a legal native type for a custom type"
+    unless $tm;
+
+  my $basic = $self->global_types->{basic}->{$tm}
+  || croak "$basic_type_name is not a legal native type for a custom type";
 
   $self->_create_type_custom($basic->type_code, @rest);
 }
