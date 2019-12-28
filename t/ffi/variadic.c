@@ -2,8 +2,9 @@
 #ifdef FFI_PL_PROBE_VARIADIC
 #include <stdio.h>
 #include <stdarg.h>
+#include "libtest.h"
 
-int
+EXTERN int
 variadic_return_arg(int which, ...)
 {
   va_list args;
