@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /*
- * strdup and strndup are useful, but technically not part of the 
+ * strdup and strndup are useful, but technically not part of the
  * C standard, and thus may be missing from some environments.
  * If libc provides these functions then it will use them,
  * otherwise it will fallback on these implementations.
