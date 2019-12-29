@@ -66,6 +66,27 @@
       argument_pointers[i] = (void*) &arguments->slot[i];
 
       arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
+
+      int custom_flag = (type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL;
+      if(custom_flag)
+      {
+        arg = ffi_pl_custom_perl(
+          self->argument_types[i]->extra[0].custom_perl.perl_to_native,
+          arg, i
+        );
+        if(arg == NULL)
+        {
+          int max = self->argument_types[i]->extra[0].custom_perl.argument_count;
+          for(n=0; n < max; n++)
+          {
+            i++;
+            argument_pointers[i] = &arguments->slot[i];
+          }
+          continue;
+        }
+        type_code ^= FFI_PL_SHAPE_CUSTOM_PERL;
+      }
+
       switch(type_code)
       {
 
@@ -524,70 +545,6 @@
               break;
 
 /*
- * ARGUMENT IN - CUSTOM
- */
-
-            case FFI_PL_SHAPE_CUSTOM_PERL:
-              {
-                SV *arg2 = ffi_pl_custom_perl(
-                  self->argument_types[i]->extra[0].custom_perl.perl_to_native,
-                  arg,
-                  i
-                );
-
-                if(arg2 != NULL)
-                {
-                  switch(type_code)
-                  {
-                    case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_uint8(arguments, i, SvUV(arg2));
-                      break;
-                    case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_sint8(arguments, i, SvIV(arg2));
-                      break;
-                    case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_uint16(arguments, i, SvUV(arg2));
-                      break;
-                    case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_sint16(arguments, i, SvIV(arg2));
-                      break;
-                    case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_uint32(arguments, i, SvUV(arg2));
-                      break;
-                    case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg2));
-                      break;
-                    case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_uint64(arguments, i, SvU64(arg2));
-                      break;
-                    case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_sint64(arguments, i, SvI64(arg2));
-                      break;
-                    case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_float(arguments, i, SvNV(arg2));
-                      break;
-                    case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_double(arguments, i, SvNV(arg2));
-                      break;
-                    case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg2) ? INT2PTR(void*, SvIV(arg2)) : NULL);
-                      break;
-                    default:
-                      warn("argument type not supported (%d)", i);
-                      break;
-                  }
-                  SvREFCNT_dec(arg2);
-                }
-
-                for(n=0; n < self->argument_types[i]->extra[0].custom_perl.argument_count; n++)
-                {
-                  i++;
-                  argument_pointers[i] = &arguments->slot[i];
-                }
-              }
-              break;
-
-/*
  * ARGUMENT IN - OBJECT
  */
 
@@ -645,6 +602,17 @@
               break;
           }
       }
+
+      if(custom_flag)
+      {
+        int max = self->argument_types[i]->extra[0].custom_perl.argument_count;
+        SvREFCNT_dec(arg);
+        for(n=0; n < max; n++)
+        {
+          i++;
+          argument_pointers[i] = &arguments->slot[i];
+        }
+      }
     }
 
     /*
@@ -657,7 +625,7 @@
     {
       fprintf(stderr, "# [%d] <%04x> %p %p",
         i,
-        self->argument_types[i]->code_type,
+        self->argument_types[i]->type_code,
         argument_pointers[i],
         &arguments->slot[i]
       );
