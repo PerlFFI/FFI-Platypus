@@ -2,6 +2,9 @@ use strict;
 use warnings;
 use Test::More;
 use FFI::Platypus;
+use FFI::CheckLib;
+
+my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 my @legal = qw( float double opaque );
 push @legal, map { ("sint$_","uint$_") } qw( 8 16 32 64 );
@@ -42,6 +45,39 @@ subtest 'illegal types' => sub {
     };
     like "$@", qr/\Q$type\E is not a legal native type for a custom type/;
   }
+
+};
+
+subtest 'records' => sub {
+
+  plan skip_all => 'this test will not work yet';
+
+  {
+    package Foo;
+    use FFI::Platypus::Record;
+    record_layout qw(
+      string(16) name
+      sint32 value
+    );
+  }
+
+  my $ffi = FFI::Platypus->new( api => 1, lib => $libtest );
+  $ffi->custom_type(
+    'foo_t' => {
+      native_type => 'record(Foo)',
+      perl_to_native => sub {
+        my $var = shift;
+        if(ref $var eq 'ARRAY')
+        {
+          return Foo->new(name => $var->[0], value => $var->[1]);
+        }
+        elsif(ref $var eq 'Foo')
+        {
+          return $var;
+        }
+      },
+    },
+  );
 
 };
 

@@ -104,4 +104,6 @@ sub list_types
   uniqstr( ( keys %{ $self->type_map } ), ( keys %{ $self->types } ) );
 }
 
+our @CARP_NOT = qw( FFI::Platypus );
+
 1;
