@@ -106,7 +106,7 @@ sub generate_dev
 
     if($content ne $old)
     {
-      print "XX generating new $ppport_h\n";
+      print "XX $ppport_h\n";
       open my $fh, '>', $ppport_h;
       print $fh $content;
       close $fh;
