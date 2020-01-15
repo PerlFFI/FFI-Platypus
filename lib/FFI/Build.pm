@@ -50,12 +50,8 @@ For this iteration I have decided not to use that module because although it wil
 that can sometimes be used by L<FFI::Platypus>, it is really designed for building XS modules, and trying
 to coerce it into a more general solution has proved difficult in the past.
 
-Supported languages out of the box are C, C++ and Fortran.  In the future I plan on also supporting
-other languages like Rust, and maybe Go, but the machinery for that will eventually live in
-L<FFI::Build::Foreign>.
-
-The hope is that this module will be merged into L<FFI::Platypus>, if and when this module becomes appropriately
-stable.
+Supported languages out of the box are C, C++ and Fortran.  Rust is supported via a language plugin,
+see L<FFI::Platypus::Lang::Rust>.
 
 =head1 CONSTRUCTOR
 
