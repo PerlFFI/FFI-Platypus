@@ -4,18 +4,20 @@ Write Perl bindings to non-Perl libraries with FFI. No XS required.
 
 # SYNOPSIS
 
-    use FFI::Platypus;
-    
-    # for all new code you should use api => 1
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(undef); # search libc
-    
-    # call dynamically
-    $ffi->function( puts => ['string'] => 'int' )->call("hello world");
-    
-    # attach as a xsub and call (much faster)
-    $ffi->attach( puts => ['string'] => 'int' );
-    puts("hello world");
+```perl
+use FFI::Platypus;
+
+# for all new code you should use api => 1
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(undef); # search libc
+
+# call dynamically
+$ffi->function( puts => ['string'] => 'int' )->call("hello world");
+
+# attach as a xsub and call (much faster)
+$ffi->attach( puts => ['string'] => 'int' );
+puts("hello world");
+```
 
 # DESCRIPTION
 
@@ -98,7 +100,9 @@ for free.  You should even consider updating existing modules to
 use API level 1 where feasible.  How do I do that you might ask?
 Simply pass in the API level to the platypus constructor.
 
-    my $ffi = FFI::Platypus->new( api => 1 );
+```perl
+my $ffi = FFI::Platypus->new( api => 1 );
+```
 
 The Platypus documentation has already been updated to assume API
 level 1.
@@ -107,7 +111,9 @@ level 1.
 
 ## new
 
-    my $ffi = FFI::Platypus->new( api => 1, %options);
+```perl
+my $ffi = FFI::Platypus->new( api => 1, %options);
+```
 
 Create a new instance of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
 
@@ -165,22 +171,26 @@ the [lib](#lib) attribute.
 
 ## lib
 
-    $ffi->lib($path1, $path2, ...);
-    my @paths = $ffi->lib;
+```perl
+$ffi->lib($path1, $path2, ...);
+my @paths = $ffi->lib;
+```
 
 The list of libraries to search for symbols in.
 
 The most portable and reliable way to find dynamic libraries is by using
 [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib), like this:
 
-    use FFI::CheckLib 0.06;
-    $ffi->lib(find_lib_or_die lib => 'archive');
-      # finds libarchive.so on Linux
-      #       libarchive.bundle on OS X
-      #       libarchive.dll (or archive.dll) on Windows
-      #       cygarchive-13.dll on Cygwin
-      #       ...
-      # and will die if it isn't found
+```perl
+use FFI::CheckLib 0.06;
+$ffi->lib(find_lib_or_die lib => 'archive');
+  # finds libarchive.so on Linux
+  #       libarchive.bundle on OS X
+  #       libarchive.dll (or archive.dll) on Windows
+  #       cygarchive-13.dll on Cygwin
+  #       ...
+  # and will die if it isn't found
+```
 
 [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib) has a number of options, such as checking for specific
 symbols, etc.  You should consult the documentation for that module.
@@ -193,14 +203,18 @@ it turns out it is different just about everywhere!).
 
 You may also use the ["find\_lib"](#find_lib) method as a shortcut:
 
-    $ffi->find_lib( lib => 'archive' );
+```perl
+$ffi->find_lib( lib => 'archive' );
+```
 
 ## ignore\_not\_found
 
 \[version 0.15\]
 
-    $ffi->ignore_not_found(1);
-    my $ignore_not_found = $ffi->ignore_not_found;
+```perl
+$ffi->ignore_not_found(1);
+my $ignore_not_found = $ffi->ignore_not_found;
+```
 
 Normally the [attach](#attach) and [function](#function) methods will
 throw an exception if it cannot find the name of the function you
@@ -215,7 +229,9 @@ optional functions and you do not wish to wrap every call to
 
 \[version 0.18\]
 
-    $ffi->lang($language);
+```
+$ffi->lang($language);
+```
 
 Specifies the foreign language that you will be interfacing with. The
 default is C.  The foreign language specified with this attribute
@@ -232,8 +248,10 @@ like `Foo::get_bar()` with ["attach"](#attach) or ["function"](#function).
 
 ## type
 
-    $ffi->type($typename);
-    $ffi->type($typename => $alias);
+```perl
+$ffi->type($typename);
+$ffi->type($typename => $alias);
+```
 
 Define a type.  The first argument is the native or C name of the type.
 The second argument (optional) is an alias name that you can use to
@@ -242,24 +260,30 @@ definitions.
 
 Examples:
 
-    $ffi->type('sint32');            # oly checks to see that sint32 is a valid type
-    $ffi->type('sint32' => 'myint'); # creates an alias myint for sint32
-    $ffi->type('bogus');             # dies with appropriate diagnostic
+```perl
+$ffi->type('sint32');            # oly checks to see that sint32 is a valid type
+$ffi->type('sint32' => 'myint'); # creates an alias myint for sint32
+$ffi->type('bogus');             # dies with appropriate diagnostic
+```
 
 ## custom\_type
 
-    $ffi->custom_type($alias => {
-      native_type         => $native_type,
-      native_to_perl      => $coderef,
-      perl_to_native      => $coderef,
-      perl_to_native_post => $coderef,
-    });
+```perl
+$ffi->custom_type($alias => {
+  native_type         => $native_type,
+  native_to_perl      => $coderef,
+  perl_to_native      => $coderef,
+  perl_to_native_post => $coderef,
+});
+```
 
 Define a custom type.  See [FFI::Platypus::Type#Custom-Types](https://metacpan.org/pod/FFI::Platypus::Type#Custom-Types) for details.
 
 ## load\_custom\_type
 
-    $ffi->load_custom_type($name => $alias, @type_args);
+```perl
+$ffi->load_custom_type($name => $alias, @type_args);
+```
 
 Load the custom type defined in the module _$name_, and make an alias
 _$alias_. If the custom type requires any arguments, they may be passed
@@ -272,8 +296,10 @@ prepended to it.
 
 ## types
 
-    my @types = $ffi->types;
-    my @types = FFI::Platypus->types;
+```perl
+my @types = $ffi->types;
+my @types = FFI::Platypus->types;
+```
 
 Returns the list of types that FFI knows about.  This will include the
 native `libffi` types (example: `sint32`, `opaque` and `double`) and
@@ -289,8 +315,10 @@ or custom types will be included in the list.
 
 ## type\_meta
 
-    my $meta = $ffi->type_meta($type_name);
-    my $meta = FFI::Platypus->type_meta($type_name);
+```perl
+my $meta = $ffi->type_meta($type_name);
+my $meta = FFI::Platypus->type_meta($type_name);
+```
 
 Returns a hash reference with the meta information for the given type.
 
@@ -302,35 +330,43 @@ change.  It may be useful for display or debugging.
 
 Examples:
 
-    my $meta = $ffi->type_meta('int');        # standard int type
-    my $meta = $ffi->type_meta('int[64]');    # array of 64 ints
-    $ffi->type('int[128]' => 'myintarray');
-    my $meta = $ffi->type_meta('myintarray'); # array of 128 ints
+```perl
+my $meta = $ffi->type_meta('int');        # standard int type
+my $meta = $ffi->type_meta('int[64]');    # array of 64 ints
+$ffi->type('int[128]' => 'myintarray');
+my $meta = $ffi->type_meta('myintarray'); # array of 128 ints
+```
 
 ## mangler
 
-    $ffi->mangler(\&mangler);
+```
+$ffi->mangler(\&mangler);
+```
 
 Specify a customer mangler to be used for symbol lookup.  This is usually useful
 when you are writing bindings for a library where all of the functions have the
 same prefix.  Example:
 
-    $ffi->mangler(sub {
-      my($symbol) = @_;
-      return "foo_$symbol";
-    });
-    
-    $ffi->function( get_bar => [] => 'int' );  # attaches foo_get_bar
-    
-    my $f = $ffi->function( set_baz => ['int'] => 'void' );
-    $f->call(22); # calls foo_set_baz
+```perl
+$ffi->mangler(sub {
+  my($symbol) = @_;
+  return "foo_$symbol";
+});
+
+$ffi->function( get_bar => [] => 'int' );  # attaches foo_get_bar
+
+my $f = $ffi->function( set_baz => ['int'] => 'void' );
+$f->call(22); # calls foo_set_baz
+```
 
 ## function
 
-    my $function = $ffi->function($name => \@argument_types => $return_type);
-    my $function = $ffi->function($address => \@argument_types => $return_type);
-    my $function = $ffi->function($name => \@argument_types => $return_type, \&wrapper);
-    my $function = $ffi->function($address => \@argument_types => $return_type, \&wrapper);
+```perl
+my $function = $ffi->function($name => \@argument_types => $return_type);
+my $function = $ffi->function($address => \@argument_types => $return_type);
+my $function = $ffi->function($name => \@argument_types => $return_type, \&wrapper);
+my $function = $ffi->function($address => \@argument_types => $return_type, \&wrapper);
+```
 
 Returns an object that is similar to a code reference in that it can be
 called like one.
@@ -338,8 +374,10 @@ called like one.
 Caveat: many situations require a real code reference, so at the price
 of a performance penalty you can get one like this:
 
-    my $function = $ffi->function(...);
-    my $coderef = sub { $function->(@_) };
+```perl
+my $function = $ffi->function(...);
+my $coderef = sub { $function->(@_) };
+```
 
 It may be better, and faster to create a real Perl function using the
 [attach](#attach) method.
@@ -347,8 +385,10 @@ It may be better, and faster to create a real Perl function using the
 In addition to looking up a function by name you can provide the address
 of the symbol yourself:
 
-    my $address = $ffi->find_symbol('my_functon');
-    my $function = $ffi->function($address => ...);
+```perl
+my $address = $ffi->find_symbol('my_functon');
+my $function = $ffi->function($address => ...);
+```
 
 Under the covers, [function](#function) uses [find\_symbol](#find_symbol)
 when you provide it with a name, but it is useful to keep this in mind
@@ -366,13 +406,17 @@ used if you need to verify/modify input/output data.
 
 Examples:
 
-    my $function = $ffi->function('my_function_name', ['int', 'string'] => 'string');
-    my $return_string = $function->(1, "hi there");
+```perl
+my $function = $ffi->function('my_function_name', ['int', 'string'] => 'string');
+my $return_string = $function->(1, "hi there");
+```
 
 \[version 0.91\]
 
-    my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type);
-    my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type, \&wrapper);
+```perl
+my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type);
+my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type, \&wrapper);
+```
 
 Version 0.91 and later allows you to creat functions for c variadic functions
 (such as printf, scanf, etc) which can take a variable number of arguments.
@@ -382,11 +426,13 @@ to create a function object, so if you need to call variadic function with
 different set of arguments then you will need to create a new function object
 each time:
 
-    # int printf(const char *fmt, ...);
-    $ffi->function( printf => ['string'] => ['int'] => 'int' )
-        ->call("print integer %d\n", 42);
-    $ffi->function( printf => ['string'] => ['string'] => 'int' )
-        ->call("print string %s\n", 'platypus');
+```perl
+# int printf(const char *fmt, ...);
+$ffi->function( printf => ['string'] => ['int'] => 'int' )
+    ->call("print integer %d\n", 42);
+$ffi->function( printf => ['string'] => ['string'] => 'int' )
+    ->call("print string %s\n", 'platypus');
+```
 
 Some older versions of libffi and possibly some platforms may not support
 variadic functions.  If you try to create a one, then an exception will be
@@ -394,12 +440,14 @@ thrown.
 
 ## attach
 
-    $ffi->attach($name => \@argument_types => $return_type);
-    $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
-    $ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
-    $ffi->attach($name => \@argument_types => $return_type, \&wrapper);
-    $ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type, \&wrapper);
-    $ffi->attach([$address => $perl_name] => \@argument_types => $return_type, \&wrapper);
+```perl
+$ffi->attach($name => \@argument_types => $return_type);
+$ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type);
+$ffi->attach([$address => $perl_name] => \@argument_types => $return_type);
+$ffi->attach($name => \@argument_types => $return_type, \&wrapper);
+$ffi->attach([$c_name => $perl_name] => \@argument_types => $return_type, \&wrapper);
+$ffi->attach([$address => $perl_name] => \@argument_types => $return_type, \&wrapper);
+```
 
 Find and attach a C function as a real live Perl xsub.  The advantage of
 attaching a function over using the [function](#function) method is that
@@ -416,10 +464,12 @@ method.
 
 Examples:
 
-    $ffi->attach('my_functon_name', ['int', 'string'] => 'string');
-    $ffi->attach(['my_c_functon_name' => 'my_perl_function_name'], ['int', 'string'] => 'string');
-    my $string1 = my_function_name($int);
-    my $string2 = my_perl_function_name($int);
+```perl
+$ffi->attach('my_functon_name', ['int', 'string'] => 'string');
+$ffi->attach(['my_c_functon_name' => 'my_perl_function_name'], ['int', 'string'] => 'string');
+my $string1 = my_function_name($int);
+my $string2 = my_perl_function_name($int);
+```
 
 \[version 0.20\]
 
@@ -430,19 +480,23 @@ input/output data.
 
 Examples:
 
-    $ffi->attach('my_function', ['int', 'string'] => 'string', sub {
-      my($my_function_xsub, $integer, $string) = @_;
-      $integer++;
-      $string .= " and another thing";
-      my $return_string = $my_function_xsub->($integer, $string);
-      $return_string =~ s/Belgium//; # HHGG remove profanity
-      $return_string;
-    });
+```perl
+$ffi->attach('my_function', ['int', 'string'] => 'string', sub {
+  my($my_function_xsub, $integer, $string) = @_;
+  $integer++;
+  $string .= " and another thing";
+  my $return_string = $my_function_xsub->($integer, $string);
+  $return_string =~ s/Belgium//; # HHGG remove profanity
+  $return_string;
+});
+```
 
 \[version 0.91\]
 
-    $ffi->attach($name => \@fixed_argument_types => \@var_argument_types, $return_type);
-    $ffi->attach($name => \@fixed_argument_types => \@var_argument_types, $return_type, \&wrapper);
+```perl
+$ffi->attach($name => \@fixed_argument_types => \@var_argument_types, $return_type);
+$ffi->attach($name => \@fixed_argument_types => \@var_argument_types, $return_type, \&wrapper);
+```
 
 As of version 0.91 you can attach a variadic functions, if it is supported
 by the platform / libffi that you are using.  For details see the `function`
@@ -451,8 +505,10 @@ will be thrown.
 
 ## closure
 
-    my $closure = $ffi->closure($coderef);
-    my $closure = FFI::Platypus->closure($coderef);
+```perl
+my $closure = $ffi->closure($coderef);
+my $closure = FFI::Platypus->closure($coderef);
+```
 
 Prepares a code reference so that it can be used as a FFI closure (a
 Perl subroutine that can be called from C code).  For details on
@@ -460,43 +516,57 @@ closures, see [FFI::Platypus::Type#Closures](https://metacpan.org/pod/FFI::Platy
 
 ## cast
 
-    my $converted_value = $ffi->cast($original_type, $converted_type, $original_value);
+```perl
+my $converted_value = $ffi->cast($original_type, $converted_type, $original_value);
+```
 
 The `cast` function converts an existing _$original\_value_ of type
 _$original\_type_ into one of type _$converted\_type_.  Not all types
 are supported, so care must be taken.  For example, to get the address
 of a string, you can do this:
 
-    my $address = $ffi->cast('string' => 'opaque', $string_value);
+```perl
+my $address = $ffi->cast('string' => 'opaque', $string_value);
+```
 
 Something that won't work is trying to cast an array to anything:
 
-    my $address = $ffi->cast('int[10]' => 'opaque', \@list);  # WRONG
+```perl
+my $address = $ffi->cast('int[10]' => 'opaque', \@list);  # WRONG
+```
 
 ## attach\_cast
 
-    $ffi->attach_cast("cast_name", $original_type, $converted_type);
-    my $converted_value = cast_name($original_value);
+```perl
+$ffi->attach_cast("cast_name", $original_type, $converted_type);
+my $converted_value = cast_name($original_value);
+```
 
 This function attaches a cast as a permanent xsub.  This will make it
 faster and may be useful if you are calling a particular cast a lot.
 
 ## sizeof
 
-    my $size = $ffi->sizeof($type);
-    my $size = FFI::Platypus->sizeof($type);
+```perl
+my $size = $ffi->sizeof($type);
+my $size = FFI::Platypus->sizeof($type);
+```
 
 Returns the total size of the given type in bytes.  For example to get
 the size of an integer:
 
-    my $intsize = $ffi->sizeof('int');   # usually 4
-    my $longsize = $ffi->sizeof('long'); # usually 4 or 8 depending on platform
+```perl
+my $intsize = $ffi->sizeof('int');   # usually 4
+my $longsize = $ffi->sizeof('long'); # usually 4 or 8 depending on platform
+```
 
 You can also get the size of arrays
 
-    my $intarraysize = $ffi->sizeof('int[64]');  # usually 4*64
-    my $intarraysize = $ffi->sizeof('long[64]'); # usually 4*64 or 8*64
-                                                 # depending on platform
+```perl
+my $intarraysize = $ffi->sizeof('int[64]');  # usually 4*64
+my $intarraysize = $ffi->sizeof('long[64]'); # usually 4*64 or 8*64
+                                             # depending on platform
+```
 
 Keep in mind that "pointer" types will always be the pointer / word size
 for the platform that you are using.  This includes strings, opaque and
@@ -510,7 +580,9 @@ iterations.
 
 \[version 0.21\]
 
-    my $align = $ffi->alignof($type);
+```perl
+my $align = $ffi->alignof($type);
+```
 
 Returns the alignment of the given type in bytes.
 
@@ -518,7 +590,9 @@ Returns the alignment of the given type in bytes.
 
 \[version 0.20\]
 
-    $ffi->find_lib( lib => $libname );
+```perl
+$ffi->find_lib( lib => $libname );
+```
 
 This is just a shortcut for calling [FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib) and
 updating the ["lib"](#lib) attribute appropriately.  Care should be taken
@@ -529,7 +603,9 @@ prerequisites appropriately.
 
 ## find\_symbol
 
-    my $address = $ffi->find_symbol($name);
+```perl
+my $address = $ffi->find_symbol($name);
+```
 
 Return the address of the given symbol (usually function).
 
@@ -537,10 +613,12 @@ Return the address of the given symbol (usually function).
 
 \[version 0.96 api = 1+\]
 
-    $ffi->bundle($package, \@args);
-    $ffi->bundle(\@args);
-    $ffi->bundle($package);
-    $ffi->bundle;
+```
+$ffi->bundle($package, \@args);
+$ffi->bundle(\@args);
+$ffi->bundle($package);
+$ffi->bundle;
+```
 
 This is an interface for bundling compiled code with your
 distribution intended to eventually replace the `package` method documented
@@ -550,8 +628,10 @@ above.  See [FFI::Platypus::Bundle](https://metacpan.org/pod/FFI::Platypus::Bund
 
 \[version 0.15 api = 0\]
 
-    $ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
-    $ffi->package;                  # autodetect
+```perl
+$ffi->package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
+$ffi->package;                  # autodetect
+```
 
 **Note**: This method is officially discouraged in favor of `bundle`
 described above.
@@ -563,8 +643,10 @@ dynamic library that was built when your distribution was installed.
 
 ## abis
 
-    my $href = $ffi->abis;
-    my $href = FFI::Platypus->abis;
+```perl
+my $href = $ffi->abis;
+my $href = FFI::Platypus->abis;
+```
 
 Get the legal ABIs supported by your platform and underlying
 implementation.  What is supported can vary a lot by CPU and by
@@ -575,7 +657,9 @@ those ABIs.
 
 ## abi
 
-    $ffi->abi($name);
+```
+$ffi->abi($name);
+```
 
 Set the ABI or calling convention for use in subsequent calls to
 ["function"](#function) or ["attach"](#attach).  May be either a string name or integer
@@ -590,15 +674,17 @@ that are related to types.
 
 ## Integer conversions
 
-    use FFI::Platypus;
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(undef);
-    
-    $ffi->attach(puts => ['string'] => 'int');
-    $ffi->attach(atoi => ['string'] => 'int');
-    
-    puts(atoi('56'));
+```perl
+use FFI::Platypus;
+
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(undef);
+
+$ffi->attach(puts => ['string'] => 'int');
+$ffi->attach(atoi => ['string'] => 'int');
+
+puts(atoi('56'));
+```
 
 **Discussion**: `puts` and `atoi` should be part of the standard C
 library on all platforms.  `puts` prints a string to standard output,
@@ -608,28 +694,30 @@ includes the standard c library.
 
 ## libnotify
 
-    use FFI::CheckLib;
-    use FFI::Platypus;
-    
-    # NOTE: I ported this from anoter Perl FFI library and it seems to work most
-    # of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior
-    # in the old version, and am not really familiar with the libnotify API to
-    # say what is the cause.  Patches welcome to fix it.
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(find_lib_or_exit lib => 'notify');
-    
-    $ffi->attach(notify_init   => ['string'] => 'void');
-    $ffi->attach(notify_uninit => []       => 'void');
-    $ffi->attach([notify_notification_new    => 'notify_new']    => ['string', 'string', 'string']           => 'opaque');
-    $ffi->attach([notify_notification_update => 'notify_update'] => ['opaque', 'string', 'string', 'string'] => 'void');
-    $ffi->attach([notify_notification_show   => 'notify_show']   => ['opaque', 'opaque']                     => 'void');
-    
-    notify_init('FFI::Platypus');
-    my $n = notify_new('','','');
-    notify_update($n, 'FFI::Platypus', 'It works!!!', 'media-playback-start');
-    notify_show($n, undef);
-    notify_uninit();
+```perl
+use FFI::CheckLib;
+use FFI::Platypus;
+
+# NOTE: I ported this from anoter Perl FFI library and it seems to work most
+# of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior
+# in the old version, and am not really familiar with the libnotify API to
+# say what is the cause.  Patches welcome to fix it.
+
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(find_lib_or_exit lib => 'notify');
+
+$ffi->attach(notify_init   => ['string'] => 'void');
+$ffi->attach(notify_uninit => []       => 'void');
+$ffi->attach([notify_notification_new    => 'notify_new']    => ['string', 'string', 'string']           => 'opaque');
+$ffi->attach([notify_notification_update => 'notify_update'] => ['opaque', 'string', 'string', 'string'] => 'void');
+$ffi->attach([notify_notification_show   => 'notify_show']   => ['opaque', 'opaque']                     => 'void');
+
+notify_init('FFI::Platypus');
+my $n = notify_new('','','');
+notify_update($n, 'FFI::Platypus', 'It works!!!', 'media-playback-start');
+notify_show($n, undef);
+notify_uninit();
+```
 
 **Discussion**: libnotify is a desktop GUI notification library for the
 GNOME Desktop environment. This script sends a notification event that
@@ -649,10 +737,12 @@ will get.
 Also in this example, we rename some of the functions when they are
 placed into Perl space to save typing:
 
-    $ffi->attach( [notify_notification_new => 'notify_new']
-      => ['string','string','string']
-      => 'opaque'
-    );
+```perl
+$ffi->attach( [notify_notification_new => 'notify_new']
+  => ['string','string','string']
+  => 'opaque'
+);
+```
 
 When you specify a list reference as the "name" of the function the
 first element is the symbol name as understood by the dynamic library.
@@ -660,23 +750,27 @@ The second element is the name as it will be placed in Perl space.
 
 Later, when we call `notify_new`:
 
-    my $n = notify_new('','','');
+```perl
+my $n = notify_new('','','');
+```
 
 We are really calling the C function `notify_notification_new`.
 
 ## Allocating and freeing memory
 
-    use FFI::Platypus;
-    use FFI::Platypus::Memory qw( malloc free memcpy );
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    my $buffer = malloc 12;
-    
-    memcpy $buffer, $ffi->cast('string' => 'opaque', "hello there"), length "hello there\0";
-    
-    print $ffi->cast('opaque' => 'string', $buffer), "\n";
-    
-    free $buffer;
+```perl
+use FFI::Platypus;
+use FFI::Platypus::Memory qw( malloc free memcpy );
+
+my $ffi = FFI::Platypus->new( api => 1 );
+my $buffer = malloc 12;
+
+memcpy $buffer, $ffi->cast('string' => 'opaque', "hello there"), length "hello there\0";
+
+print $ffi->cast('opaque' => 'string', $buffer), "\n";
+
+free $buffer;
+```
 
 **Discussion**: `malloc` and `free` are standard memory allocation
 functions available from the standard c library and.  Interfaces to
@@ -685,45 +779,47 @@ these and other memory related functions are provided by the
 
 ## structured data records
 
-    package My::UnixTime;
-    
-    use FFI::Platypus::Record;
-    
-    record_layout_1(qw(
-        int    tm_sec
-        int    tm_min
-        int    tm_hour
-        int    tm_mday
-        int    tm_mon
-        int    tm_year
-        int    tm_wday
-        int    tm_yday
-        int    tm_isdst
-        long   tm_gmtoff
-        string tm_zone
-    ));
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(undef);
-    # define a record class My::UnixTime and alias it to "tm"
-    $ffi->type("record(My::UnixTime)*" => 'tm');
-    
-    # attach the C localtime function as a constructor
-    $ffi->attach( localtime => ['time_t*'] => 'tm', sub {
-      my($inner, $class, $time) = @_;
-      $time = time unless defined $time;
-      $inner->(\$time);
-    });
-    
-    package main;
-    
-    # now we can actually use our My::UnixTime class
-    my $time = My::UnixTime->localtime;
-    printf "time is %d:%d:%d %s\n",
-      $time->tm_hour,
-      $time->tm_min,
-      $time->tm_sec,
-      $time->tm_zone;
+```perl
+package My::UnixTime;
+
+use FFI::Platypus::Record;
+
+record_layout_1(qw(
+    int    tm_sec
+    int    tm_min
+    int    tm_hour
+    int    tm_mday
+    int    tm_mon
+    int    tm_year
+    int    tm_wday
+    int    tm_yday
+    int    tm_isdst
+    long   tm_gmtoff
+    string tm_zone
+));
+
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(undef);
+# define a record class My::UnixTime and alias it to "tm"
+$ffi->type("record(My::UnixTime)*" => 'tm');
+
+# attach the C localtime function as a constructor
+$ffi->attach( localtime => ['time_t*'] => 'tm', sub {
+  my($inner, $class, $time) = @_;
+  $time = time unless defined $time;
+  $inner->(\$time);
+});
+
+package main;
+
+# now we can actually use our My::UnixTime class
+my $time = My::UnixTime->localtime;
+printf "time is %d:%d:%d %s\n",
+  $time->tm_hour,
+  $time->tm_min,
+  $time->tm_sec,
+  $time->tm_zone;
+```
 
 **Discussion**: C and other machine code languages frequently provide
 interfaces that include structured data records (known as "structs" in
@@ -742,26 +838,28 @@ with no star suffix.
 
 ## libuuid
 
-    use FFI::CheckLib;
-    use FFI::Platypus;
-    use FFI::Platypus::Memory qw( malloc free );
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(find_lib_or_exit lib => 'uuid');
-    $ffi->type('string(37)*' => 'uuid_string');
-    $ffi->type('record(16)*' => 'uuid_t');
-    
-    $ffi->attach(uuid_generate => ['uuid_t'] => 'void');
-    $ffi->attach(uuid_unparse  => ['uuid_t','uuid_string'] => 'void');
-    
-    my $uuid = "\0" x 16;  # uuid_t
-    uuid_generate($uuid);
-    
-    my $string = "\0" x 37; # 36 bytes to store a UUID string
-                            # + NUL termination
-    uuid_unparse($uuid, $string);
-    
-    print "$string\n";
+```perl
+use FFI::CheckLib;
+use FFI::Platypus;
+use FFI::Platypus::Memory qw( malloc free );
+
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(find_lib_or_exit lib => 'uuid');
+$ffi->type('string(37)*' => 'uuid_string');
+$ffi->type('record(16)*' => 'uuid_t');
+
+$ffi->attach(uuid_generate => ['uuid_t'] => 'void');
+$ffi->attach(uuid_unparse  => ['uuid_t','uuid_string'] => 'void');
+
+my $uuid = "\0" x 16;  # uuid_t
+uuid_generate($uuid);
+
+my $string = "\0" x 37; # 36 bytes to store a UUID string
+                        # + NUL termination
+uuid_unparse($uuid, $string);
+
+print "$string\n";
+```
 
 **Discussion**: libuuid is a library used to generate unique identifiers
 (UUID) for objects that may be accessible beyond the local system.  The
@@ -774,38 +872,42 @@ this case it is simply 16 bytes).  We also know that the strings
 
 ## puts and getpid
 
-    use FFI::Platypus;
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(undef);
-    
-    $ffi->attach(puts => ['string'] => 'int');
-    $ffi->attach(getpid => [] => 'int');
-    
-    puts(getpid());
+```perl
+use FFI::Platypus;
+
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(undef);
+
+$ffi->attach(puts => ['string'] => 'int');
+$ffi->attach(getpid => [] => 'int');
+
+puts(getpid());
+```
 
 **Discussion**: `puts` is part of standard C library on all platforms.
 `getpid` is available on Unix type platforms.
 
 ## Math library
 
-    use FFI::Platypus;
-    use FFI::CheckLib;
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(undef);
-    $ffi->attach(puts => ['string'] => 'int');
-    $ffi->attach(fdim => ['double','double'] => 'double');
-    
-    puts(fdim(7.0, 2.0));
-    
-    $ffi->attach(cos => ['double'] => 'double');
-    
-    puts(cos(2.0));
-    
-    $ffi->attach(fmax => ['double', 'double'] => 'double');
-    
-    puts(fmax(2.0,3.0));
+```perl
+use FFI::Platypus;
+use FFI::CheckLib;
+
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(undef);
+$ffi->attach(puts => ['string'] => 'int');
+$ffi->attach(fdim => ['double','double'] => 'double');
+
+puts(fdim(7.0, 2.0));
+
+$ffi->attach(cos => ['double'] => 'double');
+
+puts(cos(2.0));
+
+$ffi->attach(fmax => ['double', 'double'] => 'double');
+
+puts(fmax(2.0,3.0));
+```
 
 **Discussion**: On UNIX the standard c library math functions are
 frequently provided in a separate library `libm`, so you could search
@@ -816,51 +918,55 @@ use `undef` as the library to find them.
 
 ## Strings
 
-    use FFI::Platypus;
-    
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib(undef);
-    $ffi->attach(puts => ['string'] => 'int');
-    $ffi->attach(strlen => ['string'] => 'int');
-    
-    puts(strlen('somestring'));
-    
-    $ffi->attach(strstr => ['string','string'] => 'string');
-    
-    puts(strstr('somestring', 'string'));
-    
-    #attach puts => [string] => int;
-    
-    puts(puts("lol"));
-    
-    $ffi->attach(strerror => ['int'] => 'string');
-    
-    puts(strerror(2));
+```perl
+use FFI::Platypus;
+
+my $ffi = FFI::Platypus->new;
+$ffi->lib(undef);
+$ffi->attach(puts => ['string'] => 'int');
+$ffi->attach(strlen => ['string'] => 'int');
+
+puts(strlen('somestring'));
+
+$ffi->attach(strstr => ['string','string'] => 'string');
+
+puts(strstr('somestring', 'string'));
+
+#attach puts => [string] => int;
+
+puts(puts("lol"));
+
+$ffi->attach(strerror => ['int'] => 'string');
+
+puts(strerror(2));
+```
 
 **Discussion**: Strings are not a native type to `libffi` but the are
 handled seamlessly by Platypus.
 
 ## Attach function from pointer
 
-    use FFI::TinyCC;
-    use FFI::Platypus;
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    my $tcc = FFI::TinyCC->new;
-    
-    $tcc->compile_string(q{
-      int
-      add(int a, int b)
-      {
-        return a+b;
-      }
-    });
-    
-    my $address = $tcc->get_symbol('add');
-    
-    $ffi->attach( [ $address => 'add' ] => ['int','int'] => 'int' );
-    
-    print add(1,2), "\n";
+```perl
+use FFI::TinyCC;
+use FFI::Platypus;
+
+my $ffi = FFI::Platypus->new( api => 1 );
+my $tcc = FFI::TinyCC->new;
+
+$tcc->compile_string(q{
+  int
+  add(int a, int b)
+  {
+    return a+b;
+  }
+});
+
+my $address = $tcc->get_symbol('add');
+
+$ffi->attach( [ $address => 'add' ] => ['int','int'] => 'int' );
+
+print add(1,2), "\n";
+```
 
 **Discussion**: Sometimes you will have a pointer to a function from a
 source other than Platypus that you want to call.  You can use that
@@ -875,69 +981,71 @@ just-in-time (JIT) compilation service for FFI.
 
 ## libzmq
 
-    use constant ZMQ_IO_THREADS  => 1;
-    use constant ZMQ_MAX_SOCKETS => 2;
-    use constant ZMQ_REQ => 3;
-    use constant ZMQ_REP => 4;
-    use FFI::CheckLib qw( find_lib_or_exit );
-    use FFI::Platypus;
-    use FFI::Platypus::Memory qw( malloc );
-    use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
-    
-    my $endpoint = "ipc://zmq-ffi-$$";
-    my $ffi = FFI::Platypus->new( api => 1 );
-    
-    $ffi->lib(undef); # for puts
-    $ffi->attach(puts => ['string'] => 'int');
-    
-    $ffi->lib(find_lib_or_exit lib => 'zmq');
-    $ffi->attach(zmq_version => ['int*', 'int*', 'int*'] => 'void');
-    
-    my($major,$minor,$patch);
-    zmq_version(\$major, \$minor, \$patch);
-    puts("libzmq version $major.$minor.$patch");
-    die "this script only works with libzmq 3 or better" unless $major >= 3;
-    
-    $ffi->type('opaque'       => 'zmq_context');
-    $ffi->type('opaque'       => 'zmq_socket');
-    $ffi->type('opaque'       => 'zmq_msg_t');
-    $ffi->attach(zmq_ctx_new  => [] => 'zmq_context');
-    $ffi->attach(zmq_ctx_set  => ['zmq_context', 'int', 'int'] => 'int');
-    $ffi->attach(zmq_socket   => ['zmq_context', 'int'] => 'zmq_socket');
-    $ffi->attach(zmq_connect  => ['opaque', 'string'] => 'int');
-    $ffi->attach(zmq_bind     => ['zmq_socket', 'string'] => 'int');
-    $ffi->attach(zmq_send     => ['zmq_socket', 'opaque', 'size_t', 'int'] => 'int');
-    $ffi->attach(zmq_msg_init => ['zmq_msg_t'] => 'int');
-    $ffi->attach(zmq_msg_recv => ['zmq_msg_t', 'zmq_socket', 'int'] => 'int');
-    $ffi->attach(zmq_msg_data => ['zmq_msg_t'] => 'opaque');
-    $ffi->attach(zmq_errno    => [] => 'int');
-    $ffi->attach(zmq_strerror => ['int'] => 'string');
-    
-    my $context = zmq_ctx_new();
-    zmq_ctx_set($context, ZMQ_IO_THREADS, 1);
-    
-    my $socket1 = zmq_socket($context, ZMQ_REQ);
-    zmq_connect($socket1, $endpoint);
-    
-    my $socket2 = zmq_socket($context, ZMQ_REP);
-    zmq_bind($socket2, $endpoint);
-    
-    do { # send
-      our $sent_message = "hello there";
-      my($pointer, $size) = scalar_to_buffer $sent_message;
-      my $r = zmq_send($socket1, $pointer, $size, 0);
-      die zmq_strerror(zmq_errno()) if $r == -1;
-    };
-    
-    do { # recv
-      my $msg_ptr  = malloc 100;
-      zmq_msg_init($msg_ptr);
-      my $size     = zmq_msg_recv($msg_ptr, $socket2, 0);
-      die zmq_strerror(zmq_errno()) if $size == -1;
-      my $data_ptr = zmq_msg_data($msg_ptr);
-      my $recv_message = buffer_to_scalar $data_ptr, $size;
-      print "recv_message = $recv_message\n";
-    };
+```perl
+use constant ZMQ_IO_THREADS  => 1;
+use constant ZMQ_MAX_SOCKETS => 2;
+use constant ZMQ_REQ => 3;
+use constant ZMQ_REP => 4;
+use FFI::CheckLib qw( find_lib_or_exit );
+use FFI::Platypus;
+use FFI::Platypus::Memory qw( malloc );
+use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
+
+my $endpoint = "ipc://zmq-ffi-$$";
+my $ffi = FFI::Platypus->new( api => 1 );
+
+$ffi->lib(undef); # for puts
+$ffi->attach(puts => ['string'] => 'int');
+
+$ffi->lib(find_lib_or_exit lib => 'zmq');
+$ffi->attach(zmq_version => ['int*', 'int*', 'int*'] => 'void');
+
+my($major,$minor,$patch);
+zmq_version(\$major, \$minor, \$patch);
+puts("libzmq version $major.$minor.$patch");
+die "this script only works with libzmq 3 or better" unless $major >= 3;
+
+$ffi->type('opaque'       => 'zmq_context');
+$ffi->type('opaque'       => 'zmq_socket');
+$ffi->type('opaque'       => 'zmq_msg_t');
+$ffi->attach(zmq_ctx_new  => [] => 'zmq_context');
+$ffi->attach(zmq_ctx_set  => ['zmq_context', 'int', 'int'] => 'int');
+$ffi->attach(zmq_socket   => ['zmq_context', 'int'] => 'zmq_socket');
+$ffi->attach(zmq_connect  => ['opaque', 'string'] => 'int');
+$ffi->attach(zmq_bind     => ['zmq_socket', 'string'] => 'int');
+$ffi->attach(zmq_send     => ['zmq_socket', 'opaque', 'size_t', 'int'] => 'int');
+$ffi->attach(zmq_msg_init => ['zmq_msg_t'] => 'int');
+$ffi->attach(zmq_msg_recv => ['zmq_msg_t', 'zmq_socket', 'int'] => 'int');
+$ffi->attach(zmq_msg_data => ['zmq_msg_t'] => 'opaque');
+$ffi->attach(zmq_errno    => [] => 'int');
+$ffi->attach(zmq_strerror => ['int'] => 'string');
+
+my $context = zmq_ctx_new();
+zmq_ctx_set($context, ZMQ_IO_THREADS, 1);
+
+my $socket1 = zmq_socket($context, ZMQ_REQ);
+zmq_connect($socket1, $endpoint);
+
+my $socket2 = zmq_socket($context, ZMQ_REP);
+zmq_bind($socket2, $endpoint);
+
+do { # send
+  our $sent_message = "hello there";
+  my($pointer, $size) = scalar_to_buffer $sent_message;
+  my $r = zmq_send($socket1, $pointer, $size, 0);
+  die zmq_strerror(zmq_errno()) if $r == -1;
+};
+
+do { # recv
+  my $msg_ptr  = malloc 100;
+  zmq_msg_init($msg_ptr);
+  my $size     = zmq_msg_recv($msg_ptr, $socket2, 0);
+  die zmq_strerror(zmq_errno()) if $size == -1;
+  my $data_ptr = zmq_msg_data($msg_ptr);
+  my $recv_message = buffer_to_scalar $data_ptr, $size;
+  print "recv_message = $recv_message\n";
+};
+```
 
 **Discussion**: ØMQ is a high-performance asynchronous messaging library.
 There are a few things to note here.
@@ -969,103 +1077,105 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
 
 ## libarchive
 
-    use FFI::Platypus      ();
-    use FFI::CheckLib      qw( find_lib_or_exit );
-    
-    # This example uses FreeBSD's libarchive to list the contents of any
-    # archive format that it suppors.  We've also filled out a part of
-    # the ArchiveWrite class that could be used for writing archive formats
-    # supported by libarchive
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(find_lib_or_exit lib => 'archive');
-    $ffi->type('object(Archive)'      => 'archive_t');
-    $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
-    $ffi->type('object(ArchiveWrite)' => 'archive_write_t');
-    $ffi->type('object(ArchiveEntry)' => 'archive_entry_t');
-    
-    package Archive;
-    
-    # base class is "abstract" having no constructor or destructor
-    
-    $ffi->mangler(sub {
-      my($name) = @_;
-      "archive_$name";
-    });
-    $ffi->attach( error_string => ['archive_t'] => 'string' );
-    
-    package ArchiveRead;
-    
-    our @ISA = qw( Archive );
-    
-    $ffi->mangler(sub {
-      my($name) = @_;
-      "archive_read_$name";
-    });
-    
-    $ffi->attach( new                   => ['string']                        => 'archive_read_t' );
-    $ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                     => 'void' );
-    $ffi->attach( support_filter_all    => ['archive_t']                     => 'int' );
-    $ffi->attach( support_format_all    => ['archive_t']                     => 'int' );
-    $ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int' );
-    $ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int' );
-    $ffi->attach( data_skip             => ['archive_t']                     => 'int' );
-    # ... define additional read methods
-    
-    package ArchiveWrite;
-    
-    our @ISA = qw( Archive );
-    
-    $ffi->mangler(sub {
-      my($name) = @_;
-      "archive_write_$name";
-    });
-    
-    $ffi->attach( new                   => ['string'] => 'archive_write_t' );
-    $ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] => 'void' );
-    # ... define additional write methods
-    
-    package ArchiveEntry;
-    
-    $ffi->mangler(sub {
-      my($name) = @_;
-      "archive_entry_$name";
-    });
-    
-    $ffi->attach( new => ['string']     => 'archive_entry_t' );
-    $ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] => 'void' );
-    $ffi->attach( pathname              => ['archive_entry_t'] => 'string' );
-    # ... define additional entry methods
-    
-    package main;
-    
-    use constant ARCHIVE_OK => 0;
-    
-    # this is a Perl version of the C code here:
-    # https://github.com/libarchive/libarchive/wiki/Examples#List_contents_of_Archive_stored_in_File
-    
-    my $archive_filename = shift @ARGV;
-    unless(defined $archive_filename)
-    {
-      print "usage: $0 archive.tar\n";
-      exit;
-    }
-    
-    my $archive = ArchiveRead->new;
-    $archive->support_filter_all;
-    $archive->support_format_all;
-    
-    my $r = $archive->open_filename($archive_filename, 1024);
-    die "error opening $archive_filename: ", $archive->error_string
-      unless $r == ARCHIVE_OK;
-    
-    my $entry = ArchiveEntry->new;
-    
-    while($archive->next_header2($entry) == ARCHIVE_OK)
-    {
-      print $entry->pathname, "\n";
-      $archive->data_skip;
-    }
+```perl
+use FFI::Platypus      ();
+use FFI::CheckLib      qw( find_lib_or_exit );
+
+# This example uses FreeBSD's libarchive to list the contents of any
+# archive format that it suppors.  We've also filled out a part of
+# the ArchiveWrite class that could be used for writing archive formats
+# supported by libarchive
+
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(find_lib_or_exit lib => 'archive');
+$ffi->type('object(Archive)'      => 'archive_t');
+$ffi->type('object(ArchiveRead)'  => 'archive_read_t');
+$ffi->type('object(ArchiveWrite)' => 'archive_write_t');
+$ffi->type('object(ArchiveEntry)' => 'archive_entry_t');
+
+package Archive;
+
+# base class is "abstract" having no constructor or destructor
+
+$ffi->mangler(sub {
+  my($name) = @_;
+  "archive_$name";
+});
+$ffi->attach( error_string => ['archive_t'] => 'string' );
+
+package ArchiveRead;
+
+our @ISA = qw( Archive );
+
+$ffi->mangler(sub {
+  my($name) = @_;
+  "archive_read_$name";
+});
+
+$ffi->attach( new                   => ['string']                        => 'archive_read_t' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                     => 'void' );
+$ffi->attach( support_filter_all    => ['archive_t']                     => 'int' );
+$ffi->attach( support_format_all    => ['archive_t']                     => 'int' );
+$ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int' );
+$ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int' );
+$ffi->attach( data_skip             => ['archive_t']                     => 'int' );
+# ... define additional read methods
+
+package ArchiveWrite;
+
+our @ISA = qw( Archive );
+
+$ffi->mangler(sub {
+  my($name) = @_;
+  "archive_write_$name";
+});
+
+$ffi->attach( new                   => ['string'] => 'archive_write_t' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] => 'void' );
+# ... define additional write methods
+
+package ArchiveEntry;
+
+$ffi->mangler(sub {
+  my($name) = @_;
+  "archive_entry_$name";
+});
+
+$ffi->attach( new => ['string']     => 'archive_entry_t' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] => 'void' );
+$ffi->attach( pathname              => ['archive_entry_t'] => 'string' );
+# ... define additional entry methods
+
+package main;
+
+use constant ARCHIVE_OK => 0;
+
+# this is a Perl version of the C code here:
+# https://github.com/libarchive/libarchive/wiki/Examples#List_contents_of_Archive_stored_in_File
+
+my $archive_filename = shift @ARGV;
+unless(defined $archive_filename)
+{
+  print "usage: $0 archive.tar\n";
+  exit;
+}
+
+my $archive = ArchiveRead->new;
+$archive->support_filter_all;
+$archive->support_format_all;
+
+my $r = $archive->open_filename($archive_filename, 1024);
+die "error opening $archive_filename: ", $archive->error_string
+  unless $r == ARCHIVE_OK;
+
+my $entry = ArchiveEntry->new;
+
+while($archive->next_header2($entry) == ARCHIVE_OK)
+{
+  print $entry->pathname, "\n";
+  $archive->data_skip;
+}
+```
 
 **Discussion**: libarchive is the implementation of `tar` for FreeBSD
 provided as a library and available on a number of platforms.
@@ -1083,56 +1193,62 @@ Another advanced feature of this example is that we define a mangler
 to modify the symbol resolution for each class.  This means we can do
 this when we define a method for Archive:
 
-    $ffi->attach( support_filter_all => ['archive_t'] => 'int' );
+```perl
+$ffi->attach( support_filter_all => ['archive_t'] => 'int' );
+```
 
 Rather than this:
 
-    $ffi->attach(
-      [ archive_read_support_filter_all => 'support_read_filter_all' ] =>
-      ['archive_t'] => 'int' );
-    );
+```perl
+$ffi->attach(
+  [ archive_read_support_filter_all => 'support_read_filter_all' ] =>
+  ['archive_t'] => 'int' );
+);
+```
 
 ## unix open
 
-    use FFI::Platypus;
-    
-    {
-      package FD;
-    
-      use constant O_RDONLY => 0;
-      use constant O_WRONLY => 1;
-      use constant O_RDWR   => 2;
-    
-      use constant IN  => bless \do { my $in=0  }, __PACKAGE__;
-      use constant OUT => bless \do { my $out=1 }, __PACKAGE__;
-      use constant ERR => bless \do { my $err=2 }, __PACKAGE__;
-    
-      my $ffi = FFI::Platypus->new( api => 1, lib => [undef]);
-    
-      $ffi->type('object(FD,int)' => 'fd');
-    
-      $ffi->attach( [ 'open' => 'new' ] => [ 'string', 'int', 'mode_t' ] => 'fd' => sub {
-        my($xsub, $class, $fn, @rest) = @_;
-        my $fd = $xsub->($fn, @rest);
-        die "error opening $fn $!" if $$fd == -1;
-        $fd;
-      });
-    
-      $ffi->attach( write => ['fd', 'string', 'size_t' ] => 'ssize_t' );
-      $ffi->attach( read  => ['fd', 'string', 'size_t' ] => 'ssize_t' );
-      $ffi->attach( close => ['fd'] => 'int' );
-    }
-    
-    my $fd = FD->new("$0", FD::O_RDONLY);
-    
-    my $buffer = "\0" x 10;
-    
-    while(my $br = $fd->read($buffer, 10))
-    {
-      FD::OUT->write($buffer, $br);
-    }
-    
-    $fd->close;
+```perl
+use FFI::Platypus;
+
+{
+  package FD;
+
+  use constant O_RDONLY => 0;
+  use constant O_WRONLY => 1;
+  use constant O_RDWR   => 2;
+
+  use constant IN  => bless \do { my $in=0  }, __PACKAGE__;
+  use constant OUT => bless \do { my $out=1 }, __PACKAGE__;
+  use constant ERR => bless \do { my $err=2 }, __PACKAGE__;
+
+  my $ffi = FFI::Platypus->new( api => 1, lib => [undef]);
+
+  $ffi->type('object(FD,int)' => 'fd');
+
+  $ffi->attach( [ 'open' => 'new' ] => [ 'string', 'int', 'mode_t' ] => 'fd' => sub {
+    my($xsub, $class, $fn, @rest) = @_;
+    my $fd = $xsub->($fn, @rest);
+    die "error opening $fn $!" if $$fd == -1;
+    $fd;
+  });
+
+  $ffi->attach( write => ['fd', 'string', 'size_t' ] => 'ssize_t' );
+  $ffi->attach( read  => ['fd', 'string', 'size_t' ] => 'ssize_t' );
+  $ffi->attach( close => ['fd'] => 'int' );
+}
+
+my $fd = FD->new("$0", FD::O_RDONLY);
+
+my $buffer = "\0" x 10;
+
+while(my $br = $fd->read($buffer, 10))
+{
+  FD::OUT->write($buffer, $br);
+}
+
+$fd->close;
+```
 
 **Discussion**: The Unix file system calls use an integer handle for
 each open file.  We can use the same `object` type that we used
@@ -1144,62 +1260,64 @@ functions.
 
 ## bzip2
 
-    use FFI::Platypus 0.20 (); # 0.20 required for using wrappers
-    use FFI::CheckLib qw( find_lib_or_die );
-    use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
-    use FFI::Platypus::Memory qw( malloc free );
-    
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib(find_lib_or_die lib => 'bz2');
-    
-    $ffi->attach(
-      [ BZ2_bzBuffToBuffCompress => 'compress' ] => [
-        'opaque',                           # dest
-        'unsigned int *',                   # dest length
-        'opaque',                           # source
-        'unsigned int',                     # source length
-        'int',                              # blockSize100k
-        'int',                              # verbosity
-        'int',                              # workFactor
-      ] => 'int',
-      sub {
-        my $sub = shift;
-        my($source,$source_length) = scalar_to_buffer $_[0];
-        my $dest_length = int(length($source)*1.01) + 1 + 600;
-        my $dest = malloc $dest_length;
-        my $r = $sub->($dest, \$dest_length, $source, $source_length, 9, 0, 30);
-        die "bzip2 error $r" unless $r == 0;
-        my $compressed = buffer_to_scalar($dest, $dest_length);
-        free $dest;
-        $compressed;
-      },
-    );
-    
-    $ffi->attach(
-      [ BZ2_bzBuffToBuffDecompress => 'decompress' ] => [
-        'opaque',                           # dest
-        'unsigned int *',                   # dest length
-        'opaque',                           # source
-        'unsigned int',                     # source length
-        'int',                              # small
-        'int',                              # verbosity
-      ] => 'int',
-      sub {
-        my $sub = shift;
-        my($source, $source_length) = scalar_to_buffer $_[0];
-        my $dest_length = $_[1];
-        my $dest = malloc $dest_length;
-        my $r = $sub->($dest, \$dest_length, $source, $source_length, 0, 0);
-        die "bzip2 error $r" unless $r == 0;
-        my $decompressed = buffer_to_scalar($dest, $dest_length);
-        free $dest;
-        $decompressed;
-      },
-    );
-    
-    my $original = "hello compression world\n";
-    my $compressed = compress($original);
-    print decompress($compressed, length $original);
+```perl
+use FFI::Platypus 0.20 (); # 0.20 required for using wrappers
+use FFI::CheckLib qw( find_lib_or_die );
+use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
+use FFI::Platypus::Memory qw( malloc free );
+
+my $ffi = FFI::Platypus->new( api => 1 );
+$ffi->lib(find_lib_or_die lib => 'bz2');
+
+$ffi->attach(
+  [ BZ2_bzBuffToBuffCompress => 'compress' ] => [
+    'opaque',                           # dest
+    'unsigned int *',                   # dest length
+    'opaque',                           # source
+    'unsigned int',                     # source length
+    'int',                              # blockSize100k
+    'int',                              # verbosity
+    'int',                              # workFactor
+  ] => 'int',
+  sub {
+    my $sub = shift;
+    my($source,$source_length) = scalar_to_buffer $_[0];
+    my $dest_length = int(length($source)*1.01) + 1 + 600;
+    my $dest = malloc $dest_length;
+    my $r = $sub->($dest, \$dest_length, $source, $source_length, 9, 0, 30);
+    die "bzip2 error $r" unless $r == 0;
+    my $compressed = buffer_to_scalar($dest, $dest_length);
+    free $dest;
+    $compressed;
+  },
+);
+
+$ffi->attach(
+  [ BZ2_bzBuffToBuffDecompress => 'decompress' ] => [
+    'opaque',                           # dest
+    'unsigned int *',                   # dest length
+    'opaque',                           # source
+    'unsigned int',                     # source length
+    'int',                              # small
+    'int',                              # verbosity
+  ] => 'int',
+  sub {
+    my $sub = shift;
+    my($source, $source_length) = scalar_to_buffer $_[0];
+    my $dest_length = $_[1];
+    my $dest = malloc $dest_length;
+    my $r = $sub->($dest, \$dest_length, $source, $source_length, 0, 0);
+    die "bzip2 error $r" unless $r == 0;
+    my $decompressed = buffer_to_scalar($dest, $dest_length);
+    free $dest;
+    $decompressed;
+  },
+);
+
+my $original = "hello compression world\n";
+my $compressed = compress($original);
+print decompress($compressed, length $original);
+```
 
 **Discussion**: bzip2 is a compression library.  For simple one shot
 attempts at compression/decompression when you expect the original and
@@ -1228,70 +1346,74 @@ wrapper function will be returned back to the original caller.
 
 `ffi/foo.c`:
 
-    #include <ffi_platypus_bundle.h>
-    #include <string.h>
-    
-    typedef struct {
-      char *name;
-      int value;
-    } foo_t;
-    
-    foo_t*
-    foo__new(const char *class_name, const char *name, int value)
-    {
-      (void)class_name;
-      foo_t *self = malloc( sizeof( foo_t ) );
-      self->name = strdup(name);
-      self->value = value;
-      return self;
-    }
-    
-    const char *
-    foo__name(foo_t *self)
-    {
-      return self->name;
-    }
-    
-    int
-    foo__value(foo_t *self)
-    {
-      return self->value;
-    }
-    
-    void
-    foo__DESTROY(foo_t *self)
-    {
-      free(self->name);
-      free(self);
-    }
+```
+#include <ffi_platypus_bundle.h>
+#include <string.h>
+
+typedef struct {
+  char *name;
+  int value;
+} foo_t;
+
+foo_t*
+foo__new(const char *class_name, const char *name, int value)
+{
+  (void)class_name;
+  foo_t *self = malloc( sizeof( foo_t ) );
+  self->name = strdup(name);
+  self->value = value;
+  return self;
+}
+
+const char *
+foo__name(foo_t *self)
+{
+  return self->name;
+}
+
+int
+foo__value(foo_t *self)
+{
+  return self->value;
+}
+
+void
+foo__DESTROY(foo_t *self)
+{
+  free(self->name);
+  free(self);
+}
+```
 
 `lib/Foo.pm`:
 
-    package Foo;
-    
-    use strict;
-    use warnings;
-    use FFI::Platypus;
-    
-    {
-      my $ffi = FFI::Platypus->new( api => 1 );
-    
-      $ffi->type('object(Foo)' => 'foo_t');
-      $ffi->mangler(sub {
-        my $name = shift;
-        $name =~ s/^/foo__/;
-        $name;
-      });
-    
-      $ffi->bundle;
-    
-      $ffi->attach( new =>     [ 'string', 'string', 'int' ] => 'foo_t'  );
-      $ffi->attach( name =>    [ 'foo_t' ]                   => 'string' );
-      $ffi->attach( value =>   [ 'foo_t' ]                   => 'int'    );
-      $ffi->attach( DESTROY => [ 'foo_t' ]                   => 'void'   );
-    }
-    
-    1;
+```perl
+package Foo;
+
+use strict;
+use warnings;
+use FFI::Platypus;
+
+{
+  my $ffi = FFI::Platypus->new( api => 1 );
+
+  $ffi->type('object(Foo)' => 'foo_t');
+  $ffi->mangler(sub {
+    my $name = shift;
+    $name =~ s/^/foo__/;
+    $name;
+  });
+
+  $ffi->bundle;
+
+  $ffi->attach( new =>     [ 'string', 'string', 'int' ] => 'foo_t'  );
+  $ffi->attach( name =>    [ 'foo_t' ]                   => 'string' );
+  $ffi->attach( value =>   [ 'foo_t' ]                   => 'int'    );
+  $ffi->attach( DESTROY => [ 'foo_t' ]                   => 'void'   );
+}
+
+1;
+```
 
 You can bundle your own C (or other compiled language) code with your
 Perl extension.  Sometimes this is helpful for smoothing over the
@@ -1311,9 +1433,11 @@ for details.
 This turns out to be a challenge for any language calling into C, which
 frequently uses `#define` macros to define constants like so:
 
-    #define FOO_STATIC  1
-    #define FOO_DYNAMIC 2
-    #define FOO_OTHER   3
+```
+#define FOO_STATIC  1
+#define FOO_DYNAMIC 2
+#define FOO_OTHER   3
+```
 
 As macros are expanded and their definitions are thrown away by the C pre-processor
 there isn't any way to get the name/value mappings from the compiled dynamic
@@ -1321,9 +1445,11 @@ library.
 
 You can manually create equivalent constants in your Perl source:
 
-    use constant FOO_STATIC  => 1;
-    use constant FOO_DYNAMIC => 2;
-    use constant FOO_OTHER   => 3;
+```perl
+use constant FOO_STATIC  => 1;
+use constant FOO_DYNAMIC => 2;
+use constant FOO_OTHER   => 3;
+```
 
 If there are a lot of these types of constants you might want to consider using
 a tool ([Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C) can do this) that can extract the constants for you.
@@ -1484,12 +1610,14 @@ that is normally automatically built by `./Build test`.  If you prefer
 to use `prove` or run tests directly, you can use the `./Build
 libtest` command to build it.  Example:
 
-    % perl Makefile.PL
-    % make
-    % make ffi-test
-    % prove -bv t
-    # or an individual test
-    % perl -Mblib t/ffi_platypus_memory.t
+```
+% perl Makefile.PL
+% make
+% make ffi-test
+% prove -bv t
+# or an individual test
+% perl -Mblib t/ffi_platypus_memory.t
+```
 
 The build process also respects these environment variables:
 
@@ -1500,14 +1628,16 @@ The build process also respects these environment variables:
     variable will force Platypus to build with both of those options on a 64
     bit Perl as well.
 
-        % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Makefile.PL
-        DEBUG_FAKE32:
-          + making Math::Int64 a prereq
-          + Using Math::Int64's C API to manipulate 64 bit values
-        Generating a Unix-style Makefile
-        Writing Makefile for FFI::Platypus
-        Writing MYMETA.yml and MYMETA.json
-        %
+    ```
+    % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Makefile.PL
+    DEBUG_FAKE32:
+      + making Math::Int64 a prereq
+      + Using Math::Int64's C API to manipulate 64 bit values
+    Generating a Unix-style Makefile
+    Writing Makefile for FFI::Platypus
+    Writing MYMETA.yml and MYMETA.json
+    %
+    ```
 
 - FFI\_PLATYPUS\_NO\_ALLOCA
 
@@ -1519,21 +1649,25 @@ The build process also respects these environment variables:
     despite these precautions, then you can turn its use off by setting this
     environment variable when you run `Makefile.PL`:
 
-        helix% env FFI_PLATYPUS_NO_ALLOCA=1 perl Makefile.PL
-        NO_ALLOCA:
-          + alloca() will not be used, even if your platform supports it.
-        Generating a Unix-style Makefile
-        Writing Makefile for FFI::Platypus
-        Writing MYMETA.yml and MYMETA.json
+    ```perl
+    helix% env FFI_PLATYPUS_NO_ALLOCA=1 perl Makefile.PL
+    NO_ALLOCA:
+      + alloca() will not be used, even if your platform supports it.
+    Generating a Unix-style Makefile
+    Writing Makefile for FFI::Platypus
+    Writing MYMETA.yml and MYMETA.json
+    ```
 
 - V
 
     When building platypus may hide some of the excessive output when
     probing and building, unless you set `V` to a true value.
 
-        % env V=1 perl Makefile.PL
-        % make V=1
-        ...
+    ```
+    % env V=1 perl Makefile.PL
+    % make V=1
+    ...
+    ```
 
 ## Coding Guidelines
 
