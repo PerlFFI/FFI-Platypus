@@ -59,7 +59,7 @@ then C<NULL> will be passed in for those values.
 =cut
 
 use constant _incantation =>
-  $^O eq 'MSWin32' && $Config::Config{archname} =~ /MSWin32-x64/
+  $^O eq 'MSWin32' && do { require Config; $Config::Config{archname} =~ /MSWin32-x64/ }
   ? 'Q'
   : 'L!';
 use constant _size_of_pointer => FFI::Platypus->new( api => 1 )->sizeof('opaque');
