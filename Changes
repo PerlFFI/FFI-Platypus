@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.08_01   2020-01-17 19:39:21 -0700
+  - Fix warning on some versions of windows (gh#217, gh#218)
+
 1.07      2019-12-28 08:44:36 -0700
   - Fix bug in variadic argument count (gh#210, gh#211)
 
