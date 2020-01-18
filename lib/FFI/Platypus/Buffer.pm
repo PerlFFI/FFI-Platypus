@@ -45,7 +45,7 @@ understand the underlying ownership model of these pointers.
 =cut
 
 use constant _incantation =>
-  $^O eq 'MSWin32' && $Config::Config{archname} =~ /MSWin32-x64/
+  $^O eq 'MSWin32' && do { require Config; $Config::Config{archname} =~ /MSWin32-x64/ }
   ? 'Q'
   : 'L!';
 
