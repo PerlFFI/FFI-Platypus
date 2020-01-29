@@ -2,41 +2,132 @@ package Alien::Base::Wrapper;
 
 use strict;
 use warnings;
-use 5.008001;
+use 5.006;
 use Config;
 use Text::ParseWords qw( shellwords );
 
 # NOTE: Although this module is now distributed with Alien-Build,
 # it should have NO non-perl-core dependencies for all Perls
-# 5.8.1-5.26.0 (as of this writing, and any Perl more recent).
+# 5.6.0-5.30.1 (as of this writing, and any Perl more recent).
 # You should be able to extract this module from the rest of
-# Alien-Build and use it by itself.
-# ALSO NOTE: Although it was lost in the spin-off, this used
-# to be called Alien::Build::Wrapper, and was originally
-# distributed with Alien-Build.
+# Alien-Build and use it by itself.  (There is a dzil plugin
+# for this [AlienBase::Wrapper::Bundle]
 
 # ABSTRACT: Compiler and linker wrapper for Alien
-our $VERSION = '1.94'; # VERSION
+our $VERSION = '2.02'; # VERSION
 
 
-my @cflags_I;
-my @cflags_other;
-my @ldflags_L;
-my @ldflags_l;
-my @ldflags_other;
-my @mm;
-my @mb;
-
-sub _reset
+sub _join
 {
-  @cflags_I      = ();
-  @cflags_other  = ();
-  @ldflags_L     = ();
-  @ldflags_l     = ();
-  @ldflags_other = ();
-  @mm            = ();
-  @mb            = ();
+  join ' ', map { s/(\s)/\\$1/g; $_ } map { "$_" } @_;  ## no critic (ControlStructures::ProhibitMutatingListFunctions)
 }
+
+sub new
+{
+  my($class, @aliens) = @_;
+
+  my $export = 1;
+  my $writemakefile = 0;
+
+  my @cflags_I;
+  my @cflags_other;
+  my @ldflags_L;
+  my @ldflags_l;
+  my @ldflags_other;
+  my %requires = (
+    'ExtUtils::MakeMaker'  => '6.52',
+    'Alien::Base::Wrapper' => '1.97',
+  );
+
+  foreach my $alien (@aliens)
+  {
+    if($alien eq '!export')
+    {
+      $export = 0;
+      next;
+    }
+    if($alien eq 'WriteMakefile')
+    {
+      $writemakefile = 1;
+      next;
+    }
+    my $version = 0;
+    if($alien =~ s/=(.*)$//)
+    {
+      $version = $1;
+    }
+    $alien = "Alien::$alien" unless $alien =~ /::/;
+    $requires{$alien} = $version;
+    my $alien_pm = $alien . '.pm';
+    $alien_pm =~ s/::/\//g;
+    require $alien_pm unless eval { $alien->can('cflags') } && eval { $alien->can('libs') };
+    my $cflags;
+    my $libs;
+    if($alien->install_type eq 'share' && $alien->can('cflags_static'))
+    {
+      $cflags = $alien->cflags_static;
+      $libs   = $alien->libs_static;
+    }
+    else
+    {
+      $cflags = $alien->cflags;
+      $libs   = $alien->libs;
+    }
+
+    push @cflags_I,     grep  /^-I/, shellwords $cflags;
+    push @cflags_other, grep !/^-I/, shellwords $cflags;
+
+    push @ldflags_L,     grep  /^-L/,    shellwords $libs;
+    push @ldflags_l,     grep  /^-l/,    shellwords $libs;
+    push @ldflags_other, grep !/^-[Ll]/, shellwords $libs;
+  }
+
+  my @cflags_define = grep  /^-D/, @cflags_other;
+  my @cflags_other2 = grep !/^-D/, @cflags_other;
+
+  my @mm;
+
+  push @mm, INC       => _join @cflags_I                             if @cflags_I;
+  push @mm, CCFLAGS   => _join(@cflags_other2) . " $Config{ccflags}" if @cflags_other2;
+  push @mm, DEFINE    => _join(@cflags_define)                       if @cflags_define;
+
+  # TODO: handle spaces in -L paths
+  push @mm, LIBS      => ["@ldflags_L @ldflags_l"];
+  my @ldflags = (@ldflags_L, @ldflags_other);
+  push @mm, LDDLFLAGS => _join(@ldflags) . " $Config{lddlflags}"     if @ldflags;
+  push @mm, LDFLAGS   => _join(@ldflags) . " $Config{ldflags}"       if @ldflags;
+
+  my @mb;
+
+  push @mb, extra_compiler_flags => _join(@cflags_I, @cflags_other);
+  push @mb, extra_linker_flags   => _join(@ldflags_l);
+
+  if(@ldflags)
+  {
+    push @mb, config => {
+      lddlflags => _join(@ldflags) . " $Config{lddlflags}",
+      ldflags   => _join(@ldflags) . " $Config{ldflags}",
+    },
+  }
+
+  bless {
+    cflags_I       => \@cflags_I,
+    cflags_other   => \@cflags_other,
+    ldflags_L      => \@ldflags_L,
+    ldflags_l      => \@ldflags_l,
+    ldflags_other  => \@ldflags_other,
+    mm             => \@mm,
+    mb             => \@mb,
+    _export        => $export,
+    _writemakefile => $writemakefile,
+    requires       => \%requires,
+  }, $class;
+}
+
+my $default_abw = __PACKAGE__->new;
+
+# for testing only
+sub _reset { __PACKAGE__->new }
 
 
 sub _myexec
@@ -73,8 +164,8 @@ sub cc
 {
   my @command = (
     shellwords($Config{cc}),
-    @cflags_I,
-    @cflags_other,
+    @{ $default_abw->{cflags_I} },
+    @{ $default_abw->{cflags_other} },
     @ARGV,
   );
   print "@command\n" unless $ENV{ALIEN_BASE_WRAPPER_QUIET};
@@ -86,10 +177,10 @@ sub ld
 {
   my @command = (
     shellwords($Config{ld}),
-    @ldflags_L,
-    @ldflags_other,
+    @{ $default_abw->{ldflags_L} },
+    @{ $default_abw->{ldflags_other} },
     @ARGV,
-    @ldflags_l,
+    @{ $default_abw->{ldflags_l} },
   );
   print "@command\n" unless $ENV{ALIEN_BASE_WRAPPER_QUIET};
   _myexec @command;
@@ -98,94 +189,119 @@ sub ld
 
 sub mm_args
 {
-  @mm;
+  my $self = ref $_[0] ? shift : $default_abw;
+  @{ $self->{mm} };
+}
+
+
+sub mm_args2
+{
+  my $self = shift;
+  $self = $default_abw unless ref $self;
+  my %args = @_;
+
+  my @mm = @{ $self->{mm} };
+
+  while(@mm)
+  {
+    my $key = shift @mm;
+    my $value = shift @mm;
+    if(defined $args{$key})
+    {
+      if($args{$key} eq 'LIBS')
+      {
+        require Carp;
+        # Todo: support this maybe?
+        Carp::croak("please do not specify your own LIBS key with mm_args2");
+      }
+      else
+      {
+        $args{$key} = join ' ', $value, $args{$key};
+      }
+    }
+    else
+    {
+      $args{$key} = $value;
+    }
+  }
+
+  foreach my $module (keys %{ $self->{requires} })
+  {
+    $args{CONFIGURE_REQUIRES}->{$module} = $self->{requires}->{$module};
+  }
+
+  %args;
 }
 
 
 sub mb_args
 {
-  @mb;
-}
-
-sub _join
-{
-  join ' ', map { s/(\s)/\\$1/g; $_ } map { "$_" } @_;  ## no critic (ControlStructures::ProhibitMutatingListFunctions)
+  my $self = ref $_[0] ? shift : $default_abw;
+  @{ $self->{mb} };
 }
 
 sub import
 {
-  my(undef, @aliens) = @_;
-
-  my $export = 1;
-
-  foreach my $alien (@aliens)
-  {
-    if($alien eq '!export')
-    {
-      $export = 0;
-      next;
-    }
-    $alien = "Alien::$alien" unless $alien =~ /::/;
-    my $alien_pm = $alien . '.pm';
-    $alien_pm =~ s/::/\//g;
-    require $alien_pm unless eval { $alien->can('cflags') } && eval { $alien->can('libs') };
-    my $cflags;
-    my $libs;
-    if($alien->install_type eq 'share' && $alien->can('cflags_static'))
-    {
-      $cflags = $alien->cflags_static;
-      $libs   = $alien->libs_static;
-    }
-    else
-    {
-      $cflags = $alien->cflags;
-      $libs   = $alien->libs;
-    }
-
-    push @cflags_I,     grep  /^-I/, shellwords $cflags;
-    push @cflags_other, grep !/^-I/, shellwords $cflags;
-
-    push @ldflags_L,     grep  /^-L/,    shellwords $libs;
-    push @ldflags_l,     grep  /^-l/,    shellwords $libs;
-    push @ldflags_other, grep !/^-[Ll]/, shellwords $libs;
-  }
-
-  my @cflags_define = grep  /^-D/, @cflags_other;
-  my @cflags_other2 = grep !/^-D/, @cflags_other;
-
-  @mm = ();
-
-  push @mm, INC       => _join @cflags_I                             if @cflags_I;
-  push @mm, CCFLAGS   => _join(@cflags_other2) . " $Config{ccflags}" if @cflags_other2;
-  push @mm, DEFINE    => _join(@cflags_define)                       if @cflags_define;
-
-  # TODO: handle spaces in -L paths
-  push @mm, LIBS      => ["@ldflags_L @ldflags_l"];
-  my @ldflags = (@ldflags_L, @ldflags_other);
-  push @mm, LDDLFLAGS => _join(@ldflags) . " $Config{lddlflags}"     if @ldflags;
-  push @mm, LDFLAGS   => _join(@ldflags) . " $Config{ldflags}"       if @ldflags;
-
-  @mb = ();
-
-  push @mb, extra_compiler_flags => _join(@cflags_I, @cflags_other);
-  push @mb, extra_linker_flags   => _join(@ldflags_l);
-
-  if(@ldflags)
-  {
-    push @mb, config => {
-      lddlflags => _join(@ldflags) . " $Config{lddlflags}",
-      ldflags   => _join(@ldflags) . " $Config{ldflags}",
-    },
-  }
-
-  if($export)
+  shift;
+  my $abw = $default_abw = __PACKAGE__->new(@_);
+  if($abw->_export)
   {
     my $caller = caller;
     no strict 'refs';
     *{"${caller}::cc"} = \&cc;
     *{"${caller}::ld"} = \&ld;
   }
+  if($abw->_writemakefile)
+  {
+    my $caller = caller;
+    no strict 'refs';
+    *{"${caller}::WriteMakefile"} = \&WriteMakefile;
+  }
 }
+
+
+sub WriteMakefile
+{
+  my %args = @_;
+
+  require ExtUtils::MakeMaker;
+  ExtUtils::MakeMaker->VERSION('6.52');
+
+  my @aliens;
+
+  if(my $reqs = delete $args{alien_requires})
+  {
+    if(ref $reqs eq 'HASH')
+    {
+      @aliens = map {
+        my $module  = $_;
+        my $version = $reqs->{$module};
+        $version ? "$module=$version" : "$module";
+      } sort keys %$reqs;
+    }
+    elsif(ref $reqs eq 'ARRAY')
+    {
+      @aliens = @$reqs;
+    }
+    else
+    {
+      require Carp;
+      Carp::croak("aliens_require must be either a hash or array reference");
+    }
+  }
+  else
+  {
+    require Carp;
+    Carp::croak("You are using Alien::Base::Wrapper::WriteMakefile, but didn't specify any alien requirements");
+  }
+
+  ExtUtils::MakeMaker::WriteMakefile(
+    Alien::Base::Wrapper->new(@aliens)->mm_args2(%args),
+  );
+}
+
+sub _export        { shift->{_export} }
+sub _writemakefile { shift->{_writemakefile} }
 
 1;
 
@@ -201,7 +317,7 @@ Alien::Base::Wrapper - Compiler and linker wrapper for Alien
 
 =head1 VERSION
 
-version 1.94
+version 2.02
 
 =head1 SYNOPSIS
 
@@ -210,20 +326,29 @@ From the command line:
  % perl -MAlien::Base::Wrapper=Alien::Foo,Alien::Bar -e cc -- -o foo.o -c foo.c
  % perl -MAlien::Base::Wrapper=Alien::Foo,Alien::Bar -e ld -- -o foo foo.o
 
-From Makefile.PL (non-dynamic):
+From Makefile.PL (static):
 
  use ExtUtils::MakeMaker;
- use Alien::Base::Wrapper qw( Alien::Foo Alien::Bar !export );
+ use Alien::Base::Wrapper ();
+ 
+ WriteMakefile(
+   Alien::Base::Wrapper->new( 'Alien::Foo', 'Alien::Bar')->mm_args2(
+     'NAME'              => 'Foo::XS',
+     'VERSION_FROM'      => 'lib/Foo/XS.pm',
+   ),
+ );
+
+From Makefile.PL (static with wrapper)
+
+ use Alien::Base::Wrapper qw( WriteMakefile);
  
  WriteMakefile(
    'NAME'              => 'Foo::XS',
    'VERSION_FROM'      => 'lib/Foo/XS.pm',
-   'CONFIGURE_REQUIRES => {
-     'ExtUtils::MakeMaker' => 6.52,
-     'Alien::Foo'          => 0,
-     'Alien::Bar'          => 0,
+   'alien_requires'    => {
+     'Alien::Foo' => 0,
+     'Alien::Bar' => 0,
    },
-   Alien::Base::Wrapper->mm_args,
  );
 
 From Makefile.PL (dynamic):
@@ -287,6 +412,15 @@ somewhat unnecessary.  L<Alien> modules based on L<Alien::Base> have a few prere
 but they are well maintained and reliable, so while there is a small cost in terms of extra
 dependencies, the overall reliability thanks to reduced overall complexity.
 
+=head1 CONSTRUCTOR
+
+=head2 new
+
+ my $abw = Alien::Base::Wrapper->new(@aliens);
+
+Instead of passing the aliens you want to use into this modules import you can create
+a non-global instance of C<Alien::Base::Wrapper> using the OO interface.
+
 =head1 FUNCTIONS
 
 =head2 cc
@@ -305,16 +439,51 @@ is provided on the command line.
 
 =head2 mm_args
 
+ my %args = $abw->mm_args;
  my %args = Alien::Base::Wrapper->mm_args;
 
 Returns arguments that you can pass into C<WriteMakefile> to compile/link against
-the specified Aliens.
+the specified Aliens.  Note that this does not set  C<CONFIGURE_REQUIRES>.  You
+probably want to use C<mm_args2> below instead for that reason.
+
+=head2 mm_args2
+
+ my %args = $abw->mm_args2(%args);
+ my %args = Alien::Base::Wrapper->mm_args2(%args);
+
+Returns arguments that you can pass into C<WriteMakefile> to compile/link against.  It works
+a little differently from C<mm_args> above in that you can pass in arguments.  It also adds
+the appropriate C<CONFIGURE_REQUIRES> for you so you do not have to do that explicitly.
 
 =head2 mb_args
 
+ my %args = $abw->mb_args;
  my %args = Alien::Base::Wrapper->mb_args;
 
 Returns arguments that you can pass into the constructor to L<Module::Build>.
+
+=head2 WriteMakefile
+
+ use Alien::Base::Wrapper qw( WriteMakefile );
+ WriteMakefile(%args, alien_requires => %aliens);
+ WriteMakefile(%args, alien_requires => @aliens);
+
+This is a thin wrapper around C<WriteMakefile> from L<ExtUtils::MakeMaker>, which adds the
+given aliens to the configure requirements and sets the appropriate compiler and linker
+flags.
+
+If the aliens are specified as a hash reference, then the keys are the module names and the
+values are the versions.  For a list it is just the name of the aliens.
+
+For the list form you can specify a version by appending C<=version> to the name of the
+Aliens, that is:
+
+ WriteMakefile(
+   alien_requires => [ 'Alien::libfoo=1.23', 'Alien::libbar=4.56' ],
+ );
+
+The list form is recommended if the ordering of the aliens matter.  The aliens are sorted in
+the hash form to make it consistent, but it may not be the order that you want.
 
 =head1 ENVIRONMENT
 
@@ -392,7 +561,7 @@ Paul Evans (leonerd, PEVANS)
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011-2019 by Graham Ollis.
+This software is copyright (c) 2011-2020 by Graham Ollis.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
