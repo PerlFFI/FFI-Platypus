@@ -22,22 +22,28 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Cache CPAN modules
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-cpan-modules
-        with:
-          path: c:\cx
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}
-
       - name: Set up Perl
         run: |
           choco install strawberryperl
           echo "##[add-path]C:\cx\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin"
+
       - name: perl -V
-        run: perl -V
+        run: |
+          perl -V
+
+      - name: Prepare for cache
+        run: |
+          perl -V > perlversion.txt
+          dir perlversion.txt
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v1
+        with:
+          path: c:\cx
+          key: ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
+
       - name: Install Static Dependencies
         run: |
           cpanm -n Dist::Zilla
