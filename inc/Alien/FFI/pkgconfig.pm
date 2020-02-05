@@ -29,7 +29,7 @@ sub _pkg_config
   if($^O eq 'darwin' && -d '/usr/local/Cellar/libffi')
   {
     my($dir) = bsd_glob '/usr/local/Cellar/libffi/*/lib/pkgconfig';
-    push @PKG_CONFIG_PATH, $dir;
+    push @PKG_CONFIG_PATH, $dir if $dir && -d $dir;
   }
 
   my $cmd = pkg_config_exe;
