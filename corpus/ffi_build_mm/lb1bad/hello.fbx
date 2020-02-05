@@ -1,0 +1,8 @@
+use strict;
+use warnings;
+skootch skootch;
+our $DIR;
+our $PLATFORM;
+die unless $PLATFORM->isa('FFI::Build::Platform');
+
+{ source => [ "$DIR/*.c" ] };

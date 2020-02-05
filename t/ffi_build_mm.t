@@ -53,6 +53,12 @@ subtest 'basic' => dont_save_prop {
     is_deeply [sort map { $_->basename } $build->source], ['hello1.c','hello2.c']
   };
 
+  subtest 'build with fbx file with errors' => sub {
+      eval { $mm->load_build('corpus/ffi_build_mm/lb1bad', undef, undef) };
+      like ( $@, qr/skootch/, "caught compile error in fbx file" );
+
+  };
+
   subtest 'build with default' => sub {
     my $build = $mm->load_build('corpus/ffi_build_mm/lb2', undef, undef);
     isa_ok $build, 'FFI::Build';
