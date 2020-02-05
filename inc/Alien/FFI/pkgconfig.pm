@@ -5,6 +5,8 @@ use warnings;
 use Config;
 use IPC::Cmd ();
 use Capture::Tiny qw( capture );
+use Env qw( @PKG_CONFIG_PATH );
+use File::Glob qw( bsd_glob );
 
 our $VERBOSE = !!$ENV{V};
 
@@ -21,6 +23,15 @@ sub pkg_config_exe
 sub _pkg_config
 {
   my(@args) = @_;
+
+  local $ENV{PKG_CONFIG_PATH} = $ENV{PKG_CONFIG_PATH};
+
+  if($^O eq 'darwin' && -d '/usr/local/Cellar/libffi')
+  {
+    my($dir) = bsd_glob '/usr/local/Cellar/libffi/*/lib/pkgconfig';
+    push @PKG_CONFIG_PATH, $dir;
+  }
+
   my $cmd = pkg_config_exe;
   if(defined $cmd)
   {
