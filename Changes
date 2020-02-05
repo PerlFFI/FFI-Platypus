@@ -2,6 +2,15 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.10      2020-02-05 16:39:51 -0700
+  - On OS X, check if homebrew + libffi is installed and use
+    that instead of falling back on Alien::FFI (libffi isn't
+    installed by homebrew in a way that it can be found by
+    without specifically looking for it).
+  - Die with an appropriate diagnostic if there is a syntax or
+    runtime error in an .fbx file (FFI::Build).
+    (djerius++ gh#223)
+
 1.09      2020-01-18 13:41:56 -0700
   - Production release identical to 1.08_01
 
