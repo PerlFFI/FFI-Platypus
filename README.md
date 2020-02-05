@@ -1,4 +1,4 @@
-# FFI::Platypus [![Build Status](https://api.cirrus-ci.com/github/Perl5-FFI/FFI-Platypus.svg)](https://cirrus-ci.com/github/Perl5-FFI/FFI-Platypus) [![Build Status](https://secure.travis-ci.org/Perl5-FFI/FFI-Platypus.png)](http://travis-ci.org/Perl5-FFI/FFI-Platypus) [![Build status](https://ci.appveyor.com/api/projects/status/dn0iuv0k7ld4ek2i/branch/master?svg=true)](https://ci.appveyor.com/project/plicease/FFI-Platypus/branch/master) ![windows](https://github.com/Perl5-FFI/FFI-Platypus/workflows/windows/badge.svg) ![macos](https://github.com/Perl5-FFI/FFI-Platypus/workflows/macos/badge.svg)
+# FFI::Platypus [![Build Status](https://api.cirrus-ci.com/github/Perl5-FFI/FFI-Platypus.svg)](https://cirrus-ci.com/github/Perl5-FFI/FFI-Platypus) [![Build Status](https://secure.travis-ci.org/Perl5-FFI/FFI-Platypus.png)](http://travis-ci.org/Perl5-FFI/FFI-Platypus) [![Build status](https://ci.appveyor.com/api/projects/status/dn0iuv0k7ld4ek2i/branch/master?svg=true)](https://ci.appveyor.com/project/plicease/FFI-Platypus/branch/master) ![macos](https://github.com/Perl5-FFI/FFI-Platypus/workflows/macos/badge.svg)
 
 Write Perl bindings to non-Perl libraries with FFI. No XS required.
 
@@ -1809,9 +1809,11 @@ the development package for `libffi` as prereqs for this module.
 
 In addition to the contributors mentioned below, I would like to
 acknowledge Brock Wilcox (AWWAIID) and Meredith Howard (MHOWARD) whose
-work on [FFI::Sweet](https://github.com/merrilymeredith/p5-FFI-Sweet)
-not only helped me get started with FFI but significantly influenced the
-design of Platypus.
+work on `FFI::Sweet` not only helped me get started with FFI but
+significantly influenced the design of Platypus.
+
+Dan Book, who goes by Grinnz on IRC for answering user questions about
+FFI and Platypus.
 
 In addition I'd like to thank Alessandro Ghedini (ALEXBIO) whose work
 on another Perl FFI library helped drive some of the development ideas
