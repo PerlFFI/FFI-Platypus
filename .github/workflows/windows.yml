@@ -1,0 +1,56 @@
+name: windows
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+env:
+  PERL5LIB: c:\cx\lib\perl5
+  PERL_LOCAL_LIB_ROOT: c:/cx
+  PERL_MB_OPT: --install_base C:/cx
+  PERL_MM_OPT: INSTALL_BASE=C:/cx
+
+jobs:
+  perl:
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Perl
+        run: |
+          choco install strawberryperl
+          echo "##[add-path]C:\cx\bin;C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin"
+
+      - name: perl -V
+        run: |
+          perl -V
+
+      - name: Prepare for cache
+        run: |
+          perl -V > perlversion.txt
+          dir perlversion.txt
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v1
+        with:
+          path: c:\cx
+          key: ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
+
+      - name: Install Static Dependencies
+        run: |
+          cpanm -n Dist::Zilla
+          dzil authordeps --missing | cpanm -n
+          dzil listdeps --missing   | cpanm -n
+      - name: Install Dynamic Dependencies
+        run: |
+          dzil run --no-build 'cpanm --installdeps .'
+      - name: Run Tests
+        run: dzil test -v
