@@ -96,3 +96,4 @@ INCLUDE: ../../xs/API.xs
 INCLUDE: ../../xs/ABI.xs
 INCLUDE: ../../xs/Record.xs
 INCLUDE: ../../xs/Closure.xs
+INCLUDE: ../../xs/Buffer.xs
