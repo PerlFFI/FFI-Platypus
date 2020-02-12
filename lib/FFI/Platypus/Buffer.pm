@@ -2,10 +2,11 @@ package FFI::Platypus::Buffer;
 
 use strict;
 use warnings;
+use FFI::Platypus;
 use base qw( Exporter );
 
 our @EXPORT = qw( scalar_to_buffer buffer_to_scalar );
-our @EXPORT_OK = qw ( scalar_to_pointer );
+our @EXPORT_OK = qw ( scalar_to_pointer grow );
 
 # ABSTRACT: Convert scalars to C buffers
 # VERSION
@@ -126,6 +127,18 @@ sub buffer_to_scalar ($$)
 }
 
 1;
+
+=head2 grow
+
+ grow $scalar, $size;
+
+Ensure that the scalar is at least C<$size> bytes in length. Any
+pointers obtained with C<scalar_to_pointer> or C<scalar_to_buffer> are
+no longer valid after growing the scalar.
+
+
+=cut
+
 
 =head1 SEE ALSO
 
