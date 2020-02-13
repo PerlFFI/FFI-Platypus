@@ -6,7 +6,7 @@ use FFI::Platypus;
 use base qw( Exporter );
 
 our @EXPORT = qw( scalar_to_buffer buffer_to_scalar );
-our @EXPORT_OK = qw ( scalar_to_pointer grow );
+our @EXPORT_OK = qw ( scalar_to_pointer grow set_used_length );
 
 # ABSTRACT: Convert scalars to C buffers
 # VERSION
@@ -151,6 +151,42 @@ C<length($scalar) == 0>
 
 Any pointers obtained with C<scalar_to_pointer> or C<scalar_to_buffer>
 are no longer valid after growing the scalar.  By default,
+
+=head2 set_used_length
+
+ set_used_length $scalar, $length;
+
+Update Perl's notion of the length of the string in the scalar. A
+string scalar keeps track of two lengths: the number of available
+bytes and the number of used bytes.  When a string scalar is
+used as a buffer by a foreign function, it is necessary to indicate
+to Perl how many bytes were actually written to it so that Perl's
+string functions (such as C<substr> or C<unpack>) will work correctly.
+
+If C<$length> is larger than what the scalar can hold, it is set to the
+maximum possible size.
+
+In the following example, the foreign routine C<read_doubles>
+may fill the buffer with up to a set number of doubles, returning the
+number actually written.
+
+  my $sizeof_double = $ffi->sizeof( 'double' );
+  my $max_doubles = 100;
+  my $max_length = $max_doubles * $sizeof_double;
+
+  my $buffer;                   # length($buffer) == 0
+  grow $buffer, $max_length;    # length($buffer) is still  0
+  my $pointer = scalar_to_pointer($buffer);
+
+  my $num_read = read_doubles( $pointer, $max_doubles );
+                                # length($buffer) is still == 0
+
+  set_used_length $buffer, $num_read * $sizeof_double;
+                                # length($buffer) is finally != 0
+
+  # unpack the native doubles into a Perl array
+  my @doubles = unpack( 'd*', $buffer );  # @doubles == $num_read
+
 
 =head1 SEE ALSO
 
