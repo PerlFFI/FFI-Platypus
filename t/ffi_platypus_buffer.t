@@ -59,6 +59,14 @@ subtest grow => sub {
     is $str, $orig,  "buffer contents remain";
   };
 
+  subtest "fail on reference" => sub {
+    my $ref = \$orig;
+    eval { grow( $ref, 0 ); };
+    my $err = $@;
+    like ( $err, qr/argument error/, "croaked" );
+  }
+
+
 };
 
 subtest set_used_length => sub {
@@ -85,6 +93,12 @@ subtest set_used_length => sub {
       is( $len, $sv->LEN, "maxed out length" );
    };
 
+  subtest "fail on reference" => sub {
+    my $ref = \$orig;
+    eval { set_used_length( $ref, 0 ); };
+    my $err = $@;
+    like ( $err, qr/argument error/, "croaked" );
+  }
 };
 
 done_testing;

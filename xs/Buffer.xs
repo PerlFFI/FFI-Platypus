@@ -14,7 +14,7 @@ grow (sv, size, ... )
         clear = SvIV(ST(2));
 
     if (SvROK (sv))
-        sv = SvRV (sv);
+        croak("argument error: buffer must be a scalar");
     if (!SvPOK (sv))
         sv_setpvn (sv, "", 0);
     /* don't need the contents; avoid copying into the new memory */
@@ -42,7 +42,7 @@ set_used_length( sv, size )
     STRLEN len;
   CODE:
     if (SvROK (sv))
-        sv = SvRV (sv);
+        croak("argument error: buffer must be a scalar");
     if (!SvPOK (sv))
         sv_setpvn (sv, "", 0);
 
