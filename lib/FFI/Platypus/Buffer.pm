@@ -152,6 +152,8 @@ C<length($scalar) == 0>
 Any pointers obtained with C<scalar_to_pointer> or C<scalar_to_buffer>
 are no longer valid after growing the scalar.  By default,
 
+Not exported by default, but may be exported on request.
+
 =head2 set_used_length
 
  set_used_length $scalar, $length;
@@ -187,6 +189,7 @@ number actually written.
   # unpack the native doubles into a Perl array
   my @doubles = unpack( 'd*', $buffer );  # @doubles == $num_read
 
+Not exported by default, but may be exported on request.
 
 =head1 SEE ALSO
 
