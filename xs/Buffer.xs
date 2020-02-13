@@ -16,7 +16,11 @@ grow (sv, size)
     if (!SvPOK (sv))
         sv_setpvn (sv, "", 0);
     /* don't need the contents; avoid copying into the new memory */
+#if PERL_API_VERSION >= 26
     SvPVCLEAR(sv);
+#else
+    sv_setpvn (sv, "", 0);
+#endif
     SvGROW (sv, size);
     EXTEND (SP, 1);
     mPUSHi (SvLEN (sv));
