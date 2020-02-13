@@ -131,10 +131,26 @@ sub buffer_to_scalar ($$)
 =head2 grow
 
  grow $scalar, $size;
+ grow $scalar, $size, $clear;
 
-Ensure that the scalar is at least C<$size> bytes in length. Any
-pointers obtained with C<scalar_to_pointer> or C<scalar_to_buffer> are
-no longer valid after growing the scalar.
+Ensure that the scalar can contain at least C<$size> bytes.  C<$clear>
+determines if the scalar is cleared before it is enlarged, which
+avoids copying the original contents to newly allocated storage.  If
+C<$clear> is not specified or is true, the scalar is cleared,
+otherwise it is not.  For example, after
+
+   $scalar = "my string";
+   grow $scalar, 100, 0;
+
+C<$scalar == "my string">, while after
+
+   $scalar = "my string";
+   grow $scalar, 100;
+
+C<length($scalar) == 0>
+
+Any pointers obtained with C<scalar_to_pointer> or C<scalar_to_buffer>
+are no longer valid after growing the scalar.  By default,
 
 
 =cut

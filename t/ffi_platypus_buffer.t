@@ -31,17 +31,33 @@ subtest unicode => sub {
 };
 
 subtest grow => sub {
-  my $orig = 'me grimlock king';
-  my($ptr, $size) = scalar_to_buffer($orig);
-  my $sv = B::svref_2object( \$orig );
-  is $sv->CUR, $size, "consistent string lengths";
+    my $orig = 'me grimlock king';
+    my($ptr, $size) = scalar_to_buffer($orig);
+    my $sv = B::svref_2object( \$orig );
+    is $sv->CUR, $size, "B::PV returns consistent string length";
 
-  my $required = 100;
-  ok $sv->LEN < $required, "initial buffer size is smaler than required";
+    my $required = 100;
+    ok $sv->LEN < $required, "initial buffer size is smaler than required";
 
-  # in my tests, you never get exactly what you ask for
-  grow( $orig, $required );
-  ok $sv->LEN > $required, "buffer grew as expected";
+  subtest clear => sub {
+    my $str = $orig;
+
+    # in my tests, you never get exactly what you ask for
+    grow( $str, $required );
+    my $sv = B::svref_2object( \$str );
+    ok $sv->LEN > $required, "buffer grew as expected";
+    is $sv->CUR, 0,  "buffer contents cleared";
+  };
+
+  subtest "don't clear" => sub {
+    my $str = $orig;
+
+    # in my tests, you never get exactly what you ask for
+    grow( $str, $required, 0 );
+    my $sv = B::svref_2object( \$str );
+    ok $sv->LEN > $required, "buffer grew as expected";
+    is $str, $orig,  "buffer contents remain";
+  };
 
 };
 
