@@ -1,6 +1,5 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Buffer
 
-# Stolen from Data::Peek::DGrow
 void
 grow (sv, size, ... )
     SV     *sv
@@ -29,7 +28,6 @@ grow (sv, size, ... )
     SvGROW (sv, size);
     EXTEND (SP, 1);
     mPUSHi (SvLEN (sv));
-    /* XS DGrow */
 
 
 STRLEN
