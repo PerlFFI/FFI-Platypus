@@ -10,7 +10,7 @@ grow (sv, size, ... )
     int clear = 1;  
   PPCODE:
     if ( items > 2 )
-        clear = SvIV(ST(2));
+        clear = SvTRUE(ST(2));
 
     if (SvROK (sv))
         croak("argument error: buffer must be a scalar");
