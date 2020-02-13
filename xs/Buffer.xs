@@ -18,7 +18,7 @@ grow (sv, size, ... )
     /* if not a string turn it into an empty one, or if clearing is
        requested, reset string length */
     if (!SvPOK (sv) || clear ) {
-#     if PERL_API_VERSION >= 26
+#if PERL_API_VERSION >= 26
         SvPVCLEAR(sv);
 #else
         sv_setpvn (sv, "", 0);
