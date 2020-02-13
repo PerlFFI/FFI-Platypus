@@ -45,7 +45,7 @@ subtest grow => sub {
     # in my tests, you never get exactly what you ask for
     grow( $str, $required );
     my $sv = B::svref_2object( \$str );
-    ok $sv->LEN => $required, "buffer grew as expected";
+    ok $sv->LEN >= $required, "buffer grew as expected";
     is $sv->CUR, 0,  "buffer contents cleared";
   };
 
@@ -55,7 +55,7 @@ subtest grow => sub {
     # in my tests, you never get exactly what you ask for
     grow( $str, $required, 0 );
     my $sv = B::svref_2object( \$str );
-    ok $sv->LEN => $required, "buffer grew as expected";
+    ok $sv->LEN >= $required, "buffer grew as expected";
     is $str, $orig,  "buffer contents remain";
   };
 
