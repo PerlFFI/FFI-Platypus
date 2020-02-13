@@ -8,7 +8,7 @@ use if $^O ne 'MSWin32' || $] >= 5.018, 'open', ':std', ':encoding(utf8)';
 use Test::More;
 use Encode qw( decode );
 use FFI::Platypus::Buffer;
-use FFI::Platypus::Buffer qw( scalar_to_pointer grow );
+use FFI::Platypus::Buffer qw( scalar_to_pointer grow set_length );
 
 subtest simple => sub {
   my $orig = 'me grimlock king';
@@ -58,6 +58,32 @@ subtest grow => sub {
     ok $sv->LEN >= $required, "buffer grew as expected";
     is $str, $orig,  "buffer contents remain";
   };
+
+};
+
+subtest set_length => sub {
+    my $orig = 'me grimlock king';
+
+   subtest 'length < max' => sub {
+      my $str = $orig;
+      my $len = set_length( $str, 3 );
+      is( $len, 3, "requested length" );
+      is( $str, "me ", "requested string" );
+   };
+
+   subtest 'length == max' => sub {
+      my $str = $orig;
+      my $sv = B::svref_2object( \$str );
+      my $len = set_length( $str, $sv->LEN );
+      is( $len, $sv->LEN, "requested length" );
+   };
+
+   subtest 'length > max' => sub {
+      my $str = $orig;
+      my $sv = B::svref_2object( \$str );
+      my $len = set_length( $str, $sv->LEN + 10);
+      is( $len, $sv->LEN, "maxed out length" );
+   };
 
 };
 
