@@ -64,9 +64,20 @@ subtest grow => sub {
     eval { grow( $ref, 0 ); };
     my $err = $@;
     like ( $err, qr/argument error/, "croaked" );
-  }
+  };
 
+  subtest '$str = undef' => sub {
+    my $str;
+    grow( $str, $required, 0 );
+    my $sv = B::svref_2object( \$str );
+    ok $sv->LEN >= $required, "buffer grew as expected";
+  };
 
+  subtest 'undef' => sub {
+    eval { grow( undef, $required, 0 ) };
+    my $err = $@;
+    like ( $err, qr/read-only/, "croaked" );
+  };
 };
 
 subtest set_used_length => sub {
@@ -98,7 +109,21 @@ subtest set_used_length => sub {
     eval { set_used_length( $ref, 0 ); };
     my $err = $@;
     like ( $err, qr/argument error/, "croaked" );
-  }
+  };
+
+  subtest '$str = undef' => sub {
+    my $str;
+    my $len = set_used_length( $str, 100);
+    my $sv = B::svref_2object( \$str );
+    is ( $len, 0, "no added length" );
+    is( $len, $sv->LEN, "maxed out length" );
+  };
+
+  subtest 'undef' => sub {
+    eval { set_used_length( undef, 0 ) };
+    my $err = $@;
+    like ( $err, qr/read-only/, "croaked" );
+  };
 };
 
 done_testing;
