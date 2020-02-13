@@ -14,16 +14,16 @@ grow (sv, size, ... )
 
     if (SvROK (sv))
         croak("argument error: buffer must be a scalar");
-    if (!SvPOK (sv))
-        sv_setpvn (sv, "", 0);
-    /* don't need the contents; avoid copying into the new memory */
-
-    if (clear)
-#if PERL_API_VERSION >= 26
-      SvPVCLEAR(sv);
+        
+    /* if not a string turn it into an empty one, or if clearing is
+       requested, reset string length */
+    if (!SvPOK (sv) || clear ) {
+#     if PERL_API_VERSION >= 26
+        SvPVCLEAR(sv);
 #else
-      sv_setpvn (sv, "", 0);
+        sv_setpvn (sv, "", 0);
 #endif
+    }
 
     SvGROW (sv, size);
     EXTEND (SP, 1);
@@ -41,6 +41,8 @@ set_used_length( sv, size )
   CODE:
     if (SvROK (sv))
         croak("argument error: buffer must be a scalar");
+
+    /* add some stringiness if necessary; svCUR_set only works on PV's */
     if (!SvPOK (sv))
         sv_setpvn (sv, "", 0);
 
