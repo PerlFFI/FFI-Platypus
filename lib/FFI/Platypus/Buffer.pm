@@ -152,10 +152,6 @@ C<length($scalar) == 0>
 Any pointers obtained with C<scalar_to_pointer> or C<scalar_to_buffer>
 are no longer valid after growing the scalar.  By default,
 
-
-=cut
-
-
 =head1 SEE ALSO
 
 =over 4
