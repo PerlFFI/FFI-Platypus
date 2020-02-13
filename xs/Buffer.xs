@@ -4,7 +4,7 @@ MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Buffer
 void
 grow (sv, size, ... )
     SV     *sv
-    IV      size
+    STRLEN      size
  
   PROTOTYPE: $$;$
   PREINIT:
@@ -35,7 +35,7 @@ grow (sv, size, ... )
 STRLEN
 set_used_length( sv, size )
     SV     *sv
-    IV      size
+    STRLEN      size
 
   PROTOTYPE: $$
   PREINIT:
