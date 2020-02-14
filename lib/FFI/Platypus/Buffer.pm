@@ -141,7 +141,7 @@ following are recognized:
 
 If true, C<$scalar> is cleared prior to being enlarged.  This
 avoids copying the existing contents to the reallocated memory
-if they are not needed.  It defaults to C<true>.
+if they are not needed.
 
   For example, after
 
@@ -155,6 +155,8 @@ C<$scalar == "my string">, while after
 
 C<length($scalar) == 0>
 
+It defaults to C<true>.
+
 =item set_length => I<boolean>
 
 If true, the length of the I<string> in the C<$scalar> is set to C<$size>.
@@ -162,16 +164,18 @@ If true, the length of the I<string> in the C<$scalar> is set to C<$size>.
 foreign function writes exactly C<$size> bytes to C<$scalar>, as it avoids
 a subsequent call to C<set_used_length>.  Contrast this
 
-  grow my $scalar, 100, { set_length => 1 };
+  grow my $scalar, 100;
   read_exactly_100_bytes_into_scalar( scalar_to_pointer($scalar) );
   @chars = unpack( 'c*', $scalar );
 
 with this:
 
-  grow my $scalar, 100;
+  grow my $scalar, 100, { set_length => 0 };
   read_exactly_100_bytes_into_scalar( scalar_to_pointer($scalar) );
   set_used_length( $scalar, 100 );
   @chars = unpack( 'c*', $scalar );
+
+It defaults to C<true>.
 
 =back
 

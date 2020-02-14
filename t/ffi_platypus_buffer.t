@@ -44,14 +44,15 @@ subtest grow => sub {
     grow( $str, $required );
     my $sv = B::svref_2object( \$str );
     ok $sv->LEN >= $required, "buffer grew as expected";
-    is $sv->CUR, 0,  "buffer contents cleared";
+    isnt substr( $str, 0, length($orig) ), $orig, "original contents cleared";
+    is $sv->CUR, $required,  "string length == requested buffer length";
   };
 
   subtest clear => sub {
 
     subtest 'on' => sub {
       my $str = $orig;
-      grow( $str, $required, { clear => 1 }  );
+      grow( $str, $required, { clear => 1, set_length => 0 }  );
       my $sv = B::svref_2object( \$str );
       ok $sv->LEN >= $required, "buffer grew as expected";
       is $sv->CUR, 0,  "buffer contents cleared";
@@ -59,7 +60,7 @@ subtest grow => sub {
 
     subtest 'off' => sub {
       my $str = $orig;
-      grow( $str, $required, { clear => 0 }  );
+      grow( $str, $required, { clear => 0, set_length => 0 }  );
       my $sv = B::svref_2object( \$str );
       ok $sv->LEN >= $required, "buffer grew as expected";
       is $str, $orig,  "buffer contents not cleared";
