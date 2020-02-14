@@ -13,8 +13,8 @@ grow (sv, size, ... )
         clear = SvTRUE(ST(2));
 
     if (SvROK (sv))
-        croak("argument error: buffer must be a scalar");
-        
+        croak("buffer argument must be a scalar");
+
     /* if not a string turn it into an empty one, or if clearing is
        requested, reset string length */
     if (!SvPOK (sv) || clear ) {
@@ -40,7 +40,7 @@ set_used_length( sv, size )
     STRLEN len;
   CODE:
     if (SvROK (sv))
-        croak("argument error: buffer must be a scalar");
+        croak("buffer argument must be a scalar");
 
     /* add some stringiness if necessary; svCUR_set only works on PV's */
     if (!SvPOK (sv))
