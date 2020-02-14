@@ -8,7 +8,7 @@ grow (sv, size, ... )
   PROTOTYPE: $$;$
   PREINIT:
     int clear = 1;
-    int set_length = 0;
+    int set_length = 1;
 
   PPCODE:
     if (SvROK (sv))
