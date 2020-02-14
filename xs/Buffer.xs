@@ -4,16 +4,44 @@ void
 grow (sv, size, ... )
     SV     *sv
     STRLEN      size
- 
+
   PROTOTYPE: $$;$
   PREINIT:
-    int clear = 1;  
-  PPCODE:
-    if ( items > 2 )
-        clear = SvTRUE(ST(2));
+    int clear = 1;
+    int set_length = 0;
 
+  PPCODE:
     if (SvROK (sv))
         croak("buffer argument must be a scalar");
+
+   if ( items > 2 ) {
+
+       HV* hash = NULL;
+       SV* options = ST(2);
+       char *key;
+       I32 len;
+       SV* value;
+
+       if ( SvROK(options) )
+           hash = (HV*) SvRV(options);
+
+       if ( !hash || SvTYPE(hash) != SVt_PVHV )
+           croak("options argument must be a hash");
+
+       hv_iterinit(hash);
+       while( value = hv_iternextsv(hash, &key, &len ) ) {
+
+           if      ( 0 == strncmp( key, "clear", len )  ) {
+               clear = SvTRUE( value  );
+           }
+           else if ( 0 == strncmp( key, "set_length", len )  ) {
+               set_length = SvTRUE( value );
+           }
+           else {
+               croak("unknown option: %s", key );
+           }
+       }
+   }
 
     /* if not a string turn it into an empty one, or if clearing is
        requested, reset string length */
@@ -26,6 +54,8 @@ grow (sv, size, ... )
     }
 
     SvGROW (sv, size);
+    if ( set_length )
+      SvCUR_set( sv, size );
     EXTEND (SP, 1);
     mPUSHi (SvLEN (sv));
 

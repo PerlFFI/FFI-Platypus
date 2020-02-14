@@ -39,42 +39,77 @@ subtest grow => sub {
     my $required = 100;
     ok $sv->LEN < $required, "initial buffer size is smaler than required";
 
-  subtest clear => sub {
+  subtest 'default options' => sub {
     my $str = $orig;
-
-    # in my tests, you never get exactly what you ask for
     grow( $str, $required );
     my $sv = B::svref_2object( \$str );
     ok $sv->LEN >= $required, "buffer grew as expected";
     is $sv->CUR, 0,  "buffer contents cleared";
   };
 
-  subtest "don't clear" => sub {
-    my $str = $orig;
+  subtest clear => sub {
 
-    # in my tests, you never get exactly what you ask for
-    grow( $str, $required, 0 );
-    my $sv = B::svref_2object( \$str );
-    ok $sv->LEN >= $required, "buffer grew as expected";
-    is $str, $orig,  "buffer contents remain";
+    subtest 'on' => sub {
+      my $str = $orig;
+      grow( $str, $required, { clear => 1 }  );
+      my $sv = B::svref_2object( \$str );
+      ok $sv->LEN >= $required, "buffer grew as expected";
+      is $sv->CUR, 0,  "buffer contents cleared";
+    };
+
+    subtest 'off' => sub {
+      my $str = $orig;
+      grow( $str, $required, { clear => 0 }  );
+      my $sv = B::svref_2object( \$str );
+      ok $sv->LEN >= $required, "buffer grew as expected";
+      is $str, $orig,  "buffer contents not cleared";
+    };
+
+  };
+
+  subtest set_length => sub {
+
+    subtest 'on' => sub {
+      my $str = $orig;
+      grow( $str, $required, { set_length => 1 }  );
+      my $sv = B::svref_2object( \$str );
+      ok $sv->LEN >= $required, "buffer grew as expected";
+      is $sv->CUR, $required,  "buffer length set";
+    };
+
+    subtest 'off' => sub {
+      my $str = $orig;
+      grow( $str, $required, { set_length => 0, clear => 1 }  );
+      my $sv = B::svref_2object( \$str );
+      ok $sv->LEN >= $required, "buffer grew as expected";
+      is $sv->CUR, 0,  "buffer length not cleared";
+    };
+
+  };
+
+  subtest "bad option" => sub {
+      my $str;
+      eval{ grow( $str, 100, { 'bad option' => 1 } ) };
+      my $err = $@;
+      like ( $err, qr/bad option/, "croaked" );
   };
 
   subtest "fail on reference" => sub {
     my $ref = \$orig;
     eval { grow( $ref, 0 ); };
     my $err = $@;
-    like ( $err, qr/argument error/, "croaked" );
+    like ( $err, qr/must be a scalar/, "croaked" );
   };
 
   subtest '$str = undef' => sub {
     my $str;
-    grow( $str, $required, 0 );
+    grow( $str, $required );
     my $sv = B::svref_2object( \$str );
     ok $sv->LEN >= $required, "buffer grew as expected";
   };
 
   subtest 'undef' => sub {
-    eval { grow( undef, $required, 0 ) };
+    eval { grow( undef, $required ) };
     my $err = $@;
     like ( $err, qr/read-only/, "croaked" );
   };
@@ -108,7 +143,7 @@ subtest set_used_length => sub {
     my $ref = \$orig;
     eval { set_used_length( $ref, 0 ); };
     my $err = $@;
-    like ( $err, qr/argument error/, "croaked" );
+    like ( $err, qr/must be a scalar/, "croaked" );
   };
 
 TODO : {
