@@ -130,17 +130,23 @@ sub buffer_to_scalar ($$)
 
 =head2 grow
 
- grow $scalar, $size;
- grow $scalar, $size, $clear;
+ grow $scalar, $size, \%options;
 
-Ensure that the scalar can contain at least C<$size> bytes.  C<$clear>
-determines if the scalar is cleared before it is enlarged, which
-avoids copying the original contents to newly allocated storage.  If
-C<$clear> is not specified or is true, the scalar is cleared,
-otherwise it is not.  For example, after
+Ensure that the scalar can contain at least C<$size> bytes.  The
+following are recognized:
+
+=over
+
+=item clear => I<boolean>
+
+If true, C<$scalar> is cleared prior to being enlarged.  This
+avoids copying the existing contents to the reallocated memory
+if they are not needed.  It defaults to C<true>.
+
+  For example, after
 
    $scalar = "my string";
-   grow $scalar, 100, 0;
+   grow $scalar, 100, { clear => 0 };
 
 C<$scalar == "my string">, while after
 
@@ -149,8 +155,28 @@ C<$scalar == "my string">, while after
 
 C<length($scalar) == 0>
 
+=item set_length => I<boolean>
+
+If true, the length of the I<string> in the C<$scalar> is set to C<$size>.
+(See the discussion in L</set_used_length>.)  This is useful if a
+foreign function writes exactly C<$size> bytes to C<$scalar>, as it avoids
+a subsequent call to C<set_used_length>.  Contrast this
+
+  grow my $scalar, 100, { set_length => 1 };
+  read_exactly_100_bytes_into_scalar( scalar_to_pointer($scalar) );
+  @chars = unpack( 'c*', $scalar );
+
+with this:
+
+  grow my $scalar, 100;
+  read_exactly_100_bytes_into_scalar( scalar_to_pointer($scalar) );
+  set_used_length( $scalar, 100 );
+  @chars = unpack( 'c*', $scalar );
+
+=back
+
 Any pointers obtained with C<scalar_to_pointer> or C<scalar_to_buffer>
-are no longer valid after growing the scalar.  By default,
+are no longer valid after growing the scalar.
 
 Not exported by default, but may be exported on request.
 
