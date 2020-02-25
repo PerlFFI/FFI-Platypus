@@ -6,10 +6,6 @@
 #include "ffi_platypus.h"
 #include "ffi_platypus_guts.h"
 
-#ifndef HAVE_IV_IS_64
-#include "perl_math_int64.h"
-#endif
-
 #define MY_CXT_KEY "FFI::Platypus::_guts" XS_VERSION
 
 typedef struct {
@@ -72,9 +68,7 @@ BOOT:
   MY_CXT_INIT;
   MY_CXT.current_argv           = NULL;
   MY_CXT.loaded_math_longdouble = 0;
-#ifndef HAVE_IV_IS_64
   PERL_MATH_INT64_LOAD_OR_CROAK;
-#endif
 
   stash = gv_stashpv("FFI::Platypus", TRUE);
   newCONSTSUB(stash, "_cast0", newSVuv(PTR2UV(cast0)));

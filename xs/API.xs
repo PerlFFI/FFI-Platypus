@@ -271,15 +271,7 @@ arguments_get_uint64(i)
   CODE:
     if(MY_CXT.current_argv == NULL)
       croak("Not in custom type handler");
-#ifdef HAVE_IV_IS_64
-    XSRETURN_UV(ffi_pl_arguments_get_uint64(MY_CXT.current_argv, i));
-#else
-    {
-      ST(0) = sv_newmortal();
-      sv_setu64(ST(0), ffi_pl_arguments_get_uint64(MY_CXT.current_argv, i));
-      XSRETURN(1);
-    }
-#endif
+    XSRETURN_U64(ffi_pl_arguments_get_uint64(MY_CXT.current_argv, i));
 
 void
 arguments_set_uint64(i, value)
@@ -291,11 +283,7 @@ arguments_set_uint64(i, value)
   CODE:
     if(MY_CXT.current_argv == NULL)
       croak("Not in custom type handler");
-#ifdef HAVE_IV_IS_64
-    ffi_pl_arguments_set_uint64(MY_CXT.current_argv, i, SvUV(value));
-#else
     ffi_pl_arguments_set_uint64(MY_CXT.current_argv, i, SvU64(value));
-#endif
 
 void
 arguments_get_sint64(i)
@@ -306,15 +294,7 @@ arguments_get_sint64(i)
   CODE:
     if(MY_CXT.current_argv == NULL)
       croak("Not in custom type handler");
-#ifdef HAVE_IV_IS_64
-    XSRETURN_IV(ffi_pl_arguments_get_sint64(MY_CXT.current_argv, i));
-#else
-    {
-      ST(0) = sv_newmortal();
-      sv_setu64(ST(0), ffi_pl_arguments_get_sint64(MY_CXT.current_argv, i));
-      XSRETURN(1);
-    }
-#endif
+    XSRETURN_I64(ffi_pl_arguments_get_sint64(MY_CXT.current_argv, i));
 
 void
 arguments_set_sint64(i, value)
@@ -326,9 +306,5 @@ arguments_set_sint64(i, value)
   CODE:
     if(MY_CXT.current_argv == NULL)
       croak("Not in custom type handler");
-#ifdef HAVE_IV_IS_64
-    ffi_pl_arguments_set_sint64(MY_CXT.current_argv, i, SvIV(value));
-#else
     ffi_pl_arguments_set_sint64(MY_CXT.current_argv, i, SvI64(value));
-#endif
 
