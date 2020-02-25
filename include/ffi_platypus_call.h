@@ -91,21 +91,12 @@
         case FFI_PL_TYPE_SINT32:
           ffi_pl_arguments_set_sint32(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
           break;
-#ifdef HAVE_IV_IS_64
-        case FFI_PL_TYPE_UINT64:
-          ffi_pl_arguments_set_uint64(arguments, i, SvOK(arg) ? SvUV(arg) : 0);
-          break;
-        case FFI_PL_TYPE_SINT64:
-          ffi_pl_arguments_set_sint64(arguments, i, SvOK(arg) ? SvIV(arg) : 0);
-          break;
-#else
         case FFI_PL_TYPE_UINT64:
           ffi_pl_arguments_set_uint64(arguments, i, SvOK(arg) ? SvU64(arg) : 0);
           break;
         case FFI_PL_TYPE_SINT64:
           ffi_pl_arguments_set_sint64(arguments, i, SvOK(arg) ? SvI64(arg) : 0);
           break;
-#endif
         case FFI_PL_TYPE_FLOAT:
           ffi_pl_arguments_set_float(arguments, i, SvOK(arg) ? SvNV(arg) : 0.0);
           break;
@@ -297,19 +288,11 @@
                         break;
                       case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
                         Newx_or_alloca(ptr, 1, uint64_t);
-#ifdef HAVE_IV_IS_64
-                        *((uint64_t*)ptr) = SvOK(arg2) ? SvUV(arg2) : 0;
-#else
                         *((uint64_t*)ptr) = SvOK(arg2) ? SvU64(arg2) : 0;
-#endif
                         break;
                       case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
                         Newx_or_alloca(ptr, 1, int64_t);
-#ifdef HAVE_IV_IS_64
-                        *((int64_t*)ptr) = SvOK(arg2) ? SvIV(arg2) : 0;
-#else
                         *((int64_t*)ptr) = SvOK(arg2) ? SvI64(arg2) : 0;
-#endif
                         break;
                       case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
                         Newx_or_alloca(ptr, 1, float);
@@ -442,22 +425,14 @@
                       Newx(ptr, count, uint64_t);
                       for(n=0; n<count; n++)
                       {
-#ifdef HAVE_IV_IS_64
-                        ((uint64_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
-#else
                         ((uint64_t*)ptr)[n] = SvU64(*av_fetch(av, n, 1));
-#endif
                       }
                       break;
                     case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
                       Newx(ptr, count, int64_t);
                       for(n=0; n<count; n++)
                       {
-#ifdef HAVE_IV_IS_64
-                        ((int64_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
-#else
                         ((int64_t*)ptr)[n] = SvI64(*av_fetch(av, n, 1));
-#endif
                       }
                       break;
                     case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
@@ -582,21 +557,12 @@
                     case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_CUSTOM_PERL:
                       ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg2));
                       break;
-#ifdef HAVE_IV_IS_64
-                    case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_uint64(arguments, i, SvUV(arg2));
-                      break;
-                    case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
-                      ffi_pl_arguments_set_sint64(arguments, i, SvIV(arg2));
-                      break;
-#else
                     case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
                       ffi_pl_arguments_set_uint64(arguments, i, SvU64(arg2));
                       break;
                     case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
                       ffi_pl_arguments_set_sint64(arguments, i, SvI64(arg2));
                       break;
-#endif
                     case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_CUSTOM_PERL:
                       ffi_pl_arguments_set_float(arguments, i, SvNV(arg2));
                       break;
@@ -650,21 +616,12 @@
                     case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_OBJECT:
                       ffi_pl_arguments_set_sint32(arguments, i, SvIV(arg2) );
                       break;
-#ifdef HAVE_IV_IS_64
-                    case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_OBJECT:
-                      ffi_pl_arguments_set_uint64(arguments, i, SvUV(arg2) );
-                      break;
-                    case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_OBJECT:
-                      ffi_pl_arguments_set_sint64(arguments, i, SvIV(arg2) );
-                      break;
-#else
                     case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_OBJECT:
                       ffi_pl_arguments_set_uint64(arguments, i, SvU64(arg2) );
                       break;
                     case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_OBJECT:
                       ffi_pl_arguments_set_sint64(arguments, i, SvI64(arg2) );
                       break;
-#endif
                     case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_OBJECT:
                       ffi_pl_arguments_set_pointer(arguments, i, SvOK(arg2) ? INT2PTR(void*, SvIV(arg2)) : NULL);
                       break;
@@ -799,18 +756,10 @@
                         sv_setiv(SvRV(arg), *((int32_t*)ptr));
                         break;
                       case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
-#ifdef HAVE_IV_IS_64
-                        sv_setuv(SvRV(arg), *((uint64_t*)ptr));
-#else
                         sv_setu64(SvRV(arg), *((uint64_t*)ptr));
-#endif
                         break;
                       case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
-#ifdef HAVE_IV_IS_64
-                        sv_setiv(SvRV(arg), *((int64_t*)ptr));
-#else
                         sv_seti64(SvRV(arg), *((int64_t*)ptr));
-#endif
                         break;
                       case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
                         sv_setnv(SvRV(arg), *((float*)ptr));
@@ -911,21 +860,13 @@
                     case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
                       for(n=0; n<count; n++)
                       {
-#ifdef HAVE_IV_IS_64
-                        sv_setuv(*av_fetch(av, n, 1), ((uint64_t*)ptr)[n]);
-#else
                         sv_setu64(*av_fetch(av, n, 1), ((uint64_t*)ptr)[n]);
-#endif
                       }
                       break;
                     case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
                       for(n=0; n<count; n++)
                       {
-#ifdef HAVE_IV_IS_64
-                        sv_setiv(*av_fetch(av, n, 1), ((int64_t*)ptr)[n]);
-#else
                         sv_seti64(*av_fetch(av, n, 1), ((int64_t*)ptr)[n]);
-#endif
                       }
                       break;
                     case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
@@ -1112,26 +1053,10 @@
 #endif
           break;
         case FFI_PL_TYPE_UINT64:
-#ifdef HAVE_IV_IS_64
-          XSRETURN_UV(result.uint64);
-#else
-          {
-            ST(0) = sv_newmortal();
-            sv_setu64(ST(0), result.uint64);
-            XSRETURN(1);
-          }
-#endif
+          XSRETURN_U64(result.uint64);
           break;
         case FFI_PL_TYPE_SINT64:
-#ifdef HAVE_IV_IS_64
-          XSRETURN_IV(result.sint64);
-#else
-          {
-            ST(0) = sv_newmortal();
-            sv_seti64(ST(0), result.uint64);
-            XSRETURN(1);
-          }
-#endif
+          XSRETURN_I64(result.sint64);
           break;
         case FFI_PL_TYPE_FLOAT:
           XSRETURN_NV(result.xfloat);
@@ -1289,19 +1214,11 @@
                     break;
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
                     value = newSV(0);
-#ifdef HAVE_IV_IS_64
-                    sv_setuv(value, *((uint64_t*) result.pointer));
-#else
                     sv_seti64(value, *((int64_t*) result.pointer));
-#endif
                     break;
                   case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
                     value = newSV(0);
-#ifdef HAVE_IV_IS_64
-                    sv_setiv(value, *((int64_t*) result.pointer));
-#else
                     sv_seti64(value, *((int64_t*) result.pointer));
-#endif
                     break;
                   case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
                     value = newSV(0);
@@ -1425,21 +1342,13 @@
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-#ifdef HAVE_IV_IS_64
-                      sv[i] = sv_2mortal( newSVuv( ((uint64_t*)result.pointer)[i] ) );
-#else
                       sv[i] = sv_2mortal( newSVu64( ((uint64_t*)result.pointer)[i] ) );
-#endif
                     }
                     break;
                   case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
                     for(i=0; i<count; i++)
                     {
-#ifdef HAVE_IV_IS_64
-                      sv[i] = sv_2mortal( newSViv( ((int64_t*)result.pointer)[i] ) );
-#else
                       sv[i] = sv_2mortal( newSVi64( ((int64_t*)result.pointer)[i] ) );
-#endif
                     }
                     break;
                   case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
@@ -1579,18 +1488,10 @@
 #endif
                     break;
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
-#ifdef HAVE_IV_IS_64
-                    ret_in = newSVuv(result.uint64);
-#else
                     ret_in = newSVu64(result.uint64);
-#endif
                     break;
                   case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_CUSTOM_PERL:
-#ifdef HAVE_IV_IS_64
-                    ret_in = newSViv(result.sint64);
-#else
                     ret_in = newSVi64(result.sint64);
-#endif
                     break;
                   case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_CUSTOM_PERL:
                     ret_in = newSVnv(result.xfloat);
@@ -1695,18 +1596,10 @@
 #endif
                     break;
                   case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_OBJECT:
-#ifdef HAVE_IV_IS_64
-                    sv_setiv(value, result.sint64);
-#else
                     sv_seti64(value, result.sint64);
-#endif
                     break;
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_OBJECT:
-#ifdef HAVE_IV_IS_64
-                    sv_setuv(value, result.uint64);
-#else
                     sv_setu64(value, result.uint64);
-#endif
                     break;
                   default:
                     break;

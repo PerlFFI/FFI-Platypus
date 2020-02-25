@@ -6,10 +6,6 @@
 #include "ffi_platypus.h"
 #include "ffi_platypus_guts.h"
 
-#ifndef HAVE_IV_IS_64
-#include "perl_math_int64.h"
-#endif
-
 void
 ffi_pl_closure_add_data(SV *closure, ffi_pl_closure *closure_data)
 {
@@ -99,11 +95,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
           break;
         case FFI_PL_TYPE_SINT64:
           sv = sv_newmortal();
-#ifdef HAVE_IV_IS_64
-          sv_setiv(sv, *((int64_t*)arguments[i]));
-#else
           sv_seti64(sv, *((int64_t*)arguments[i]));
-#endif
           XPUSHs(sv);
           break;
         case FFI_PL_TYPE_UINT8:
@@ -123,11 +115,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
           break;
         case FFI_PL_TYPE_UINT64:
           sv = sv_newmortal();
-#ifdef HAVE_IV_IS_64
-          sv_setuv(sv, *((uint64_t*)arguments[i]));
-#else
           sv_setu64(sv, *((uint64_t*)arguments[i]));
-#endif
           XPUSHs(sv);
           break;
         case FFI_PL_TYPE_FLOAT:
@@ -256,18 +244,10 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
 #endif
         break;
       case FFI_PL_TYPE_UINT64:
-#ifdef HAVE_IV_IS_64
-        *((uint64_t*)result) = SvUV(sv);
-#else
         *((uint64_t*)result) = SvU64(sv);
-#endif
         break;
       case FFI_PL_TYPE_SINT64:
-#ifdef HAVE_IV_IS_64
-        *((int64_t*)result) = SvIV(sv);
-#else
         *((int64_t*)result) = SvI64(sv);
-#endif
         break;
       case FFI_PL_TYPE_FLOAT:
         *((float*)result) = SvNV(sv);
