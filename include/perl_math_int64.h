@@ -8,6 +8,30 @@
  * Module::CAPIMaker version: 0.02
  */
 
+/* Platypus specific begin */
+#ifdef HAVE_IV_IS_64
+#define SvU64(a) SvUV(a)
+#define SvI64(a) SvIV(a)
+#define sv_seti64(a,b) sv_setiv(a,b)
+#define sv_setu64(a,b) sv_setuv(a,b)
+#define newSVi64(a) newSViv(a)
+#define newSVu64(a) newSVuv(a)
+#define XSRETURN_U64(a) XSRETURN_UV(a)
+#define XSRETURN_I64(a) XSRETURN_IV(a)
+#define PERL_MATH_INT64_LOAD_OR_CROAK
+#else
+#define XSRETURN_U64(a) {   \
+  ST(0) = sv_newmortal();   \
+  sv_setu64(ST(0), a);      \
+  XSRETURN(1);              \
+}
+#define XSRETURN_I64(a) {   \
+  ST(0) = sv_newmortal();   \
+  sv_seti64(ST(0), a);      \
+  XSRETURN(1);              \
+}
+/* Platypus specific end */
+
 #if !defined (PERL_MATH_INT64_H_INCLUDED)
 #define PERL_MATH_INT64_H_INCLUDED
 
@@ -63,5 +87,5 @@ extern uint64_t  (*math_int64_c_api_randU64)(pTHX);
 #define sv_setu64(target, u64) (sv_setsv_mg(target, sv_2mortal(newSVu64(u64))))
 
 #endif
-
+#endif
 #endif
