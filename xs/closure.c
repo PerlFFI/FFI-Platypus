@@ -2,9 +2,9 @@
 #include "perl.h"
 #include "XSUB.h"
 #include "ppport.h"
-
 #include "ffi_platypus.h"
 #include "ffi_platypus_guts.h"
+#include "perl_math_int64.h"
 
 void
 ffi_pl_closure_add_data(SV *closure, ffi_pl_closure *closure_data)
