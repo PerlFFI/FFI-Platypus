@@ -3,6 +3,8 @@ use warnings;
 use lib 'inc';
 use My::Config;
 use File::Spec;
+use File::Spec ();
+use File::Find ();
 
 if(@ARGV > 0)
 {
@@ -104,7 +106,19 @@ foreach my $type (qw( double ))
 }
 
 {
-  my @list = sort map { chomp; s/\.pm$//; s/^lib\///; s/\//::/g; $_ } `find lib -name \*.pm`;
+  my @list;
+  # sort map { chomp; s/\.pm$//; s/^lib\///; s/\//::/g; $_ } `find lib -name \*.pm`
+  File::Find::find(sub {
+    my $pm = $File::Find::name;
+    return unless $pm =~ s/\.pm$//;
+    $pm =~ s/^lib\///;
+    $pm =~ s/\//::/g;
+    $pm =~ s/^lib\///;
+    push @list, $pm;
+  }, 'lib');
+  @list = sort @list;
+
+  die "unable to find modules!" unless @list;
 
   open my $fh, '>', 't/01_use.t';
 
