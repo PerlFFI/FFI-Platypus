@@ -22,8 +22,7 @@ subtest 'Foo constructor' => sub {
   is $ffi->sizeof('foo_t'), 2, 'sizeof foo_t = 2';
   is $ffi->sizeof('bar_t'), 4, 'sizeof foo_t = 4';
 
-  is $ffi->function('UnMangled::Name(int i)' => ['myint'] => 'myint')->call(22), 22;
-
+  is $ffi->function('UnMangled::Name(int i)' => ['bmyint'] => 'bmyint')->call(22), 22;
 };
 
 subtest 'Foo attribute' => sub {
@@ -42,11 +41,10 @@ subtest 'Foo attribute' => sub {
   is $ffi->sizeof('foo_t'), 2, 'sizeof foo_t = 2';
   is $ffi->sizeof('bar_t'), 4, 'sizeof foo_t = 4';
 
-  is $ffi->function('UnMangled::Name(int i)' => ['myint'] => 'myint')->call(22), 22;
+  is $ffi->function('UnMangled::Name(int i)' => ['bmyint'] => 'bmyint')->call(22), 22;
 };
 
 subtest 'MyLang::Roger' => sub {
-
   my $ffi = FFI::Platypus->new;
   $ffi->lang('=MyLang::Roger');
 
@@ -55,7 +53,6 @@ subtest 'MyLang::Roger' => sub {
   note $@;
 
   is $ffi->sizeof('foo_t'), 4, 'sizeof foo_t = 4';
-
 };
 
 done_testing;
@@ -76,9 +73,10 @@ package
 sub native_type_map
 {
   {
-    foo_t => 'sint16',
-    bar_t => 'uint32',
-    myint => 'sint32',
+    foo_t  => 'sint16',
+    bar_t  => 'uint32',
+    myint  => 'sint32',
+    bmyint => 'uint8',
   }
 }
 

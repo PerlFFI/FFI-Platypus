@@ -40,6 +40,13 @@ use Capture::Tiny qw( capture_merged );
   }
 }
 
+sub vcpkg
+{
+  return unless $Config{ccname} eq 'cl';
+  require Alien::FFI::Vcpkg;
+  !!eval { Alien::FFI::Vcpkg->vcpkg }
+}
+
 sub myWriteMakefile
 {
   my %args = @_;
@@ -51,12 +58,19 @@ sub myWriteMakefile
   ExtUtils::MakeMaker->VERSION('7.12');
   $build_config->set(version => [ $args{VERSION} =~ /^([0-9]+)\.([0-9]{2})/ ]);
 
-  if(eval { require Alien::FFI; Alien::FFI->VERSION('0.20'); 1 })
+  if(0 && eval { require Alien::FFI; Alien::FFI->VERSION('0.20'); 1 })
   {
     print "using already installed Alien::FFI (version @{[ Alien::FFI->VERSION ]})\n";
     $build_config->set(alien => { class => 'Alien::FFI', mode => 'already-installed' });
     require Alien::Base::Wrapper;
     Alien::Base::Wrapper->import( 'Alien::FFI', 'Alien::psapi', '!export' );
+    %alien = Alien::Base::Wrapper->mm_args;
+  }
+  elsif(vcpkg())
+  {
+    $build_config->set(alien => { class => 'Alien::FFI::Vcpkg', mode => 'system' });
+    require Alien::Base::Wrapper;
+    Alien::Base::Wrapper->import( 'Alien::FFI::Vcpkg', '!export');
     %alien = Alien::Base::Wrapper->mm_args;
   }
   else
