@@ -68,6 +68,7 @@ sub myWriteMakefile
   }
   elsif(vcpkg())
   {
+    print "using vcpkg libffi package\n";
     $build_config->set(alien => { class => 'Alien::FFI::Vcpkg', mode => 'system' });
     require Alien::Base::Wrapper;
     Alien::Base::Wrapper->import( 'Alien::FFI::Vcpkg', '!export');
