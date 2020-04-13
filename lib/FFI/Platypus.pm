@@ -1768,9 +1768,9 @@ recent versions of Perl.
 
 =item L<FFI>
 
-Foreign function interface based on (nomenclature is everything) FSF's
-C<ffcall>. It hasn't worked for quite some time, and C<ffcall> is no
-longer supported or distributed.
+Older, simpler, less featureful FFI.  It used to be implemented
+using FSF's C<ffcall>.  Because C<ffcall> has been unsupported for
+some time, I reimplemented this module using L<FFI::Platypus>.
 
 =item L<C::DynaLib>
 
