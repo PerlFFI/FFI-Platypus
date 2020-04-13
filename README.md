@@ -1784,9 +1784,9 @@ the development package for `libffi` as prereqs for this module.
 
 - [FFI](https://metacpan.org/pod/FFI)
 
-    Foreign function interface based on (nomenclature is everything) FSF's
-    `ffcall`. It hasn't worked for quite some time, and `ffcall` is no
-    longer supported or distributed.
+    Older, simpler, less featureful FFI.  It used to be implemented
+    using FSF's `ffcall`.  Because `ffcall` has been unsupported for
+    some time, I reimplemented this module using [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
 
 - [C::DynaLib](https://metacpan.org/pod/C::DynaLib)
 

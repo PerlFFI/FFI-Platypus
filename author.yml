@@ -132,6 +132,7 @@ pod_spelling_system:
     - DJERIUS
     - Diab
     - Jerius
+    - featureful
 
 pod_coverage:
   skip: 0
