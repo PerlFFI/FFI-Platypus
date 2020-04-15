@@ -5,7 +5,6 @@ use warnings;
 use 5.008001;
 use Carp ();
 use Text::ParseWords ();
-use List::Util 1.45 ();
 use FFI::Temp;
 use Capture::Tiny ();
 use File::Spec;
