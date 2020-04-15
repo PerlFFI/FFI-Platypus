@@ -47,6 +47,8 @@ jobs:
     - env: CIP_TAG=5.8.1-threads
   allow_failures:
     - env: CIP_TAG=5.10.0-threads
+    - env: CIP_TAG=5.8.1
+    - env: CIP_TAG=5.8.1-threads
 
 cache:
   directories:
