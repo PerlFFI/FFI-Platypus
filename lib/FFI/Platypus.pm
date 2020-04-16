@@ -422,6 +422,18 @@ sub lang
   $self->{lang};
 }
 
+=head2 api
+
+[version 1.11]
+
+ my $level = $ffi->api;
+
+Returns the API level of the Platypus instance.
+
+=cut
+
+sub api { shift->{api} }
+
 =head1 METHODS
 
 =head2 type
