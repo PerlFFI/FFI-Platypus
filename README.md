@@ -244,6 +244,16 @@ Platypus to find symbols using the demangled names (for example, if you
 specify [CPP](https://metacpan.org/pod/FFI::Platypus::Lang::CPP) for C++ you can use method names
 like `Foo::get_bar()` with ["attach"](#attach) or ["function"](#function).
 
+## api
+
+\[version 1.11\]
+
+```perl
+my $level = $ffi->api;
+```
+
+Returns the API level of the Platypus instance.
+
 # METHODS
 
 ## type

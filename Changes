@@ -1,7 +1,13 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.11      2020-04-16 04:07:34 -0600
   - Add api method (gh#233)
+  - On Visual C++ Perl detect libffi using Win32::Vcpkg, if
+    available (gh#229)
+  - Simplified internal handling of 64 bit integers for
+    32 and 64 bit arch (gh#228)
 
 1.10      2020-02-05 16:39:51 -0700
   - On OS X, check if homebrew + libffi is installed and use
