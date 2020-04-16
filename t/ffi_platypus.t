@@ -869,4 +869,26 @@ subtest 'language plugin api version' => sub {
 
 };
 
+subtest 'api attribute' => sub {
+
+  is(
+    FFI::Platypus->new->api,
+    0,
+    'default is zero',
+  );
+
+  is(
+    FFI::Platypus->new( api => 0 )->api,
+    0,
+    'explicit zero',
+  );
+
+  is(
+    FFI::Platypus->new( api => 1 )->api,
+    1,
+    'explicit one',
+  );
+
+};
+
 done_testing;

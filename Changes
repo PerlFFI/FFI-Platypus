@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add api method (gh#233)
 
 1.10      2020-02-05 16:39:51 -0700
   - On OS X, check if homebrew + libffi is installed and use
