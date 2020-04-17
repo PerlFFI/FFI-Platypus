@@ -207,6 +207,7 @@ typedef struct _ffi_pl_type {
 typedef struct _ffi_pl_function {
   void *address;
   void *platypus_sv;  /* really a Perl SV* */
+  int platypus_api;
   ffi_cif ffi_cif;
   ffi_pl_type *return_type;
   ffi_pl_type *argument_types[0];

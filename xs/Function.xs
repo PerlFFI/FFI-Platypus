@@ -54,6 +54,14 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
     self = (ffi_pl_function*)buffer;
     Newx(ffi_argument_types, items-6+extra_arguments, ffi_type*);
 
+    {
+      HV *hv;
+      SV **sv;
+      hv = (HV*) SvRV(platypus);
+      sv = hv_fetch(hv, "api", 3, 0);
+      self->platypus_api = SvIV(*sv);
+    }
+
     self->address = address;
     self->return_type = return_type;
     ffi_return_type = ffi_pl_type_to_libffi_type(return_type);
