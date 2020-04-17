@@ -251,6 +251,10 @@ sub new
   {
     $tp = 'Version1';
   }
+  elsif($api == 2)
+  {
+    $tp = 'Version1';
+  }
   else
   {
     Carp::croak("API version $api not (yet) implemented");
