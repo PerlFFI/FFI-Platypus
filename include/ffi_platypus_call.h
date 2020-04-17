@@ -1440,6 +1440,7 @@
                 SV *ret_in=NULL, *ret_out;
                 switch(type_code)
                 {
+                  /* TODO: FFI_PL_BASE_VOID, FFI_PL_BASE_COMPLEX, FFI_PL_BASE_STRING, FFI_PL_BASE_CLOSURE, FFI_PL_BASE_RECORD */
                   case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_CUSTOM_PERL:
 #if defined FFI_PL_PROBE_BIGENDIAN
                     ret_in = newSVuv(result.uint8_array[3]);
