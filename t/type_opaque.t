@@ -5,7 +5,9 @@ use FFI::CheckLib;
 use FFI::Platypus;
 use FFI::Platypus::Memory qw( malloc free );
 
-foreach my $api (0, 1)
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+
+foreach my $api (0, 1, 2)
 {
 
   subtest "api = $api" => sub {
@@ -16,8 +18,7 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api );
-    $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api >= 2 ? $api : undef), lib => [@lib] );
 
     $ffi->attach( [pointer_null => 'null']           => []          => 'opaque');
     $ffi->attach( [pointer_is_null => 'is_null']     => ['opaque']    => 'int');
@@ -25,7 +26,7 @@ foreach my $api (0, 1)
     $ffi->attach( [pointer_get_my_pointer => 'getp'] => []          => 'opaque');
     $ffi->attach( [pointer_get_my_pointer_arg => 'geta'] => ['opaque*'] => 'void');
 
-    is null(), undef, 'null = undef';
+    is_deeply [null()], [$api >= 2 ? (undef) : ()], 'null = ()/undef';
     is is_null(undef), 1, 'is_null(undef) == 1';
     is is_null(), 1, 'is_null() == 1';
 
@@ -161,38 +162,46 @@ foreach my $api (0, 1)
   };
 }
 
-subtest 'object' => sub {
+foreach my $api (1,2) {
 
-  { package Roger }
+  subtest 'object' => sub {
 
-  my $ffi = FFI::Platypus->new( api => 1 );
-  $ffi->type('object(Roger)', 'roger_t');
-  $ffi->type('object(Roger,opaque)', 'roger2_t');
+    { package Roger }
 
-  my $ptr = malloc 200;
+    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api >= 2 ? $api : undef), lib => [@lib] );
+    $ffi->type('object(Roger)', 'roger_t');
+    $ffi->type('object(Roger,opaque)', 'roger2_t');
 
-  subtest 'argument' => sub {
+    my $ptr = malloc 200;
 
-    is $ffi->cast('roger_t' => 'opaque', bless(\$ptr, 'Roger')), $ptr;
-    is $ffi->cast('roger2_t' => 'opaque', bless(\$ptr, 'Roger')), $ptr;
+    subtest 'argument' => sub {
 
+      is $ffi->cast('roger_t' => 'opaque', bless(\$ptr, 'Roger')), $ptr;
+      is $ffi->cast('roger2_t' => 'opaque', bless(\$ptr, 'Roger')), $ptr;
+
+    };
+
+    subtest 'return value' => sub {
+
+      is $ffi->cast('opaque' => 'roger_t', undef), undef;
+
+      my $obj1 = $ffi->cast('opaque' => 'roger_t', $ptr);
+      isa_ok $obj1, 'Roger';
+      is $$obj1, $ptr;
+
+      my $obj2 = $ffi->cast('opaque' => 'roger2_t', $ptr);
+      isa_ok $obj2, 'Roger';
+      is $$obj2, $ptr;
+
+    };
+
+    is_deeply
+      [$ffi->function( pointer_null => [] => 'roger_t' )->call],
+      [$api >= 2 ? (undef) : ()],
+    ;
+
+    free $ptr;
   };
-
-  subtest 'return value' => sub {
-
-    is $ffi->cast('opaque' => 'roger_t', undef), undef;
-
-    my $obj1 = $ffi->cast('opaque' => 'roger_t', $ptr);
-    isa_ok $obj1, 'Roger';
-    is $$obj1, $ptr;
-
-    my $obj2 = $ffi->cast('opaque' => 'roger2_t', $ptr);
-    isa_ok $obj2, 'Roger';
-    is $$obj2, $ptr;
-
-  };
-
-  free $ptr;
 };
 
 done_testing;
