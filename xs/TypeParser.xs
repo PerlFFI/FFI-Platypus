@@ -41,48 +41,30 @@ create_type_basic(self, type_code)
     RETVAL
 
 ffi_pl_type *
-create_type_record(self, size, record_class)
+create_type_record(self, is_by_value, size, record_class=NULL, ffi_type=NULL)
     SV *self
+    int is_by_value
     size_t size
     ffi_pl_string record_class
+    void *ffi_type
   PREINIT:
     ffi_pl_type *type;
     size_t class_name_size;
   CODE:
     (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
-    type->type_code |= FFI_PL_TYPE_RECORD;
+    type->type_code |= is_by_value ? FFI_PL_TYPE_RECORD_VALUE : FFI_PL_TYPE_RECORD;
     type->extra[0].record.size = size;
-    if(record_class == NULL)
-      type->extra[0].record.class = NULL;
-    else
+    if(record_class != NULL)
     {
       class_name_size = strlen(record_class)+1;
       type->extra[0].record.class = malloc(class_name_size);
       memcpy(type->extra[0].record.class, record_class, class_name_size);
     }
-    type->extra[0].record.ffi_type = NULL;
-    RETVAL = type;
-  OUTPUT:
-    RETVAL
-
-ffi_pl_type*
-create_type_record_value(self, size, record_class, ffi_type)
-    SV *self
-    size_t size
-    const char *record_class
-    void* ffi_type
-  PREINIT:
-    ffi_pl_type *type;
-    size_t class_name_size;
-  CODE:
-    (void)self;
-    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
-    type->type_code |= FFI_PL_TYPE_RECORD_VALUE;
-    type->extra[0].record.size = size;
-    class_name_size = strlen(record_class)+1;
-    type->extra[0].record.class = malloc(class_name_size);
-    memcpy(type->extra[0].record.class, record_class, class_name_size);
+    else
+    {
+      type->extra[0].record.class = NULL;
+    }
     type->extra[0].record.ffi_type = ffi_type;
     RETVAL = type;
   OUTPUT:

@@ -24,8 +24,8 @@ subtest 'basic type' => sub {
 subtest 'fixed string / record (pass by reference)' => sub {
 
   my $type = FFI::Platypus::TypeParser->create_type_record(
+    0,
     22,
-    undef,
   );
 
   isa_ok $type, 'FFI::Platypus::Type';
@@ -47,7 +47,8 @@ subtest 'record' => sub {
 
   subtest 'record class value (pass by value)' => sub {
 
-    my $type = FFI::Platypus::TypeParser->create_type_record_value(
+    my $type = FFI::Platypus::TypeParser->create_type_record(
+      1,
       Foo::Bar->_ffi_record_size,
       'Foo::Bar',
       Foo::Bar->_ffi_meta->ffi_type,
@@ -66,6 +67,7 @@ subtest 'record' => sub {
   subtest 'record class (pass by reference)' => sub {
 
     my $type = FFI::Platypus::TypeParser->create_type_record(
+      0,
       Foo::Bar->_ffi_record_size,
       'Foo::Bar',
     );
