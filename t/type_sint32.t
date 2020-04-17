@@ -9,7 +9,9 @@ use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
-foreach my $api (0, 1)
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+
+foreach my $api (0, 1, 2)
 {
 
   subtest "api = $api" => sub {
@@ -20,8 +22,7 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api );
-    $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api >=2 ? $api : undef) );
     $ffi->type('sint32 *' => 'sint32_p');
     $ffi->type('sint32 [10]' => 'sint32_a');
     $ffi->type('sint32 []' => 'sint32_a2');
@@ -94,26 +95,29 @@ foreach my $api (0, 1)
   };
 }
 
-subtest 'object' => sub {
+foreach my $api (1,2)
+{
+  subtest 'object' => sub {
 
-  { package Roger }
+    { package Roger }
 
-  my $ffi = FFI::Platypus->new( api => 1 );
-  $ffi->type('object(Roger,sint32)', 'roger_t');
+    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api >=2 ? $api : undef) );
+    $ffi->type('object(Roger,sint32)', 'roger_t');
 
-  my $int = -22;
+    my $int = -22;
 
-  subtest 'argument' => sub {
+    subtest 'argument' => sub {
 
-    is $ffi->cast('roger_t' => 'sint32', bless(\$int, 'Roger')), $int;
+      is $ffi->cast('roger_t' => 'sint32', bless(\$int, 'Roger')), $int;
 
-  };
+    };
 
-  subtest 'return value' => sub {
+    subtest 'return value' => sub {
 
-    my $obj1 = $ffi->cast('sint32' => 'roger_t', $int);
-    isa_ok $obj1, 'Roger';
-    is $$obj1, $int;
+      my $obj1 = $ffi->cast('sint32' => 'roger_t', $int);
+      isa_ok $obj1, 'Roger';
+      is $$obj1, $int;
+    };
 
   };
 
