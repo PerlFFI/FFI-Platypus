@@ -4,7 +4,9 @@ use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
-foreach my $api (0, 1)
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+
+foreach my $api (0, 1, 2)
 {
 
   subtest "api = $api" => sub {
@@ -15,10 +17,9 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $p = $api == 1 ? '*' : '';
+    my $p = $api == 0 ? '' : '*';
 
-    my $ffi = FFI::Platypus->new( api => $api );
-    $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api >= 2 ? $api : undef ) );
     $ffi->type("string(10)$p" => 'string_10');
     $ffi->type("string(5)$p"  => 'string_5');
 
@@ -201,6 +202,11 @@ foreach my $api (0, 1)
       is($dst, "hello world\0");
 
     };
+
+    is_deeply(
+      [$ffi->function( pointer_null => [] => 'string' )->call],
+      [$api >= 2 ? (undef) : ()],
+    );
 
   };
 }
