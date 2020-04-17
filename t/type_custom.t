@@ -43,14 +43,14 @@ subtest 'illegal types' => sub {
         native_to_perl => sub {},
       });
     };
-    like "$@", qr/\Q$type\E is not a legal native type for a custom type/;
+    like "$@", qr/\Q$type\E is not a legal basis for a custom type/;
   }
 
 };
 
 subtest 'records' => sub {
 
-  plan skip_all => 'this test will not work yet';
+  plan skip_all => 'todo';
 
   {
     package Foo;
@@ -78,6 +78,8 @@ subtest 'records' => sub {
       },
     },
   );
+
+  ok 1;
 
 };
 

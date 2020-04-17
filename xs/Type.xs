@@ -69,6 +69,24 @@ is_record_value(self)
     RETVAL
 
 int
+is_customizable(self)
+    ffi_pl_type *self
+  PREINIT:
+    int shape;
+    int base;
+  CODE:
+    shape = self->type_code & FFI_PL_SHAPE_MASK;
+    base  = self->type_code & FFI_PL_BASE_MASK;
+    RETVAL = shape == FFI_PL_SHAPE_SCALAR
+          && (   base == FFI_PL_BASE_SINT
+              || base == FFI_PL_BASE_UINT
+              || base == FFI_PL_BASE_FLOAT
+              || base == FFI_PL_BASE_OPAQUE
+             );
+  OUTPUT:
+    RETVAL
+
+int
 is_object_ok(self)
     ffi_pl_type *self
   PREINIT:
