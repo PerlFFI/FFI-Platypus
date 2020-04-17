@@ -53,14 +53,14 @@ foreach my $api (0, 1, 2)
 
     is_deeply \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
 
-    is null(), undef, 'null() == undef';
+    is_deeply [null()], [$api >= 2 ? (undef) : ()], 'null() == undef';
     is is_null(undef), 1, 'is_null(undef) == 1';
     is is_null(), 1, 'is_null() == 1';
     is is_null(\22), 0, 'is_null(22) == 0';
 
     is_deeply static_array(), [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5], 'static_array = [-5.5, 5.5, -10, 10, -15.5, 15.5, 20, -20, 25.5, -25.5]';
 
-    is null2(), undef, 'null2() == undef';
+    is_deeply [null2()], [$api >= 2 ? (undef) : ()], 'null2() == undef';
 
     my $closure = $ffi->closure(sub { $_[0]+2.25 });
     $ffi->attach( [float_set_closure => 'set_closure'] => ['float_c'] => 'void');

@@ -98,7 +98,7 @@ foreach my $api (0, 1, 2)
 
     is_deeply( string_test_pointer_ret("foo"), \"foo" );
     is_deeply( string_test_pointer_ret(undef), \undef );
-    is_deeply( [string_test_pointer_ret_null()], [] );
+    is_deeply( [string_test_pointer_ret_null()], [$api >= 2 ? (undef) : ()] );
 
     subtest 'fixed length input' => sub {
 
