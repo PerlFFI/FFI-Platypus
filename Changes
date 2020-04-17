@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.14_01   2020-04-17 09:14:25 -0600
+  - Experimental: with api => 2, a return value of NULL is
+    translated to undef instead of empty list (gh#234, gh#231)
+
 1.12_01   2020-04-17 10:35:51 -0400
   - Added grow and set_used_length functions to
     FFI::Platypus::Buffer (djerius++ gh#225)
