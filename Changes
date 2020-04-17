@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.15_01   2020-04-17 10:34:13 -0600
+  - Internal refactor (gh214)
+
 1.14_01   2020-04-17 09:14:25 -0600
   - Experimental: with api => 2, a return value of NULL is
     translated to undef instead of empty list (gh#234, gh#231)
