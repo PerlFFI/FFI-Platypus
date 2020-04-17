@@ -7,7 +7,7 @@ use Data::Dumper;
 use File::Spec;
 use FFI::Platypus::TypeParser;
 
-my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 sub xdump ($)
 {
@@ -174,8 +174,7 @@ subtest 'find lib' => sub {
   };
 
   subtest external => sub {
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib($libtest);
+    my $ffi = FFI::Platypus->new( lib => [@lib] );
 
     my $good = $ffi->find_symbol('f0');
     ok $good, "ffi.find_symbol(f0) = $good";
@@ -185,8 +184,7 @@ subtest 'find lib' => sub {
   };
 
   subtest internal => sub {
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib(undef);
+    my $ffi = FFI::Platypus->new( lib => [undef] );
 
     my $good = $ffi->find_symbol('printf');
     ok $good, "ffi.find_symbol(printf) = $good";
@@ -198,8 +196,7 @@ subtest 'find lib' => sub {
 
 subtest 'find symbol' => sub {
   subtest external => sub {
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+    my $ffi = FFI::Platypus->new( lib => [@lib] );
 
     my $good = $ffi->find_symbol('f0');
     ok $good, "ffi.find_symbol(f0) = $good";
@@ -209,8 +206,7 @@ subtest 'find symbol' => sub {
   };
 
   subtest internal => sub {
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib(undef);
+    my $ffi = FFI::Platypus->new( lib => [undef] );
 
     my $good = $ffi->find_symbol('printf');
     ok $good, "ffi.find_symbol(printf) = $good";
@@ -563,8 +559,7 @@ subtest 'class or instance method' => sub {
 };
 
 subtest 'cast' => sub {
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+  my $ffi = FFI::Platypus->new( lib => [@lib] );
 
   subtest 'cast from string to pointer' => sub {
     my $string = "foobarbaz";
@@ -619,8 +614,7 @@ subtest 'cast' => sub {
 subtest 'ignore_not_found' => sub {
 
   subtest 'ignore_not_found=undef' => sub {
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib($libtest);
+    my $ffi = FFI::Platypus->new( lib => [@lib] );
 
     my $f1 = eval { $ffi->function(f1 => [] => 'void') };
     is $@, '', 'no exception';
@@ -638,8 +632,7 @@ subtest 'ignore_not_found' => sub {
   };
 
   subtest 'ignore_not_found=0' => sub {
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib($libtest);
+    my $ffi = FFI::Platypus->new( lib => [@lib] );
     $ffi->ignore_not_found(0);
 
     my $f1 = eval { $ffi->function(f1 => [] => 'void') };
@@ -657,8 +650,7 @@ subtest 'ignore_not_found' => sub {
   };
 
   subtest 'ignore_not_found=0 (constructor)' => sub {
-    my $ffi = FFI::Platypus->new( ignore_not_found => 0 );
-    $ffi->lib($libtest);
+    my $ffi = FFI::Platypus->new( ignore_not_found => 0, lib => [@lib] );
 
     my $f1 = eval { $ffi->function(f1 => [] => 'void') };
     is $@, '', 'no exception';
@@ -675,8 +667,7 @@ subtest 'ignore_not_found' => sub {
   };
 
   subtest 'ignore_not_found=1' => sub {
-    my $ffi = FFI::Platypus->new;
-    $ffi->lib($libtest);
+    my $ffi = FFI::Platypus->new( lib => [@lib] );
     $ffi->ignore_not_found(1);
 
     my $f1 = eval { $ffi->function(f1 => [] => 'void') };
@@ -694,8 +685,7 @@ subtest 'ignore_not_found' => sub {
   };
 
   subtest 'ignore_not_found=1 (constructor)' => sub {
-    my $ffi = FFI::Platypus->new( ignore_not_found => 1 );
-    $ffi->lib($libtest);
+    my $ffi = FFI::Platypus->new( ignore_not_found => 1, lib => [@lib] );
 
     my $f1 = eval { $ffi->function(f1 => [] => 'void') };
     is $@, '', 'no exception';
@@ -711,8 +701,7 @@ subtest 'ignore_not_found' => sub {
   };
 
   subtest 'ignore_not_found bool context' => sub {
-    my $ffi = FFI::Platypus->new( ignore_not_found => 1 );
-    $ffi->lib($libtest);
+    my $ffi = FFI::Platypus->new( ignore_not_found => 1, lib => [@lib] );
 
     my $f1 = eval { $ffi->function(f1 => [] => 'void') };
     ok $f1, 'f1 exists and resolved to boolean true';
@@ -730,8 +719,7 @@ subtest 'attach basic' => sub {
   use FFI::Platypus;
   use Test::More;
 
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($libtest);
+  my $ffi = FFI::Platypus->new( lib => [@lib] );
 
   $ffi->attach('f0' => ['uint8'] => 'uint8');
   $ffi->attach([f0=>'f1'] => ['uint8'] => 'uint8');
@@ -765,8 +753,7 @@ subtest 'attach void' => sub {
   use FFI::Platypus;
   use Test::More;
 
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($libtest);
+  my $ffi = FFI::Platypus->new( lib => [@lib] );
 
   $ffi->attach('f2' => ['int*'] => 'void');
   $ffi->attach([f2=>'f2_implicit'] => ['int*']);
@@ -783,8 +770,7 @@ subtest 'attach void' => sub {
 
 subtest 'customer mangler' => sub {
 
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($libtest);
+  my $ffi = FFI::Platypus->new( lib => [@lib] );
   $ffi->mangler( sub { "mystrangeprefix_$_[0]" });
   is($ffi->function(bar => [] => 'int')->call, 42 );
 };
@@ -823,16 +809,14 @@ subtest 'warning defaults' => sub {
 
   subtest 'api = 0' => sub {
     @warnings = ();
-    my $ffi = FFI::Platypus->new( api => 0 );
-    $ffi->lib('corpus/bogus.so');
+    my $ffi = FFI::Platypus->new( api => 0, lib => ['corpus/bogus.so'] );
     is $ffi->find_symbol('foo'), undef;
     is_deeply \@warnings, [];
   };
 
   subtest 'api = 1' => sub {
     @warnings = ();
-    my $ffi = FFI::Platypus->new( api => 1 );
-    $ffi->lib('corpus/bogus.so');
+    my $ffi = FFI::Platypus->new( api => 1, lib => ['corpus/bogus.so'] );
     local $@ = '';
     is $ffi->find_symbol('foo'), undef;
     like $warnings[0], qr/^warning: error loading corpus\/bogus\.so/;
