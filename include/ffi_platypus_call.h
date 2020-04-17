@@ -1202,7 +1202,14 @@
             case FFI_PL_SHAPE_POINTER:
               if(result.pointer == NULL)
               {
-                XSRETURN_EMPTY;
+                if(self->platypus_api >= 2)
+                {
+                  XSRETURN_UNDEF;
+                }
+                else
+                {
+                  XSRETURN_EMPTY;
+                }
               }
               else
               {
@@ -1309,7 +1316,14 @@
             case FFI_PL_SHAPE_ARRAY:
               if(result.pointer == NULL)
               {
-                XSRETURN_EMPTY;
+                if(self->platypus_api >= 2)
+                {
+                  XSRETURN_UNDEF;
+                }
+                else
+                {
+                  XSRETURN_EMPTY;
+                }
               }
               else
               {
