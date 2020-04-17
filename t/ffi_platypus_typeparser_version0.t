@@ -126,6 +126,7 @@ subtest record => sub {
       size      => 8,
       type      => 'record',
       type_code => FFI_PL_TYPE_RECORD,
+      class     => 'Foo::Bar::Baz',
     },
     'classed record',
   ) or diag explain $type;

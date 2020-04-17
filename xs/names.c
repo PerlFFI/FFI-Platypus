@@ -49,7 +49,7 @@ ffi_pl_type_to_libffi_type(ffi_pl_type *type)
     case FFI_PL_TYPE_RECORD:
       return &ffi_type_pointer;
     case FFI_PL_TYPE_RECORD_VALUE:
-      return type->extra[0].record_value.ffi_type;
+      return type->extra[0].record.ffi_type;
   }
   switch(type_code & (FFI_PL_SHAPE_MASK))
   {

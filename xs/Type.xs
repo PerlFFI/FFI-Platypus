@@ -125,9 +125,10 @@ DESTROY(self)
       if(!PL_dirty)
         Safefree(self->extra[0].closure.ffi_cif.arg_types);
     }
-    else if(self->type_code == FFI_PL_TYPE_RECORD_VALUE)
+    else if(self->type_code == FFI_PL_TYPE_RECORD
+    ||      self->type_code == FFI_PL_TYPE_RECORD_VALUE)
     {
-      Safefree(self->extra[0].record_value.class);
+      Safefree(self->extra[0].record.class);
     }
     else
     {

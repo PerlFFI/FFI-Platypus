@@ -28,14 +28,14 @@
 #elif FFI_PL_CALL_RET_NO_NORMAL
 #define RESULT result_ptr
     void *result_ptr;
-    Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, char);
+    Newx_or_alloca(result_ptr, self->return_type->extra[0].record.size, char);
 #else
 #define RESULT result_ptr
     ffi_pl_result result;
     void *result_ptr;
     if(self->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
     {
-      Newx_or_alloca(result_ptr, self->return_type->extra[0].record_value.size, char);
+      Newx_or_alloca(result_ptr, self->return_type->extra[0].record.size, char);
     }
     else
     {
@@ -180,7 +180,7 @@
           break;
         case FFI_PL_TYPE_RECORD_VALUE:
           {
-            const char *record_class = self->argument_types[i]->extra[0].record_value.class;
+            const char *record_class = self->argument_types[i]->extra[0].record.class;
             /* TODO if object is read-onyl ? */
             if(sv_isobject(arg) && sv_derived_from(arg, record_class))
             {
@@ -958,9 +958,9 @@
           {
             SV *value, *ref;
             value = newSV(0);
-            sv_setpvn(value, result_ptr, self->return_type->extra[0].record_value.size);
+            sv_setpvn(value, result_ptr, self->return_type->extra[0].record.size);
             ref = ST(0) = sv_2mortal(newRV_noinc(value));
-            sv_bless(ref, gv_stashpv(self->return_type->extra[0].record_value.class, GV_ADD));
+            sv_bless(ref, gv_stashpv(self->return_type->extra[0].record.class, GV_ADD));
             ffi_pl_heap_free();
             XSRETURN(1);
           }
@@ -1124,10 +1124,10 @@
           {
             SV *value = newSV(0);
             sv_setpvn(value, result.pointer, self->return_type->extra[0].record.size);
-            if(self->return_type->extra[0].record.stash)
+            if(self->return_type->extra[0].record.class != NULL)
             {
               SV *ref = ST(0) = sv_2mortal(newRV_noinc(value));
-              sv_bless(ref, self->return_type->extra[0].record.stash);
+              sv_bless(ref, gv_stashpv(self->return_type->extra[0].record.class, GV_ADD));
             }
             else
             {

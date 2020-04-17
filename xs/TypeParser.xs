@@ -47,37 +47,43 @@ create_type_record(self, size, record_class)
     ffi_pl_string record_class
   PREINIT:
     ffi_pl_type *type;
+    size_t class_name_size;
   CODE:
     (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
     type->type_code |= FFI_PL_TYPE_RECORD;
     type->extra[0].record.size = size;
     if(record_class == NULL)
-      type->extra[0].record.stash = NULL;
+      type->extra[0].record.class = NULL;
     else
-      type->extra[0].record.stash = gv_stashpv(record_class, GV_ADD);
+    {
+      class_name_size = strlen(record_class)+1;
+      type->extra[0].record.class = malloc(class_name_size);
+      memcpy(type->extra[0].record.class, record_class, class_name_size);
+    }
+    type->extra[0].record.ffi_type = NULL;
     RETVAL = type;
   OUTPUT:
     RETVAL
 
 ffi_pl_type*
-create_type_record_value(self, size, class, ffi_type)
+create_type_record_value(self, size, record_class, ffi_type)
     SV *self
     size_t size
-    const char *class
+    const char *record_class
     void* ffi_type
   PREINIT:
     ffi_pl_type *type;
     size_t class_name_size;
   CODE:
     (void)self;
-    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record_value));
+    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
     type->type_code |= FFI_PL_TYPE_RECORD_VALUE;
-    type->extra[0].record_value.size = size;
-    class_name_size = strlen(class)+1;
-    type->extra[0].record_value.class = malloc(class_name_size);
-    memcpy(type->extra[0].record_value.class, class, class_name_size);
-    type->extra[0].record_value.ffi_type = ffi_type;
+    type->extra[0].record.size = size;
+    class_name_size = strlen(record_class)+1;
+    type->extra[0].record.class = malloc(class_name_size);
+    memcpy(type->extra[0].record.class, record_class, class_name_size);
+    type->extra[0].record.ffi_type = ffi_type;
     RETVAL = type;
   OUTPUT:
     RETVAL
