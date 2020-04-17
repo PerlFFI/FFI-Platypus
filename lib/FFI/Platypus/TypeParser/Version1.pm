@@ -135,15 +135,15 @@ sub parse
     if(my $pointer = $4)
     {
       return $self->types->{$name} = $self->create_type_record(
+        0,
         $size,
-        undef,
       );
     }
     elsif($opt->{member})
     {
       return $self->types->{"$name *"} = $self->create_type_record(
+        0,
         $size,
-        undef,
       );
     }
     else
@@ -158,13 +158,15 @@ sub parse
     if(my $pointer = $6)
     {
       return $self->types->{$name} = $self->create_type_record(
+        0,
         $class->$size_method,
         $class,
       );
     }
     else
     {
-      return $self->types->{$name} = $self->create_type_record_value(
+      return $self->types->{$name} = $self->create_type_record(
+        1,
         $class->$size_method,
         $class,
         $class->_ffi_meta->ffi_type,
@@ -236,6 +238,7 @@ sub parse
       {
         my $meta = $unit_type->meta;
         return $self->types->{$name} = $self->create_type_record(
+          0,
           $meta->{size},
           $meta->{class},
         );
