@@ -9,7 +9,9 @@ use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
-foreach my $api (0, 1)
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+
+foreach my $api (0, 1, 2)
 {
 
   subtest "api = $api" => sub {
@@ -20,8 +22,7 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api );
-    $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api >= 2 ? $api : undef) );
     $ffi->type('double *' => 'double_p');
     $ffi->type('double [10]' => 'double_a');
     $ffi->type('double []' => 'double_a2');
