@@ -139,20 +139,21 @@ create_type_pointer(self, type_code)
     RETVAL
 
 ffi_pl_type *
-_create_type_custom(self, type_code, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
+_create_type_custom(self, basis, perl_to_native, native_to_perl, perl_to_native_post, argument_count)
     SV *self
-    int type_code
+    ffi_pl_type* basis
     SV *perl_to_native
     SV *native_to_perl
     SV *perl_to_native_post
     int argument_count
   PREINIT:
     ffi_pl_type *type;
+    int type_code;
     ffi_pl_type_extra_custom_perl *custom;
   CODE:
     (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));
-    type->type_code = FFI_PL_SHAPE_CUSTOM_PERL | type_code;
+    type->type_code = FFI_PL_SHAPE_CUSTOM_PERL | basis->type_code;
 
     custom = &type->extra[0].custom_perl;
     custom->perl_to_native = SvOK(perl_to_native) ? SvREFCNT_inc_simple_NN(perl_to_native) : NULL;

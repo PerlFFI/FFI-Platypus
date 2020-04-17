@@ -161,8 +161,12 @@ subtest 'pointer' => sub {
 
 subtest 'custom type' => sub {
 
-  my $type = FFI::Platypus::TypeParser->_create_type_custom(
+  my $basis = FFI::Platypus::TypeParser->create_type_basic(
     FFI_PL_TYPE_SINT8,
+  );
+
+  my $type = FFI::Platypus::TypeParser->_create_type_custom(
+    $basis,
     sub {},
     sub {},
     sub {},
