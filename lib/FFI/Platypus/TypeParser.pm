@@ -51,7 +51,7 @@ sub create_type_custom
   {
     croak "$name is not a legal basis for a custom type"
   }
-  $self->_create_type_custom($type->type_code, @rest);
+  $self->_create_type_custom($type, @rest);
 }
 
 # this is the type map provided by the language plugin, if any
