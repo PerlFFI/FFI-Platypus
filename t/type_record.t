@@ -48,7 +48,7 @@ subtest 'return null' => sub {
   );
 
   is_deeply(
-    [FFI::Platypus->new( api => 2, lib => [@lib] )->function( pointer_null => [] => 'record(10)*' )->call],
+    [FFI::Platypus->new( api => 2, experimental => 2, lib => [@lib] )->function( pointer_null => [] => 'record(10)*' )->call],
     [undef],
   );
 

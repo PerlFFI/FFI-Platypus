@@ -1171,7 +1171,14 @@
         case FFI_PL_SHAPE_OBJECT | FFI_PL_TYPE_OPAQUE:
           if(result.pointer == NULL)
           {
-            XSRETURN_EMPTY;
+            if(self->platypus_api >= 2)
+            {
+              XSRETURN_UNDEF;
+            }
+            else
+            {
+              XSRETURN_EMPTY;
+            }
           }
           else
           {
