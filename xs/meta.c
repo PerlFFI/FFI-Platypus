@@ -39,13 +39,9 @@ ffi_pl_sizeof_new(ffi_pl_type *self)
 size_t
 ffi_pl_sizeof(ffi_pl_type *self)
 {
-  if(self->type_code == FFI_PL_TYPE_RECORD)
+  if(self->type_code == FFI_PL_TYPE_RECORD || self->type_code == FFI_PL_TYPE_RECORD_VALUE)
   {
     return self->extra[0].record.size;
-  }
-  else if(self->type_code == FFI_PL_TYPE_RECORD_VALUE)
-  {
-    return self->extra[0].record_value.size;
   }
   else
   {
@@ -117,13 +113,15 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
           case FFI_PL_TYPE_RECORD:
             hv_store(meta, "type",          4, newSVpv("record",0),0);
-            hv_store(meta, "ref",           3, newSViv(self->extra[0].record.stash != NULL ? 1 : 0),0);
+            hv_store(meta, "ref",           3, newSViv(self->extra[0].record.class != NULL ? 1 : 0),0);
+            if(self->extra[0].record.class != NULL)
+              hv_store(meta, "class",         5, newSVpv(self->extra[0].record.class,0), 0);
             break;
 
           case FFI_PL_TYPE_RECORD_VALUE:
             hv_store(meta, "type",          4, newSVpv("record_value",0),0);
-            hv_store(meta, "ref",           3, newSViv(1),0);
-            hv_store(meta, "class",         5, newSVpv(self->extra[0].record_value.class,0), 0);
+            hv_store(meta, "ref",           3, newSViv(self->extra[0].record.class != NULL ? 1 : 0),0);
+            hv_store(meta, "class",         5, newSVpv(self->extra[0].record.class,0), 0);
             break;
 
           default:

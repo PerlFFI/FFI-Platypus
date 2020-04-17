@@ -147,10 +147,10 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
           if( *((char**)arguments[i]) != NULL)
           {
             sv_setpvn(sv, *((char**)arguments[i]), extra->argument_types[i]->extra[0].record.size);
-            if(extra->argument_types[i]->extra[0].record.stash)
+            if(extra->argument_types[i]->extra[0].record.class != NULL)
             {
               SV *ref = newRV_inc(sv);
-              sv_bless(ref, extra->argument_types[i]->extra[0].record.stash);
+              sv_bless(ref, gv_stashpv(extra->argument_types[i]->extra[0].record.class, GV_ADD));
               SvREADONLY_on(sv);
               sv = ref;
             }
