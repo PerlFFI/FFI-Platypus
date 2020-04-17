@@ -5,13 +5,12 @@ use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
 use FFI::Platypus::Memory qw( malloc free );
 
-my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 my $record_size = My::FooRecord->ffi_record_size;
 note "record size = $record_size";
 
 subtest 'not a reference' => sub {
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($libtest);
+  my $ffi = FFI::Platypus->new( lib => [@lib] );
 
   $ffi->type("record($record_size)" => 'foo_record_t');
   my $get_name  = $ffi->function( foo_get_name    => [ 'foo_record_t' ] => 'string' );
@@ -41,9 +40,22 @@ subtest 'not a reference' => sub {
 };
 
 
+subtest 'return null' => sub {
+
+  is_deeply(
+    [FFI::Platypus->new( api => 1, lib => [@lib] )->function( pointer_null => [] => 'record(10)*' )->call],
+    [],
+  );
+
+  is_deeply(
+    [FFI::Platypus->new( api => 2, lib => [@lib] )->function( pointer_null => [] => 'record(10)*' )->call],
+    [undef],
+  );
+
+};
+
 subtest 'is a reference' => sub {
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($libtest);
+  my $ffi = FFI::Platypus->new( lib => [@lib] );
 
   $ffi->type("record(My::FooRecord)" => 'foo_record_t');
   my $get_name  = $ffi->function( foo_get_name    => [ 'foo_record_t' ] => 'string' );
@@ -92,8 +104,7 @@ subtest 'closure' => sub {
     );
   }
 
-  my $ffi = FFI::Platypus->new;
-  $ffi->lib($libtest);
+  my $ffi = FFI::Platypus->new( lib => [@lib] );
 
   $ffi->type('record(Closture::Record::RW)' => 'cx_struct_rw_t');
   eval { $ffi->type('(cx_struct_rw_t,int)->void' => 'cx_closure_t') };
@@ -212,8 +223,7 @@ subtest 'closure' => sub {
 
 subtest 'api = 1 fixed string' => sub {
 
-  my $ffi = FFI::Platypus->new( api => 1 );
-  $ffi->lib($libtest);
+  my $ffi = FFI::Platypus->new( api => 1, lib => [@lib] );
 
   {
     package My::FooRecord2;
