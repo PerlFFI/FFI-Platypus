@@ -4,7 +4,7 @@ use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
 
-my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 my @legal = qw( float double opaque );
 push @legal, map { ("sint$_","uint$_") } qw( 8 16 32 64 );
@@ -50,8 +50,6 @@ subtest 'illegal types' => sub {
 
 subtest 'records' => sub {
 
-  plan skip_all => 'todo';
-
   {
     package Foo;
     use FFI::Platypus::Record;
@@ -61,25 +59,94 @@ subtest 'records' => sub {
     );
   }
 
-  my $ffi = FFI::Platypus->new( api => 1, lib => $libtest );
-  $ffi->custom_type(
-    'foo_t' => {
-      native_type => 'record(Foo)',
-      perl_to_native => sub {
-        my $var = shift;
-        if(ref $var eq 'ARRAY')
-        {
-          return Foo->new(name => $var->[0], value => $var->[1]);
-        }
-        elsif(ref $var eq 'Foo')
-        {
-          return $var;
-        }
-      },
-    },
-  );
 
-  ok 1;
+  subtest 'pointer' => sub {
+
+    plan skip_all => 'todo';
+
+    my $ffi = FFI::Platypus->new( api => 1, lib => [@lib] );
+    local $@ = '';
+    eval {
+      $ffi->custom_type(
+        'foo_t' => {
+          native_type => 'record(Foo)*',
+          perl_to_native => sub {
+            my $var = shift;
+            return Foo->new(name => $var->[0], value => $var->[1]);
+          },
+          native_to_perl => sub {
+            my $rec = shift;
+            return [$rec->name, $rec->value];
+          },
+        },
+      );
+    };
+
+    is "$@", '' or return;
+
+    {
+      is(
+        $ffi->function( foo_get_name => [ 'foo_t' ] => 'string' )
+            ->call( ["Graham", 47] ),
+        "Graham",
+      );
+      is(
+        $ffi->function( foo_get_value => [ 'foo_t' ] => 'sint32' )
+            ->call( ["Graham", 47] ),
+        47,
+      );
+      is_deeply(
+        $ffi->function( foo_create => ['string','sint32'] => 'foo_t' )
+            ->call(Foo->new(name => "Adams", value => 42)),
+        ["Adams", 42],
+      );
+    }
+
+  };
+
+  subtest 'by-value' => sub {
+
+    plan skip_all => 'todo';
+
+    my $ffi = FFI::Platypus->new( api => 1, lib => [@lib] );
+    local $@ = '';
+    eval {
+      $ffi->custom_type(
+        'foo_t' => {
+          native_type => 'record(Foo)',
+          perl_to_native => sub {
+            my $var = shift;
+            return Foo->new(name => $var->[0], value => $var->[1]);
+          },
+          native_to_perl => sub {
+            my $rec = shift;
+            return [$rec->name, $rec->value];
+          },
+        },
+      );
+    };
+
+    is "$@", '' or return;
+
+    {
+      is(
+        $ffi->function( foo_value_get_name => [ 'foo_t' ] => 'string' )
+            ->call( ["Graham", 47] ),
+        "Graham",
+      );
+      is(
+        $ffi->function( foo_value_get_value => [ 'foo_t' ] => 'sint32' )
+            ->call( ["Graham", 47] ),
+        47,
+      );
+      is_deeply(
+        $ffi->function( foo_value_create => ['string','sint32'] => 'foo_t' )
+            ->call(Foo->new(name => "Adams", value => 42)),
+        ["Adams", 42],
+      );
+    }
+
+  };
 
 };
 
