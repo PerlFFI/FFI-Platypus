@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.12_01   2020-04-17 10:35:51 -0400
+  - Added grow and set_used_length functions to
+    FFI::Platypus::Buffer (djerius++ gh#225)
+
 1.11      2020-04-16 04:07:34 -0600
   - Add api method (gh#233)
   - On Visual C++ Perl detect libffi using Win32::Vcpkg, if
