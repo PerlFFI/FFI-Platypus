@@ -39,7 +39,10 @@ ffi_pl_sizeof_new(ffi_pl_type *self)
 size_t
 ffi_pl_sizeof(ffi_pl_type *self)
 {
-  if(self->type_code == FFI_PL_TYPE_RECORD || self->type_code == FFI_PL_TYPE_RECORD_VALUE)
+  if(self->type_code == FFI_PL_TYPE_RECORD
+  || self->type_code == FFI_PL_TYPE_RECORD_VALUE
+  || self->type_code == (FFI_PL_TYPE_RECORD | FFI_PL_SHAPE_CUSTOM_PERL)
+  || self->type_code == (FFI_PL_TYPE_RECORD_VALUE | FFI_PL_SHAPE_CUSTOM_PERL))
   {
     return self->extra[0].record.size;
   }
@@ -154,6 +157,14 @@ ffi_pl_get_type_meta(ffi_pl_type *self)
 
       if(self->extra[0].custom_perl.native_to_perl != NULL)
         hv_store(meta, "custom_native_to_perl", 18, newRV_inc((SV*)self->extra[0].custom_perl.native_to_perl), 0);
+
+      if(self->type_code == (FFI_PL_TYPE_RECORD | FFI_PL_SHAPE_CUSTOM_PERL))
+      {
+        hv_store(meta, "sub_type",      8, newSVpv("record",0),0);
+        hv_store(meta, "ref",           3, newSViv(self->extra[0].record.class != NULL ? 1 : 0),0);
+        if(self->extra[0].record.class != NULL)
+          hv_store(meta, "class",         5, newSVpv(self->extra[0].record.class,0), 0);
+      }
       break;
   }
 

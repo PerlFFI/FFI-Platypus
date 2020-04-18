@@ -165,6 +165,9 @@ typedef struct _ffi_pl_type_extra_record {
 } ffi_pl_type_extra_record;
 
 typedef struct _ffi_pl_type_extra_custom_perl {
+  union {
+    ffi_pl_type_extra_record record;
+  } ox;
   void *perl_to_native;
   void *native_to_perl;
   void *perl_to_native_post;
