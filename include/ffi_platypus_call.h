@@ -1109,8 +1109,13 @@
           break;
 #endif
         case FFI_PL_TYPE_RECORD:
+        case FFI_PL_TYPE_RECORD | FFI_PL_SHAPE_CUSTOM_PERL:
           if(result.pointer == NULL)
           {
+            if((type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
+            {
+              ffi_pl_heap_free();
+            }
             if(self->platypus_api >= 2)
             {
               XSRETURN_UNDEF;
@@ -1122,17 +1127,37 @@
           }
           else
           {
+            SV *ref;
             SV *value = newSV(0);
             sv_setpvn(value, result.pointer, self->return_type->extra[0].record.size);
             if(self->return_type->extra[0].record.class != NULL)
             {
-              SV *ref = ST(0) = sv_2mortal(newRV_noinc(value));
+              ref = sv_2mortal(newRV_noinc(value));
               sv_bless(ref, gv_stashpv(self->return_type->extra[0].record.class, GV_ADD));
             }
             else
             {
-              ST(0) = sv_2mortal(value);
+              ref = sv_2mortal(value);
             }
+
+            if((type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
+            {
+              MY_CXT.current_argv = arguments;
+
+              ST(0) = ffi_pl_custom_perl(
+                self->return_type->extra[0].custom_perl.native_to_perl,
+                ref,
+                -1
+              );
+
+              MY_CXT.current_argv = NULL;
+              ffi_pl_heap_free();
+            }
+            else
+            {
+              ST(0) = ref;
+            }
+
             XSRETURN(1);
           }
           break;
