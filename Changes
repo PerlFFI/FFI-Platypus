@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.17_01   2020-04-18 09:04:02 -0600
   - Silence (probably harmless) clang warning introduced in 1.12_01
     (gh#237, gh#239)
 
