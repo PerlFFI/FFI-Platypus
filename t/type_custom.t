@@ -62,17 +62,16 @@ subtest 'records' => sub {
 
   subtest 'pointer' => sub {
 
-    plan skip_all => 'todo';
-
     my $ffi = FFI::Platypus->new( api => 1, lib => [@lib] );
     local $@ = '';
     eval {
+      our $state1;
       $ffi->custom_type(
         'foo_t' => {
           native_type => 'record(Foo)*',
           perl_to_native => sub {
             my $var = shift;
-            return Foo->new(name => $var->[0], value => $var->[1]);
+            return $state1 = Foo->new(name => $var->[0], value => $var->[1]);
           },
           native_to_perl => sub {
             my $rec = shift;
@@ -95,28 +94,27 @@ subtest 'records' => sub {
             ->call( ["Graham", 47] ),
         47,
       );
-      is_deeply(
-        $ffi->function( foo_create => ['string','sint32'] => 'foo_t' )
-            ->call(Foo->new(name => "Adams", value => 42)),
-        ["Adams", 42],
-      );
+      #is_deeply(
+      #  $ffi->function( foo_create => ['string','sint32'] => 'foo_t' )
+      #      ->call(Foo->new(name => "Adams", value => 42)),
+      #  ["Adams", 42],
+      #);
     }
 
   };
 
   subtest 'by-value' => sub {
 
-    plan skip_all => 'todo';
-
     my $ffi = FFI::Platypus->new( api => 1, lib => [@lib] );
     local $@ = '';
     eval {
+      our $state2;
       $ffi->custom_type(
         'foo_t' => {
           native_type => 'record(Foo)',
           perl_to_native => sub {
             my $var = shift;
-            return Foo->new(name => $var->[0], value => $var->[1]);
+            return $state2 = Foo->new(name => $var->[0], value => $var->[1]);
           },
           native_to_perl => sub {
             my $rec = shift;
@@ -139,11 +137,11 @@ subtest 'records' => sub {
             ->call( ["Graham", 47] ),
         47,
       );
-      is_deeply(
-        $ffi->function( foo_value_create => ['string','sint32'] => 'foo_t' )
-            ->call(Foo->new(name => "Adams", value => 42)),
-        ["Adams", 42],
-      );
+      #is_deeply(
+      #  $ffi->function( foo_value_create => ['string','sint32'] => 'foo_t' )
+      #      ->call(Foo->new(name => "Adams", value => 42)),
+      #  ["Adams", 42],
+      #);
     }
 
   };
