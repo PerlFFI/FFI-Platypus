@@ -22,6 +22,7 @@ jobs:
     - env: CIP_TAG=5.30-buster-arm64v8
       arch: arm64
     - env: CIP_TAG=5.30-debug
+    - env: CIP_TAG=5.30-debug32
     - env: CIP_TAG=5.30-buster32
     - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
     - env: CIP_TAG=5.30-threads
