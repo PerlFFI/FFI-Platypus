@@ -2,8 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.16_01   2020-04-18 10:10:37 -0400
+  - Initial support for custom records.  Returning custom records
+    (either via pointer or by reference) is excluded, but should
+    be added soon (gh#214, gh#215, gh#235)
+
 1.15_01   2020-04-17 10:34:13 -0600
-  - Internal refactor (gh214)
+  - Internal refactor (gh#214)
 
 1.14_01   2020-04-17 09:14:25 -0600
   - Experimental: with api => 2, a return value of NULL is
