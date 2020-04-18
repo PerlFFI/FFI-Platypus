@@ -29,7 +29,7 @@ grow (sv, size, ... )
            croak("options argument must be a hash");
 
        hv_iterinit(hash);
-       while( value = hv_iternextsv(hash, &key, &len ) ) {
+       while( (value = hv_iternextsv(hash, &key, &len)) != NULL ) {
 
            if      ( 0 == strncmp( key, "clear", len )  ) {
                clear = SvTRUE( value  );
