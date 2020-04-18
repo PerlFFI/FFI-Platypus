@@ -56,7 +56,8 @@ is_record(self)
     ffi_pl_type *self
   CODE:
     /* may not need this method anymore */
-    RETVAL = self->type_code == FFI_PL_TYPE_RECORD;
+    RETVAL = self->type_code == FFI_PL_TYPE_RECORD
+    ||       self->type_code == (FFI_PL_TYPE_RECORD | FFI_PL_SHAPE_CUSTOM_PERL);
   OUTPUT:
     RETVAL
 
@@ -64,7 +65,8 @@ int
 is_record_value(self)
     ffi_pl_type *self
   CODE:
-    RETVAL = self->type_code == FFI_PL_TYPE_RECORD_VALUE;
+    RETVAL = self->type_code == FFI_PL_TYPE_RECORD_VALUE
+    ||       self->type_code == (FFI_PL_TYPE_RECORD_VALUE | FFI_PL_SHAPE_CUSTOM_PERL);
   OUTPUT:
     RETVAL
 
@@ -128,7 +130,8 @@ DESTROY(self)
     else if(self->type_code == FFI_PL_TYPE_RECORD
     ||      self->type_code == FFI_PL_TYPE_RECORD_VALUE)
     {
-      Safefree(self->extra[0].record.class);
+      if(self->extra[0].record.class != NULL)
+        free(self->extra[0].record.class);
     }
     else
     {
@@ -146,12 +149,14 @@ DESTROY(self)
               SvREFCNT_dec(custom->perl_to_native_post);
             if(custom->native_to_perl != NULL)
               SvREFCNT_dec(custom->native_to_perl);
+            if(self->extra[0].record.class != NULL)
+              free(self->extra[0].record.class);
           }
           break;
         case FFI_PL_SHAPE_OBJECT:
           {
             if(self->extra[0].object.class != NULL)
-              Safefree(self->extra[0].object.class);
+              free(self->extra[0].object.class);
           }
           break;
         default:

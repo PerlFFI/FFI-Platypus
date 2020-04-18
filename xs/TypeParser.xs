@@ -49,7 +49,6 @@ create_type_record(self, is_by_value, size, record_class=NULL, ffi_type=NULL)
     void *ffi_type
   PREINIT:
     ffi_pl_type *type;
-    size_t class_name_size;
   CODE:
     (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_record));
@@ -57,9 +56,9 @@ create_type_record(self, is_by_value, size, record_class=NULL, ffi_type=NULL)
     type->extra[0].record.size = size;
     if(record_class != NULL)
     {
-      class_name_size = strlen(record_class)+1;
-      type->extra[0].record.class = malloc(class_name_size);
-      memcpy(type->extra[0].record.class, record_class, class_name_size);
+      size = strlen(record_class)+1;
+      type->extra[0].record.class = malloc(size);
+      memcpy(type->extra[0].record.class, record_class, size);
     }
     else
     {
@@ -77,13 +76,13 @@ create_type_object(self, type_code, class)
     ffi_pl_string class
   PREINIT:
     ffi_pl_type *type;
-    size_t class_name_size;
+    size_t size;
   CODE:
     (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_object));
-    class_name_size = strlen(class)+1;
-    type->extra[0].object.class = malloc(class_name_size);
-    memcpy(type->extra[0].object.class, class, class_name_size);
+    size = strlen(class)+1;
+    type->extra[0].object.class = malloc(size);
+    memcpy(type->extra[0].object.class, class, size);
     type->type_code |= type_code;
     type->type_code |= FFI_PL_SHAPE_OBJECT;
     RETVAL = type;
@@ -150,10 +149,26 @@ _create_type_custom(self, basis, perl_to_native, native_to_perl, perl_to_native_
     ffi_pl_type *type;
     int type_code;
     ffi_pl_type_extra_custom_perl *custom;
+    ffi_pl_type_extra_record *record;
+    size_t size;
   CODE:
     (void)self;
     type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_custom_perl));
     type->type_code = FFI_PL_SHAPE_CUSTOM_PERL | basis->type_code;
+
+    type->extra[0].record.class = NULL;
+    if( (basis->type_code & FFI_PL_BASE_MASK) == (FFI_PL_TYPE_RECORD & FFI_PL_BASE_MASK)
+    ||  (basis->type_code & FFI_PL_BASE_MASK) == (FFI_PL_TYPE_RECORD_VALUE & FFI_PL_BASE_MASK))
+    {
+      type->extra[0].record.size = basis->extra[0].record.size;
+      type->extra[0].record.ffi_type = basis->extra[0].record.ffi_type;
+      if(basis->extra[0].record.class)
+      {
+        size = strlen(basis->extra[0].record.class) + 1;
+        type->extra[0].record.class = malloc(size);
+        memcpy(type->extra[0].record.class, basis->extra[0].record.class, size);
+      }
+    }
 
     custom = &type->extra[0].custom_perl;
     custom->perl_to_native = SvOK(perl_to_native) ? SvREFCNT_inc_simple_NN(perl_to_native) : NULL;
