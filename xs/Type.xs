@@ -84,10 +84,8 @@ is_customizable(self)
               || base == FFI_PL_BASE_UINT
               || base == FFI_PL_BASE_FLOAT
               || base == FFI_PL_BASE_OPAQUE
-              /*
               || base == FFI_PL_BASE_RECORD
               || base == (FFI_PL_BASE_RECORD | FFI_PL_BASE_OPAQUE)
-              */
              );
   OUTPUT:
     RETVAL
