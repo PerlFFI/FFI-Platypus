@@ -96,7 +96,7 @@ subtest 'records' => sub {
       );
       #is_deeply(
       #  $ffi->function( foo_create => ['string','sint32'] => 'foo_t' )
-      #      ->call(Foo->new(name => "Adams", value => 42)),
+      #      ->call("Adams",42),
       #  ["Adams", 42],
       #);
     }
@@ -139,7 +139,7 @@ subtest 'records' => sub {
       );
       #is_deeply(
       #  $ffi->function( foo_value_create => ['string','sint32'] => 'foo_t' )
-      #      ->call(Foo->new(name => "Adams", value => 42)),
+      #      ->call("Adams", 42),
       #  ["Adams", 42],
       #);
     }

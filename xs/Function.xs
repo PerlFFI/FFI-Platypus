@@ -28,11 +28,17 @@ new(class, platypus, address, abi, var_fixed_args, return_type, ...)
     }
 #endif
 #ifndef FFI_PL_PROBE_RECORDVALUE
-    if(return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
+    if(return_type->type_code == FFI_PL_TYPE_RECORD_VALUE
+    || return_type->type_code == (FFI_PL_TYPE_RECORD_VALUE|FFI_PL_SHAPE_CUSTOM_PERL))
     {
       croak("returning record values is not supported by some combination of your libffi/compiler/platypus");
     }
 #endif
+    if(return_type->type_code == (FFI_PL_TYPE_RECORD|FFI_PL_SHAPE_CUSTOM_PERL)
+    || return_type->type_code == (FFI_PL_TYPE_RECORD_VALUE|FFI_PL_SHAPE_CUSTOM_PERL))
+    {
+      croak("returning custom records is not YET supported");
+    }
     ffi_abi = abi == -1 ? FFI_DEFAULT_ABI : abi;
 
     for(i=0,extra_arguments=0; i<(items-6); i++)
