@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Silence (probably harmless) clang warning introduced in 1.12_01
+    (gh#237, gh#239)
 
 1.16_01   2020-04-18 10:10:37 -0400
   - Initial support for custom records.  Returning custom records
