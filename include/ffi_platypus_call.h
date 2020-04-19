@@ -1114,7 +1114,17 @@
           {
             if((type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
             {
+              MY_CXT.current_argv = arguments;
+
+              ST(0) = ffi_pl_custom_perl(
+                self->return_type->extra[0].custom_perl.native_to_perl,
+                &PL_sv_undef,
+                -1
+              );
+
+              MY_CXT.current_argv = NULL;
               ffi_pl_heap_free();
+              XSRETURN(1);
             }
             if(self->platypus_api >= 2)
             {
