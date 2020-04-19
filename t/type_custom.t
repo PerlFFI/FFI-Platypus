@@ -62,7 +62,7 @@ subtest 'records' => sub {
 
   subtest 'pointer' => sub {
 
-    my $ffi = FFI::Platypus->new( api => 1, lib => [@lib] );
+    my $ffi = FFI::Platypus->new( api => 2, experimental => 2, lib => [@lib] );
     local $@ = '';
     eval {
       our $state1;
@@ -75,7 +75,7 @@ subtest 'records' => sub {
           },
           native_to_perl => sub {
             my $rec = shift;
-            return [$rec->name, $rec->value];
+            return defined $rec ? [$rec->name, $rec->value] : [];
           },
         },
       );
@@ -98,6 +98,11 @@ subtest 'records' => sub {
         $ffi->function( foo_create => ['string','sint32'] => 'foo_t' )
             ->call("Adams", 42),
         ["Adams\0\0\0\0\0\0\0\0\0\0\0", 42],
+      );
+      is_deeply(
+        $ffi->function( pointer_null => [] => 'foo_t' )
+            ->call,
+        [],
       );
     }
 

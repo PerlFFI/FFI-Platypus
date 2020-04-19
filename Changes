@@ -1,8 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
-  - Complete support for custom records.  Including returning custom
-    records (gh#214, gh#215, gh#235, gh#238)
+  - Return pointer to custom record (gh#214, gh#215, gh#235, gh#238)
 
 1.17_01   2020-04-18 09:04:02 -0600
   - Silence (probably harmless) clang warning introduced in 1.12_01
