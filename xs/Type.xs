@@ -125,7 +125,6 @@ countof(self)
       case FFI_PL_SHAPE_POINTER:
       case FFI_PL_SHAPE_CUSTOM_PERL:
       case FFI_PL_SHAPE_OBJECT:
-        /* TODO: record should maybe return the size in bytes */
         switch(self->type_code)
         {
           case FFI_PL_TYPE_VOID:
