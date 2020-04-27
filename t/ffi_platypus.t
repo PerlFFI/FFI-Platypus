@@ -903,7 +903,7 @@ subtest 'kindof' => sub {
   );
 };
 
-subtest 'kindof' => sub {
+subtest 'countof' => sub {
   is(
     FFI::Platypus->_countof('void'),
     0,
