@@ -43,6 +43,80 @@ sizeof(self)
   OUTPUT:
     RETVAL
 
+const char *
+kindof(self)
+    ffi_pl_type *self
+  PREINIT:
+    int type_code;
+  CODE:
+    type_code = self->type_code;
+
+    /* ignore custom asoect */
+    if((type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
+    {
+      type_code ^= FFI_PL_SHAPE_CUSTOM_PERL;
+    }
+
+    switch(type_code)
+    {
+      case FFI_PL_TYPE_VOID :
+        RETVAL = "void";
+        break;
+
+      case FFI_PL_TYPE_SINT8:
+      case FFI_PL_TYPE_UINT8:
+      case FFI_PL_TYPE_SINT16:
+      case FFI_PL_TYPE_UINT16:
+      case FFI_PL_TYPE_SINT32:
+      case FFI_PL_TYPE_UINT32:
+      case FFI_PL_TYPE_SINT64:
+      case FFI_PL_TYPE_UINT64:
+      case FFI_PL_TYPE_FLOAT:
+      case FFI_PL_TYPE_DOUBLE:
+      case FFI_PL_TYPE_LONG_DOUBLE:
+      case FFI_PL_TYPE_COMPLEX_FLOAT:
+      case FFI_PL_TYPE_COMPLEX_DOUBLE:
+      case FFI_PL_TYPE_OPAQUE:
+        RETVAL = "scalar";
+        break;
+
+      case FFI_PL_TYPE_STRING:
+        RETVAL = "string";
+        break;
+
+      case FFI_PL_TYPE_CLOSURE:
+        RETVAL = "closure";
+        break;
+
+      case FFI_PL_TYPE_RECORD:
+        RETVAL = "record";
+        break;
+
+      case FFI_PL_TYPE_RECORD_VALUE:
+        RETVAL = "record-value";
+        break;
+
+      default:
+        switch(type_code & FFI_PL_SHAPE_MASK)
+        {
+          case FFI_PL_SHAPE_POINTER:
+            RETVAL = "pointer";
+            break;
+          case FFI_PL_SHAPE_ARRAY:
+            RETVAL = "array";
+            break;
+          case FFI_PL_SHAPE_OBJECT:
+            RETVAL = "object";
+            break;
+          default:
+            RETVAL = "default";
+            break;
+          //  croak("internal error computing type kind (%x)", type_code);
+        }
+    }
+  OUTPUT:
+    RETVAL
+
 int
 type_code(self)
     ffi_pl_type *self

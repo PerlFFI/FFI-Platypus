@@ -20,6 +20,7 @@ subtest 'basic type' => sub {
   is $type->sizeof, 1;
   is $type->is_record, 0;
   is $type->is_record_value, 0;
+  is $type->kindof, "scalar";
   note Dumper($type->meta);
 
 };
@@ -36,6 +37,7 @@ subtest 'fixed string / record (pass by reference)' => sub {
   is $type->sizeof, 22;
   is $type->is_record, 1;
   is $type->is_record_value, 0;
+  is $type->kindof, "record";
   note Dumper($type->meta);
 
   my $custom = FFI::Platypus::TypeParser->_create_type_custom(
@@ -51,6 +53,7 @@ subtest 'fixed string / record (pass by reference)' => sub {
   is $custom->sizeof, 22;
   is $custom->is_record, 1;
   is $custom->is_record_value, 0;
+  is $custom->kindof, "record";
   note Dumper($custom->meta);
 
 };
@@ -81,6 +84,7 @@ subtest 'record' => sub {
     is $type->sizeof, 4;
     is $type->is_record, 0;
     is $type->is_record_value, 1;
+    is $type->kindof, "record-value";
     note Dumper($type->meta);
 
     my $custom = FFI::Platypus::TypeParser->_create_type_custom(
@@ -96,6 +100,7 @@ subtest 'record' => sub {
     is $custom->sizeof, 4;
     is $custom->is_record, 0;
     is $custom->is_record_value, 1;
+    is $custom->kindof, "record-value";
     note Dumper($custom->meta);
 
 
@@ -115,6 +120,7 @@ subtest 'record' => sub {
     is $type->sizeof, 4;
     is $type->is_record, 1;
     is $type->is_record_value, 0;
+    is $type->kindof, "record";
     note Dumper($type->meta);
 
     my $custom = FFI::Platypus::TypeParser->_create_type_custom(
@@ -130,6 +136,7 @@ subtest 'record' => sub {
     is $custom->sizeof, 4;
     is $custom->is_record, 1;
     is $custom->is_record_value, 0;
+    is $type->kindof, "record";
     note Dumper($custom->meta);
 
   };
@@ -147,6 +154,7 @@ subtest 'string rw' => sub {
   is $type->sizeof, $pointer_size;
   is $type->is_record, 0;
   is $type->is_record_value, 0;
+  is $type->kindof, "string";
   note Dumper($type->meta);
 
 };
@@ -163,6 +171,7 @@ subtest 'string ro' => sub {
   is $type->sizeof, $pointer_size;
   is $type->is_record, 0;
   is $type->is_record_value,0;
+  is $type->kindof, "string";
   note Dumper($type->meta);
 
 };
@@ -180,6 +189,7 @@ subtest 'fixed array' => sub {
   is $type->sizeof, 10;
   is $type->is_record, 0;
   is $type->is_record_value,0;
+  is $type->kindof, "array";
   note Dumper($type->meta);
 
 };
@@ -196,6 +206,7 @@ subtest 'var array' => sub {
   is $type->meta->{size}, 0;
   is $type->is_record, 0;
   is $type->is_record_value,0;
+  is $type->kindof, "array";
   note Dumper($type->meta);
 
 };
@@ -211,6 +222,7 @@ subtest 'pointer' => sub {
   is $type->sizeof, $pointer_size;
   is $type->is_record, 0;
   is $type->is_record_value,0;
+  is $type->kindof, "pointer";
   note Dumper($type->meta);
 
 };
@@ -236,6 +248,7 @@ subtest 'custom type' => sub {
   is $type->sizeof, 1;
   is $type->is_record, 0;
   is $type->is_record_value,0;
+  is $type->kindof, "scalar";
   note Dumper($type->meta);
 
 };

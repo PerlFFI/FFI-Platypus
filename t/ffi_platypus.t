@@ -875,4 +875,22 @@ subtest 'api attribute' => sub {
 
 };
 
+subtest 'kindof' => sub {
+  is(
+    FFI::Platypus->_kindof('void'),
+    'void',
+    'void',
+  );
+  is(
+    FFI::Platypus->_kindof('sint8'),
+    'scalar',
+    'scalar',
+  );
+  is(
+    FFI::Platypus->_kindof('string'),
+    'string',
+    'string',
+  );
+};
+
 done_testing;

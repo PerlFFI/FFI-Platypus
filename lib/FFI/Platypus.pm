@@ -962,6 +962,14 @@ sub alignof
     : $self->new->alignof($name);
 }
 
+sub _kindof
+{
+  my($self, $name) = @_;
+  ref $self
+    ? $self->{tp}->parse($name)->kindof
+    : $self->new->_kindof($name);
+}
+
 =head2 find_lib
 
 [version 0.20]
