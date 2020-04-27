@@ -887,8 +887,46 @@ subtest 'kindof' => sub {
     'scalar',
   );
   is(
+    FFI::Platypus->_kindof('sint8[10]'),
+    'array',
+    'array (fixed)',
+  );
+  is(
+    FFI::Platypus->_kindof('sint8[]'),
+    'array',
+    'array (var)',
+  );
+  is(
     FFI::Platypus->_kindof('string'),
     'string',
+    'string',
+  );
+};
+
+subtest 'kindof' => sub {
+  is(
+    FFI::Platypus->_countof('void'),
+    0,
+    'void',
+  );
+  is(
+    FFI::Platypus->_countof('sint8'),
+    1,
+    'scalar',
+  );
+  is(
+    FFI::Platypus->_countof('sint8[10]'),
+    10,
+    'array (fixed)',
+  );
+  is(
+    FFI::Platypus->_countof('sint8[]'),
+    0,
+    'array (var)',
+  );
+  is(
+    FFI::Platypus->_countof('string'),
+    1,
     'string',
   );
 };
