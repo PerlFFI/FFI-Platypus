@@ -109,10 +109,40 @@ kindof(self)
             RETVAL = "object";
             break;
           default:
-            RETVAL = "default";
-            break;
-          //  croak("internal error computing type kind (%x)", type_code);
+            croak("internal error computing type kind (%x)", type_code);
         }
+    }
+  OUTPUT:
+    RETVAL
+
+int
+countof(self)
+    ffi_pl_type *self
+  CODE:
+    switch(self->type_code & FFI_PL_SHAPE_MASK)
+    {
+      case FFI_PL_SHAPE_SCALAR:
+      case FFI_PL_SHAPE_POINTER:
+      case FFI_PL_SHAPE_CUSTOM_PERL:
+      case FFI_PL_SHAPE_OBJECT:
+        /* TODO: record should maybe return the size in bytes */
+        switch(self->type_code)
+        {
+          case FFI_PL_TYPE_VOID:
+            RETVAL = 0;
+            break;
+          default:
+            RETVAL = 1;
+            break;
+        }
+        break;
+
+      case FFI_PL_SHAPE_ARRAY:
+        RETVAL = self->extra[0].array.element_count;
+        break;
+
+      default:
+        croak("internal error computing type kind (%x)", self->type_code);
     }
   OUTPUT:
     RETVAL
