@@ -965,6 +965,28 @@
             XSRETURN(1);
           }
           break;
+        case FFI_PL_TYPE_RECORD_VALUE | FFI_PL_SHAPE_CUSTOM_PERL:
+          {
+            SV *value, *ref;
+            value = newSV(0);
+            sv_setpvn(value, result_ptr, self->return_type->extra[0].record.size);
+            ref = sv_2mortal(newRV_noinc(value));
+            sv_bless(ref, gv_stashpv(self->return_type->extra[0].record.class, GV_ADD));
+
+            MY_CXT.current_argv = arguments;
+
+            ST(0) = ffi_pl_custom_perl(
+              self->return_type->extra[0].custom_perl.native_to_perl,
+              ref,
+              -1
+            );
+
+            MY_CXT.current_argv = NULL;
+
+            ffi_pl_heap_free();
+            XSRETURN(1);
+          }
+          break;
 #endif
 #if ! FFI_PL_CALL_RET_NO_NORMAL
         case FFI_PL_TYPE_VOID:
