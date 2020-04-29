@@ -992,6 +992,14 @@ sub _def
   $self->{def}->{$package}->{$type};
 }
 
+sub _unitof
+{
+  my($self, $name) = @_;
+  ref $self
+    ? $self->{tp}->parse($name)->unitof
+    : $self->new->_unitof($name);
+}
+
 =head2 find_lib
 
 [version 0.20]
