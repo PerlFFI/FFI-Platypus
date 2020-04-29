@@ -984,9 +984,9 @@ sub _def
   my $self = shift;
   my $package = shift || caller;
   my $type = shift;
-  $self->type($type);
   if(@_)
   {
+    $self->type($type);
     $self->{def}->{$package}->{$type} = shift;
   }
   $self->{def}->{$package}->{$type};

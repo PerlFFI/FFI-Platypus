@@ -946,9 +946,14 @@ subtest 'def' => sub {
 
   subtest 'needs to be a real type' => sub {
     local $@;
-    eval { $ffi->_def(undef, '[] illegal (',) };
+    eval { $ffi->_def(undef, '[] illegal (', 'value') };
     like $@, qr/bad type name/;
   };
+
+  is
+    $ffi->_def(undef, '[] illegal (',),
+    undef,
+  ;
 
   is
     $ffi->_def(undef, 'int', 'roger'),
