@@ -12,7 +12,7 @@
  *    extra function call.  (`$ffi->function(...)->call(...)` and
  *    `$ffi->attach(foo => ...); foo(...)`).  This is obviously absurd.
  *
- * Maybe all each of these weird trade offs each save only a few ms on
+ * Maybe each of these weird trade offs each save only a few ms on
  * each call, but in the end the can add up.  As a result of this
  * priority set, FFI::Platypus does seem to perform considerably better
  * than any other FFI implementations available in Perl ( see
@@ -85,6 +85,7 @@
           }
           continue;
         }
+        av_push(MY_CXT.custom_keepers, newRV_inc(arg));
         type_code ^= FFI_PL_SHAPE_CUSTOM_PERL;
       }
 
@@ -677,6 +678,7 @@
 /*
  * ARGUMENT OUT - SCALAR TYPES
  */
+
         case FFI_PL_TYPE_CLOSURE:
           {
             arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
@@ -695,7 +697,6 @@
 /*
  * ARGUMENT OUT - POINTER TYPES
  */
-
             case FFI_PL_SHAPE_POINTER:
               {
                 void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
@@ -919,6 +920,11 @@
                     arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
                     ffi_pl_custom_perl_cb(coderef, arg, i);
                   }
+                }
+                {
+                  SV *sv = av_pop(MY_CXT.custom_keepers);
+                  if(SvOK(sv))
+                    SvREFCNT_dec(sv);
                 }
               }
               break;
