@@ -16,6 +16,7 @@ typedef struct {
    *  2 attempted load, but errored
    */
   int loaded_math_longdouble;
+  AV* custom_keepers;
 } my_cxt_t;
 
 START_MY_CXT
@@ -68,6 +69,7 @@ BOOT:
   MY_CXT_INIT;
   MY_CXT.current_argv           = NULL;
   MY_CXT.loaded_math_longdouble = 0;
+  MY_CXT.custom_keepers         = get_av("FFI::Platypus::keep", GV_ADD);
   PERL_MATH_INT64_LOAD_OR_CROAK;
 
   stash = gv_stashpv("FFI::Platypus", TRUE);
@@ -79,6 +81,7 @@ void
 CLONE(...)
   CODE:
     MY_CXT_CLONE;
+    MY_CXT.custom_keepers         = get_av("FFI::Platypus::keep", GV_ADD);
 
 INCLUDE: ../../xs/DL.xs
 INCLUDE: ../../xs/Internal.xs
@@ -91,3 +94,4 @@ INCLUDE: ../../xs/ABI.xs
 INCLUDE: ../../xs/Record.xs
 INCLUDE: ../../xs/Closure.xs
 INCLUDE: ../../xs/Buffer.xs
+

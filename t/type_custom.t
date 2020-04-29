@@ -68,13 +68,12 @@ subtest 'records' => sub {
     my $ffi = FFI::Platypus->new( api => 2, experimental => 2, lib => [@lib] );
     local $@ = '';
     eval {
-      our $state1;
       $ffi->custom_type(
         'foo_t' => {
           native_type => 'record(Foo)*',
           perl_to_native => sub {
             my $var = shift;
-            return $state1 = Foo->new(name => $var->[0], value => $var->[1]);
+            return Foo->new(name => $var->[0], value => $var->[1]);
           },
           native_to_perl => sub {
             my $rec = shift;
@@ -116,13 +115,12 @@ subtest 'records' => sub {
     my $ffi = FFI::Platypus->new( api => 1, lib => [@lib] );
     local $@ = '';
     eval {
-      our $state2;
       $ffi->custom_type(
         'foo_t' => {
           native_type => 'record(Foo)',
           perl_to_native => sub {
             my $var = shift;
-            return $state2 = Foo->new(name => $var->[0], value => $var->[1]);
+            return Foo->new(name => $var->[0], value => $var->[1]);
           },
           native_to_perl => sub {
             my $rec = shift;
