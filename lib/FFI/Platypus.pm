@@ -979,6 +979,19 @@ sub _countof
     : $self->new->_countof($name);
 }
 
+sub _def
+{
+  my $self = shift;
+  my $package = shift || caller;
+  my $type = shift;
+  $self->type($type);
+  if(@_)
+  {
+    $self->{def}->{$package}->{$type} = shift;
+  }
+  $self->{def}->{$package}->{$type};
+}
+
 =head2 find_lib
 
 [version 0.20]

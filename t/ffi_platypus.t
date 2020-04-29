@@ -931,4 +931,55 @@ subtest 'countof' => sub {
   );
 };
 
+subtest 'def' => sub {
+  my $ffi = FFI::Platypus->new( api => 1 );
+
+  subtest 'needs to be a real type' => sub {
+    local $@;
+    eval { $ffi->_def(undef, '[] illegal (',) };
+    like $@, qr/bad type name/;
+  };
+
+  is
+    $ffi->_def(undef, 'int', 'roger'),
+    'roger',
+  ;
+
+  is
+    $ffi->_def('main', 'int'),
+    'roger',
+  ;
+
+  is
+    $ffi->_def(undef, 'int'),
+    'roger',
+  ;
+
+  is
+    $ffi->_def('foo', 'int'),
+    undef,
+  ;
+
+  is
+    $ffi->_def('foo', 'int', 'prime'),
+    'prime',
+  ;
+
+  is
+    $ffi->_def('foo', 'int'),
+    'prime',
+  ;
+
+  is
+    $ffi->_def('foo', 'int', undef),
+    undef,
+  ;
+
+  is
+    $ffi->_def('foo', 'int'),
+    undef,
+  ;
+
+};
+
 done_testing;
