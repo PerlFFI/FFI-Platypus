@@ -33,7 +33,8 @@
 #define RESULT result_ptr
     ffi_pl_result result;
     void *result_ptr;
-    if(self->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE)
+    if(self->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE
+    || self->return_type->type_code == (FFI_PL_TYPE_RECORD_VALUE | FFI_PL_SHAPE_CUSTOM_PERL))
     {
       Newx_or_alloca(result_ptr, self->return_type->extra[0].record.size, char);
     }
@@ -975,13 +976,11 @@
 
             MY_CXT.current_argv = arguments;
 
-            SvREFCNT_inc_simple_void_NN(ref);
             ST(0) = ffi_pl_custom_perl(
               self->return_type->extra[0].custom_perl.native_to_perl,
               ref,
               -1
             );
-            SvREFCNT_dec_NN(ref);
 
             MY_CXT.current_argv = NULL;
 

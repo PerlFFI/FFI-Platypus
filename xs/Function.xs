@@ -207,7 +207,8 @@ _attach(self, perl_name, path_name, proto)
       croak("self is not of type FFI::Platypus::Function");
 
     f = INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
-    is_ret_rv = f->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE;
+    is_ret_rv = (f->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE) ||
+                (f->return_type->type_code == (FFI_PL_TYPE_RECORD_VALUE | FFI_PL_SHAPE_CUSTOM_PERL));
 
     if(path_name == NULL)
       path_name = "unknown";
@@ -247,7 +248,10 @@ _sub_ref(self, path_name)
     ffi_pl_function *f;
   CODE:
     f = INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
-    is_ret_rv = f->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE;
+
+    is_ret_rv = (f->return_type->type_code == FFI_PL_TYPE_RECORD_VALUE) ||
+                (f->return_type->type_code == (FFI_PL_TYPE_RECORD_VALUE | FFI_PL_SHAPE_CUSTOM_PERL));
+
     cv = newXS(NULL, is_ret_rv ? ffi_pl_sub_call_rv : ffi_pl_sub_call, path_name);
     CvXSUBANY(cv).any_ptr = (void *) INT2PTR(ffi_pl_function*, SvIV((SV*) SvRV(self)));
     /*
