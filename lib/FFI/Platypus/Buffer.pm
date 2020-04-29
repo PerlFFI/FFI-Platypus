@@ -144,7 +144,7 @@ avoids copying the existing contents to the reallocated memory
 if they are not needed.
 
   For example, after
-
+ 
    $scalar = "my string";
    grow $scalar, 100, { clear => 0 };
 
@@ -205,17 +205,17 @@ number actually written.
   my $sizeof_double = $ffi->sizeof( 'double' );
   my $max_doubles = 100;
   my $max_length = $max_doubles * $sizeof_double;
-
+ 
   my $buffer;                   # length($buffer) == 0
   grow $buffer, $max_length;    # length($buffer) is still  0
   my $pointer = scalar_to_pointer($buffer);
-
+ 
   my $num_read = read_doubles( $pointer, $max_doubles );
                                 # length($buffer) is still == 0
-
+ 
   set_used_length $buffer, $num_read * $sizeof_double;
                                 # length($buffer) is finally != 0
-
+ 
   # unpack the native doubles into a Perl array
   my @doubles = unpack( 'd*', $buffer );  # @doubles == $num_read
 
