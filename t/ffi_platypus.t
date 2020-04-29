@@ -887,6 +887,11 @@ subtest 'kindof' => sub {
     'scalar',
   );
   is(
+    FFI::Platypus->_kindof('sint8*'),
+    'pointer',
+    'pointer',
+  );
+  is(
     FFI::Platypus->_kindof('sint8[10]'),
     'array',
     'array (fixed)',
@@ -913,6 +918,11 @@ subtest 'countof' => sub {
     FFI::Platypus->_countof('sint8'),
     1,
     'scalar',
+  );
+  is(
+    FFI::Platypus->_countof('sint8*'),
+    1,
+    'pointer',
   );
   is(
     FFI::Platypus->_countof('sint8[10]'),
@@ -979,7 +989,39 @@ subtest 'def' => sub {
     $ffi->_def('foo', 'int'),
     undef,
   ;
+};
 
+subtest 'unitof' => sub {
+  is(
+    FFI::Platypus->_unitof('void'),
+    undef,
+    'void',
+  );
+  is(
+    FFI::Platypus->_unitof('sint8'),
+    undef,
+    'scalar',
+  );
+  is(
+    FFI::Platypus->_unitof('sint8*'),
+    'sint8',
+    'pointer',
+  );
+  is(
+    FFI::Platypus->_unitof('sint8[10]'),
+    'sint8',
+    'array (fixed)',
+  );
+  is(
+    FFI::Platypus->_unitof('sint8[]'),
+    'sint8',
+    'array (var)',
+  );
+  is(
+    FFI::Platypus->_unitof('string'),
+    undef,
+    'string',
+  );
 };
 
 done_testing;

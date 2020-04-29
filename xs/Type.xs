@@ -43,6 +43,70 @@ sizeof(self)
   OUTPUT:
     RETVAL
 
+SV*
+unitof(self)
+    ffi_pl_type *self
+  PREINIT:
+    int type_code;
+  CODE:
+    type_code = self->type_code;
+
+    /* ignore custom asoect */
+    if((type_code & FFI_PL_SHAPE_MASK) == FFI_PL_SHAPE_CUSTOM_PERL)
+    {
+      type_code ^= FFI_PL_SHAPE_CUSTOM_PERL;
+    }
+
+    switch(type_code)
+    {
+      case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("sint8");
+      case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("uint8");
+      case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("sint16");
+      case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("uint16");
+      case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("sint32");
+      case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("uint32");
+      case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("sint64");
+      case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("uint64");
+      case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("float");
+      case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("double");
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+      case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("longdouble");
+#endif
+#ifdef FFI_PL_PROBE_COMPLEX
+      case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("complex_float");
+
+      case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
+      case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_ARRAY:
+        XSRETURN_PV("complex_double");
+#endif
+      default:
+        XSRETURN_UNDEF;
+    }
+
 const char *
 kindof(self)
     ffi_pl_type *self

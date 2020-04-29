@@ -22,6 +22,7 @@ subtest 'basic type' => sub {
   is $type->is_record_value, 0;
   is $type->kindof, "scalar";
   is $type->countof, 1;
+  is $type->unitof, undef;
   note Dumper($type->meta);
 
 };
@@ -40,6 +41,7 @@ subtest 'fixed string / record (pass by reference)' => sub {
   is $type->is_record_value, 0;
   is $type->kindof, "record";
   is $type->countof, 1;
+  is $type->unitof, undef;
   note Dumper($type->meta);
 
   my $custom = FFI::Platypus::TypeParser->_create_type_custom(
@@ -57,6 +59,7 @@ subtest 'fixed string / record (pass by reference)' => sub {
   is $custom->is_record_value, 0;
   is $custom->kindof, "record";
   is $custom->countof, 1;
+  is $type->unitof, undef;
   note Dumper($custom->meta);
 
 };
@@ -89,6 +92,7 @@ subtest 'record' => sub {
     is $type->is_record_value, 1;
     is $type->kindof, "record-value";
     is $type->countof, 1;
+  is $type->unitof, undef;
     note Dumper($type->meta);
 
     my $custom = FFI::Platypus::TypeParser->_create_type_custom(
@@ -106,6 +110,7 @@ subtest 'record' => sub {
     is $custom->is_record_value, 1;
     is $custom->kindof, "record-value";
     is $custom->countof, 1;
+    is $type->unitof, undef;
     note Dumper($custom->meta);
 
 
@@ -126,6 +131,7 @@ subtest 'record' => sub {
     is $type->is_record, 1;
     is $type->is_record_value, 0;
     is $type->kindof, "record";
+    is $type->unitof, undef;
     is $type->countof, 1;
     note Dumper($type->meta);
 
@@ -144,6 +150,7 @@ subtest 'record' => sub {
     is $custom->is_record_value, 0;
     is $custom->kindof, "record";
     is $custom->countof, 1;
+    is $type->unitof, undef;
     note Dumper($custom->meta);
 
   };
@@ -163,6 +170,7 @@ subtest 'string rw' => sub {
   is $type->is_record_value, 0;
   is $type->kindof, "string";
   is $type->countof, 1;
+  is $type->unitof, undef;
   note Dumper($type->meta);
 
 };
@@ -181,6 +189,7 @@ subtest 'string ro' => sub {
   is $type->is_record_value,0;
   is $type->kindof, "string";
   is $type->countof, 1;
+  is $type->unitof, undef;
   note Dumper($type->meta);
 
 };
@@ -200,6 +209,7 @@ subtest 'fixed array' => sub {
   is $type->is_record_value,0;
   is $type->kindof, "array";
   is $type->countof, 10;
+  is $type->unitof, 'sint8';
   note Dumper($type->meta);
 
 };
@@ -218,6 +228,7 @@ subtest 'var array' => sub {
   is $type->is_record_value,0;
   is $type->kindof, "array";
   is $type->countof, 0;
+  is $type->unitof, 'sint8';
   note Dumper($type->meta);
 
 };
@@ -235,6 +246,7 @@ subtest 'pointer' => sub {
   is $type->is_record_value,0;
   is $type->kindof, "pointer";
   is $type->countof, 1;
+  is $type->unitof, 'sint8';
   note Dumper($type->meta);
 
 };
@@ -262,6 +274,7 @@ subtest 'custom type' => sub {
   is $type->is_record_value,0;
   is $type->kindof, "scalar";
   is $type->countof, 1;
+  is $type->unitof, undef;
   note Dumper($type->meta);
 
 };
