@@ -53,6 +53,10 @@ jobs:
     - env: CIP_TAG=5.8.1
     - env: CIP_TAG=5.8.1-threads
 
+branches:
+  only:
+    - master
+
 cache:
   directories:
     - "$HOME/.cip"
