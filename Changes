@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.21_01   2020-04-29 19:10:59 -0600
+  - Diagnostic release.
+
 1.20_01   2020-04-29 06:45:11 -0600
   - Return record custom record value (gh#214, gh#215, gh#235, gh#238, #245)
 
