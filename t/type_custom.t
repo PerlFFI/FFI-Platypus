@@ -3,11 +3,14 @@ use warnings;
 use Test::More;
 use FFI::Platypus;
 use FFI::CheckLib;
+use FFI::Platypus::ShareConfig;
 
 my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
 
 my @legal = qw( float double opaque );
 push @legal, map { ("sint$_","uint$_") } qw( 8 16 32 64 );
+
+my $return_ok = FFI::Platypus::ShareConfig->get('probe')->{recordvalue};
 
 subtest 'legal custom types' => sub {
 
@@ -142,11 +145,16 @@ subtest 'records' => sub {
             ->call( ["Graham", 47] ),
         47,
       );
-      is_deeply(
-        $ffi->function( foo_value_create => ['string','sint32'] => 'foo_t' )
-            ->call("Adams", 42),
-       ["Adams\0\0\0\0\0\0\0\0\0\0\0", 42],
-      );
+      subtest 'return-value' => sub {
+        plan skip_all => 'test requires working return records-by-value'
+        unless $return_ok;
+
+        is_deeply(
+          $ffi->function( foo_value_create => ['string','sint32'] => 'foo_t' )
+              ->call("Adams", 42),
+         ["Adams\0\0\0\0\0\0\0\0\0\0\0", 42],
+        );
+      };
     }
 
   };

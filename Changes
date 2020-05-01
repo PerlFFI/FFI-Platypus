@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix test on MSWin32 + older libffi where returning record values
+    doesn't work (introduced in 1.20_01, gh#250)
 
 1.21_01   2020-04-29 19:10:59 -0600
   - Diagnostic release.
