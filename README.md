@@ -596,6 +596,61 @@ my $align = $ffi->alignof($type);
 
 Returns the alignment of the given type in bytes.
 
+## kindof
+
+\[version 1.24\]
+
+```perl
+my $kind = $ffi->kindof($type);
+```
+
+Returns the kind of a type.  This is a string with a value of one of
+
+- `void`
+- `scalar`
+- `string`
+- `closure`
+- `record`
+- `record-value`
+- `pointer`
+- `array`
+- `object`
+
+## countof
+
+\[version 1.24\]
+
+```perl
+my $count = $ffi->countof($type);
+```
+
+For array types returns the number of elements in the array (returns 0 for variable length array).
+For the `void` type returns 0.  Returns 1 for all other types.
+
+## def
+
+\[version 1.24\]
+
+```perl
+$ffi->def($package, $type, $value);
+my $value = $ff->def($package, $type);
+```
+
+This method allows you to store data for types.  If the `$package` is not provided, then the
+caller's package will be used.  `$type` must be a legal Platypus type for the [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus)
+instance.
+
+## unitof
+
+\[version 1.24\]
+
+```perl
+my $unittype = $ffi->unitof($type);
+```
+
+For array and pointer types, returns the basic type without the array or pointer part.
+In other words, for `sin16[]` or `sint16*` it will return `sint16`.
+
 ## find\_lib
 
 \[version 0.20\]

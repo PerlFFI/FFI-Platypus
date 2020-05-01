@@ -897,32 +897,32 @@ subtest 'api attribute' => sub {
 
 subtest 'kindof' => sub {
   is(
-    FFI::Platypus->_kindof('void'),
+    FFI::Platypus->kindof('void'),
     'void',
     'void',
   );
   is(
-    FFI::Platypus->_kindof('sint8'),
+    FFI::Platypus->kindof('sint8'),
     'scalar',
     'scalar',
   );
   is(
-    FFI::Platypus->_kindof('sint8*'),
+    FFI::Platypus->kindof('sint8*'),
     'pointer',
     'pointer',
   );
   is(
-    FFI::Platypus->_kindof('sint8[10]'),
+    FFI::Platypus->kindof('sint8[10]'),
     'array',
     'array (fixed)',
   );
   is(
-    FFI::Platypus->_kindof('sint8[]'),
+    FFI::Platypus->kindof('sint8[]'),
     'array',
     'array (var)',
   );
   is(
-    FFI::Platypus->_kindof('string'),
+    FFI::Platypus->kindof('string'),
     'string',
     'string',
   );
@@ -930,32 +930,32 @@ subtest 'kindof' => sub {
 
 subtest 'countof' => sub {
   is(
-    FFI::Platypus->_countof('void'),
+    FFI::Platypus->countof('void'),
     0,
     'void',
   );
   is(
-    FFI::Platypus->_countof('sint8'),
+    FFI::Platypus->countof('sint8'),
     1,
     'scalar',
   );
   is(
-    FFI::Platypus->_countof('sint8*'),
+    FFI::Platypus->countof('sint8*'),
     1,
     'pointer',
   );
   is(
-    FFI::Platypus->_countof('sint8[10]'),
+    FFI::Platypus->countof('sint8[10]'),
     10,
     'array (fixed)',
   );
   is(
-    FFI::Platypus->_countof('sint8[]'),
+    FFI::Platypus->countof('sint8[]'),
     0,
     'array (var)',
   );
   is(
-    FFI::Platypus->_countof('string'),
+    FFI::Platypus->countof('string'),
     1,
     'string',
   );
@@ -966,84 +966,84 @@ subtest 'def' => sub {
 
   subtest 'needs to be a real type' => sub {
     local $@;
-    eval { $ffi->_def(undef, '[] illegal (', 'value') };
+    eval { $ffi->def(undef, '[] illegal (', 'value') };
     like $@, qr/bad type name/;
   };
 
   is
-    $ffi->_def(undef, '[] illegal (',),
+    $ffi->def(undef, '[] illegal (',),
     undef,
   ;
 
   is
-    $ffi->_def(undef, 'int', 'roger'),
+    $ffi->def(undef, 'int', 'roger'),
     'roger',
   ;
 
   is
-    $ffi->_def('main', 'int'),
+    $ffi->def('main', 'int'),
     'roger',
   ;
 
   is
-    $ffi->_def(undef, 'int'),
+    $ffi->def(undef, 'int'),
     'roger',
   ;
 
   is
-    $ffi->_def('foo', 'int'),
+    $ffi->def('foo', 'int'),
     undef,
   ;
 
   is
-    $ffi->_def('foo', 'int', 'prime'),
+    $ffi->def('foo', 'int', 'prime'),
     'prime',
   ;
 
   is
-    $ffi->_def('foo', 'int'),
+    $ffi->def('foo', 'int'),
     'prime',
   ;
 
   is
-    $ffi->_def('foo', 'int', undef),
+    $ffi->def('foo', 'int', undef),
     undef,
   ;
 
   is
-    $ffi->_def('foo', 'int'),
+    $ffi->def('foo', 'int'),
     undef,
   ;
 };
 
 subtest 'unitof' => sub {
   is(
-    FFI::Platypus->_unitof('void'),
+    FFI::Platypus->unitof('void'),
     undef,
     'void',
   );
   is(
-    FFI::Platypus->_unitof('sint8'),
+    FFI::Platypus->unitof('sint8'),
     undef,
     'scalar',
   );
   is(
-    FFI::Platypus->_unitof('sint8*'),
+    FFI::Platypus->unitof('sint8*'),
     'sint8',
     'pointer',
   );
   is(
-    FFI::Platypus->_unitof('sint8[10]'),
+    FFI::Platypus->unitof('sint8[10]'),
     'sint8',
     'array (fixed)',
   );
   is(
-    FFI::Platypus->_unitof('sint8[]'),
+    FFI::Platypus->unitof('sint8[]'),
     'sint8',
     'array (var)',
   );
   is(
-    FFI::Platypus->_unitof('string'),
+    FFI::Platypus->unitof('string'),
     undef,
     'string',
   );

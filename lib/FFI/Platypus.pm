@@ -964,24 +964,79 @@ sub alignof
     : $self->new->alignof($name);
 }
 
-# will make public versions of these when they are ready
-sub _kindof
+=head2 kindof
+
+[version 1.24]
+
+ my $kind = $ffi->kindof($type);
+
+Returns the kind of a type.  This is a string with a value of one of
+
+=over 4
+
+=item C<void>
+
+=item C<scalar>
+
+=item C<string>
+
+=item C<closure>
+
+=item C<record>
+
+=item C<record-value>
+
+=item C<pointer>
+
+=item C<array>
+
+=item C<object>
+
+=back
+
+=cut
+
+sub kindof
 {
   my($self, $name) = @_;
   ref $self
     ? $self->{tp}->parse($name)->kindof
-    : $self->new->_kindof($name);
+    : $self->new->kindof($name);
 }
 
-sub _countof
+=head2 countof
+
+[version 1.24]
+
+ my $count = $ffi->countof($type);
+
+For array types returns the number of elements in the array (returns 0 for variable length array).
+For the C<void> type returns 0.  Returns 1 for all other types.
+
+=cut
+
+sub countof
 {
   my($self, $name) = @_;
   ref $self
     ? $self->{tp}->parse($name)->countof
-    : $self->new->_countof($name);
+    : $self->new->countof($name);
 }
 
-sub _def
+=head2 def
+
+[version 1.24]
+
+ $ffi->def($package, $type, $value);
+ my $value = $ff->def($package, $type);
+
+This method allows you to store data for types.  If the C<$package> is not provided, then the
+caller's package will be used.  C<$type> must be a legal Platypus type for the L<FFI::Platypus>
+instance.
+
+=cut
+
+sub def
 {
   my $self = shift;
   my $package = shift || caller;
@@ -994,12 +1049,23 @@ sub _def
   $self->{def}->{$package}->{$type};
 }
 
-sub _unitof
+=head2 unitof
+
+[version 1.24]
+
+ my $unittype = $ffi->unitof($type);
+
+For array and pointer types, returns the basic type without the array or pointer part.
+In other words, for C<sin16[]> or C<sint16*> it will return C<sint16>.
+
+=cut
+
+sub unitof
 {
   my($self, $name) = @_;
   ref $self
     ? $self->{tp}->parse($name)->unitof
-    : $self->new->_unitof($name);
+    : $self->new->unitof($name);
 }
 
 =head2 find_lib
