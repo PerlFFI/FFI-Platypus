@@ -421,6 +421,8 @@ sub lang
       $type_map{pointer} = 'opaque' if $self->{tp}->isa('FFI::Platypus::TypeParser::Version0');
       $self->{tp}->type_map(\%type_map);
     }
+
+    $class->load_custom_types($self) if $class->can('load_custom_types');
   }
 
   $self->{lang};
