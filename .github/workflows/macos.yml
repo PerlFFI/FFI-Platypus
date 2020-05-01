@@ -26,6 +26,7 @@ jobs:
         run: |
           brew install perl
           brew install libffi
+          brew install jq
           curl https://cpanmin.us | perl - App::cpanminus -n
           echo "##[add-path]/Users/runner/perl5/bin"
 
@@ -35,6 +36,7 @@ jobs:
       - name: Prepare for cache
         run: |
           perl -V > perlversion.txt
+          brew info --installed --json libffi | jq '.[] | select(.name=="libffi") | .versions' >> perlversion.txt
           ls -l perlversion.txt
 
       - name: Cache CPAN modules
