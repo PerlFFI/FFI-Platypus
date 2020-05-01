@@ -853,6 +853,26 @@ subtest 'language plugin api version' => sub {
 
 };
 
+subtest 'language load_custom_types hook' => sub {
+
+  my @args;
+
+  {
+    package FFI::Platypus::Lang::Frooble2;
+    sub native_type_map {}
+    no warnings 'once';
+    *load_custom_types = sub {
+      @args = @_;
+    };
+  }
+
+  FFI::Platypus->new( lang => 'Frooble2', api => 1 );
+
+  is($args[0], 'FFI::Platypus::Lang::Frooble2');
+  isa_ok $args[1], 'FFI::Platypus';
+
+};
+
 subtest 'api attribute' => sub {
 
   is(
