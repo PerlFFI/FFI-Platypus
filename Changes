@@ -2,6 +2,14 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.23_01   2020-05-01 11:13:59 -0600
+  - Custom record arguments are kept around for the lifetime of the
+    function call, meaning they don't have to be explicitly kept by
+    the custom code wrapper as long as they aren't used after the
+    function returns (gh#236, gh#247).
+  - This completes support for custom record types.  This is a
+    release candidate.
+
 1.22_01   2020-05-01 08:16:25 -0600
   - Fix test on MSWin32 + older libffi where returning record values
     doesn't work (introduced in 1.20_01, gh#250)
@@ -10,7 +18,7 @@ Revision history for {{$dist->name}}
   - Diagnostic release.
 
 1.20_01   2020-04-29 06:45:11 -0600
-  - Return record custom record value (gh#214, gh#215, gh#235, gh#238, #245)
+  - Return record custom record value (gh#214, gh#215, gh#235, gh#238, gh#245)
 
 1.19_01   2020-04-27 12:38:43 -0600
   - Diagnostic release.
