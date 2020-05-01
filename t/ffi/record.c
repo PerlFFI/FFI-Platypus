@@ -9,9 +9,19 @@ typedef struct {
 EXTERN const char *
 foo_get_name(foo_record_t *self)
 {
+  static char ret[16];
   if(self == NULL)
     return NULL;
-  return self->name;
+  /*
+   * TODO: we need to copy the name because the record
+   * could fall out of scope before we start processing
+   * the return values in ffi_platypus_call.h.  If we
+   * can rework that code to delay until after the SV*
+   * is created for the return value then we wouldn't
+   * need to do this.
+   */
+  memcpy(ret, self->name, 16);
+  return ret;
 }
 
 EXTERN const char *
