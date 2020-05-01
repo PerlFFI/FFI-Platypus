@@ -482,7 +482,15 @@
                       break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
                     case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_ARRAY:
-                      Newx(ptr, count, long double);
+                      /* gh#236: lets hope the compiler is smart enough to opitmize this */
+                      if(sizeof(long double) >= 16)
+                      {
+                        Newx(ptr, count, long double);
+                      }
+                      else
+                      {
+                        Newx(ptr, count*16, char);
+                      }
                       for(n=0; n<count; n++)
                       {
                         SV *sv = *av_fetch(av, n, 1);
