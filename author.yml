@@ -133,6 +133,10 @@ pod_spelling_system:
     - Diab
     - Jerius
     - featureful
+    - countof
+    - kindof
+    - thet
+    - unitof
 
 pod_coverage:
   skip: 0
