@@ -72,6 +72,59 @@ have structure understood by the C or other foreign language library
 that you are interfacing with.  It is designed for use with FFI and
 L<FFI::Platypus>, though it may have other applications.
 
+Before you get to deep into using this class you should also consider
+the L<FFI::C>, which provides some overlapping functionality.  Briefly,
+it comes down to this:
+
+=over 4
+
+=item L<FFI::Platypus::Record>
+
+Supports:
+
+=over 4
+
+=item C pointers to C<struct> types
+
+=item Passing C <struct>s by-value.
+
+=back
+
+Does not support:
+
+=over 4
+
+=item C C<union> types.
+
+=item C arrays of C<struct> and C<union> types.
+
+=back
+
+=item L<FFI::C>
+
+Supports:
+
+=over 4
+
+=item C C<struct> andC<union> types
+
+=item C arrays of C<struct> and C<union> types.
+
+=back
+
+Does not support:
+
+=over 4
+
+=item Passing C C<struct>s by-value.
+
+=back
+
+String members are as of this writing a TODO for L<FFI::C>, but
+should be coming soon!
+
+=back
+
 =head1 FUNCTIONS
 
 =head2 record_layout_1
@@ -402,9 +455,9 @@ sub record_layout
 
 1;
 
-=head1 TODO
+=head1 CAVEATS
 
-These useful features (and probably more) are missing:
+These useful features (and probably more) are missing, and unlikely to be added.
 
 =over 4
 
@@ -414,6 +467,8 @@ These useful features (and probably more) are missing:
 
 =back
 
+If you need these features, consider using L<FFI::C> instead.
+
 =head1 SEE ALSO
 
 =over 4
@@ -421,6 +476,12 @@ These useful features (and probably more) are missing:
 =item L<FFI::Platypus>
 
 The main platypus documentation.
+
+=item L<FFI::C>
+
+Another interface for constructing structured data.  It includes support for
+C<union> and array types (which this module does not), but lacks support for
+passing records by-value.
 
 =item L<FFI::Platypus::Record::TieArray>
 

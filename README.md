@@ -1789,6 +1789,14 @@ the development package for `libffi` as prereqs for this module.
     Define structured data records (C "structs") for use with
     Platypus.
 
+- [FFI::C](https://metacpan.org/pod/FFI::C)
+
+    Another interface for defining structured data records for use
+    with Platypus.  Its advantage over [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record) is
+    that it supports `union`s and nested data structures.  Its
+    disadvantage is that it doesn't support passing `struct`s
+    by-value.
+
 - [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API)
 
     The custom types API for Platypus.

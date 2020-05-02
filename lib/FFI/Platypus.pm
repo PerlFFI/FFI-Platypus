@@ -1821,6 +1821,14 @@ Type definitions for Platypus.
 Define structured data records (C "structs") for use with
 Platypus.
 
+=item L<FFI::C>
+
+Another interface for defining structured data records for use
+with Platypus.  Its advantage over L<FFI::Platypus::Record> is
+that it supports C<union>s and nested data structures.  Its
+disadvantage is that it doesn't support passing C<struct>s
+by-value.
+
 =item L<FFI::Platypus::API>
 
 The custom types API for Platypus.
