@@ -1341,6 +1341,8 @@ we used the C<ffi> method to tell L<FFI::C> to use our local instance of
 L<FFI::Platypus> it registers the C<tm> type for us, and we can just start
 using it as a return type!
 
+=head2 structured data records by-value
+
 =head2 libuuid
 
 # EXAMPLE: examples/uuid.pl
