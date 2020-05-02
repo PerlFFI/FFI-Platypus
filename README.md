@@ -23,6 +23,7 @@ puts("hello world");
 
 Platypus is a library for creating interfaces to machine code libraries
 written in languages like C, [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP),
+[Go](https://metacpan.org/pod/FFI::Platypus::Lang::Go),
 [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran),
 [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust),
 [Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal). Essentially anything that gets
@@ -74,6 +75,7 @@ to write an extension with Platypus instead of XS:
     (since on some platforms Perl is compiled and linked with a C++
     compiler). Platypus on the other hand could be used to call other
     compiled languages, like [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran),
+    [Go](https://metacpan.org/pod/FFI::Platypus::Lang::Go),
     [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust),
     [Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal), [C++](https://metacpan.org/pod/FFI::Platypus::Lang::CPP),
     or even [assembly](https://metacpan.org/pod/FFI::Platypus::Lang::ASM), allowing you to focus
@@ -1828,6 +1830,10 @@ the development package for `libffi` as prereqs for this module.
 - [FFI::Platypus::Lang::Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran)
 
     Documentation and tools for using Platypus with Fortran
+
+- [FFI::Platypus::Lang::Go](https://metacpan.org/pod/FFI::Platypus::Lang::Go)
+
+    Documentation and tools for using Platypus with Go
 
 - [FFI::Platypus::Lang::Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal)
 
