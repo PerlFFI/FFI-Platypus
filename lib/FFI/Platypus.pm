@@ -1323,22 +1323,23 @@ L<FFI::Platypus::Memory> module.
 
 =head2 structured data records
 
-# EXAMPLE: examples/time_record.pl
+# EXAMPLE: examples/time_struct.pl
 
 B<Discussion>: C and other machine code languages frequently provide
 interfaces that include structured data records (known as "structs" in
 C).  They sometimes provide an API in which you are expected to
 manipulate these records before and/or after passing them along to C
-functions.  There are a few ways of dealing with such interfaces, but
-the easiest way is demonstrated here defines a record class using a
-specific layout.  For more details see L<FFI::Platypus::Record>.
-(L<FFI::Platypus::Type> includes some other ways of manipulating
-structured data records).
+functions.  For C pointers to structs, unions and arrays of structs and
+unions, the easiest interface to use is via L<FFI::C>.  If you are
+working with structs that must be passed as values (not pointers),
+then you want to use the L<FFI::Platypus::Record> class instead.
+We will discuss this class later.
 
-The C C<localtime> function takes a pointer to a record, hence we suffix
-the type with a star: C<record(My::UnixTime)*>.  If the function takes
-a record in pass-by-value mode then we'd just say C<record(My::UnixTime)>
-with no star suffix.
+The C C<localtime> function takes a pointer to a C struct.  We simply define
+the members of the struct using the L<FFI::C> C<struct> method.  Because
+we used the C<ffi> method to tell L<FFI::C> to use our local instance of
+L<FFI::Platypus> it registers the C<tm> type for us, and we can just start
+using it as a return type!
 
 =head2 libuuid
 

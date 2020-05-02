@@ -845,40 +845,49 @@ these and other memory related functions are provided by the
 ## structured data records
 
 ```perl
-package My::UnixTime;
+use FFI::Platypus 1.00;
+use FFI::C;
 
-use FFI::Platypus::Record;
+my $ffi = FFI::Platypus->new(
+  api => 1,
+  lib => [undef],
+);
+FFI::C->ffi($ffi);
 
-record_layout_1(qw(
-    int    tm_sec
-    int    tm_min
-    int    tm_hour
-    int    tm_mday
-    int    tm_mon
-    int    tm_year
-    int    tm_wday
-    int    tm_yday
-    int    tm_isdst
-    long   tm_gmtoff
-    string tm_zone
-));
+package Unix::TimeStruct {
 
-my $ffi = FFI::Platypus->new( api => 1 );
-$ffi->lib(undef);
-# define a record class My::UnixTime and alias it to "tm"
-$ffi->type("record(My::UnixTime)*" => 'tm');
+  FFI::C->struct(tm => [
+    tm_sec    => 'int',
+    tm_min    => 'int',
+    tm_hour   => 'int',
+    tm_mday   => 'int',
+    tm_mon    => 'int',
+    tm_year   => 'int',
+    tm_wday   => 'int',
+    tm_yday   => 'int',
+    tm_isdst  => 'int',
+    tm_gmtoff => 'long',
+    _tm_zone  => 'opaque',
+  ]);
 
-# attach the C localtime function as a constructor
-$ffi->attach( localtime => ['time_t*'] => 'tm', sub {
-  my($inner, $class, $time) = @_;
-  $time = time unless defined $time;
-  $inner->(\$time);
-});
+  # For now 'string' is unsupported by FFI::C, but we
+  # can cast the time zone from an opaque pointer to
+  # string.
+  sub tm_zone {
+    my $self = shift;
+    $ffi->cast('opaque', 'string', $self->_tm_zone);
+  }
 
-package main;
+  # attach the C localtime function
+  $ffi->attach( localtime => ['time_t*'] => 'tm', sub {
+    my($inner, $class, $time) = @_;
+    $time = time unless defined $time;
+    $inner->(\$time);
+  });
+}
 
 # now we can actually use our My::UnixTime class
-my $time = My::UnixTime->localtime;
+my $time = Unix::TimeStruct->localtime;
 printf "time is %d:%d:%d %s\n",
   $time->tm_hour,
   $time->tm_min,
@@ -890,16 +899,17 @@ printf "time is %d:%d:%d %s\n",
 interfaces that include structured data records (known as "structs" in
 C).  They sometimes provide an API in which you are expected to
 manipulate these records before and/or after passing them along to C
-functions.  There are a few ways of dealing with such interfaces, but
-the easiest way is demonstrated here defines a record class using a
-specific layout.  For more details see [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record).
-([FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) includes some other ways of manipulating
-structured data records).
+functions.  For C pointers to structs, unions and arrays of structs and
+unions, the easiest interface to use is via [FFI::C](https://metacpan.org/pod/FFI::C).  If you are
+working with structs that must be passed as values (not pointers),
+then you want to use the [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record) class instead.
+We will discuss this class later.
 
-The C `localtime` function takes a pointer to a record, hence we suffix
-the type with a star: `record(My::UnixTime)*`.  If the function takes
-a record in pass-by-value mode then we'd just say `record(My::UnixTime)`
-with no star suffix.
+The C `localtime` function takes a pointer to a C struct.  We simply define
+the members of the struct using the [FFI::C](https://metacpan.org/pod/FFI::C) `struct` method.  Because
+we used the `ffi` method to tell [FFI::C](https://metacpan.org/pod/FFI::C) to use our local instance of
+[FFI::Platypus](https://metacpan.org/pod/FFI::Platypus) it registers the `tm` type for us, and we can just start
+using it as a return type!
 
 ## libuuid
 
