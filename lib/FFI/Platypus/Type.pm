@@ -220,11 +220,11 @@ Unsigned 32 bit integer (C<unsigned int>, C<uint32_t>)
 
 =item sint64
 
-Signed 64 bit integer (C<long> or C<long long>, C<int64_t>)
+Signed 64 bit integer (C<long long>, C<int64_t>)
 
 =item uint64
 
-Unsigned 64 bit integer (C<unsigned long> or C<unsigned long long>,
+Unsigned 64 bit integer (C<unsigned long long>,
 C<uint64_t>)
 
 =back
@@ -257,6 +257,12 @@ decide.  The C<malloc> function is defined in terms of C<size_t>:
  $ffi->attach( malloc => ['size_t'] => 'opaque';
 
 (Note that you can get C<malloc> from L<FFI::Platypus::Memory>).
+
+=item long, unsigned long
+
+On 64 bit systems, this is usually a 64 bit integer.  On 32 bit systems
+this is frequently a 32 bit integer (and C<long long> or
+C<unsigned long long> are for 64 bit).
 
 =back
 
@@ -628,7 +634,18 @@ Older versions of Platypus did not support pointers to strings or records.
 =head2 Records
 
 Records are structured data of a fixed length.  In C they are called
-C<struct>s To declare a record type, use C<record>:
+C<struct>s.
+
+The Platypus native way of working with structured data is via the C<record>
+type. There is also L<FFI::C> which has some overlapping functionality.
+Briefly, L<FFI::C> supports C<union> and arrays of structured types, but
+not passing structured data by-value, while the C<record> type doesn't
+support C<union> or arrays of structured data, but does support passing
+structured data by-value.  The remainder of this section will discuss
+the native Platypus C<record> type, but you should remember that for
+some applications L<FFI::C> might be more appropriate.
+
+To declare a record type, use C<record>:
 
  $ffi->type( 'record (42)' => 'my_record_of_size_42_bytes' );
 
