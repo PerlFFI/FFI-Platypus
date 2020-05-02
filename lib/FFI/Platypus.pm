@@ -45,6 +45,7 @@ use FFI::Platypus::Type;
 
 Platypus is a library for creating interfaces to machine code libraries
 written in languages like C, L<C++|FFI::Platypus::Lang::CPP>,
+L<Go|FFI::Platypus::Lang::Go>,
 L<Fortran|FFI::Platypus::Lang::Fortran>,
 L<Rust|FFI::Platypus::Lang::Rust>,
 L<Pascal|FFI::Platypus::Lang::Pascal>. Essentially anything that gets
@@ -98,6 +99,7 @@ least some understanding of C, the C pre-processor, and some C++ caveats
 (since on some platforms Perl is compiled and linked with a C++
 compiler). Platypus on the other hand could be used to call other
 compiled languages, like L<Fortran|FFI::Platypus::Lang::Fortran>,
+L<Go|FFI::Platypus::Lang::Go>,
 L<Rust|FFI::Platypus::Lang::Rust>,
 L<Pascal|FFI::Platypus::Lang::Pascal>, L<C++|FFI::Platypus::Lang::CPP>,
 or even L<assembly|FFI::Platypus::Lang::ASM>, allowing you to focus
@@ -1860,6 +1862,10 @@ language
 =item L<FFI::Platypus::Lang::Fortran>
 
 Documentation and tools for using Platypus with Fortran
+
+=item L<FFI::Platypus::Lang::Go>
+
+Documentation and tools for using Platypus with Go
 
 =item L<FFI::Platypus::Lang::Pascal>
 
