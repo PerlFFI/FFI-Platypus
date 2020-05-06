@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fixed bug where return type uint64* was being returned as
+    sint64* (gh#258, gh#259)
 
 1.24      2020-05-02 16:59:34 -0600
   - Add kindof method (gh#243, gh#254)

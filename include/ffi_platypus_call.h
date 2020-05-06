@@ -1282,7 +1282,7 @@
                     break;
                   case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
                     value = newSV(0);
-                    sv_seti64(value, *((int64_t*) result.pointer));
+                    sv_setu64(value, *((uint64_t*) result.pointer));
                     break;
                   case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
                     value = newSV(0);
