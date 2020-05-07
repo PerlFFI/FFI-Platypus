@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.26      2020-05-07 04:59:17 -0600
   - The return type for the function method can now be omitted and
     defaults to 'void' (gh#262, gh#263)
   - The attach_cast method can now take a wrapper function (gh#261, gh#264)
