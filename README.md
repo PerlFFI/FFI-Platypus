@@ -428,6 +428,8 @@ my $return_string = $function->(1, "hi there");
 ```perl
 my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type);
 my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type, \&wrapper);
+my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types);
+my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => \&wrapper);
 ```
 
 Version 0.91 and later allows you to creat functions for c variadic functions
@@ -449,6 +451,10 @@ $ffi->function( printf => ['string'] => ['string'] => 'int' )
 Some older versions of libffi and possibly some platforms may not support
 variadic functions.  If you try to create a one, then an exception will be
 thrown.
+
+\[version 1.26\]
+
+If the return type is omitted then `void` will be the assumed return type.
 
 ## attach
 

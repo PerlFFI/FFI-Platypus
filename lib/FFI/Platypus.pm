@@ -690,6 +690,8 @@ Examples:
 
  my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type);
  my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => $return_type, \&wrapper);
+ my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types);
+ my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => \&wrapper);
 
 Version 0.91 and later allows you to creat functions for c variadic functions
 (such as printf, scanf, etc) which can take a variable number of arguments.
@@ -709,6 +711,10 @@ Some older versions of libffi and possibly some platforms may not support
 variadic functions.  If you try to create a one, then an exception will be
 thrown.
 
+[version 1.26]
+
+If the return type is omitted then C<void> will be the assumed return type.
+
 =cut
 
 sub function
@@ -716,7 +722,7 @@ sub function
   my $wrapper;
   $wrapper = pop if ref $_[-1] eq 'CODE';
 
-  croak "usage \$ffi->function( name, [ arguments ], return_type)" unless @_ >= 4 && @_ <= 6;
+  croak "usage \$ffi->function( \$name, \\\@arguments, [\\\@var_args], [\$return_type])" unless @_ >= 3 && @_ <= 6;
 
   my $self = shift;
   my $name = shift;
@@ -724,6 +730,7 @@ sub function
   my $var_args;
   $var_args = shift if defined $_[0] && ref($_[0]) eq 'ARRAY';
   my $ret = shift;
+  $ret = 'void' unless defined $ret;
 
   # special case: treat a single void argument type as an empty list of
   # arguments, a la olde timey C compilers.
