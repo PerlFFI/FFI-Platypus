@@ -617,6 +617,7 @@ subtest 'cast' => sub {
       return $out + 4;
     });
     is(cast4(4), 8);
+    is(prototype \&cast4, '$');
   };
 };
 
