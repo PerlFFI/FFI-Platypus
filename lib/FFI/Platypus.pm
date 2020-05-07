@@ -904,19 +904,32 @@ sub cast
 =head2 attach_cast
 
  $ffi->attach_cast("cast_name", $original_type, $converted_type);
+ $ffi->attach_cast("cast_name", $original_type, $converted_type, \&wrapper);
  my $converted_value = cast_name($original_value);
 
 This function attaches a cast as a permanent xsub.  This will make it
 faster and may be useful if you are calling a particular cast a lot.
 
+[version 1.26]
+
+A wrapper may be added as the last argument to C<attach_cast> and works
+just like the wrapper for C<attach> and C<function> methods.
+
 =cut
 
 sub attach_cast
 {
-  my($self, $name, $type1, $type2) = @_;
+  my($self, $name, $type1, $type2, $wrapper) = @_;
   my $caller = caller;
   $name = join '::', $caller, $name unless $name =~ /::/;
-  $self->attach([0 => $name] => [$type1] => $type2 => '$');
+  if(defined $wrapper && ref($wrapper) eq 'CODE')
+  {
+    $self->attach([0 => $name] => [$type1] => $type2 => '$', $wrapper);
+  }
+  else
+  {
+    $self->attach([0 => $name] => [$type1] => $type2 => '$');
+  }
   $self;
 }
 

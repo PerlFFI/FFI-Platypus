@@ -3,6 +3,7 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - The return type for the function method can now be omitted and
     defaults to 'void' (gh#262, gh#263)
+  - The attach_cast method can now take a wrapper function (gh#261, gh#264)
 
 1.25      2020-05-05 19:40:02 -0600
   - Fixed bug where return type uint64* was being returned as

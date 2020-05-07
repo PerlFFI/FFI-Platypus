@@ -557,11 +557,17 @@ my $address = $ffi->cast('int[10]' => 'opaque', \@list);  # WRONG
 
 ```perl
 $ffi->attach_cast("cast_name", $original_type, $converted_type);
+$ffi->attach_cast("cast_name", $original_type, $converted_type, \&wrapper);
 my $converted_value = cast_name($original_value);
 ```
 
 This function attaches a cast as a permanent xsub.  This will make it
 faster and may be useful if you are calling a particular cast a lot.
+
+\[version 1.26\]
+
+A wrapper may be added as the last argument to `attach_cast` and works
+just like the wrapper for `attach` and `function` methods.
 
 ## sizeof
 
