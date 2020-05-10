@@ -79,6 +79,12 @@ C<malloc>:
 
  my $pointer = realloc undef, 64; # same as malloc 64
 
+=head2 strcpy
+
+ strcpy $opaque, $string;
+
+Copies the string to the memory location pointed to by C<$opaque>.
+
 =head2 strdup
 
  my $pointer = strdup $string;
@@ -98,7 +104,7 @@ copied in the new string.
 
 =cut
 
-our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup strndup );
+our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup strndup strcpy );
 
 my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
@@ -111,6 +117,7 @@ $ffi->attach(calloc  => ['size_t', 'size_t']           => 'opaque' => '$$');
 $ffi->attach(realloc => ['opaque', 'size_t']           => 'opaque' => '$$');
 $ffi->attach(memcpy  => ['opaque', 'opaque', 'size_t'] => 'opaque' => '$$$');
 $ffi->attach(memset  => ['opaque', 'int', 'size_t']    => 'opaque' => '$$$');
+$ffi->attach(strcpy  => ['opaque', 'string']           => 'opaque' => '$$');
 
 my $_strdup_impl = 'not-loaded';
 sub _strdup_impl { $_strdup_impl }
