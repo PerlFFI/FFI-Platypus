@@ -81,4 +81,13 @@ subtest 'strndup' => sub {
   };
 };
 
+subtest 'strcpy' => sub {
+
+  my $ptr = malloc(5);
+  strcpy $ptr, "perl";
+  is($ffi->cast('opaque', 'string', $ptr), "perl", "pointer cast back to string matches");
+  free $ptr;
+
+};
+
 done_testing;
