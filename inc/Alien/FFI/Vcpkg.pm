@@ -7,7 +7,6 @@ my $pkg;
 
 sub vcpkg
 {
-  $DB::single = 1;
   $pkg ||= do {
     require Win32::Vcpkg::List;
     Win32::Vcpkg::List->new->search('libffi');
