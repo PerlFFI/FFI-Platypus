@@ -186,6 +186,20 @@ subtest 'hardwire' => sub {
     like "$@", qr/Modification of a read-only value attempted/;
     is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
   };
+
+  subtest 'unicode' => sub {
+    my $stuff = "привет";
+    my($ptr, $len) = scalar_to_buffer $stuff;
+    my $ro;
+    _hardwire $ro, $ptr, $len, 1;
+    is($ro, "привет");
+    is(length($ro), 6);
+    is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
+    local $@ = '';
+    eval { $ro .= "foo" };
+    like "$@", qr/Modification of a read-only value attempted/;
+    is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
+  };
 };
 
 done_testing;
