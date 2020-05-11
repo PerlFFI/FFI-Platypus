@@ -1,6 +1,23 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Buffer
 
 void
+_hardwire(sv, addr, len, utf8 = 0)
+    SV* sv
+    void *addr
+    size_t len
+    IV utf8
+  PROTOTYPE: $$$;$
+  CODE:
+    SvUPGRADE(sv, SVt_PV);
+    SvPVX(sv) = addr;
+    SvCUR_set(sv, len);
+    SvLEN_set(sv, 0);
+    SvPOK_only(sv);
+    SvREADONLY_on(sv);
+    if(utf8)
+      SvUTF8_on(sv);
+
+void
 grow (sv, size, ... )
     SV     *sv
     STRLEN      size

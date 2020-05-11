@@ -8,7 +8,7 @@ use if $^O ne 'MSWin32' || $] >= 5.018, 'open', ':std', ':encoding(utf8)';
 use Test::More;
 use Encode qw( decode );
 use FFI::Platypus::Buffer;
-use FFI::Platypus::Buffer qw( scalar_to_pointer grow set_used_length );
+use FFI::Platypus::Buffer qw( scalar_to_pointer grow set_used_length _hardwire );
 
 subtest simple => sub {
   my $orig = 'me grimlock king';
@@ -165,6 +165,26 @@ TODO : {
     eval { set_used_length( undef, 0 ) };
     my $err = $@;
     like ( $err, qr/read-only/, "croaked" );
+  };
+};
+
+subtest 'hardwire' => sub {
+
+  # hardwire is experimental, do not use outside
+  # of testing
+
+  subtest 'ascii' => sub {
+    my $stuff = "my stuff";
+    my($ptr, $len) = scalar_to_buffer $stuff;
+    my $ro;
+    _hardwire $ro, $ptr, $len;
+    is($ro, "my stuff");
+    is(length($ro), 8);
+    is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
+    local $@ = '';
+    eval { $ro .= "foo" };
+    like "$@", qr/Modification of a read-only value attempted/;
+    is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
   };
 };
 
