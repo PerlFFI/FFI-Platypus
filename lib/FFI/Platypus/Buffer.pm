@@ -6,7 +6,7 @@ use FFI::Platypus;
 use base qw( Exporter );
 
 our @EXPORT = qw( scalar_to_buffer buffer_to_scalar );
-our @EXPORT_OK = qw ( scalar_to_pointer grow set_used_length );
+our @EXPORT_OK = qw ( scalar_to_pointer grow set_used_length _hardwire );
 
 # ABSTRACT: Convert scalars to C buffers
 # VERSION
