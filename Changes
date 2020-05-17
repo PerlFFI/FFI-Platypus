@@ -2,6 +2,7 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Add strcpy to FFI::Platypus::Memory (gh#265)
+  - Add window to FFI::Platypus::Buffer (gh#266, gh#267)
 
 1.26      2020-05-07 04:59:17 -0600
   - The return type for the function method can now be omitted and
