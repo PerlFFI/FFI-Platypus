@@ -6,7 +6,7 @@ use FFI::Platypus;
 use base qw( Exporter );
 
 our @EXPORT = qw( scalar_to_buffer buffer_to_scalar );
-our @EXPORT_OK = qw ( scalar_to_pointer grow set_used_length _hardwire );
+our @EXPORT_OK = qw ( scalar_to_pointer grow set_used_length window );
 
 # ABSTRACT: Convert scalars to C buffers
 # VERSION
@@ -218,6 +218,70 @@ number actually written.
  
   # unpack the native doubles into a Perl array
   my @doubles = unpack( 'd*', $buffer );  # @doubles == $num_read
+
+Not exported by default, but may be exported on request.
+
+=head2 window
+
+ window $scalar, $pointer, $size;
+ window $scalar, $pointer, $size, $utf8;
+
+This makes the scalar a read-only window into the arbitrary region of
+memory defined by C<$pointer>, pointing to the start of the region
+and C<$size>, the size of the region.  This can be useful if you have
+a C function that returns a buffer pair (pointer, size), and want to
+access it from Perl without having to copy the data.  This can also
+be useful when interfacing with programming languages that store
+strings as a address/length pair instead of a pointer to
+null-terminated sequence of bytes.
+
+You can specify C<$utf8> to set the UTF-8 flag on the scalar.  Note
+that the behavior of setting the UTF-8 flag on a buffer that does
+not contain UTF-8 as understood by the version of Perl that you are
+running is undefined.
+
+I<Hint>: If you have a buffer that needs to be free'd by C once the
+scalar falls out of scope you can use L<Variable::Magic> to apply
+magic to the scalar and free the pointer once it falls out of scope.
+
+ use FFI::Platypus::Buffer qw( scalar_to_pointer );
+ use FFI::Platypus::Memory qw( strdup free );
+ use Variable::Magic qw( wizard cast );
+ 
+ my $free_when_out_of_scope = wizard(
+   free => sub {
+     my $ptr = scalar_to_pointer ${$_[0]};
+     free $ptr;
+   }
+ );
+ 
+ my $ptr = strdup "Hello Perl";
+ my $scalar;
+ window $scalar, $ptr, 10;
+ cast $scalar, $free_when_out_of_scope;
+ undef $ptr;  # don't need to track the pointer anymore.
+ 
+ # we can now use scalar as a regular read-only Perl variable
+ print $scalar, "\n";  # prints "Hello Perl" without the \0
+ 
+ # this will free the C pointer
+ undef $scalar;
+
+I<Hint>: Returning a scalar string from a Perl function actually
+copies the value.  If you want to return a string without copying
+then you need to return a reference.
+
+ sub c_string
+ {
+   my $ptr = strdup "Hello Perl";
+   my $scalar;
+   window $scalar, $ptr, 10;
+   cast $scalar, $free_when_out_of_scope;
+   \$scalar;
+ }
+ 
+ my $ref = c_string();
+ print $$ref, "\n";  # prints "Hello Perl" without the \0
 
 Not exported by default, but may be exported on request.
 

@@ -8,7 +8,7 @@ use if $^O ne 'MSWin32' || $] >= 5.018, 'open', ':std', ':encoding(utf8)';
 use Test::More;
 use Encode qw( decode );
 use FFI::Platypus::Buffer;
-use FFI::Platypus::Buffer qw( scalar_to_pointer grow set_used_length _hardwire );
+use FFI::Platypus::Buffer qw( scalar_to_pointer grow set_used_length window );
 
 subtest simple => sub {
   my $orig = 'me grimlock king';
@@ -177,7 +177,7 @@ subtest 'hardwire' => sub {
     my $stuff = "my stuff";
     my($ptr, $len) = scalar_to_buffer $stuff;
     my $ro;
-    _hardwire $ro, $ptr, $len;
+    window $ro, $ptr, $len;
     is($ro, "my stuff");
     is(length($ro), 8);
     is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
@@ -191,7 +191,7 @@ subtest 'hardwire' => sub {
     my $stuff = "привет";
     my($ptr, $len) = scalar_to_buffer $stuff;
     my $ro;
-    _hardwire $ro, $ptr, $len, 1;
+    window $ro, $ptr, $len, 1;
     is($ro, "привет");
     is(length($ro), 6);
     is_deeply([scalar_to_buffer $ro], [$ptr,$len]);

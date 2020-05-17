@@ -1,7 +1,7 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Buffer
 
 void
-_hardwire(sv, addr, len, utf8 = 0)
+window(sv, addr, len, utf8 = 0)
     SV* sv
     void *addr
     size_t len
