@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.27_01   2020-05-17 18:01:37 -0600
   - Add strcpy to FFI::Platypus::Memory (gh#265)
   - Add window to FFI::Platypus::Buffer (gh#266, gh#267)
 
