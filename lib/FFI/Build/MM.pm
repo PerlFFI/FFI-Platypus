@@ -291,7 +291,7 @@ sub mm_postamble
 {
   my($self) = @_;
 
-  my $postamble = ".PHONY: fbx_build ffi fbx_test ffi-test fbc_clean ffi-clean\n\n";
+  my $postamble = ".PHONY: fbx_build ffi fbx_test ffi-test fbx_clean ffi-clean\n\n";
 
   # make fbx_realclean ; make clean
   $postamble .= "realclean :: fbx_clean\n" .
