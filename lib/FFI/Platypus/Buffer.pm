@@ -223,17 +223,21 @@ Not exported by default, but may be exported on request.
 
 =head2 window
 
+ window $scalar, $pointer;
  window $scalar, $pointer, $size;
  window $scalar, $pointer, $size, $utf8;
 
 This makes the scalar a read-only window into the arbitrary region of
 memory defined by C<$pointer>, pointing to the start of the region
-and C<$size>, the size of the region.  This can be useful if you have
-a C function that returns a buffer pair (pointer, size), and want to
-access it from Perl without having to copy the data.  This can also
-be useful when interfacing with programming languages that store
-strings as a address/length pair instead of a pointer to
-null-terminated sequence of bytes.
+and C<$size>, the size of the region.  If C<$size> is omitted then
+it will assume a C style string and use the C C<strlen> function to
+determine the size (the terminating C<'\0'> will not be included).
+
+This can be useful if you have a C function that returns a buffer
+pair (pointer, size), and want to access it from Perl without having
+to copy the data.  This can also be useful when interfacing with
+programming languages that store strings as a address/length pair
+instead of a pointer to null-terminated sequence of bytes.
 
 You can specify C<$utf8> to set the UTF-8 flag on the scalar.  Note
 that the behavior of setting the UTF-8 flag on a buffer that does

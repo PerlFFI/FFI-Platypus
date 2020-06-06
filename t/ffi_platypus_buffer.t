@@ -200,6 +200,16 @@ subtest 'hardwire' => sub {
     like "$@", qr/Modification of a read-only value attempted/;
     is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
   };
+
+  subtest 'strlen' => sub {
+    my $stuff = "foo\0bar";
+    my($ptr) = scalar_to_pointer $stuff;
+    my $ro;
+    window $ro, $ptr;
+    is($ro, "foo");
+    is(length($ro), 3);
+    is_deeply([scalar_to_pointer $ro], [$ptr]);
+  };
 };
 
 done_testing;
