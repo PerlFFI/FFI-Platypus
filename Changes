@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.29      2020-06-06 08:40:10 -0600
   - For window (from FFI::Platypus::Buffer), if $size is omitted then
     it will assumed to be a C string and computed using strlen (gh#270)
 
