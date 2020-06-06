@@ -1,13 +1,15 @@
 MODULE = FFI::Platypus PACKAGE = FFI::Platypus::Buffer
 
 void
-window(sv, addr, len, utf8 = 0)
+window(sv, addr, len = 0, utf8 = 0)
     SV* sv
     void *addr
     size_t len
     IV utf8
-  PROTOTYPE: $$$;$
+  PROTOTYPE: $$;$$
   CODE:
+    if(len == 0)
+      len = strlen((char*)addr);
     SvUPGRADE(sv, SVt_PV);
     SvPVX(sv) = addr;
     SvCUR_set(sv, len);
