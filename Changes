@@ -1,6 +1,12 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Dropping support for Perl 5.8.1, 5.8.2 and 5.8.3, and the threaded version
+    of 5.10.0.  For now Platypus will install on these versions of Perl, but a
+    warning will be issued, along with a 45s sleep at configure time and a 180s
+    sleep at test time.  Please upgrade to 5.8.4 (or preferrably 5.32).
+    Starting July 1st, Platypus will refuse to install on these elderly Perls.
+    (gh#271, gh#272)
 
 1.29      2020-06-06 08:40:10 -0600
   - For window (from FFI::Platypus::Buffer), if $size is omitted then
