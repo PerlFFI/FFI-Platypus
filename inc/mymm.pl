@@ -10,7 +10,6 @@ use lib 'inc';
 use File::Spec;
 use My::BuildConfig;
 use My::ShareConfig;
-use Capture::Tiny qw( capture_merged );
 
 {
   my $dh;
@@ -20,22 +19,11 @@ use Capture::Tiny qw( capture_merged );
 
   foreach my $badcheck (@files)
   {
-    my($out, $ret) = capture_merged {
-      system $^X, $badcheck;
-      $?;
-    };
-    if($ret)
+    system $^X, $badcheck;
+    if($?)
     {
-      if($out ne '')
-      {
-        print $out;
-        exit;
-      }
-      else
-      {
-        print "bad check $badcheck failed\n";
-        exit;
-      }
+      print "bad check $badcheck failed\n";
+      exit;
     }
   }
 }
