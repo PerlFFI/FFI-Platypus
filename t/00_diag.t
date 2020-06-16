@@ -28,6 +28,46 @@ $modules{$_} = $_ for qw(
 );
 
 $post_diag = sub {
+  if($] < 5.008004)
+  {
+    diag " !! WARNING WARNING WARNINGS WARNING !!";
+    diag "";
+    diag "The version of Perl you are using is very old (at least 15 years)";
+    diag "as of this writing.  The FFI-Platypus team plans on dropping support";
+    diag "for Perls older than 5.8.4 on or after July 1st 2020.  At that time";
+    diag "FFI-Platypus will refuse to install on these older Perls.  Please";
+    diag "take the time to migrate to a supported version of Perl ASAP.";
+    diag "";
+    diag "https://github.com/Perl5-FFI/FFI-Platypus/issues/271";
+    diag "";
+    diag " !! WARNING WARNING WARNINGS WARNING !!";
+    diag "";
+    diag "";
+    diag "sleep 180";
+    sleep 180;
+    diag "";
+    diag "";
+  }
+  if($] == 5.010 && $Config{useithreads})
+  {
+    diag " !! WARNING WARNING WARNINGS WARNING !!";
+    diag "";
+    diag "The version of Perl you are using (5.10.0) when compiled";
+    diag "with threads is buggy and not supported by the Platypus team.";
+    diag "Please take the time to upgraded to a supported version of";
+    diag "Perl.  Easiest upgrade is probably to 5.10.0 unthreaded, or";
+    diag "5.10.1.  Better would be to upgrade to 5.32.";
+    diag "";
+    diag "https://github.com/Perl5-FFI/FFI-Platypus/issues/271";
+    diag "";
+    diag " !! WARNING WARNING WARNINGS WARNING !!";
+    diag "";
+    diag "";
+    diag "sleep 180";
+    sleep 180;
+    diag "";
+    diag "";
+  }
   eval {
     require lib;
     lib->import('inc');
