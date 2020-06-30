@@ -16,7 +16,7 @@ if("$^V" eq "v5.10.0")
   diag "this test.  If you need threads you can either upgrade to 5.10.1+ or downgrade to 5.8.9-";
   diag '';
   diag "You can also follow along with this issue here:";
-  diag "https://github.com/Perl5-FFI/FFI-Platypus/issues/68";
+  diag "https://github.com/PerlFFI/FFI-Platypus/issues/68";
   diag '';
   diag '';
 }

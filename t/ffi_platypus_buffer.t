@@ -3,7 +3,7 @@ use warnings;
 use utf8;
 use B;
 
-# see https://github.com/Perl5-FFI/FFI-Platypus/issues/85
+# see https://github.com/PerlFFI/FFI-Platypus/issues/85
 use if $^O ne 'MSWin32' || $] >= 5.018, 'open', ':std', ':encoding(utf8)';
 use Test::More;
 use Encode qw( decode );

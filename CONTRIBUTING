@@ -3,7 +3,7 @@ CONTRIBUTING
     If you have implemented a new feature or fixed a bug then you may make
     a pull request on this project's GitHub repository:
 
-    https://github.com/Perl5-FFI/FFI-Platypus/pulls
+    https://github.com/PerlFFI/FFI-Platypus/pulls
 
     This project is developed using Dist::Zilla. The project's git
     repository also comes with the Makefile.PL file necessary for building,
@@ -110,7 +110,7 @@ CONTRIBUTING
     making significant changes to the Platypus Core. For that I use
     `FFI-Performance`, which can be found in my GitHub repository here:
 
-    https://github.com/Perl5-FFI/FFI-Performance
+    https://github.com/PerlFFI/FFI-Performance
 
  System integrators
 

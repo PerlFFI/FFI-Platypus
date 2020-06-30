@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Move to new GH org PerlFFI (old org was Perl5-FFI, and will remain to
+    keep URL redirection).  The new URL is
+    https://github.com/PerlFFI/FFI-Platypus (gh#275)
 
 1.30      2020-06-16 06:51:53 -0600
   - Dropping support for Perl 5.8.1, 5.8.2 and 5.8.3, and the threaded version

@@ -1630,7 +1630,7 @@ That means all the way back to 5.8.1.  Unfortunately, 5.10.0 seems to have a pro
 that is difficult to diagnose.  Patches to fix are welcome, if you want to help
 out on this, please see:
 
-L<https://github.com/Perl5-FFI/FFI-Platypus/issues/68>
+L<https://github.com/PerlFFI/FFI-Platypus/issues/68>
 
 Since this is an older buggy version of Perl it is recommended that you instead
 upgrade to 5.10.1 or later.
@@ -1684,14 +1684,14 @@ If something does not work the way you think it should, or if you have a
 feature request, please open an issue on this project's GitHub Issue
 tracker:
 
-L<https://github.com/perl5-FFI/FFI-Platypus/issues>
+L<https://github.com/perlFFI/FFI-Platypus/issues>
 
 =head1 CONTRIBUTING
 
 If you have implemented a new feature or fixed a bug then you may make a
 pull request on this project's GitHub repository:
 
-L<https://github.com/Perl5-FFI/FFI-Platypus/pulls>
+L<https://github.com/PerlFFI/FFI-Platypus/pulls>
 
 This project is developed using L<Dist::Zilla>.  The project's git
 repository also comes with the C<Makefile.PL> file necessary
@@ -1815,7 +1815,7 @@ making significant changes to the Platypus Core.  For that I use
 
 =over 4
 
-=item L<https://github.com/Perl5-FFI/FFI-Performance>
+=item L<https://github.com/PerlFFI/FFI-Performance>
 
 =back
 

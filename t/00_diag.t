@@ -38,7 +38,7 @@ $post_diag = sub {
     diag "FFI-Platypus will refuse to install on these older Perls.  Please";
     diag "take the time to migrate to a supported version of Perl ASAP.";
     diag "";
-    diag "https://github.com/Perl5-FFI/FFI-Platypus/issues/271";
+    diag "https://github.com/PerlFFI/FFI-Platypus/issues/271";
     diag "";
     diag " !! WARNING WARNING WARNINGS WARNING !!";
     diag "";
@@ -58,7 +58,7 @@ $post_diag = sub {
     diag "Perl.  Easiest upgrade is probably to 5.10.0 unthreaded, or";
     diag "5.10.1.  Better would be to upgrade to 5.32.";
     diag "";
-    diag "https://github.com/Perl5-FFI/FFI-Platypus/issues/271";
+    diag "https://github.com/PerlFFI/FFI-Platypus/issues/271";
     diag "";
     diag " !! WARNING WARNING WARNINGS WARNING !!";
     diag "";

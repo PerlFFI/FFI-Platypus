@@ -231,7 +231,7 @@ sub cxx
   }
   elsif($self->osname eq 'MSWin32' && $self->{config}->{ccname} eq 'cl')
   {
-    # TODO: see https://github.com/Perl5-FFI/FFI-Platypus/issues/203
+    # TODO: see https://github.com/PerlFFI/FFI-Platypus/issues/203
     #return \@cc;
   }
 

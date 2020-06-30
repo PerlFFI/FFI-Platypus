@@ -24,6 +24,6 @@ if(-f $path)
   print "If you believe this to be an error in FFI-Platypus, please feel\n";
   print "free to open a ticket here:\n\n";
 
-  print "https://github.com/Perl5-FFI/FFI-Platypus/issues\n\n";
+  print "https://github.com/PerlFFI/FFI-Platypus/issues\n\n";
   exit 2 if $@;
 }

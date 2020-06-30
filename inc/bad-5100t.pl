@@ -13,7 +13,7 @@ if($] == 5.010 && $Config{useithreads})
   print "Perl.  Easiest upgrade is probably to 5.10.0 unthreaded, or\n";
   print "5.10.1.  Better would be to upgrade to 5.32.\n";
   print "\n";
-  print "https://github.com/Perl5-FFI/FFI-Platypus/issues/271\n";
+  print "https://github.com/PerlFFI/FFI-Platypus/issues/271\n";
   print "\n";
   print " !! WARNING WARNING WARNINGS WARNING !!\n";
   print "\n\n\n";

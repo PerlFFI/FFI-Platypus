@@ -9,7 +9,7 @@ if($] < 5.008004)
   print "FFI-Platypus will refuse to install on these old Perls.  Please take\n";
   print "the time to migrate to a supported version of Perl ASAP.\n";
   print "\n";
-  print "https://github.com/Perl5-FFI/FFI-Platypus/issues/271\n";
+  print "https://github.com/PerlFFI/FFI-Platypus/issues/271\n";
   print "\n";
   print " !! WARNING WARNING WARNINGS WARNING !!\n";
   print "\n\n\n";
