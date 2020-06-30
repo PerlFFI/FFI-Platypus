@@ -5,7 +5,7 @@ use Config;
 if($] == 5.010 && $Config{useithreads})
 {
   print "\n\n\n";
-  print " !! WARNING WARNING WARNINGS WARNING !!\n";
+  print " !! ERROR ERROR ERRORS ERROR !!\n";
   print "\n";
   print "The version of Perl you are using (5.10.0) when compiled\n";
   print "with threads is buggy and not supported by the Platypus team.\n";
@@ -15,7 +15,7 @@ if($] == 5.010 && $Config{useithreads})
   print "\n";
   print "https://github.com/PerlFFI/FFI-Platypus/issues/271\n";
   print "\n";
-  print " !! WARNING WARNING WARNINGS WARNING !!\n";
+  print " !! ERROR ERROR ERRORS ERROR !!\n";
   print "\n\n\n";
-  print "sleep 45\n";
+  exit;
 }

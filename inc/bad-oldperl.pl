@@ -1,7 +1,7 @@
 if($] < 5.008004)
 {
   print "\n\n\n";
-  print " !! WARNING WARNING WARNINGS WARNING !!\n";
+  print " !! ERROR ERROR ERRORS ERROR !!\n";
   print "\n";
   print "The version of Perl you are using is very old (at least 15 years)\n";
   print "as of this writing.  The FFI-Platypus team plans on dropping support\n";
@@ -11,9 +11,8 @@ if($] < 5.008004)
   print "\n";
   print "https://github.com/PerlFFI/FFI-Platypus/issues/271\n";
   print "\n";
-  print " !! WARNING WARNING WARNINGS WARNING !!\n";
+  print " !! ERROR ERROR ERRORS ERROR !!\n";
   print "\n\n\n";
-  print "sleep 45\n";
-  sleep 45;
+  exit;
 }
 
