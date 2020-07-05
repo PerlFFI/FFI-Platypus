@@ -2,6 +2,7 @@ package FFI::Platypus::Declare;
 
 use strict;
 use warnings;
+use 5.008004;
 use Carp ();
 use FFI::Platypus;
 

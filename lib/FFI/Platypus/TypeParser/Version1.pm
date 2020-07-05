@@ -2,6 +2,7 @@ package FFI::Platypus::TypeParser::Version1;
 
 use strict;
 use warnings;
+use 5.008004;
 use Carp qw( croak );
 use base qw( FFI::Platypus::TypeParser );
 

@@ -2,7 +2,7 @@ package FFI::Platypus::Internal;
 
 use strict;
 use warnings;
-use 5.008001;
+use 5.008004;
 use FFI::Platypus;
 use base qw( Exporter );
 

@@ -190,7 +190,7 @@ sub configure
   $ch->define_var( PERL_OS_WINDOWS => 1 ) if $^O =~ /^(MSWin32|cygwin|msys)$/;
 
   {
-    my($major, $minor, $patch) = $] =~ /^(5)\.([0-9]{3})([0-9]{3})/;
+    my($major, $minor, $patch) = $] =~ /^(5|[7-9])\.([0-9]{3})([0-9]{3})/;
     $ch->define_var( FFI_PL_PERL_VERSION_MAJOR => int $major );
     $ch->define_var( FFI_PL_PERL_VERSION_MINOR => int $minor );
     $ch->define_var( FFI_PL_PERL_VERSION_PATCH => int $patch );

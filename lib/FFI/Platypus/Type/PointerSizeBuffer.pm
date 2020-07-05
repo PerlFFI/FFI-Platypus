@@ -2,6 +2,7 @@ package FFI::Platypus::Type::PointerSizeBuffer;
 
 use strict;
 use warnings;
+use 5.008004;
 use FFI::Platypus;
 use FFI::Platypus::API qw(
   arguments_set_pointer

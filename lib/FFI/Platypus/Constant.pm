@@ -2,6 +2,7 @@ package FFI::Platypus::Constant;
 
 use strict;
 use warnings;
+use 5.008004;
 use constant 1.32 ();
 use FFI::Platypus;
 

@@ -2,6 +2,7 @@ package FFI::Probe::Runner;
 
 use strict;
 use warnings;
+use 5.008004;
 use Capture::Tiny qw( capture );
 use FFI::Probe::Runner::Result;
 

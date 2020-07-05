@@ -2,7 +2,7 @@ package FFI::Build::MM;
 
 use strict;
 use warnings;
-use 5.008001;
+use 5.008004;
 use Carp ();
 use FFI::Build;
 use JSON::PP ();

@@ -2,6 +2,7 @@ package FFI::Probe::Runner::Builder;
 
 use strict;
 use warnings;
+use 5.008004;
 use Config;
 use Capture::Tiny qw( capture_merged );
 use Text::ParseWords ();
