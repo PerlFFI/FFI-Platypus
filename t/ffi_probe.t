@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use 5.008004;
 use Test::More;
 use FFI::Probe;
 use FFI::Probe::Runner;

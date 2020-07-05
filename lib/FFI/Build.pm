@@ -2,7 +2,7 @@ package FFI::Build;
 
 use strict;
 use warnings;
-use 5.008001;
+use 5.008004;
 use FFI::Build::File::Library;
 use Carp ();
 use File::Glob ();

@@ -2,6 +2,7 @@ package FFI::Platypus::Legacy;
 
 use strict;
 use warnings;
+use 5.008004;
 
 # ABSTRACT: Legacy Platypus interfaces
 # VERSION

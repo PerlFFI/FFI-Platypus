@@ -2,6 +2,7 @@ package FFI::Platypus::Record::Meta;
 
 use strict;
 use warnings;
+use 5.008004;
 
 # ABSTRACT: FFI support for structured records data
 # VERSION

@@ -2,6 +2,7 @@ package FFI::Platypus::ShareConfig;
 
 use strict;
 use warnings;
+use 5.008004;
 use File::Spec;
 
 # VERSION

@@ -2,6 +2,7 @@ package FFI::Probe::Runner::Result;
 
 use strict;
 use warnings;
+use 5.008004;
 
 # ABSTRACT: The results from a probe run.
 # VERSION

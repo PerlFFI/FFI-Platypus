@@ -2,6 +2,7 @@ package FFI::Probe;
 
 use strict;
 use warnings;
+use 5.008004;
 use File::Basename qw( dirname );
 use Data::Dumper ();
 use FFI::Probe::Runner;

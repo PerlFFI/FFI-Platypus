@@ -2,6 +2,7 @@ package FFI::Platypus::Lang::ASM;
 
 use strict;
 use warnings;
+use 5.008004;
 
 # ABSTRACT: Documentation and tools for using Platypus with the Assembly
 # VERSION

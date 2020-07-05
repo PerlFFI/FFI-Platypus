@@ -2,6 +2,7 @@ package FFI::Platypus::TypeParser;
 
 use strict;
 use warnings;
+use 5.008004;
 use List::Util 1.45 qw( uniqstr );
 use Carp qw( croak );
 

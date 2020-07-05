@@ -2,6 +2,7 @@ package FFI::Platypus::Lang::C;
 
 use strict;
 use warnings;
+use 5.008004;
 
 # ABSTRACT: Documentation and tools for using Platypus with the C programming language
 # VERSION

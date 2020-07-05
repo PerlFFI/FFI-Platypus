@@ -12,7 +12,9 @@
 
 #include "EXTERN.h"
 #include "perl.h"
+#if PERL_REVISION < 7
 #include "ppport.h"
+#endif
 
 #ifdef __MINGW32__
 #include <stdint.h>

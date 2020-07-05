@@ -2,6 +2,7 @@ package FFI::Platypus::Record;
 
 use strict;
 use warnings;
+use 5.008004;
 use Carp qw( croak );
 use FFI::Platypus;
 use base qw( Exporter );

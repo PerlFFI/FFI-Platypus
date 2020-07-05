@@ -2,6 +2,7 @@ package FFI::Platypus::Lang::Win32;
 
 use strict;
 use warnings;
+use 5.008004;
 use Config;
 
 # ABSTRACT: Documentation and tools for using Platypus with the Windows API

@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use 5.008004;
 use Test::More;
 use FFI::Build::MM;
 use Capture::Tiny qw( capture_merged );

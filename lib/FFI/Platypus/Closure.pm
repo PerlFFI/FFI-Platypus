@@ -2,6 +2,7 @@ package FFI::Platypus::Closure;
 
 use strict;
 use warnings;
+use 5.008004;
 use FFI::Platypus;
 use Scalar::Util qw( refaddr);
 use Carp qw( croak );

@@ -2,6 +2,7 @@ package FFI::Platypus::Function;
 
 use strict;
 use warnings;
+use 5.008004;
 use FFI::Platypus;
 
 # ABSTRACT: An FFI function object

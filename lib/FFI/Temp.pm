@@ -2,6 +2,7 @@ package FFI::Temp;
 
 use strict;
 use warnings;
+use 5.008004;
 use Carp qw( croak );
 use File::Spec;
 use File::Temp qw( tempdir );

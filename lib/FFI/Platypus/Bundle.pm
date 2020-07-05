@@ -2,6 +2,7 @@ package FFI::Platypus::Bundle;
 
 use strict;
 use warnings;
+use 5.008004;
 use Carp ();
 
 # ABSTRACT: Bundle foreign code with your Perl module

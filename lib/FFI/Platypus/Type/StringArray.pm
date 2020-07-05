@@ -2,6 +2,7 @@ package FFI::Platypus::Type::StringArray;
 
 use strict;
 use warnings;
+use 5.008004;
 use FFI::Platypus;
 
 # ABSTRACT: Platypus custom type for arrays of strings
