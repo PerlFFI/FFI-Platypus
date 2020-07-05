@@ -6,7 +6,10 @@ cip sudo apt-get update
 cip sudo apt-get install libffi-dev
 cip exec cpanm -n version
 
-cip exec cpanm -n Math::LongDouble
+# M::LD doesn't work yet on 7.0.0
+if [ "$CP_TAG" != "7.0.0-core-p7" ]; then
+  cip exec cpanm -n Math::LongDouble
+fi
 
 if [ "$CIP_TAG" == "5.30-debug" ]; then
   cip exec cpanm -n Test::LeakTrace
