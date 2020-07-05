@@ -46,8 +46,6 @@ jobs:
     - env: CIP_TAG=5.8.9
     - env: CIP_TAG=5.8.8
     - env: CIP_TAG=5.8.4
-  allow_failures:
-    - env: CIP_TAG=7.0.0-core-p7
 
 branches:
   only:
