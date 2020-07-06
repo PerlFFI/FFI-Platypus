@@ -18,19 +18,20 @@ jobs:
   include:
     - env: CIP_TAG=static
     - env: CIP_TAG=7.0.0-core-p7
-    - env: CIP_TAG=5.30
-    - env: CIP_TAG=5.30-buster-arm64v8
+    - env: CIP_TAG=5.32
+    - env: CIP_TAG=5.32-buster-arm64v8
       arch: arm64
-    - env: CIP_TAG=5.30-debug
-    - env: CIP_TAG=5.30-debug32
-    - env: CIP_TAG=5.30-buster32
-    - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
-    - env: CIP_TAG=5.30-threads
-    - env: CIP_TAG=5.30-longdouble
-    - env: CIP_TAG=5.30-quadmath
-    - env: CIP_TAG=5.30-ffimaster
-    - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
-    - env: CIP_TAG=5.30 CIP_ENV=FFI_PLATYPUS_NO_EXTRA_TYPES=1
+    - env: CIP_TAG=5.32-debug
+    - env: CIP_TAG=5.32-debug32
+    - env: CIP_TAG=5.32-buster32
+    - env: CIP_TAG=5.32 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
+    - env: CIP_TAG=5.32-threads
+    - env: CIP_TAG=5.32-longdouble
+    - env: CIP_TAG=5.32-quadmath
+    - env: CIP_TAG=5.32-ffimaster
+    - env: CIP_TAG=5.32 CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
+    - env: CIP_TAG=5.32 CIP_ENV=FFI_PLATYPUS_NO_EXTRA_TYPES=1
+    - env: CIP_TAG=5.30
     - env: CIP_TAG=5.28
     - env: CIP_TAG=5.26
     - env: CIP_TAG=5.24
