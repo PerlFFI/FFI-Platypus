@@ -300,7 +300,7 @@ sub shellwords
 {
   my $self = _self(shift);
 
-  my $win = !!$self->osname eq 'MSWin32';
+  my $win = !!($self->osname eq 'MSWin32');
 
   grep { defined $_ } map {
     ref $_
