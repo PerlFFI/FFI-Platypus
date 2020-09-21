@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix unsupported Perl tests.
+    Fixes code that refuse to install on 5.10.0t (threads) (gh#275, gh#280)
 
 1.31      2020-07-01 05:28:10 -0600
   - Refuse to install on very old versions of Perl 5.8.1, 5.8.2, 5.8.3 and

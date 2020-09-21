@@ -13,6 +13,6 @@ if($] < 5.008004)
   print "\n";
   print " !! ERROR ERROR ERRORS ERROR !!\n";
   print "\n\n\n";
-  exit;
+  exit 2;
 }
 
