@@ -17,5 +17,5 @@ if($] == 5.010 && $Config{useithreads})
   print "\n";
   print " !! ERROR ERROR ERRORS ERROR !!\n";
   print "\n\n\n";
-  exit;
+  exit 2;
 }
