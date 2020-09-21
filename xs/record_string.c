@@ -1,9 +1,7 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
-#if PERL_REVISION < 7
 #include "ppport.h"
-#endif
 #include "ffi_platypus.h"
 #include "ffi_platypus_guts.h"
 
