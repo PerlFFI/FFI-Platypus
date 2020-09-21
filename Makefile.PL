@@ -83,7 +83,7 @@ my %WriteMakefileArgs = (
     "Capture::Tiny" => 0,
     "Test::More"    => "0.98"
   },
-  "VERSION" => "1.31",
+  "VERSION" => "1.32",
   "test"    => {
     "TESTS" => "t/*.t"
   }

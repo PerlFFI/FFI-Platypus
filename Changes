@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.32      2020-09-21 04:25:13 -0600
   - Fix unsupported Perl tests.
     Fixes code that refuse to install on 5.10.0t (threads) (gh#275, gh#280)
 
