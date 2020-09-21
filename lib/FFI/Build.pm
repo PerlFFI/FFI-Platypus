@@ -309,7 +309,7 @@ sub _file_classes
     # also anything already loaded, that might not be in the
     # @INC path (for testing ususally)
     push @file_classes,
-      map { my $f = $_; $f =~ s/::$//; "FFI::Build::File::$f" }
+      map { my $f = $_; $f =~ s/::$//g; "FFI::Build::File::$f" }
       grep !/Base::/,
       grep /::$/,
       keys %{FFI::Build::File::};
