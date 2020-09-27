@@ -329,6 +329,9 @@ at install time.  See L<FFI::Platypus::Constant> for details.
 The main FAQ (L<FFI::Platypus/FAQ>) also has a discussion on dealing
 with constants and enumerated types.
 
+There is also a type plugin (L<FFI::Platypus::Type::Enum>) that can be helpful
+in writing interfaces that use enums.
+
 =head3 Boolean types
 
 At install time Platypus attempts to detect the correct type for C<bool>
