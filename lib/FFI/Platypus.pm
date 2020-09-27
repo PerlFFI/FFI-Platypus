@@ -1582,6 +1582,9 @@ is identical to the process of defining macro constants in Perl.
 
 For more details on enumerated types see L<FFI::Platypus::Type/"Enum types">.
 
+There is also a type plugin (L<FFI::Platypus::Type::Enum>) that can be helpful
+in writing interfaces that use enums.
+
 =head2 Memory leaks
 
 There are a couple places where memory is allocated, but never deallocated that may
