@@ -361,7 +361,7 @@ sub _bundle
     my($output, $error) = Capture::Tiny::capture_merged(sub {
       $lib = eval {
         my $dist_name = $package;
-        $dist_name =~ s/::/-/;
+        $dist_name =~ s/::/-/g;
         my $fbmm = FFI::Build::MM->new( save => 0 );
         $fbmm->mm_args( DISTNAME => $dist_name );
         my $build = $fbmm->load_build('ffi', undef, 'ffi/_build');
