@@ -398,7 +398,7 @@ In addition to looking up a function by name you can provide the address
 of the symbol yourself:
 
 ```perl
-my $address = $ffi->find_symbol('my_functon');
+my $address = $ffi->find_symbol('my_function');
 my $function = $ffi->function($address => ...);
 ```
 
@@ -483,8 +483,8 @@ method.
 Examples:
 
 ```perl
-$ffi->attach('my_functon_name', ['int', 'string'] => 'string');
-$ffi->attach(['my_c_functon_name' => 'my_perl_function_name'], ['int', 'string'] => 'string');
+$ffi->attach('my_function_name', ['int', 'string'] => 'string');
+$ffi->attach(['my_c_function_name' => 'my_perl_function_name'], ['int', 'string'] => 'string');
 my $string1 = my_function_name($int);
 my $string2 = my_perl_function_name($int);
 ```
