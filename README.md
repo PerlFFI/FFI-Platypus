@@ -1,4 +1,4 @@
-# FFI::Platypus [![Build Status](https://api.cirrus-ci.com/github/PerlFFI/FFI-Platypus.svg)](https://cirrus-ci.com/github/PerlFFI/FFI-Platypus) [![Build Status](https://travis-ci.org/PerlFFI/FFI-Platypus.svg)](http://travis-ci.org/PerlFFI/FFI-Platypus) ![windows](https://github.com/PerlFFI/FFI-Platypus/workflows/windows/badge.svg) ![macos](https://github.com/PerlFFI/FFI-Platypus/workflows/macos/badge.svg)
+# FFI::Platypus [![Build Status](https://api.cirrus-ci.com/github/PerlFFI/FFI-Platypus.svg)](https://cirrus-ci.com/github/PerlFFI/FFI-Platypus) [![Build Status](https://api.travis-ci.com/PerlFFI/FFI-Platypus.svg?branch=master)](https://travis-ci.com/github/PerlFFI/FFI-Platypus) ![windows](https://github.com/PerlFFI/FFI-Platypus/workflows/windows/badge.svg) ![macos](https://github.com/PerlFFI/FFI-Platypus/workflows/macos/badge.svg)
 
 Write Perl bindings to non-Perl libraries with FFI. No XS required.
 
