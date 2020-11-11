@@ -14,14 +14,14 @@ use File::Path ();
 # ABSTRACT: Build shared libraries for use with FFI
 # VERSION
 
-# Platypus Man,
-# Platypus Man,
-# Friendly Neighborhood Platypus Man
+# Platypus-Man,
+# Platypus-Man,
+# Friendly Neighborhood Platypus-Man
 # Is He Strong?
 # Listen Bud
 # He's got Proportional Strength of a Platypus
 # Hey Man!
-# There Goes The Platypus Man
+# There Goes The Platypus-Man
 
 =head1 SYNOPSIS
 
