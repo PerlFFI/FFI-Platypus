@@ -10,13 +10,13 @@ use FFI::Platypus::Type;
 # ABSTRACT: Write Perl bindings to non-Perl libraries with FFI. No XS required.
 # VERSION
 
-# Platypus Man,
-# Platypus Man,
+# Platypus-Man,
+# Platypus-Man,
 # Does Whatever A Platypus Can
 # Is Mildly Venomous
 # Hangs Out In Rivers By Caves
 # Look Out!
-# Here Comes The Platypus Man
+# Here Comes The Platypus-Man
 
 # From the original FFI::Platypus prototype:
 #  Kinda like gluing a duckbill to an adorable mammal
