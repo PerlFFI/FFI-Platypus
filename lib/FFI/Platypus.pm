@@ -12,9 +12,10 @@ use FFI::Platypus::Type;
 
 # Platypus Man,
 # Platypus Man,
-# Does Everything The Platypus Can
-# ...
-# Watch Out!
+# Does Whatever A Platypus Can
+# Is Mildly Venomous
+# Hangs Out In Rivers By Caves
+# Look Out!
 # Here Comes The Platypus Man
 
 # From the original FFI::Platypus prototype:
