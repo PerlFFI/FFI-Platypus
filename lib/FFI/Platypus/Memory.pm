@@ -12,14 +12,14 @@ use base qw( Exporter );
 =head1 SYNOPSIS
 
  use FFI::Platypus::Memory;
- 
+
  # allocate 64 bytes of memory using the
  # libc malloc function.
  my $pointer = malloc 64;
- 
+
  # use that memory wisely
  ...
- 
+
  # free the memory when you are done.
  free $pointer;
 
@@ -103,9 +103,33 @@ useful in Perl.
 The same as C<strdup> above, except at most C<$max> characters will be
 copied in the new string.
 
+=head2 strlenW
+
+ my $size = strlenW $opaque;
+
+Counts the length of a null-terminated string of 16-bit characters.
+This is useful when dealing with Windows Unicode strings (LPCWSTR and LPWSTR)
+and other UTF-16 libraries.
+
+=head2 strcpyW
+
+ my $size = strcpyW $opaque, $opaque;
+
+The same as C<strcpy> above, except it works with 16-bit characters.
+This is useful when dealing with Windows Unicode strings (LPCWSTR and LPWSTR)
+and other UTF-16 libraries.
+
+=head2 strncpyW
+
+ my $size = strncpyW $opaque, $opaque, $max;
+
+The same as C<strncpy> above, except it works with 16-bit characters.
+This is useful when dealing with Windows Unicode strings (LPCWSTR and LPWSTR)
+and other UTF-16 libraries.
+
 =cut
 
-our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup strndup strcpy );
+our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup strndup strcpy strlenW strcpyW strncpyW );
 
 my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
@@ -147,6 +171,10 @@ if($@)
   $_strndup_impl = 'ffi';
   $ffi->attach([ ffi_platypus_memory__strndup => 'strndup' ] => ['string','size_t'] => 'opaque' => '$$');
 }
+
+$ffi->attach([ ffi_platypus_memory__strlenW => 'strlenW' ] => ['opaque'] => 'size_t' => '$');
+$ffi->attach([ ffi_platypus_memory__strcpyW => 'strcpyW' ] => ['opaque','opaque'] => 'opaque' => '$$');
+$ffi->attach([ ffi_platypus_memory__strncpyW => 'strncpyW' ] => ['opaque','opaque','size_t'] => 'opaque' => '$$$');
 
 1;
 

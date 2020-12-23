@@ -119,6 +119,7 @@ sub native_type_map
       LPCSTR                    string
       LPCVOID                   opaque
       LPVOID                    opaque
+      LPWSTR                    opaque
       LRESULT                   LONG_PTR
       PSTR                      string
       PVOID                     opaque
@@ -143,7 +144,6 @@ sub native_type_map
       VOID                      void
       WORD                      uint16
       WPARAM                    UINT_PTR
-
     );
 
     if($Config{ptrsize} == 4)
@@ -193,13 +193,43 @@ sub native_type_map
       }
     }
 
-    # stuff we are not yet dealing with
-    # LPCTSTR is unicode string, not currently supported
-    # LPWSTR 16 bit unicode string
-    # TBYTE TCHAR UNICODE_STRING WCHAR
+    # LPWSTR is simply mapped to opaque. Here are some recipies:
+    # - Provide buffer populated with wide string:
+    #   $ffi->attach(takes_lpwstr=>['LPWSTR','size_t']=>'void');
+    #   my $buf_size = 512;
+    #   my $buf = malloc($buf_size*2);
+    #   takes_lpwstr($buf, $buf_size);
+    #   say $ffi->cast('opaque' => 'LPCWSTR', $buf);
+    #   free($buf);
+    #
+    # - Returns buffer populated with wide string which must be freed:
+    #   $ffi->attach(returns_lpwstr=>[]=>'LPWSTR');
+    #   my $buf = returns_lpwstr();
+    #   say $ffi->cast('opaque' => 'LPCWSTR', $buf);
+    #   free($buf);
+
+    # We don't deal with WCHAR. It's simply a uint16_t, but it's
+    # semantically a Unicode Code Point. This is no biggie since one
+    # should never encounter a WCHAR outside of a LPWSTR or LPCWSTR.
+
     # Not supported: POINTER_32 POINTER_64 POINTER_SIGNED POINTER_UNSIGNED
   }
   \%map;
+}
+
+
+=head2 load_custom_types
+
+ FFI::Platypus::Lang::Win32->load_custom_types($ffi);
+
+Load custom types.
+
+=cut
+
+sub load_custom_types
+{
+  my($class, $ffi) = @_;
+  $ffi->load_custom_type('::Win32::LPCWSTR' => 'LPCWSTR');
 }
 
 1;

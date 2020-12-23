@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 /*
  * strdup and strndup are useful, but technically not part of the
@@ -13,6 +14,10 @@
 #else
 #define EXPORT
 #endif
+
+typedef uint16_t     WCHAR;
+typedef WCHAR*       LPWSTR;
+typedef const WCHAR* LPCWSTR;
 
 EXPORT
 char *
@@ -46,4 +51,34 @@ ffi_platypus_memory__strndup(const char *olds, size_t max)
     memcpy(news, olds, size);
   }
   return news;
+}
+
+EXPORT
+size_t
+ffi_platypus_memory__strlenW(LPCWSTR s)
+{
+  size_t len = 0;
+  for (; *s; ++len, ++s);
+  return len;
+}
+
+EXPORT
+LPWSTR
+ffi_platypus_memory__strcpyW(LPWSTR dst, LPCWSTR src)
+{
+  while (*src)
+    *(dst++) = *(src++);
+  *dst = 0;
+  return dst;
+}
+
+EXPORT
+LPWSTR
+ffi_platypus_memory__strncpyW(LPWSTR dst, LPCWSTR src, size_t n)
+{
+  for (; *src && n; --n)
+    *(dst++) = *(src++);
+  for (; n; --n)
+    *(dst++) = 0;
+  return dst;
 }
