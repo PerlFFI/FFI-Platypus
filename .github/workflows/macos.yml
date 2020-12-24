@@ -28,7 +28,7 @@ jobs:
           brew install libffi
           brew install jq
           curl https://cpanmin.us | perl - App::cpanminus -n
-          echo "##[add-path]/Users/runner/perl5/bin"
+          echo "/Users/runner/perl5/bin" >> $GITHUB_PATH
 
       - name: perl -V
         run: perl -V
