@@ -11,8 +11,31 @@ use Config;
 =head1 SYNOPSIS
 
  use FFI::Platypus;
- my $ffi = FFI::Platypus->new( api => 1 );
- $ffi->lang('Win32');
+ use FFI::Platypus::Memory;  # For malloc and free.
+
+
+ use constant MB_OK => 0;
+
+ my $ffi_user32 = FFI::Platypus->new( api => 1 );
+ $ffi_user32->lang('Win32');
+ $ffi_user32->find_lib( lib => 'user32' );
+
+ $ffi_user32->attach([MessageBoxW => 'MessageBox'] => ['HWND', 'LPCWSTR', 'LPCWSTR', 'UINT'] => 'int');
+
+ MessageBox(undef, "I ❤️ Platypus", "Confession", MB_OK);
+
+
+ my $ffi_kernel32 = FFI::Platypus->new( api => 1 );
+ $ffi_kernel32->lang('Win32');
+ $ffi_kernel32->find_lib( lib => 'kernel32' );
+
+ $ffi_kernel32->attach([GetCurrentDirectoryW => 'GetCurrentDirectory'] => ['DWORD', 'LPWSTR'] => 'DWORD');
+
+ my $buf_size = GetCurrentDirectory(0, undef) or die($^E);
+ my $buf = malloc($buf_size * 2);
+ GetCurrentDirectory($buf_size, $buf) or die($^E);
+ say $ffi_kernel32->cast('opaque' => 'LPCWSTR', $buf);
+ free($buf);
 
 =head1 DESCRIPTION
 
@@ -25,6 +48,9 @@ C<uint32>.
 =head2 abi
 
  my $abi = FFI::Platypus::Lang::Win32->abi;
+
+This is automatically called when C<< $ffi->lang('Win32'); >> is used.
+It causes the proper ABI to make Windows system calls to be used.
 
 =cut
 
@@ -39,9 +65,22 @@ sub abi
 
  my $hashref = FFI::Platypus::Lang::Win32->native_type_map;
 
-This returns a hash reference containing the native aliases for the
-Windows API.  That is the keys are native Windows API C types and the
-values are libffi native types.
+This is automatically called when C<< $ffi->lang('Win32'); >> is used.
+It returns definitions for the following native aliases for the Windows API,
+allowing them to be used in function declarations:
+C<BOOL>, C<BOOLEAN>, C<BYTE>, C<CCHAR>, C<CHAR>, C<COLORREF>, C<DWORD>, C<DWORDLONG>,
+C<DWORD_PTR>, C<DWORD32>, C<DWORD64>, C<FLOAT>, C<HACCEL>, C<HALF_PTR>, C<HANDLE>,
+C<HBITMAP>, C<HBRUSH>, C<HCOLORSPACE>, C<HCONV>, C<HCONVLIST>, C<HCURSOR>, C<HDC>,
+C<HDDEDATA>, C<HDESK>, C<HDROP>, C<HDWP>, C<HENHMETAFILE>, C<HFILE>, C<HFONT>,
+C<HGDIOBJ>, C<HGLOBAL>, C<HHOOK>, C<HICON>, C<HINSTANCE>, C<HKEY>, C<HKL>, C<HLOCAL>,
+C<HMENU>, C<HMETAFILE>, C<HMODULE>, C<HMONITOR>, C<HPALETTE>, C<HPEN>, C<HRESULT>,
+C<HRGN>, C<HRSRC>, C<HSZ>, C<HWINSTA>, C<HWND>, C<INT>, C<INT_PTR>, C<INT8>, C<INT16>,
+C<INT32>, C<INT64>, C<LANGID>, C<LCID>, C<LCTYPE>, C<LGRPID>, C<LONG>, C<LONGLONG>,
+C<LONG_PTR>, C<LONG32>, C<LONG64>, C<LPCSTR>, C<LPCVOID>, C<LPVOID>, C<LPWSTR>,
+C<LRESULT>, C<PSTR>, C<PVOID>, C<QWORD>, C<SC_HANDLE>, C<SC_LOCK>, C<SERVICE_STATUS_HANDLE>,
+C<SHORT>, C<SIZE_T>, C<SSIZE_T>, C<UCHAR>, C<UHALF_PTR>, C<UINT>, C<UINT_PTR>, C<UINT8>,
+C<UINT16>, C<UINT32>, C<UINT64>, C<ULONG>, C<ULONGLONG>, C<ULONG_PTR>, C<ULONG32>,
+C<ULONG64>, C<USHORT>, C<USN>, C<VOID>, C<WORD> and C<WPARAM>.
 
 =cut
 
@@ -131,6 +170,7 @@ sub native_type_map
       SIZE_T                    ULONG_PTR
       SSIZE_T                   LONG_PTR
       UCHAR                     uint8
+      UINT                      uint
       UINT8                     uint8
       UINT16                    uint16
       UINT32                    uint32
@@ -193,21 +233,6 @@ sub native_type_map
       }
     }
 
-    # LPWSTR is simply mapped to opaque. Here are some recipies:
-    # - Provide buffer populated with wide string:
-    #   $ffi->attach(takes_lpwstr=>['LPWSTR','size_t']=>'void');
-    #   my $buf_size = 512;
-    #   my $buf = malloc($buf_size*2);
-    #   takes_lpwstr($buf, $buf_size);
-    #   say $ffi->cast('opaque' => 'LPCWSTR', $buf);
-    #   free($buf);
-    #
-    # - Returns buffer populated with wide string which must be freed:
-    #   $ffi->attach(returns_lpwstr=>[]=>'LPWSTR');
-    #   my $buf = returns_lpwstr();
-    #   say $ffi->cast('opaque' => 'LPCWSTR', $buf);
-    #   free($buf);
-
     # We don't deal with WCHAR. It's simply a uint16_t, but it's
     # semantically a Unicode Code Point. This is no biggie since one
     # should never encounter a WCHAR outside of a LPWSTR or LPCWSTR.
@@ -222,7 +247,9 @@ sub native_type_map
 
  FFI::Platypus::Lang::Win32->load_custom_types($ffi);
 
-Load custom types.
+This is automatically called when C<< $ffi->lang('Win32'); >> is used.
+It provdes the C<LPCWSTR> type for use in function declarations.
+See L<FFI::Platypus::Type::Win32::LPCWSTR> for more information.
 
 =cut
 

@@ -12,25 +12,16 @@ use Encode qw( decode encode );
 
 =head1 SYNOPSIS
 
-In your C code:
-
- void
- takes_unicode_string(LPCWSTR s)
- {
-   ...
- }
-
-In your L<Platypus::FFI> code:
-
  use FFI::Platypus;
 
  my $ffi = FFI::Platypus->new( api => 1 );
- $ffi->load_custom_type('::Win32::LPCWSTR' => 'LPCWSTR');
+ $ffi->lang('Win32');
 
- $ffi->attach(takes_unicode_string => ['LPCWSTR'] => 'void');
+ use constant MB_OK => 0;
 
- my $str = "I ❤️ Platypus";
- takes_unicode_string($str);
+ $ffi->attach([MessageBoxW => 'MessageBox'] => ['HWND', 'LPCWSTR', 'LPCWSTR', 'UINT'] => 'int');
+
+ MessageBox(undef, "I ❤️ Platypus", "Confession", MB_OK);
 
 =head1 DESCRIPTION
 
