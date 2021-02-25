@@ -148,6 +148,10 @@ if($@)
   $ffi->attach([ ffi_platypus_memory__strndup => 'strndup' ] => ['string','size_t'] => 'opaque' => '$$');
 }
 
+# used internally by FFI::Platypus::Type::WideString, may go away.
+eval { $ffi->attach( [ wcslen  => '_wcslen' ]  => [ 'opaque'           ] => 'size_t' => '$' ) };
+eval { $ffi->attach( [ wcsnlen => '_wcsnlen' ] => [ 'string', 'size_t' ] => 'size_t' => '$$' ) };
+
 1;
 
 =head1 SEE ALSO

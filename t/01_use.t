@@ -33,6 +33,7 @@ require_ok 'FFI::Platypus::Type';
 require_ok 'FFI::Platypus::Type::PointerSizeBuffer';
 require_ok 'FFI::Platypus::Type::StringArray';
 require_ok 'FFI::Platypus::Type::StringPointer';
+require_ok 'FFI::Platypus::Type::WideString';
 require_ok 'FFI::Platypus::TypeParser';
 require_ok 'FFI::Platypus::TypeParser::Version0';
 require_ok 'FFI::Platypus::TypeParser::Version1';
@@ -72,6 +73,7 @@ ok -f 't/ffi_platypus_type.t',                                'test for FFI::Pla
 ok -f 't/ffi_platypus_type_pointersizebuffer.t',              'test for FFI::Platypus::Type::PointerSizeBuffer';
 ok -f 't/ffi_platypus_type_stringarray.t',                    'test for FFI::Platypus::Type::StringArray';
 ok -f 't/ffi_platypus_type_stringpointer.t',                  'test for FFI::Platypus::Type::StringPointer';
+ok -f 't/ffi_platypus_type_widestring.t',                     'test for FFI::Platypus::Type::WideString';
 ok -f 't/ffi_platypus_typeparser.t',                          'test for FFI::Platypus::TypeParser';
 ok -f 't/ffi_platypus_typeparser_version0.t',                 'test for FFI::Platypus::TypeParser::Version0';
 ok -f 't/ffi_platypus_typeparser_version1.t',                 'test for FFI::Platypus::TypeParser::Version1';
