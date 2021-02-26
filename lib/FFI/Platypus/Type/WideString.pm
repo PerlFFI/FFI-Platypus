@@ -69,54 +69,45 @@ sub _compute_wide_string_encoding
   return ($encoding, $size);
 }
 
-my $encoding;
-my $width;
-
-sub perl_to_native
-{
-  if(defined $_[0])
-  {
-    my $buf = encode($encoding, $_[0]."\0");
-    push @stack, \$buf;
-    return unpack(_incantation, pack 'P', $buf);
-  }
-  else
-  {
-    push @stack, undef;
-    return undef;
-  }
-}
-
-sub perl_to_native_post
-{
-  pop @stack;
-  return;
-}
-
-sub native_to_perl
-{
-  return undef unless defined $_[0];
-  return decode($encoding, unpack('P'.(FFI::Platypus::Memory::_wcslen($_[0])*$width), pack(_incantation, $_[0])));
-}
-
 sub ffi_custom_type_api_1
 {
   my %args = @_;
 
-  ($encoding, $width) = __PACKAGE__->_compute_wide_string_encoding() unless defined $encoding;
+  my($encoding, $width) = __PACKAGE__->_compute_wide_string_encoding();
 
   my $size   = $args{size} || 1024;
   my $access = $args{access} || 'read';
 
   my %ct = (
     native_type    => 'opaque',
-    native_to_perl => \&native_to_perl,
   );
+
+  $ct{native_to_perl} = sub {
+    return undef unless defined $_[0];
+    return decode($encoding, unpack('P'.(FFI::Platypus::Memory::_wcslen($_[0])*$width), pack(_incantation, $_[0])));
+  };
 
   if($access eq 'read')
   {
-    $ct{perl_to_native}      = \&perl_to_native;
-    $ct{perl_to_native_post} = \&perl_to_native_post;
+    $ct{perl_to_native} = sub {
+      if(defined $_[0])
+      {
+        my $buf = encode($encoding, $_[0]."\0");
+        push @stack, \$buf;
+        return unpack(_incantation, pack 'P', $buf);
+      }
+      else
+      {
+        push @stack, undef;
+        return undef;
+      }
+    };
+
+    $ct{perl_to_native_post} = sub {
+      pop @stack;
+      return;
+    };
+
   }
   elsif($access eq 'write')
   {
