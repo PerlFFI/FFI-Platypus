@@ -30,15 +30,27 @@ $ffi->ignore_not_found(1);
 $ffi->load_custom_type('::WideString' => 'wstring');
 $ffi->load_custom_type('::WideString' => 'wstring_w', access => 'write');
 
-our $ptr;
-my $wcsdup = $ffi->function( wcsdup => ['wstring'] => 'opaque' => sub{
-  my $xsub = shift;
-  free $ptr if defined $ptr;
-  $ptr = undef;
-  $ptr = $xsub->(@_);
-});
+my $wcsdup = do {
 
-END { free $ptr if defined $ptr; undef $ptr };
+  our $ptr;
+  my $wrapper = sub {
+    my $xsub = shift;
+    free $ptr if defined $ptr;
+    $ptr = undef;
+    $ptr = $xsub->(@_);
+  };
+
+  my $wcsdup = $ffi->function( wcsdup => ['wstring'] => 'opaque' => $wrapper);
+
+  $wcsdup = $ffi->function( _wcsdup => ['wstring'] => 'opaque' => $wrapper)
+    if $^O eq 'MSWin32' && ! defined $wcsdup;
+
+  END { free $ptr if defined $ptr; undef $ptr };
+
+  $wcsdup;
+};
+
+
 
 
 subtest 'wcschr' => sub {
@@ -109,7 +121,7 @@ subtest 'wide string as a return value' => sub {
   foreach my $test (@strings)
   {
     my($name, $string) = @$test;
-    $wcsdup->($string);
+    my $ptr = $wcsdup->($string);
     is($ffi->cast('opaque','wstring', $ptr), $string, $name);
   }
 
