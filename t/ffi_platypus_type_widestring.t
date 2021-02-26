@@ -22,8 +22,8 @@ if(my $error = $@)
 note "encoding = $encoding";
 note "width    = $width";
 
-my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
-push @lib, undef;
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';  # need test lib for pointer_is_null
+push @lib, undef;                                                      # for libc wcs* functions
 
 my $ffi = FFI::Platypus->new( api => 1, lib => \@lib );
 $ffi->ignore_not_found(1);

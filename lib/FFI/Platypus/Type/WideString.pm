@@ -30,6 +30,12 @@ my @stack;  # To keep buffer alive.
 
 sub _compute_wide_string_encoding
 {
+  foreach my $need (qw( wcslen wcsnlen ))
+  {
+    die "This type plugin needs $need from libc, and cannot find it"
+      unless FFI::Platypus::Memory->can("_$need");
+  }
+
   my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
 
   my $size = eval { $ffi->sizeof('wchar_t') };
