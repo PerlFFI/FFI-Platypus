@@ -128,8 +128,17 @@ eval {
   $ffi->attach(strdup  => ['string'] => 'opaque' => '$');
   $_strdup_impl = 'libc';
 };
+if($@ && $^O eq 'MSWin32')
+{
+  eval {
+    die "do not use c impl" if ($ENV{FFI_PLATYPUS_MEMORY_STRDUP_IMPL}||'libc') eq 'ffi';
+    $ffi->attach([ _strdup => 'strdup' ] => ['string'] => 'opaque' => '$');
+    $_strdup_impl = 'libc';
+  };
+}
 if($@)
 {
+  warn "using bundled strdup";
   $_strdup_impl = 'ffi';
   $ffi->attach([ ffi_platypus_memory__strdup => 'strdup' ] => ['string'] => 'opaque' => '$');
 }
