@@ -1401,8 +1401,13 @@ use C<undef> as the library to find them.
 
 # EXAMPLE: examples/string.pl
 
-B<Discussion>: Strings are not a native type to C<libffi> but the are
-handled seamlessly by Platypus.
+B<Discussion>: ASCII and UTF-8 Strings are not a native type to C<libffi>
+but the are handled seamlessly by Platypus.  If you need to talk to an
+API that uses so called "wide" strings (APIs which use C<const wchar_t*>
+or C<wchar_t*>), then you will want to use the wide string type plugin
+L<FFI::Platypus::Type::WideString>.  APIs which use other arbitrary
+encodings can be accessed by converting your Perl strings manually with
+the L<Encode> module.
 
 =head2 Attach function from pointer
 
@@ -1518,6 +1523,20 @@ wrapper will be a code reference to the C function.  The Perl arguments
 will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the
 wrapper function will be returned back to the original caller.
+
+=head2 The Win32 API
+
+# EXAMPLE: examples/win32_messagebox.pl
+
+B<Discussion>: The API used by Microsoft Windows present some uniq
+challenges.  On 32 bit systems a different ABI is used than what is
+used by the standard C library.  It also provides a rats nest of
+type aliases.  Finally if you want to talk Unicode to any of the
+Windows API you will need to use C<UTF-16LE> instead of C<utf-8>
+which is native to Perl.  (The Win32 API referrs to these as
+C<LPWSTR> and C<LPCWSTR> types).  As much as possible the Win32
+"language" plugin attempts to handle this transparently.  For more
+details see L<FFI::Platypus::Lang::Win32>.
 
 =head2 bundle your own code
 
