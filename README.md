@@ -1032,8 +1032,13 @@ $ffi->attach(strerror => ['int'] => 'string');
 puts(strerror(2));
 ```
 
-**Discussion**: Strings are not a native type to `libffi` but the are
-handled seamlessly by Platypus.
+**Discussion**: ASCII and UTF-8 Strings are not a native type to `libffi`
+but the are handled seamlessly by Platypus.  If you need to talk to an
+API that uses so called "wide" strings (APIs which use `const wchar_t*`
+or `wchar_t*`), then you will want to use the wide string type plugin
+[FFI::Platypus::Type::WideString](https://metacpan.org/pod/FFI::Platypus::Type::WideString).  APIs which use other arbitrary
+encodings can be accessed by converting your Perl strings manually with
+the [Encode](https://metacpan.org/pod/Encode) module.
 
 ## Attach function from pointer
 
@@ -1432,6 +1437,18 @@ wrapper will be a code reference to the C function.  The Perl arguments
 will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the
 wrapper function will be returned back to the original caller.
+
+## The Win32 API
+
+**Discussion**: The API used by Microsoft Windows present some uniq
+challenges.  On 32 bit systems a different ABI is used than what is
+used by the standard C library.  It also provides a rats nest of
+type aliases.  Finally if you want to talk Unicode to any of the
+Windows API you will need to use `UTF-16LE` instead of `utf-8`
+which is native to Perl.  (The Win32 API referrs to these as
+`LPWSTR` and `LPCWSTR` types).  As much as possible the Win32
+"language" plugin attempts to handle this transparently.  For more
+details see [FFI::Platypus::Lang::Win32](https://metacpan.org/pod/FFI::Platypus::Lang::Win32).
 
 ## bundle your own code
 
