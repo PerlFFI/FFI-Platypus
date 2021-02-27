@@ -271,6 +271,14 @@ sub load_custom_types
 
 The Core Platypus documentation.
 
+=item L<FFI::Platypus::Type::WideString>
+
+The wide string type plugin use for C<LPWSTR> and C<LPCWSTR> types.
+
+=item L<Win32::API>
+
+Another FFI, but for Windows only.
+
 =back
 
 =cut
