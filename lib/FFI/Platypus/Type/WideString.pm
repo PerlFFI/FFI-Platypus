@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use 5.008004;
 use FFI::Platypus;
-use FFI::Platypus::Memory ();
-use FFI::Platypus::Buffer qw( buffer_to_scalar scalar_to_pointer );
+use FFI::Platypus::Memory qw( memcpy );
+use FFI::Platypus::Buffer qw( buffer_to_scalar scalar_to_pointer scalar_to_buffer );
 use Encode qw( decode encode );
 use Carp ();
 
@@ -122,14 +122,28 @@ sub ffi_custom_type_api_1
 
     $ct{perl_to_native} = sub {
       my $ref = shift;
-      push @stack, $ref;
-      if(ref($ref) eq 'SCALAR')
+      if(ref($ref) eq 'ARRAY')
       {
+        ${ $ref->[0] } = "\0" x $size unless defined ${ $ref->[0] };
+        my $ptr = scalar_to_pointer ${ $ref->[0] };
+        if(defined $ref->[0])
+        {
+          my $init = encode($encoding, $ref->[1]);
+          my($sptr, $ssize) = scalar_to_buffer($init);
+          memcpy($ptr, $sptr, $ssize);
+        }
+        push @stack, \${ $ref->[0] };
+        return $ptr;
+      }
+      elsif(ref($ref) eq 'SCALAR')
+      {
+        push @stack, $ref;
         $$ref = "\0" x $size unless defined $$ref;
         return scalar_to_pointer $$ref;
       }
       else
       {
+        push @stack, $ref;
         return undef;
       }
     };
