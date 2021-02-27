@@ -138,6 +138,7 @@ pod_spelling_system:
     - thet
     - unitof
     - const
+    - IKEGAMI
 
 pod_coverage:
   skip: 0
