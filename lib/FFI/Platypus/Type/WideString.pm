@@ -36,9 +36,11 @@ occasionally find APIs that talk in wide strings.  (libarchive, for example,
 can work in both).
 
 This plugin will detect the native wide string format for you and transparently
-convert Perl strings, which are typically encoded internally as UTF-8.  It can
-be used either for read/write buffers, for const read-only strings, and for
-return values.  It supports these options:
+convert Perl strings, which are typically encoded internally as UTF-8.  If for
+some reason it cannot detect the correct encoding, or if your platform is
+currently supported, an exception will be thrown (please open a ticket if this
+is the case).  It can be used either for read/write buffers, for const read-only
+strings, and for return values.  It supports these options:
 
 Options:
 
