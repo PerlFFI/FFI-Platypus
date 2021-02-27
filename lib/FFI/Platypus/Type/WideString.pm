@@ -5,6 +5,7 @@ use warnings;
 use 5.008004;
 use FFI::Platypus;
 use FFI::Platypus::Memory ();
+use FFI::Platypus::Buffer qw( buffer_to_scalar scalar_to_pointer );
 use Encode qw( decode encode );
 use Carp ();
 
@@ -20,11 +21,6 @@ use Carp ();
 # TODO
 
 =cut
-
-use constant _incantation =>
-  $^O eq 'MSWin32' && do { require Config; $Config::Config{archname} =~ /MSWin32-x64/ }
-    ? 'Q'
-    : 'L!';
 
 my @stack;  # To keep buffer alive.
 
@@ -90,7 +86,12 @@ sub ffi_custom_type_api_1
 
   $ct{native_to_perl} = sub {
     return undef unless defined $_[0];
-    return decode($encoding, unpack('P'.(FFI::Platypus::Memory::_wcslen($_[0])*$width), pack(_incantation, $_[0])));
+    return decode($encoding,
+      buffer_to_scalar(
+        $_[0],
+        FFI::Platypus::Memory::_wcslen($_[0])*$width,
+      )
+    );
   };
 
   if($access eq 'read')
@@ -100,7 +101,7 @@ sub ffi_custom_type_api_1
       {
         my $buf = encode($encoding, $_[0]."\0");
         push @stack, \$buf;
-        return unpack(_incantation, pack 'P', $buf);
+        return scalar_to_pointer $buf;
       }
       else
       {
@@ -125,7 +126,7 @@ sub ffi_custom_type_api_1
       if(ref($ref) eq 'SCALAR')
       {
         $$ref = "\0" x $size unless defined $$ref;
-        return unpack(_incantation, pack 'P', $$ref);
+        return scalar_to_pointer $$ref;
       }
       else
       {
