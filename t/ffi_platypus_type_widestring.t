@@ -50,9 +50,6 @@ my $wcsdup = do {
   $wcsdup;
 };
 
-
-
-
 subtest 'wcschr' => sub {
 
   my $wcschr = $ffi->function( wcschr => ['opaque','wchar_t'] => 'wstring' );
@@ -126,6 +123,26 @@ subtest 'wide string as a return value' => sub {
   }
 
   is($ffi->cast('opaque','wstring', undef), undef, 'NULL');
+
+};
+
+subtest 'wide string as in-out argument' => sub {
+
+  my $wcscat = $ffi->function( wcscat => ['wstring_w','wstring'] => 'wstring' );
+  plan skip_all => 'Test requires wcscat' unless defined $wcscat;
+
+  foreach my $test (@strings)
+  {
+    my($name, $string) = @$test;
+
+    my $out1;
+    $wcscat->call([\$out1, $string], $string);
+    is($out1, "$string$string", "$name default buffer size");
+
+    my $out2 = "\0" x ($width * (length($string)*2+1));
+    $wcscat->call([\$out2, $string], $string);
+    is($out2, "$string$string", "$name with just enough buffer");
+  }
 
 };
 
