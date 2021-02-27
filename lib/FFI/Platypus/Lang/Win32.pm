@@ -10,21 +10,52 @@ use Config;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus;
- my $ffi = FFI::Platypus->new( api => 1 );
+ use utf8;
+ use FFI::Platypus 1.00;
+ 
+ my $ffi = FFI::Platypus->new(
+   api  => 1,
+   lib  => [undef],
+ );
+ 
+ # load this plugin
  $ffi->lang('Win32');
+ 
+ use constant MB_OK                   => 0x00000000;
+ use constant MB_DEFAULT_DESKTOP_ONLY => 0x00020000;
+ $ffi->attach( [MessageBoxW => 'MessageBox'] => [ 'HWND', 'LPCWSTR', 'LPCWSTR', 'UINT'] => 'int' );
+ MessageBox(undef, "I ❤️ Platypus", "Confession", MB_OK|MB_DEFAULT_DESKTOP_ONLY);
+ 
+ $ffi->attach( [GetCurrentDirectoryW => 'GetCurrentDirectory'] => ['DWORD', 'LPWSTR'] => 'DWORD');
+ my $buf_size = GetCurrentDirectory(0,undef);
+ my $dir = "\0" x ($buf_size*2);
+ GetCurrentDirectory($buf_size, \$dir) or die $^E;
+ print "$dir\n";
 
 =head1 DESCRIPTION
 
 This module provides the Windows datatypes used by the Windows API.
 This means that you can use things like C<DWORD> as an alias for
-C<uint32>.
+C<uint32>.  The full list of type aliases is not documented here as
+it may change over time or be dynamic.  You can get the list for your
+current environment with this one-liner:
+
+ perl -MFFI::Platypus::Lang::Win32 -E "say for sort keys %{ FFI::Platypus::Lang::Win32->native_type_map }"
+
+You also get C<LPCWSTR> and C<LPWSTR> "wide" string types which are
+implemented using L<FFI::Platypus::Type::WideString>.  For full details,
+please see the documentation for that module, and note that C<LPCWSTR>
+is a wide string in the read-only string mode and C<LPWSTR> is a wide
+string in the read-write buffer mode.
 
 =head1 METHODS
 
 =head2 abi
 
  my $abi = FFI::Platypus::Lang::Win32->abi;
+
+This is called internally when the type plugin is loaded by Platypus.
+It selects the appropriate ABI to make Win32 API function calls.
 
 =cut
 
@@ -39,9 +70,19 @@ sub abi
 
  my $hashref = FFI::Platypus::Lang::Win32->native_type_map;
 
+This is called internally when the type plugin is loaded by Platypus.
+It provides types aliases useful on the Windows platform, so it may
+also be useful for introspection.
+
 This returns a hash reference containing the native aliases for the
 Windows API.  That is the keys are native Windows API C types and the
 values are libffi native types.
+
+This will includes types like C<DWORD> and C<HWND>, and others.  The
+full list may be adjusted over time and may be computed dynamically.
+To get the full list for your install you can use this one-liner:
+
+ perl -MFFI::Platypus::Lang::Win32 -E "say for sort keys %{ FFI::Platypus::Lang::Win32->native_type_map }"
 
 =cut
 
@@ -130,6 +171,7 @@ sub native_type_map
       SIZE_T                    ULONG_PTR
       SSIZE_T                   LONG_PTR
       UCHAR                     uint8
+      UINT                      uint
       UINT8                     uint8
       UINT16                    uint16
       UINT32                    uint32
@@ -200,6 +242,23 @@ sub native_type_map
     # Not supported: POINTER_32 POINTER_64 POINTER_SIGNED POINTER_UNSIGNED
   }
   \%map;
+}
+
+=head2 load_custom_types
+
+ FFI::Platypus::Lang::Win32->load_custom_types($ffi);
+
+This is called internally when the type plugin is loaded by Platypus.
+It provides custom types useful on the Windows platform.  For now
+that means the C<LPWSTR> and C<LPCWSTR> types.
+
+=cut
+
+sub load_custom_types
+{
+  my(undef, $ffi) = @_;
+  $ffi->load_custom_type('::WideString' => 'LPCWSTR', access => 'read'  );
+  $ffi->load_custom_type('::WideString' => 'LPWSTR',  access => 'write' );
 }
 
 1;
