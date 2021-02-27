@@ -137,6 +137,7 @@ pod_spelling_system:
     - kindof
     - thet
     - unitof
+    - const
 
 pod_coverage:
   skip: 0

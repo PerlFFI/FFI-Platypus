@@ -18,7 +18,94 @@ use Carp ();
 
 =head1 DESCRIPTION
 
+This custom type plugin for L<FFI::Platypus> provides support for the native
+"wide" string type on your platform, if it is available.
+
+Wide strings are made of up wide characters (C<wchar_t>, also known as C<WCHAR>
+on Windows) and have enough bits to represent character sets that require
+larger than the traditional one byte C<char>.
+
+These strings are most commonly used on Windows where they are referred to as
+C<LPWSTR> and C<LPCWSTR> (The former for read/write buffers and the latter for
+const read-only strings), where they are encoded as C<UTF-16LE>.
+
+They are also supported by libc on many modern Unix systems where they are usually
+C<UTF-32> of the native byte-order of the system.  APIs on Unix systems more
+commonly use UTF-8 which provides some compatibility with ASCII, but you may
+occasionally find APIs that talk in wide strings.  (libarchive, for example,
+can work in both).
+
+This plugin will detect the native wide string format for you and transparently
+convert Perl strings, which are typically encoded internally as UTF-8.  It can
+be used either for read/write buffers, for const read-only strings, and for
+return values.  It supports these options:
+
+Options:
+
+=over 4
+
+=item access
+
+Either C<read> or C<write> depending on if you are using a read/write buffer
+or a const read-only string.
+
+=item size
+
+For read/write buffer, the size of the buffer to create, if not provided by
+the caller.
+
+=back
+
+=head2 read-only
+
+Read-only strings are the easiest of all, are converted to the native wide
+string format in a buffer and are freed after that function call completes.
+
+ $ffi->load_custom_type('::WideString' => 'wstring' );
+ $ffi->function( wprintf => [ 'wstring' ] => [ 'wstring' ] => 'int' )
+      ->call("I %s perl + Platypus", "❤");
+
+This is the mode that you want to use when you are calling a function that
+takes a C<const wchar_t*> or a C<LPCWSTR>.
+
+=head2 return value
+
+For return values the C<access> and C<size> options are ignored.  The string
+is simply copied into a Perl native string.
+
+ $ffi->load_custom_type('::WideString' => 'wstring' );
+ # see note below in CAVEATS about strdup
+ my $str = $ffi->function( strdup => [ 'wstring' ] => 'wstring' )
+               ->call("I ❤ perl + Platypus");
+
+This is the mode that you want to use when you are calling a function that
+returns a C<const wchar_t*>, C<wchar_t>, C<LPWSTR> or C<LPCWSTR>.
+
+=head2 read/write
+
+Read/write strings can be passed in one of two ways.  Which you choose
+depends on if you want to initialize the read/write buffer or not.
+
 # TODO
+
+This is the mode that you want to use when you are calling a function that
+takes a <wchar_t*> or a C<LPWSTR>.
+
+=head1 CAVEATS
+
+As with the Platypus built in C<string> type, return values are copied into
+a Perl scalar.  This is usually what you want anyway, but some APIs expect
+the caller to take responsibility for freeing the pointer to the wide string
+that it returns.  For example, C<wcsdup> works in this way.  The workaround
+is to return an opaque pointer, cast it from a wide string and free the
+pointer.
+
+ use FFI::Platypus::Memory qw( free );
+ $ffi->load_custom_type('::WideString' => 'wstring' );
+ my $ptr = $ffi->function( strdup => [ 'wstring' ] => 'opaque' )
+               ->call("I ❤ perl + Platypus");
+ my $str = $ffi->cast('opaque', 'wstring', $ptr);
+ free $ptr;
 
 =cut
 
