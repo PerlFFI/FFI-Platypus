@@ -6,7 +6,7 @@ use 5.008004;
 use FFI::Platypus;
 use FFI::Platypus::Memory qw( memcpy );
 use FFI::Platypus::Buffer qw( buffer_to_scalar scalar_to_pointer scalar_to_buffer );
-use Encode qw( decode encode );
+use Encode qw( decode encode find_encoding );
 use Carp ();
 
 # ABSTRACT: Platypus custom type for Unicode "wide" strings
@@ -68,6 +68,9 @@ sub _compute_wide_string_encoding
     die "odd byteorder $byteorder not (yet) supported";
   }
 
+  die "Perl doesn't recognize $encoding as an encoding"
+    unless find_encoding($encoding);
+
   return ($encoding, $size);
 }
 
@@ -75,9 +78,23 @@ sub ffi_custom_type_api_1
 {
   my %args = @_;
 
+  # TODO: it wold be nice to allow arbitrary encodings, but we are
+  # relying on a couple of wcs* functions to compute the string, so
+  # we will leave that for future development.
   my($encoding, $width) = __PACKAGE__->_compute_wide_string_encoding();
 
-  my $size   = $args{size} || 1024;
+  # it is hard to come up with a default size for write buffers
+  # but 2048 is a multiple of 1024 that is large enough to fit
+  # any Windows PATH (260*4)+2 = 1042
+  #
+  # (assuming all characters in the PATH are in the BMP, which is
+  #  admitedly unlikely, possilby impossible (?) and and a null
+  #  termination of two bytes).
+  #
+  # it is arbitrary and based on a platform specific windows
+  # thing, but windows is where wide strings are most likely
+  # to be found, so seems good as anything.
+  my $size   = $args{size} || 2048;
   my $access = $args{access} || 'read';
 
   my %ct = (
