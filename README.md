@@ -1440,6 +1440,25 @@ wrapper function will be returned back to the original caller.
 
 ## The Win32 API
 
+```perl
+use utf8;
+use FFI::Platypus;
+
+my $ffi = FFI::Platypus->new(
+  api  => 1,
+  lib  => [undef],
+);
+
+# see FFI::Platypus::Lang::Win32
+$ffi->lang('Win32');
+
+# Send a Unicode string to the Windows API MessageBoxW function.
+use constant MB_OK                   => 0x00000000;
+use constant MB_DEFAULT_DESKTOP_ONLY => 0x00020000;
+$ffi->attach( [MessageBoxW => 'MessageBox'] => [ 'HWND', 'LPCWSTR', 'LPCWSTR', 'UINT'] => 'int' );
+MessageBox(undef, "I ❤️ Platypus", "Confession", MB_OK|MB_DEFAULT_DESKTOP_ONLY);
+```
+
 **Discussion**: The API used by Microsoft Windows present some unique
 challenges.  On 32 bit systems a different ABI is used than what is
 used by the standard C library.  It also provides a rats nest of
