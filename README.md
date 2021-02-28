@@ -1440,12 +1440,12 @@ wrapper function will be returned back to the original caller.
 
 ## The Win32 API
 
-**Discussion**: The API used by Microsoft Windows present some uniq
+**Discussion**: The API used by Microsoft Windows present some unique
 challenges.  On 32 bit systems a different ABI is used than what is
 used by the standard C library.  It also provides a rats nest of
 type aliases.  Finally if you want to talk Unicode to any of the
 Windows API you will need to use `UTF-16LE` instead of `utf-8`
-which is native to Perl.  (The Win32 API referrs to these as
+which is native to Perl.  (The Win32 API refers to these as
 `LPWSTR` and `LPCWSTR` types).  As much as possible the Win32
 "language" plugin attempts to handle this transparently.  For more
 details see [FFI::Platypus::Lang::Win32](https://metacpan.org/pod/FFI::Platypus::Lang::Win32).

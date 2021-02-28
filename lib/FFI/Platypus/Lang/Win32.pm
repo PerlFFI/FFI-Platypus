@@ -92,14 +92,14 @@ B<Discussion>: This only works if you know the API that you are using will not e
 more than 2048 bytes.  The author believes this to be the case for C<GetCurrentDirectoryW>
 since directory paths in windows have a maximum of 260 characters.  If every character was
 outside the Basic Multilingual Plane (BMP) they would take up exactly 4 characters each.
-(This is probably not ever the case since the disk volume at least will be a latin letter).
+(This is probably not ever the case since the disk volume at least will be a Latin letter).
 Taking account of the C<NULL> termination you would need 260 * 4 + 2 bytes or 1048 bytes.
 
 We pass in a reference to our scalar so that the Win32 API can write into it.
 
-We are passing in half the number of bytes as the first argument because the API explects
+We are passing in half the number of bytes as the first argument because the API expects
 the number of C<WCHAR> (or C<wchar_t>), not the number of bytes or the technically the
-number of charactrs since characters can take up either 2 or 4 bytes in UTF-16.
+number of characters since characters can take up either 2 or 4 bytes in UTF-16.
 
 =item allocate your buffer to your own size.
 
@@ -130,7 +130,7 @@ reference.  The firs element of the array is the buffer, and the second is the i
  GetCurrentDirectory($size, [ \$dir, "I ❤ Perl + Platypus" ]);
 
 B<Discussion>: Note that this particular API ignores the string passed in and writes
-over it, but this demonstrates how you would initalize a buffer string.  Once again,
+over it, but this demonstrates how you would initialize a buffer string.  Once again,
 if C<$dir> is not initialized (is C<undef>), then a buffer of the default size of 2048
 bytes will be created internally.  You can also allocate a specific number of bytes
 as in the previous example.

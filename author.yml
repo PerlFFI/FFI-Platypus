@@ -139,6 +139,7 @@ pod_spelling_system:
     - unitof
     - const
     - IKEGAMI
+    - BMP
 
 pod_coverage:
   skip: 0
