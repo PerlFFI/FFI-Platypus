@@ -1528,12 +1528,12 @@ wrapper function will be returned back to the original caller.
 
 # EXAMPLE: examples/win32_messagebox.pl
 
-B<Discussion>: The API used by Microsoft Windows present some uniq
+B<Discussion>: The API used by Microsoft Windows present some unique
 challenges.  On 32 bit systems a different ABI is used than what is
 used by the standard C library.  It also provides a rats nest of
 type aliases.  Finally if you want to talk Unicode to any of the
 Windows API you will need to use C<UTF-16LE> instead of C<utf-8>
-which is native to Perl.  (The Win32 API referrs to these as
+which is native to Perl.  (The Win32 API refers to these as
 C<LPWSTR> and C<LPCWSTR> types).  As much as possible the Win32
 "language" plugin attempts to handle this transparently.  For more
 details see L<FFI::Platypus::Lang::Win32>.
