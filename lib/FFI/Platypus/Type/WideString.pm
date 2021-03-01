@@ -127,7 +127,90 @@ returns a C<const wchar_t*>, C<wchar_t>, C<LPWSTR> or C<LPCWSTR>.
 Read/write strings can be passed in one of two ways.  Which you choose
 depends on if you want to initialize the read/write buffer or not.
 
-# TODO
+=over 4
+
+=item default buffer size
+
+The simplest way is to fallback on the default buffer size, which can
+be specified using the C<size> option when creating the custom type.
+
+ my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
+ $ffi->load_custom_type('::WideString' => 'wstring',   access => 'read' );
+ $ffi->load_custom_type('::WideString' => 'wstring_w', access => 'write', size => 512 );
+
+ $ffi->attach( wcscpy => ['wstring_w', 'wstring'] );
+ my $buf;
+ wcscpy(\$buf, "I ❤ perl + Platypus");
+ print $buf, "\n";  # prints "I ❤ perl + Platypus"
+
+B<Discussion>: This is the most sensical approach when the exact size of the
+buffer is known for all usages of the string type.  It can also be sensical
+if the buffer size is larger than any possible output, though care should
+be taken since this may be hard to determine reliably.
+
+The default size if none is specified when creating the custom type is 2048,
+which is probably large enough for many uses, but also probably wastes
+memory for many of them.
+
+=item allocate your buffer of a specific size
+
+The safest and most memory efficient method is of course to allocate exactly
+the amount of memory that you need.
+
+ my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
+ $ffi->load_custom_type('::WideString' => 'wstring',   access => 'read'  );
+ $ffi->load_custom_type('::WideString' => 'wstring_w', access => 'write' );
+
+ $ffi->attach( wcscpy => ['wstring_w', 'wstring'] );
+ my $width = $ffi->sizeof('wchar_t');
+ my $buf = "\0" x ( (length ("I ❤ perl + Platypus") + 1)*$width);
+ wcscpy(\$buf, "I ❤ perl + Platypus");
+ print $buf, "\n";  # prints "I ❤ perl + Platypus"
+
+B<Discussion>: By assigning C<$buf> to a string of null characters the
+length of the source string, plus one (for the null at the end) and then
+multiplying that by the size of C<wchar_t>, you get the exact number of
+bytes needed for the destination buffer.
+
+Note that although we pass in a reference to a buffer, what comes back
+is converted to a Perl string, which will be internally UTF-8, not stored
+at the original buffer location.  This is slightly awkward, but what you
+need most of the time.
+
+=item initialize the read/write buffer
+
+Some functions don't expect empty null padded buffers though, in this
+case you will want to initialize the buffer.
+
+ my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
+ $ffi->load_custom_type('::WideString' => 'wstring',   access => 'read'  );
+ $ffi->load_custom_type('::WideString' => 'wstring_w', access => 'write' );
+
+ $ffi->attach( wcscat => ['wstring_w', 'wstring'] );
+ my $buf;
+ wcscat( [ \$buf, "I ❤ perl" ], " + Platypus");
+ print $buf, "\n";  # prints "I ❤ perl + Platypus"
+
+B<Discussion>: To initialize we pass in an array reference instead of a
+scalar reference.  The first element is a scalar reference to the buffer
+(which can be pre-allocated or not; if it is not allocated then it will
+be allocated to the default size for the type).  The second argument is
+what the buffer should be initialized to before the underlying C function
+is called.  The Perl string is encoded into wide string format before
+being used to initialize the buffer.
+
+As before a reference to the translated string is returned, and the
+buffer that was used to pass in is freed.
+
+=item allocate memory using C<malloc> or C<wcsdup> etc.
+
+You can also allocate memory using C<malloc> or C<wcsdup> to return
+an opaque type and manipulate it using the libc C<wcs*> functions.
+It will still probably be useful to use this plugin to cast the
+opaque back to a Perl string.  The CAVEATS section below includes
+several examples.
+
+=back
 
 This is the mode that you want to use when you are calling a function that
 takes a <wchar_t*> or a C<LPWSTR>.

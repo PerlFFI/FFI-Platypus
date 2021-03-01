@@ -141,6 +141,7 @@ pod_spelling_system:
     - IKEGAMI
     - BMP
     - WebAssembly
+    - sensical
 
 pod_coverage:
   skip: 0
