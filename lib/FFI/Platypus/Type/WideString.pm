@@ -76,8 +76,8 @@ For return values the C<access> and C<size> options are ignored.  The string
 is simply copied into a Perl native string.
 
  $ffi->load_custom_type('::WideString' => 'wstring' );
- # see note below in CAVEATS about strdup
- my $str = $ffi->function( strdup => [ 'wstring' ] => 'wstring' )
+ # see note below in CAVEATS about wcsdup
+ my $str = $ffi->function( wcsdup => [ 'wstring' ] => 'wstring' )
                ->call("I ❤ perl + Platypus");
 
 This is the mode that you want to use when you are calling a function that
@@ -104,7 +104,7 @@ pointer.
 
  use FFI::Platypus::Memory qw( free );
  $ffi->load_custom_type('::WideString' => 'wstring' );
- my $ptr = $ffi->function( strdup => [ 'wstring' ] => 'opaque' )
+ my $ptr = $ffi->function( wcsdup => [ 'wstring' ] => 'opaque' )
                ->call("I ❤ perl + Platypus");
  my $str = $ffi->cast('opaque', 'wstring', $ptr);
  free $ptr;
@@ -113,6 +113,7 @@ Because of the order in which objects are freed you cannot return a wide
 string if it is also a wide string argument to a function.  For example
 C<wcscpy> may crash if you specify the return value as a wide string:
 
+ # wchar_t *wcscpy(wchar_t *dest, const wchar_t *src);
  $ffi->attach( wcscpy => [ 'wstring_w', 'wstring' ] => 'wstring' ); # no
  my $str;
  wcscpy( \$str, "I ❤ perl + Platypus");  # may crash on memory error
@@ -128,9 +129,30 @@ To make this code work, you can just ignore the return value:
  my $str;
  wcscpy( \$str, "I ❤ perl + Platypus"); # good!
 
-Other APIs may actually require you to care about the return value, in
-which case you will have to work with pointers and casts to get the job
-done.
+On the other hand you do care about the return value from C<wcschr>, which returns
+a pointer to the first occurrence of a character in an argument string:
+
+ # wchar_t *wcschr(const wchar_t *wcs, wchar_t wc);
+ $ffi->attach( wcschr => [ 'wstring', 'wchar_t' ] => 'wstring' ); # no
+ # this may crash on memory error or return the wrong value
+ my $str = wcschr("I ❤ perl + Platypus", ord("❤"));
+
+Instead you need to work with pointers and casts to use this function:
+
+ use FFI::Platypus 1.00;
+ use FFI::Platypus::Memory qw( free );
+ 
+ my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
+ 
+ $ffi->attach( wcsdup => ['wstring'] => 'opaque' );
+ $ffi->attach( strchr => [ opaque', 'wchar_t' ] => 'wstring' );
+ 
+ # create a wcs string in memory using wcsdup
+ my $haystack = wcsdup("I ❤ perl + Platypus");
+ # find the heart and return as a wide string
+ my $needle = strchr($haystack, ord("❤"));
+ # safe to free the pointer to the larger string now
+ free $haystack;
 
 =cut
 
