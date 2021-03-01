@@ -16,3 +16,4 @@ use constant MB_OK                   => 0x00000000;
 use constant MB_DEFAULT_DESKTOP_ONLY => 0x00020000;
 $ffi->attach( [MessageBoxW => 'MessageBox'] => [ 'HWND', 'LPCWSTR', 'LPCWSTR', 'UINT'] => 'int' );
 MessageBox(undef, "I ❤️ Platypus", "Confession", MB_OK|MB_DEFAULT_DESKTOP_ONLY);
+
