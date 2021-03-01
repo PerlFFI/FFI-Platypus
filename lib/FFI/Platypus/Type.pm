@@ -593,6 +593,19 @@ and return an opaque pointer to the string using a cast.
  });
  print_message($get_message);
 
+Another type of string that you may run into with some APIs is the
+so called "wide" string.  In your C code if you see C<wchar_t*>
+or C<const wchar_t*> or if in Win32 API code you see C<LPWSTR>
+or C<LPCWSTR>.  Most commonly you will see these types when working
+with the Win32 API, but you may see them in Unix as well.  These
+types are intended for dealing with Unicode, but they do not use
+the same UTF-8 format used by Perl internally, so they need to be
+converted.  You can do this manually by allocating the memory
+and using the L<Encode> module, but the easier way is to use
+either L<FFI::Platypus::Type::WideString> or
+L<FFI::Platypus::Lang::Win32>, which handle the memory allocation
+and conversion for you.
+
 =head2 Pointer / References
 
 In C you can pass a pointer to a variable to a function in order
