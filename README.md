@@ -1903,6 +1903,12 @@ the development package for `libffi` as prereqs for this module.
 
     Documentation and tools for using Platypus with the Win32 API.
 
+- [Wasm](https://metacpan.org/pod/Wasm) and [Wasm::Wasmtime](https://metacpan.org/pod/Wasm::Wasmtime)
+
+    Modules for writing WebAssembly bindings in Perl.  This allows you to call
+    functions written in any language supported by WebAssembly.  These modules
+    are also implemented using Platypus.
+
 - [Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C)
 
     A great interface for decoding C data structures, including `struct`s,

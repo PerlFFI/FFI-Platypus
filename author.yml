@@ -140,6 +140,7 @@ pod_spelling_system:
     - const
     - IKEGAMI
     - BMP
+    - WebAssembly
 
 pod_coverage:
   skip: 0
