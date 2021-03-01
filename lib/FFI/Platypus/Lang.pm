@@ -25,7 +25,41 @@ This package itself doesn't do anything, it serves only as documentation.
 
 =item L<FFI::Platypus>
 
+Platypus itself.
+
+=item L<FFI::Platypus::Lang::ASM>
+
+This language plugin provides no type aliases, and is intended
+for use with assembly language or for when no other language
+plugin is appropriate.
+
 =item L<FFI::Platypus::Lang::C>
+
+Language plugin for the C programming language.
+
+=item L<FFI::Platypus::Lang::Fortran>
+
+Non-core language plugin for the Fortran programming language.
+
+=item L<FFI::Platypus::Lang::CPP>
+
+Non-core language plugin for the C++ programming language.
+
+=item L<FFI::Platypus::Lang::Go>
+
+Non-core language plugin for the Go programming language.
+
+=item L<FFI::Platypus::Lang::Pascal>
+
+Non-core language plugin for the Pascal programming language.
+
+=item L<FFI::Platypus::Lang::Rust>
+
+Non-core language plugin for the Rust programming language.
+
+=item L<FFI::Platypus::Lang::Win32>
+
+Language plugin for use with the Win32 API.
 
 =back
 

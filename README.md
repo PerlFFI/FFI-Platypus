@@ -1899,6 +1899,10 @@ the development package for `libffi` as prereqs for this module.
 
     Documentation and tools for using Platypus with the Assembly
 
+- [FFI::Platypus::Lang::Win32](https://metacpan.org/pod/FFI::Platypus::Lang::Win32)
+
+    Documentation and tools for using Platypus with the Win32 API.
+
 - [Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C)
 
     A great interface for decoding C data structures, including `struct`s,

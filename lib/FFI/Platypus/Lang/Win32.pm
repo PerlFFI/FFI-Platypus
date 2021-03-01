@@ -376,6 +376,10 @@ sure you also require at least that version of Platypus.
 
 The Core Platypus documentation.
 
+=item L<FFI::Platypus::Lang>
+
+Includes a list of other language plugins for Platypus.
+
 =item L<FFI::Platypus::Type::WideString>
 
 The wide string type plugin use for C<LPWSTR> and C<LPCWSTR> types.
