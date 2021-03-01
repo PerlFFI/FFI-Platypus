@@ -1923,6 +1923,10 @@ language
 
 Documentation and tools for using Platypus with the Assembly
 
+=item L<FFI::Platypus::Lang::Win32>
+
+Documentation and tools for using Platypus with the Win32 API.
+
 =item L<Convert::Binary::C>
 
 A great interface for decoding C data structures, including C<struct>s,

@@ -48,6 +48,10 @@ sub native_type_map
 
 The Core Platypus documentation.
 
+=item L<FFI::Platypus::Lang>
+
+Includes a list of other language plugins for Platypus.
+
 =back
 
 =cut
