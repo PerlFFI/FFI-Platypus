@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.35_01   2021-03-01 16:02:07 -0700
   - Favor the Microsoft strdup over the bundled copy if found as _strdup
     which is what it is called now (gh#299).
   - Added FFI::Platypus::Type::WideString type plugin (IKEGAMI++ gh#291, gh#292, gh#299)
