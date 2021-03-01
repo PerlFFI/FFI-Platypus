@@ -13,7 +13,7 @@ Revision history for {{$dist->name}}
 
 1.33      2020-09-28 10:47:26 -0600
   - FFI::Platypus::Declare is no longer part of this distribution.  It is
-    no available from FFI-Platypus-Declare instead.  It has already
+    now available from FFI-Platypus-Declare instead.  It has already
     been discouraged for quite some time. (gh#285)
   - Fix bug where bundled .so name could incorrectly get double colons (::)
     in the name in development mode only.  This is probably only a problem
