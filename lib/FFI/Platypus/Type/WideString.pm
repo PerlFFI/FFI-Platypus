@@ -14,7 +14,46 @@ use Carp ();
 
 =head1 SYNOPSIS
 
-# TODO
+ use FFI::Platypus 1.00;
+ 
+ my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
+ $ffi->load_custom_type('::WideString' => 'wstring', access => 'read' );
+ $ffi->load_custom_type('::WideString' => 'wstring_w', access => 'write' );
+ 
+ # call function that takes a constant wide string
+ $ffi->attach( wcscmp => ['wstring', 'wstring'] => 'int' );
+ my $diff = wcscmp("I ❤ perl + Platypus", "I ❤ perl + Platypus"); # returns 0
+ 
+ # call a function that takes a wide string for writing
+ $ffi->attach( wcscpy => ['wstring_w', 'wstring'] );
+ my $buf;
+ wcscpy(\$buf, "I ❤ perl + Platypus");
+ print $buf, "\n";  # prints "I ❤ perl + Platypus"
+ 
+ # call a function that takes a wide string for modification
+ $ffi->attach( wcscat => ['wstring_w', 'wstring'] );
+ my $buf;
+ wcscat( [ \$buf, "I ❤ perl" ], " + Platypus");
+ print $buf, "\n";  # prints "I ❤ perl + Platypus"
+
+On Windows use with C<LPCWSTR>:
+
+ use FFI::Platypus 1.00;
+ 
+ my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
+ 
+ # define some custom Win32 Types
+ # to get these automatically see FFI::Platypus::Lang::Win32
+ $ffi->load_custom_type('::WideString' => 'LPCWSTR', access => 'read' );
+ $ffi->type('opaque' => 'HWND');
+ $ffi->type('uint'   => 'UINT');
+ 
+ use constant MB_OK                   => 0x00000000;
+ use constant MB_DEFAULT_DESKTOP_ONLY => 0x00020000;
+ 
+ $ffi->attach( [MessageBoxW => 'MessageBox'] => [ 'HWND', 'LPCWSTR', 'LPCWSTR', 'UINT'] => 'int' );
+ 
+ MessageBox(undef, "I ❤️ Platypus", "Confession", MB_OK|MB_DEFAULT_DESKTOP_ONLY);
 
 =head1 DESCRIPTION
 
