@@ -91,7 +91,7 @@ subtest 'wide string as argument (in)' => sub {
 
 subtest 'wide string as argument (out)' => sub {
 
-  my $wcscpy = $ffi->function( wcscpy => ['wstring_w','wstring'] => 'wstring' );
+  my $wcscpy = $ffi->function( wcscpy => ['wstring_w','wstring'] );
   plan skip_all => 'Test requires wcscpy' unless defined $wcscpy;
 
   foreach my $test (@strings)
@@ -128,7 +128,7 @@ subtest 'wide string as a return value' => sub {
 
 subtest 'wide string as in-out argument' => sub {
 
-  my $wcscat = $ffi->function( wcscat => ['wstring_w','wstring'] => 'wstring' );
+  my $wcscat = $ffi->function( wcscat => ['wstring_w','wstring'] );
   plan skip_all => 'Test requires wcscat' unless defined $wcscat;
 
   foreach my $test (@strings)

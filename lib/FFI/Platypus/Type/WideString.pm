@@ -109,6 +109,29 @@ pointer.
  my $str = $ffi->cast('opaque', 'wstring', $ptr);
  free $ptr;
 
+Because of the order in which objects are freed you cannot return a wide
+string if it is also a wide string argument to a function.  For example
+C<wcscpy> may crash if you specify the return value as a wide string:
+
+ $ffi->attach( wcscpy => [ 'wstring_w', 'wstring' ] => 'wstring' ); # no
+ my $str;
+ wcscpy( \$str, "I ❤ perl + Platypus");  # may crash on memory error
+
+This is because the order in which things are done here are 1. C<$str> is allocated
+2. C<$str> is re-encoded as utf and the old buffer is freed 3. the return value
+is computed based on the C<$str> buffer that was freed.
+
+If you look at C<wcscpy> though you don't actually need the return value.
+To make this code work, you can just ignore the return value:
+
+ $ffi->attach( wcscpy => [ 'wstring_w', 'wstring' ] => 'void' ); # yes
+ my $str;
+ wcscpy( \$str, "I ❤ perl + Platypus"); # good!
+
+Other APIs may actually require you to care about the return value, in
+which case you will have to work with pointers and casts to get the job
+done.
+
 =cut
 
 my @stack;  # To keep buffer alive.
