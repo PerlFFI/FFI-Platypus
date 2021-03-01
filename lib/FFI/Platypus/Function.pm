@@ -10,7 +10,7 @@ use FFI::Platypus;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  
  # call directly
  my $ffi = FFI::Platypus->new( api => 1 );

@@ -28,10 +28,10 @@ C<lib/Foo.pm>:
  
  use strict;
  use warnings;
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  use base qw( Exporter );
  
- my $ffi = FFI::Platypus->new;
+ my $ffi = FFI::Platypus->new( api => 1 );
  # sets constatns Foo::FOO and ABC::DEF from C
  $ffi->bundle;
  

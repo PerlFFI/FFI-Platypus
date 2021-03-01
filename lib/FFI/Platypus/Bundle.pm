@@ -129,7 +129,7 @@ dist is named C<Foo-Bar> but your specific class is named C<Foo::Bar::Baz>, you'
 want something like this:
 
  package Foo::Bar::Baz;
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->bundle('Foo::Bar');
  ...

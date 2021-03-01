@@ -9,7 +9,7 @@ use 5.008004;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->lang('ASM');
 

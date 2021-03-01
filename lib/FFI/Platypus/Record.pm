@@ -42,7 +42,7 @@ Perl:
  
  package main;
  
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  
  my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->lib("myperson.so");

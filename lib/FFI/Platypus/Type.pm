@@ -56,7 +56,7 @@ tm
 
 OO Interface:
 
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->type('int' => 'my_int');
 
@@ -70,7 +70,7 @@ Types may be "defined" ahead of time, or simply used when defining or
 attaching functions.
 
  # Example of defining types
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->type('int');
  $ffi->type('string');
@@ -126,7 +126,7 @@ second argument to the L<FFI::Platypus#type> method can be used to
 define a type alias that can later be used by function declaration
 and attachment.
 
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->type('int'    => 'myint');
  $ffi->type('string' => 'mystring');
@@ -634,7 +634,7 @@ code.
  }
  
  # foo.pl
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->lib('libfoo.so'); # change to reflect the dynamic lib
                          # that contains foo.c
@@ -904,7 +904,7 @@ constants in your Perl module, like this:
 
  package Foo;
  
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  use base qw( Exporter );
  
  our @EXPORT_OK = qw( FOO_STATIC FOO_DYNAMIC FOO_OTHER foo get_foo );
@@ -928,7 +928,7 @@ function, like this:
 
  package Foo;
  
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  
  our @EXPORT_OK = qw( foo get_foo );
  
@@ -981,7 +981,7 @@ interface like this:
 
  package Foo;
  
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  use FFI::Platypus::API qw( arguments_get_string );
  
  my $ffi = FFI::Platypus->new( api => 1 );

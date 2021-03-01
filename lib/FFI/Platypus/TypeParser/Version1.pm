@@ -11,7 +11,7 @@ use base qw( FFI::Platypus::TypeParser );
 
 =head1 SYNOPSIS
 
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  my $ffi = FFI::Platypus->new( api => 1 );
  $ffi->type('record(Foo::Bar)' => 'foo_bar_t');
  $ffi->type('record(Foo::Bar)*' => 'foo_bar_ptr');
