@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::CheckLib;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 use FFI::Platypus::Memory qw( malloc free );
 
 my $ffi = FFI::Platypus->new( api => 1 );
@@ -12,11 +12,10 @@ $ffi->type('record(16)*' => 'uuid_t');
 $ffi->attach(uuid_generate => ['uuid_t'] => 'void');
 $ffi->attach(uuid_unparse  => ['uuid_t','uuid_string'] => 'void');
 
-my $uuid = "\0" x 16;  # uuid_t
+my $uuid = "\0" x $ffi->sizeof('uuid_t');
 uuid_generate($uuid);
 
-my $string = "\0" x 37; # 36 bytes to store a UUID string
-                        # + NUL termination
+my $string = "\0" x $ffi->sizeof('uuid_string');
 uuid_unparse($uuid, $string);
 
 print "$string\n";
