@@ -8,6 +8,7 @@ before_install:
   - cip before-install
 
 install:
+  - cip login
   - cip diag
   - cip install
 
