@@ -25,7 +25,7 @@ use File::Path ();
 
 =head1 SYNOPSIS
 
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  use FFI::Build;
  
  my $build = FFI::Build->new(

@@ -14,7 +14,7 @@ push @EXPORT, grep /RTLD_/, keys %FFI::Platypus::DL::;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  use FFI::Platypus::DL;
  
  my $handle = dlopen("./libfoo.so", RTLD_PLATYPUS_DEFAULT);

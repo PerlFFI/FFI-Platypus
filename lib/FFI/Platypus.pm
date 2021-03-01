@@ -29,7 +29,7 @@ use FFI::Platypus::Type;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus;
+ use FFI::Platypus 1.00;
  
  # for all new code you should use api => 1
  my $ffi = FFI::Platypus->new( api => 1 );
