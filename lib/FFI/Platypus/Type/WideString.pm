@@ -439,3 +439,25 @@ sub ffi_custom_type_api_1
 }
 
 1;
+
+=head1 SEE ALSO
+
+=over 4
+
+=item L<FFI::Platypus>
+
+Core Platypus documentation.
+
+=item L<FFI::Platypus::Type>
+
+Includes documentation on handling "normal" 8 bit C strings among others.
+
+=item L<FFI::Platypus::Lang::Win32>
+
+Documentation for using Platypus with C<LPWSTR> and C<LPCWSTR> types on
+Microsoft Windows.  These types are just aliases for the standard C wide
+strings.
+
+=back
+
+=cut
