@@ -1927,6 +1927,12 @@ Documentation and tools for using Platypus with the Assembly
 
 Documentation and tools for using Platypus with the Win32 API.
 
+=item L<Wasm> and L<Wasm::Wasmtime>
+
+Modules for writing WebAssembly bindings in Perl.  This allows you to call
+functions written in any language supported by WebAssembly.  These modules
+are also implemented using Platypus.
+
 =item L<Convert::Binary::C>
 
 A great interface for decoding C data structures, including C<struct>s,
