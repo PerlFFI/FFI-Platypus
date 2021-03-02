@@ -377,19 +377,19 @@ sub configure
       else
       {
         print "Unable to verify any ffi_abis.\n";
-        print "only default ABI will be available\n";
+        die "unable to configure Platypus";
       }
     }
     else
     {
       print "Unable to find ffi_abi enum.\n";
-      print "only default ABI will be available\n";
+      die "unable to configure Platypus";
     }
   }
   else
   {
     print "C pre-processor failed...\n";
-    print "only default ABI will be available\n";
+    die "unable to configure Platypus";
   }
 
   $ch->write_config_h;
