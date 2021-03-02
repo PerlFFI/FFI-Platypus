@@ -1,8 +1,9 @@
 use strict;
 use warnings;
 use Test::More;
-use FFI::Platypus;
 
+eval { require FFI::Platypus; FFI::Platypus->VERSION('1.00') };
+plan skip_all => 'Test requires FFI::Platypus 1.00' if $@;
 eval { require Test::Script; Test::Script->import('script_compiles') };
 plan skip_all => 'Test requires Test::Script' if $@;
 eval { require Convert::Binary::C };
