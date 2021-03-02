@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 
 {
   package FD;

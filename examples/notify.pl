@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::CheckLib;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 
 # NOTE: I ported this from anoter Perl FFI library and it seems to work most
 # of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior

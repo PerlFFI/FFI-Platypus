@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use FFI::Platypus 0.20 (); # 0.20 required for using wrappers
+use FFI::Platypus 1.00;
 use FFI::CheckLib qw( find_lib_or_die );
 use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
 use FFI::Platypus::Memory qw( malloc free );

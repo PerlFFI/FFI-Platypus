@@ -5,7 +5,7 @@ use constant ZMQ_MAX_SOCKETS => 2;
 use constant ZMQ_REQ => 3;
 use constant ZMQ_REP => 4;
 use FFI::CheckLib qw( find_lib_or_exit );
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 use FFI::Platypus::Memory qw( malloc );
 use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
 

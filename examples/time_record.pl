@@ -3,6 +3,7 @@ use warnings;
 
 package My::UnixTime;
 
+use FFI::Platypus 1.00;
 use FFI::Platypus::Record;
 
 record_layout_1(qw(
