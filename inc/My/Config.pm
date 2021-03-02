@@ -392,6 +392,27 @@ sub configure
     print "only default ABI will be available\n";
   }
 
+  unless(%abi)
+  {
+    $probe->check_eval(
+      decl => [
+        "#include \"ffi_platypus.h\"",
+      ],
+      eval => {
+        "abi.default_abi" => [ '%d' => "FFI_DEFAULT_ABI" ],
+      },
+    );
+    if(defined $probe->data->{abi})
+    {
+      %abi = %{ $probe->data->{abi} || {} };
+    }
+    else
+    {
+      print "Unable to determine even the default ABI\n";
+      die "unable to configure Platypus";
+    }
+  }
+
   $ch->write_config_h;
   $self->share_config->set( type_map => \%type_map );
   $self->share_config->set( align    => \%align    );
