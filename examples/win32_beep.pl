@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 
 my($freq, $duration) = @_;
 $freq     ||= 750;

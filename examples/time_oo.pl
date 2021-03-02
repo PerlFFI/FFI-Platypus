@@ -3,7 +3,7 @@ use warnings;
 
 package My::UnixTime;
 
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 use FFI::TinyCC;
 use FFI::TinyCC::Inline 'tcc_eval';
 

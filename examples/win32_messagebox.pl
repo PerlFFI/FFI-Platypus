@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use utf8;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 
 my $ffi = FFI::Platypus->new(
   api  => 1,

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 use FFI::Platypus::Memory qw( malloc free memcpy );
 
 my $ffi = FFI::Platypus->new( api => 1 );

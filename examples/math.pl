@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 use FFI::CheckLib;
 
 my $ffi = FFI::Platypus->new( api => 1 );

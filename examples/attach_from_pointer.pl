@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::TinyCC;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 
 my $ffi = FFI::Platypus->new( api => 1 );
 my $tcc = FFI::TinyCC->new;

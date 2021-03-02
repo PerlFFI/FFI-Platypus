@@ -1,12 +1,12 @@
 use strict;
 use warnings;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 
-my $ffi = FFI::Platypus->new;
+my $ffi = FFI::Platypus->new( api => 1 );
 
-foreach my $type_name (sort FFI::Platypus->types)
+foreach my $type_name (sort $ffi->types)
 {
   my $meta = $ffi->type_meta($type_name);
-  next unless $meta->{element_type} eq 'int';
+  next unless defined $meta->{element_type} && $meta->{element_type} eq 'int';
   printf "%20s %s\n", $type_name, $meta->{ffi_type};
 }

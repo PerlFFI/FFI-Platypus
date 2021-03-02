@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Convert::Binary::C;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 use Data::Dumper qw( Dumper );
 
 my $c = Convert::Binary::C->new;

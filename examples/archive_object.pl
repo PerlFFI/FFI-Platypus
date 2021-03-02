@@ -1,7 +1,7 @@
 use strict;
 use warnings;
-use FFI::Platypus      ();
-use FFI::CheckLib      qw( find_lib_or_exit );
+use FFI::Platypus 1.00;
+use FFI::CheckLib qw( find_lib_or_exit );
 
 # This example uses FreeBSD's libarchive to list the contents of any
 # archive format that it suppors.  We've also filled out a part of
