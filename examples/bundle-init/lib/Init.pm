@@ -2,7 +2,7 @@ package Init;
 
 use strict;
 use warnings;
-use FFI::Platypus;
+use FFI::Platypus 1.00;
 
 our $VERSION = '1.00';
 
