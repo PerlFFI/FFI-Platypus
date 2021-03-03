@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.36_01   2021-03-02 17:32:03 -0700
+  - Improved the reliability of ABI detection on some platforms (gh#285, gh#301, gh#302)
+
 1.35_01   2021-03-01 16:02:07 -0700
   - Favor the Microsoft strdup over the bundled copy if found as _strdup
     which is what it is called now (gh#299).
