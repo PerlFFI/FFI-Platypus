@@ -16,6 +16,7 @@ use FFI::Probe::Runner;
 use FFI::Probe::Runner::Builder;
 use File::Glob qw( bsd_glob );
 use File::Basename qw( basename );
+use JSON::PP qw( decode_json );
 
 my @probe_types = split /\n/, <<EOF;
 char
@@ -351,9 +352,12 @@ sub configure
     if($cpp_output =~ m/typedef\s+enum\s+ffi_abi\s+{(.*?)}/s)
     {
       my $enum = $1;
+      my %seen;
       while($enum =~ s/FFI_([A-Z_0-9]+)//)
       {
         my $abi = $1;
+        next if $seen{$abi};
+        $seen{$abi}++;
         next if $abi =~ /^(FIRST|LAST)_ABI$/;
         $probe->check_eval(
           decl => [
@@ -376,38 +380,67 @@ sub configure
       }
       else
       {
-        print "Unable to verify any ffi_abis.\n";
-        print "only default ABI will be available\n";
+        $probe->log("[[[ Unable to verify any ffi_abis ]]]");
+        print "*** Unable to detect ffi_abis     ***\n";
+        print "[[[ Unable to verify any ffi_abis ]]]\n";
+        print "[[[ will try all known ABIs       ]]]\n";
       }
     }
     else
     {
-      print "Unable to find ffi_abi enum.\n";
-      print "only default ABI will be available\n";
+      $probe->log("[[[ ffi_abi enum not found ]]]");
+      print "*** Unable to detect ffi_abis     ***\n";
+      print "[[[ ffi_abi enum not found        ]]]\n";
+      print "[[[ will try all known ABIs       ]]]\n";
     }
   }
   else
   {
-    print "C pre-processor failed...\n";
-    print "only default ABI will be available\n";
+    $probe->log("[[[ C pre-processor failed... ]]]");
+    print "*** Unable to detect ffi_abis     ***\n";
+    print "[[[ C pre-processor failed...     ]]]\n";
+    print "[[[ will try all known ABIs       ]]]\n";
   }
 
   unless(%abi)
   {
-    $probe->check_eval(
+    if($probe->check_eval(
       decl => [
         "#include \"ffi_platypus.h\"",
       ],
       eval => {
         "abi.default_abi" => [ '%d' => "FFI_DEFAULT_ABI" ],
       },
-    );
-    if(defined $probe->data->{abi})
+    ))
     {
+      open my $fh, '<', 'inc/abi/abis-all.json'
+        or die "unable to read abis-all.json $!";
+      my @abis = @{ decode_json(do { local $/; <$fh> }) };
+      close $fh;
+
+      foreach my $abi (@abis)
+      {
+        $probe->check_eval(
+          decl => [
+            "#include \"ffi_platypus.h\"",
+          ],
+          stmt => [
+            "ffi_cif cif;",
+            "ffi_type *args[1];",
+            "ffi_abi abi;",
+            "if(ffi_prep_cif(&cif, FFI_$abi, 0, &ffi_type_void, args) != FFI_OK) { return 2; }",
+          ],
+          eval => {
+            "abi.@{[ lc $abi ]}" => [ '%d' => "FFI_$abi" ],
+          },
+        );
+      }
+
       %abi = %{ $probe->data->{abi} || {} };
     }
     else
     {
+      $probe->log("[[[ fatal: unable to determine even the default ABI ]]]");
       print "Unable to determine even the default ABI\n";
       die "unable to configure Platypus";
     }
