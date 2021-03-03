@@ -137,7 +137,7 @@ be specified using the C<size> option when creating the custom type.
  my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
  $ffi->load_custom_type('::WideString' => 'wstring',   access => 'read' );
  $ffi->load_custom_type('::WideString' => 'wstring_w', access => 'write', size => 512 );
-
+ 
  $ffi->attach( wcscpy => ['wstring_w', 'wstring'] );
  my $buf;
  wcscpy(\$buf, "I ❤ perl + Platypus");
@@ -160,7 +160,7 @@ the amount of memory that you need.
  my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
  $ffi->load_custom_type('::WideString' => 'wstring',   access => 'read'  );
  $ffi->load_custom_type('::WideString' => 'wstring_w', access => 'write' );
-
+ 
  $ffi->attach( wcscpy => ['wstring_w', 'wstring'] );
  my $width = $ffi->sizeof('wchar_t');
  my $buf = "\0" x ( (length ("I ❤ perl + Platypus") + 1)*$width);
@@ -185,7 +185,7 @@ case you will want to initialize the buffer.
  my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
  $ffi->load_custom_type('::WideString' => 'wstring',   access => 'read'  );
  $ffi->load_custom_type('::WideString' => 'wstring_w', access => 'write' );
-
+ 
  $ffi->attach( wcscat => ['wstring_w', 'wstring'] );
  my $buf;
  wcscat( [ \$buf, "I ❤ perl" ], " + Platypus");

@@ -22,7 +22,8 @@ my %WriteMakefileArgs = (
     "Capture::Tiny"       => 0,
     "ExtUtils::MakeMaker" => "7.12",
     "ExtUtils::ParseXS"   => "3.30",
-    "IPC::Cmd"            => 0
+    "IPC::Cmd"            => 0,
+    "JSON::PP"            => 0
   },
   "DISTNAME"         => "FFI-Platypus",
   "LICENSE"          => "perl",
