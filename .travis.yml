@@ -41,15 +41,15 @@ jobs:
     - env: CIP_TAG=5.18
     - env: CIP_TAG=5.16
     - env: CIP_TAG=5.14
-    - env: CIP_TAG=5.14-longdouble
+#    - env: CIP_TAG=5.14-longdouble
     - env: CIP_TAG=5.12
     - env: CIP_TAG=5.10.1
-    - env: CIP_TAG=5.10.0
+#    - env: CIP_TAG=5.10.0
     - env: CIP_TAG=5.8.9
     - env: CIP_TAG=5.8.8
     - env: CIP_TAG=5.8.4
-  allow_failures:
-    - env: CIP_TAG=5.10.0
+#  allow_failures:
+#    - env: CIP_TAG=5.10.0
 
 branches:
   only:
