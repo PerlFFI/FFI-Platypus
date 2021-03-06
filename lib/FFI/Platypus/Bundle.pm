@@ -355,7 +355,7 @@ and an L<Alien> you have to link the L<Alien> library with your bundled
 code.  If the L<Alien> uses the L<Alien::Base> interface then all you have
 to do is give the name of the L<Alien> to L<FFI::Build>.
 
-For example, the C<bzip2> librariy provides an interface that requires
+For example, the C<bzip2> library provides an interface that requires
 the caller to allocate a C C<struct> and then pass it to its various
 functions.  The C<struct> is actually pretty simple and you could use
 L<FFI::C> or L<FFI::Platypus::Record>, but here is an example of how you
