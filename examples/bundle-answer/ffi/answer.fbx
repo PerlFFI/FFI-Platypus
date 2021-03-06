@@ -1,0 +1,9 @@
+use strict;
+use warnings;
+
+our $DIR;
+
+return {
+  cflags => "-I/include",
+  source => "$DIR/*.c",
+}

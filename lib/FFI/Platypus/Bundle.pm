@@ -288,6 +288,58 @@ If C<ffi_pl_bundle_fini> didn't call back into Perl space like
 this then we don't have to be as careful about deallocating
 things in Perl space.
 
+=head2 compiler or linker flags example
+
+There are times when you will want to specify your own compiler and
+linker flags for the C code that you are bundling.  The C<TL;DR> is that
+you can put a C<.fbx> file in your C<ffi> directory.  This is a Perl
+script that returns a hash reference that is passed into the
+L<FFI::Build> constructor.  This allows you to set a number of options,
+including compiler and linker flags.  A more detailed example follows:
+
+You may want or need to set compiler and linker flags for your bundled
+C code.  For example, say we have a header file, but instead of
+putting it in the C<ffi> directory we want to put it in a separate
+directory called C<include>.
+
+C<include/answer.h>:
+
+# EXAMPLE: examples/bundle-answer/include/answer.h
+
+C<ffi/answer.c>:
+
+# EXAMPLE: examples/bundle-answer/ffi/answer.c
+
+C<lib/Answer.pm>:
+
+# EXAMPLE: examples/bundle-answer/lib/Answer.pm
+
+If you try to use this module just as-is you will get an error, about
+not being able to find the header file.  Probably something like this:
+
+ ffi/answer.c:1:10: fatal error: 'answer.h' file not found
+
+So we put a C<answer.fbx> file in the C<ffi> directory.  (In case you
+are wondering FBX stands for "Ffi Build and file eXtensions should
+whenever possible be three characters long").  The name of the file
+can be anything so long as it ends in C<.fbx>, we just choose C<answer>
+here because that is the name of the project.
+
+C<ffi/answer.fbx>:
+
+# EXAMPLE: examples/bundle-answer/ffi/answer.fbx
+
+The C<$DIR> variable is provided by the builder code.  It is the root
+of the distribution, and is helpful if you need a fully qualified path.
+In this case you could have also used C<ffi/*.c>.
+
+The script returns a hash reference which is passed into the L<FFI::Build>
+constructor, so you can use any of the options supported by that
+class.  Now we should be able to use our bundled module:
+
+ % perl -Ilib -MAnswer=answer -E 'say answer'
+ 42
+
 =cut
 
 package FFI::Platypus;

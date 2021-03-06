@@ -142,6 +142,7 @@ pod_spelling_system:
     - BMP
     - WebAssembly
     - sensical
+    - eXtensions
 
 pod_coverage:
   skip: 0
