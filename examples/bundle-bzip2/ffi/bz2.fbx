@@ -1,0 +1,7 @@
+use strict;
+use warnings;
+
+{
+  alien => ['Alien::Libbz2'],
+  source => ['ffi/*.c'],
+};

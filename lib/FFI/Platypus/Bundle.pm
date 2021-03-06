@@ -288,7 +288,7 @@ If C<ffi_pl_bundle_fini> didn't call back into Perl space like
 this then we don't have to be as careful about deallocating
 things in Perl space.
 
-=head2 compiler or linker flags example
+=head2 Compiler or linker flags example
 
 There are times when you will want to specify your own compiler and
 linker flags for the C code that you are bundling.  The C<TL;DR> is that
@@ -339,6 +339,42 @@ class.  Now we should be able to use our bundled module:
 
  % perl -Ilib -MAnswer=answer -E 'say answer'
  42
+
+=head2 Using bundled code with Alien.
+
+A useful technique is to use Platypus with L<Alien> technology.  The
+L<Alien> namespace is reserved for providing external non-Perl dependencies
+for CPAN modules.  The nominal L<Alien> module when installed looks
+for the library locally, and if it can't be found it fetches it from
+the internet, builds it, and installs it in a private directory so that
+it can be used by other CPAN modules.  For L<Aliens> that provide
+shared libraries, and that have simple interfaces that do not require
+additional C code you can easily just pass the shared libraries
+to Platypus directly.  For modules that require some bundled C code
+and an L<Alien> you have to link the L<Alien> library with your bundled
+code.  If the L<Alien> uses the L<Alien::Base> interface then all you have
+to do is give the name of the L<Alien> to L<FFI::Build>.
+
+For example, the C<bzip2> librariy provides an interface that requires
+the caller to allocate a C C<struct> and then pass it to its various
+functions.  The C<struct> is actually pretty simple and you could use
+L<FFI::C> or L<FFI::Platypus::Record>, but here is an example of how you
+would connect bundled C code with an L<Alien>.
+
+C<ffi/compress.c>:
+
+# EXAMPLE: examples/bundle-bzip2/ffi/compress.c
+
+C<lib/Bzip2.pm>:
+
+# EXAMPLE: examples/bundle-bzip2/lib/Bzip2.pm
+
+The C<.fbx> file that goes with this to make it work with L<Alien::Libbz2>
+is now pretty trivial:
+
+C<ffi/bz2.fbx>:
+
+# EXAMPLE: examples/bundle-bzip2/ffi/bz2.fbx
 
 =cut
 
