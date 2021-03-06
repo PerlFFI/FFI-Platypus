@@ -2,13 +2,20 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.37_01   2021-03-06 14:03:35 -0700
+  - Document the .fbx interface for specifying compiler / linker flags or
+    using Aliens with bundled C code in FFI::Platypus::Bundle
+    (gh#221, gh#306)
+
 1.36_01   2021-03-02 17:32:03 -0700
-  - Improved the reliability of ABI detection on some platforms (gh#285, gh#301, gh#302)
+  - Improved the reliability of ABI detection on some platforms
+    (gh#285, gh#301, gh#302)
 
 1.35_01   2021-03-01 16:02:07 -0700
   - Favor the Microsoft strdup over the bundled copy if found as _strdup
     which is what it is called now (gh#299).
-  - Added FFI::Platypus::Type::WideString type plugin (IKEGAMI++ gh#291, gh#292, gh#299)
+  - Added FFI::Platypus::Type::WideString type plugin
+    (IKEGAMI++ gh#291, gh#292, gh#299)
 
 1.34      2020-10-23 09:04:46 -0600
   - Fixed bug in in record meta object which expressed itself on at least
