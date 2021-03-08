@@ -1,0 +1,83 @@
+name: linux
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  perl:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        cip_tag:
+          - static
+          - "5.33"
+          - "5.32"
+          - "5.32-buster32"
+          - "5.32-debug"
+          - "5.32-debug32"
+          - "5.32-ffimaster"
+          - "5.32-longdouble"
+          - "5.32-quadmath"
+          - "5.32-threads"
+          - "5.30"
+          - "5.28"
+          - "5.26"
+          - "5.24"
+          - "5.22"
+          - "5.20"
+          - "5.18"
+          - "5.16"
+          - "5.14"
+          - "5.14-longdouble"
+          - "5.12"
+          - "5.10"
+          - "5.8.9"
+          - "5.8.8"
+          - "5.8.4"
+
+    env:
+      CIP_TAG: ${{ matrix.cip_tag }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Bootstrap CIP
+        run: |
+          curl https://raw.githubusercontent.com/plicease/cip/main/bin/github-bootstrap | bash
+
+      - name: Cache-Key
+        id: cache-key
+        run: |
+          echo -n '::set-output name=key::'
+          cip cache-key
+
+      - name: Cache CPAN modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.cip
+          key: ${{ runner.os }}-build-${{ steps.cache-key.outputs.key }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ steps.cache-key.outputs.key }}
+
+      - name: Start-Container
+        run: |
+          cip start
+
+      - name: Diagnostics
+        run: |
+          cip diag
+
+      - name: Install-Dependencies
+        run: |
+          cip install
+
+      - name: Build + Test
+        run: |
+          cip script

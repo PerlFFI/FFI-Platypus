@@ -17,39 +17,11 @@ script:
 
 jobs:
   include:
-    - env: CIP_TAG=static
-    - env: CIP_TAG=5.33
-    - env: CIP_TAG=5.32
     - env: CIP_TAG=5.32-buster-arm64v8
       arch: arm64
-    - env: CIP_TAG=5.32-debug
-    - env: CIP_TAG=5.32-debug32
-    - env: CIP_TAG=5.32-buster32
     - env: CIP_TAG=5.32 CIP_ENV=FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
-    - env: CIP_TAG=5.32-threads
-    - env: CIP_TAG=5.32-longdouble
-    - env: CIP_TAG=5.32-quadmath
-    - env: CIP_TAG=5.32-ffimaster
     - env: CIP_TAG=5.32 CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
     - env: CIP_TAG=5.32 CIP_ENV=FFI_PLATYPUS_NO_EXTRA_TYPES=1
-    - env: CIP_TAG=5.30
-    - env: CIP_TAG=5.28
-    - env: CIP_TAG=5.26
-    - env: CIP_TAG=5.24
-    - env: CIP_TAG=5.22
-    - env: CIP_TAG=5.20
-    - env: CIP_TAG=5.18
-    - env: CIP_TAG=5.16
-    - env: CIP_TAG=5.14
-#    - env: CIP_TAG=5.14-longdouble
-    - env: CIP_TAG=5.12
-    - env: CIP_TAG=5.10.1
-#    - env: CIP_TAG=5.10.0
-    - env: CIP_TAG=5.8.9
-    - env: CIP_TAG=5.8.8
-    - env: CIP_TAG=5.8.4
-#  allow_failures:
-#    - env: CIP_TAG=5.10.0
 
 branches:
   only:
