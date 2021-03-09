@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.38      2021-03-08 17:13:15 -0700
+  - Production release identical to 1.37_01
+
 1.37_01   2021-03-06 14:03:35 -0700
   - Document the .fbx interface for specifying compiler / linker flags or
     using Aliens with bundled C code in FFI::Platypus::Bundle
