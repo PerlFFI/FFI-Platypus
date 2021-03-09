@@ -273,7 +273,7 @@ definitions.
 Examples:
 
 ```perl
-$ffi->type('sint32');            # oly checks to see that sint32 is a valid type
+$ffi->type('sint32');            # only checks to see that sint32 is a valid type
 $ffi->type('sint32' => 'myint'); # creates an alias myint for sint32
 $ffi->type('bogus');             # dies with appropriate diagnostic
 ```
