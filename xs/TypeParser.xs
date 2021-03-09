@@ -288,9 +288,12 @@ create_type_closure(self, return_type, ...)
         case FFI_PL_TYPE_RECORD:
           ffi_argument_types[i] = &ffi_type_pointer;
           break;
+        case FFI_PL_TYPE_RECORD_VALUE:
+          ffi_argument_types[i] = type->extra[0].closure.argument_types[i]->extra[0].record.ffi_type;
+          break;
         default:
           Safefree(ffi_argument_types);
-          croak("Only native types and strings are supported as closure argument types (%d)", return_type->type_code);
+          croak("Only native types and strings are supported as closure argument types (%d)", type->extra[0].closure.argument_types[i]->type_code);
           break;
       }
     }

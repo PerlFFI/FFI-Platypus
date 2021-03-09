@@ -60,3 +60,18 @@ cx_closure_call(cx_struct_t *s, int i)
 {
   my_cx_closure(s, i);
 }
+
+typedef void (*cxv_closure_t)(cx_struct_t, int);
+static cxv_closure_t my_cxv_closure;
+
+EXTERN void
+cxv_closure_set(cxv_closure_t closure)
+{
+  my_cxv_closure = closure;
+}
+
+EXTERN void
+cxv_closure_call(cx_struct_t s, int i)
+{
+  my_cxv_closure(s, i);
+}

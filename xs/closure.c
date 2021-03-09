@@ -60,7 +60,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
   int flags = extra->flags;
   int i;
   int count;
-  SV *sv;
+  SV *sv,*ref;
 
   if(!(flags & G_NOARGS))
   {
@@ -149,7 +149,7 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
             sv_setpvn(sv, *((char**)arguments[i]), extra->argument_types[i]->extra[0].record.size);
             if(extra->argument_types[i]->extra[0].record.class != NULL)
             {
-              SV *ref = newRV_inc(sv);
+              ref = newRV_inc(sv);
               sv_bless(ref, gv_stashpv(extra->argument_types[i]->extra[0].record.class, GV_ADD));
               SvREADONLY_on(sv);
               sv = ref;
@@ -160,6 +160,14 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
             }
           }
           XPUSHs(sv);
+          break;
+        case FFI_PL_TYPE_RECORD_VALUE:
+          sv = sv_newmortal();
+          sv_setpvn(sv, (char*)arguments[i], extra->argument_types[i]->extra[0].record.size);
+          ref = newRV_inc(sv);
+          sv_bless(ref, gv_stashpv(extra->argument_types[i]->extra[0].record.class, GV_ADD));
+          SvREADONLY_on(sv);
+          XPUSHs(ref);
           break;
         default:
           warn("bad type");
