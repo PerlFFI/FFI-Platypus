@@ -34,11 +34,11 @@ Perl:
  
  use FFI::Platypus::Record;
  
- record_layout_1(qw(
-   int       age
-   string(3) title
-   string_rw name
- ));
+ record_layout_1(
+   'int'       => 'age',
+   'string(3)' => 'title',
+   'string rw' => 'name',
+ );
  
  package main;
  
@@ -87,7 +87,7 @@ Supports:
 
 =item C pointers to C<struct> types
 
-=item Passing C <struct>s by-value.
+=item Passing C C<struct>s by-value.
 
 =back
 
