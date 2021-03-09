@@ -143,6 +143,7 @@ pod_spelling_system:
     - WebAssembly
     - sensical
     - eXtensions
+    - szTheory
 
 pod_coverage:
   skip: 0
