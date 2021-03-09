@@ -2008,6 +2008,8 @@ Diab Jerius (DJERIUS)
 
 Eric Brine (IKEGAMI)
 
+szTheory
+
 # COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2015,2016,2017,2018,2019,2020 by Graham Ollis.
