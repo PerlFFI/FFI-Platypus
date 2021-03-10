@@ -182,8 +182,9 @@ _create_type_custom(self, basis, perl_to_native, native_to_perl, perl_to_native_
 
 
 ffi_pl_type *
-create_type_closure(self, return_type, ...)
+create_type_closure(self, abi, return_type, ...)
     SV *self
+    int abi
     ffi_pl_type *return_type
   PREINIT:
     ffi_pl_type *type;
@@ -237,16 +238,16 @@ create_type_closure(self, return_type, ...)
         break;
     }
 
-    Newx(ffi_argument_types, items-2, ffi_type*);
-    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-2));
+    Newx(ffi_argument_types, items-3, ffi_type*);
+    type = ffi_pl_type_new(sizeof(ffi_pl_type_extra_closure) + sizeof(ffi_pl_type)*(items-3));
     type->type_code = FFI_PL_TYPE_CLOSURE;
 
     type->extra[0].closure.return_type = return_type;
     type->extra[0].closure.flags = 0;
 
-    for(i=0; i<(items-2); i++)
+    for(i=0; i<(items-3); i++)
     {
-      arg = ST(2+i);
+      arg = ST(3+i);
       type->extra[0].closure.argument_types[i] = INT2PTR(ffi_pl_type*, SvIV((SV*)SvRV(arg)));
       switch(type->extra[0].closure.argument_types[i]->type_code)
       {
@@ -300,8 +301,8 @@ create_type_closure(self, return_type, ...)
 
     ffi_status = ffi_prep_cif(
       &type->extra[0].closure.ffi_cif,
-      FFI_DEFAULT_ABI,
-      items-2,
+      abi == -1 ? FFI_DEFAULT_ABI : abi,
+      items-3,
       ffi_return_type,
       ffi_argument_types
     );
@@ -318,7 +319,7 @@ create_type_closure(self, return_type, ...)
         croak("unknown error with ffi_prep_cif");
     }
 
-    if( items-2 == 0 )
+    if( items-3 == 0 )
     {
       type->extra[0].closure.flags |= G_NOARGS;
     }

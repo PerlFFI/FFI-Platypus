@@ -1258,6 +1258,7 @@ sub abi
   }
 
   $self->{abi} = $newabi;
+  $self->{tp}->abi($newabi);
 
   $self;
 }

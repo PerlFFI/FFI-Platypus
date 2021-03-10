@@ -24,7 +24,7 @@ the public interface to Platypus types.
 sub new
 {
   my($class) = @_;
-  my $self = bless { types => {}, type_map => {} }, $class;
+  my $self = bless { types => {}, type_map => {}, abi => -1 }, $class;
   $self->build;
   $self;
 }
@@ -74,6 +74,14 @@ sub type_map
 sub types
 {
   shift->{types};
+}
+
+# The type parser needs to know the ABI when creating closures
+sub abi
+{
+  my($self, $new) = @_;
+  $self->{abi} = $new if defined $new;
+  $self->{abi};
 }
 
 {
