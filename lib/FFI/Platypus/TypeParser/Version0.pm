@@ -128,7 +128,7 @@ sub parse
   {
     my @argument_types = map { $self->parse($_) } map { my $t = $_; $t =~ s/^\s+//; $t =~ s/\s+$//; $t } split /,/, $1;
     my $return_type = $self->parse($2);
-    return $self->types->{$name} = $self->create_type_closure($return_type, @argument_types);
+    return $self->types->{$name} = $self->create_type_closure($self->abi, $return_type, @argument_types);
   }
 
   if($name =~ /^ string \s* \( ([0-9]+) \) $/x)

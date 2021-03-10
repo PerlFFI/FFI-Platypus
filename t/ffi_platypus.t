@@ -56,8 +56,10 @@ subtest 'abi' => sub {
     subtest $abi => sub {
       eval { $ffi->abi($abi) };
       is $@, '', 'string';
+      is $ffi->{tp}->abi, $abis{$abi}, 'type parser';
       eval { $ffi->abi($abis{$abi}) };
       is $@, '', 'integer';
+      is $ffi->{tp}->abi, $abis{$abi}, 'type parser';
     };
   }
 
