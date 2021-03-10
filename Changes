@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.39_01   2021-03-09 17:38:37 -0700
   - Fix bug where closure ABI wasn't being used for non-default
     ABIs (gh#313, gh#314)
   - Add support for closures taking records pass-by-value (gh#312)
