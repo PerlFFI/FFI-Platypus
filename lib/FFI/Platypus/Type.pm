@@ -824,8 +824,10 @@ return type.  Currently only native types (integers, floating point
 values, opaque), strings and records (by-value; you can pass a pointer
 to a record, but due to limitations of the record implementation this
 is actually a copy) are supported as closure argument types, and only
-native types are supported as closure return types.  Inside the closure
-any records passed in are read-only.
+native types and records (by-value; pointer records and records with
+string pointers cannot be returned from a closure) are supported as
+closure return types.  Inside the closure any records passed in are
+read-only.
 
 We plan to add other types, though they can be converted using the Platypus
 C<cast> or C<attach_cast> methods.
