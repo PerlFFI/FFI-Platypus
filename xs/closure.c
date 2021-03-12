@@ -267,8 +267,23 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
         *((void**)result) = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
         break;
       case FFI_PL_TYPE_RECORD_VALUE:
-        /* TODO: type checking! */
-        memcpy(result, SvPV_nolen(SvRV(sv)), extra->return_type->extra[0].record.size);
+        if(sv_isobject(sv) && sv_derived_from(sv, extra->return_type->extra[0].record.class))
+        {
+          char *ptr;
+          STRLEN len;
+          ptr = SvPV(SvRV(sv), len);
+          if(len > extra->return_type->extra[0].record.size)
+            len = extra->return_type->extra[0].record.size;
+          else if(len < extra->return_type->extra[0].record.size)
+          {
+            warn("Return record from closure is wrong size!");
+            memset(result, 0, extra->return_type->extra[0].record.size);
+          }
+          memcpy(result, ptr, len);
+          break;
+        }
+        warn("Return record from closure is wrong type!");
+        memset(result, 0, extra->return_type->extra[0].record.size);
         break;
       default:
         warn("bad type");

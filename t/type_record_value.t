@@ -261,16 +261,59 @@ subtest 'closure ret' => sub {
     $f;
   };
 
-  my $f = $ffi->closure(sub {
-    return Closure::Record::Simple->new( foo => 1, bar => 2, baz => 3 );
-  });
+  subtest 'good' => sub {
 
-  my $r = $cxv_closure_simple_call->call($f);
+    my $f = $ffi->closure(sub {
+      return Closure::Record::Simple->new( foo => 1, bar => 2, baz => 3 );
+    });
 
-  isa_ok $r, 'Closure::Record::Simple';
-  is $r->foo, 1;
-  is $r->bar, 2;
-  is $r->baz, 3;
+    my $r = $cxv_closure_simple_call->call($f);
+
+    isa_ok $r, 'Closure::Record::Simple';
+    is $r->foo, 1;
+    is $r->bar, 2;
+    is $r->baz, 3;
+  };
+
+  subtest 'bad' => sub {
+
+    my $f = $ffi->closure(sub {
+      return undef;
+    });
+
+    local $SIG{__WARN__} = sub {
+      note @_;
+    };
+
+    my $r = $cxv_closure_simple_call->call($f);
+
+    isa_ok $r, 'Closure::Record::Simple';
+    is $r->foo, 0;
+    is $r->bar, 0;
+    is $r->baz, 0;
+
+  };
+
+  subtest 'short' => sub {
+
+    my $f = $ffi->closure(sub {
+      my $r = Closure::Record::Simple->new;
+      $$r = "";
+      return $r;
+    });
+
+    local $SIG{__WARN__} = sub {
+      note @_;
+    };
+
+    my $r = $cxv_closure_simple_call->call($f);
+
+    isa_ok $r, 'Closure::Record::Simple';
+    is $r->foo, 0;
+    is $r->bar, 0;
+    is $r->baz, 0;
+
+  };
 
 };
 
