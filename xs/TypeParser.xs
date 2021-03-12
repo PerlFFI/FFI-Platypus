@@ -41,12 +41,12 @@ create_type_basic(self, type_code)
     RETVAL
 
 ffi_pl_type *
-create_type_record(self, is_by_value, size, record_class=NULL, ffi_type=NULL)
+create_type_record(self, is_by_value, size, record_class=NULL, meta=NULL)
     SV *self
     int is_by_value
     size_t size
     ffi_pl_string record_class
-    void *ffi_type
+    void *meta
   PREINIT:
     ffi_pl_type *type;
   CODE:
@@ -64,7 +64,7 @@ create_type_record(self, is_by_value, size, record_class=NULL, ffi_type=NULL)
     {
       type->extra[0].record.class = NULL;
     }
-    type->extra[0].record.ffi_type = ffi_type;
+    type->extra[0].record.meta = meta;
     RETVAL = type;
   OUTPUT:
     RETVAL
@@ -161,7 +161,7 @@ _create_type_custom(self, basis, perl_to_native, native_to_perl, perl_to_native_
     ||  (basis->type_code & FFI_PL_BASE_MASK) == (FFI_PL_TYPE_RECORD_VALUE & FFI_PL_BASE_MASK))
     {
       type->extra[0].record.size = basis->extra[0].record.size;
-      type->extra[0].record.ffi_type = basis->extra[0].record.ffi_type;
+      type->extra[0].record.meta = basis->extra[0].record.meta;
       if(basis->extra[0].record.class)
       {
         size = strlen(basis->extra[0].record.class) + 1;
@@ -234,7 +234,11 @@ create_type_closure(self, abi, return_type, ...)
         ffi_return_type = &ffi_type_pointer;
         break;
       case FFI_PL_TYPE_RECORD_VALUE:
-        ffi_return_type = return_type->extra[0].record.ffi_type;
+        if(return_type->extra[0].record.meta == NULL)
+          croak("Only native types are supported as closure return types (%d)", return_type->type_code);
+        if(!return_type->extra[0].record.meta->can_return_from_closure)
+          croak("Record return type contains types that cannot be returned from a closure");
+        ffi_return_type = &return_type->extra[0].record.meta->ffi_type;
         break;
       default:
         croak("Only native types are supported as closure return types (%d)", return_type->type_code);
@@ -293,7 +297,12 @@ create_type_closure(self, abi, return_type, ...)
           ffi_argument_types[i] = &ffi_type_pointer;
           break;
         case FFI_PL_TYPE_RECORD_VALUE:
-          ffi_argument_types[i] = type->extra[0].closure.argument_types[i]->extra[0].record.ffi_type;
+          if(type->extra[0].closure.argument_types[i]->extra[0].record.meta == NULL)
+          {
+            Safefree(ffi_argument_types);
+            croak("Only native types and strings are supported as closure argument types (%d)", type->extra[0].closure.argument_types[i]->type_code);
+          }
+          ffi_argument_types[i] = &type->extra[0].closure.argument_types[i]->extra[0].record.meta->ffi_type;
           break;
         default:
           Safefree(ffi_argument_types);

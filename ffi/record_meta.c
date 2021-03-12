@@ -8,6 +8,7 @@
 #define EXPORT
 #endif
 
+/* TODO: tis is replicated in ffi_platypus.h, which is bad */
 typedef struct _ffi_pl_record_meta_t {
   ffi_type top;
   int can_return_from_closure;

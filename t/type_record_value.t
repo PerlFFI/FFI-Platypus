@@ -126,7 +126,7 @@ subtest 'closure' => sub {
   {
     local $@ = '';
     eval { $ffi->type('()->cx_struct_rw_t' )  };
-    like "$@", qr/Only native types are supported as closure return types/, 'do not allow record type with pointer strings as ret type';
+    like "$@", qr/Record return type contains types that cannot be returned from a closure/, 'do not allow record type with pointer strings as ret type';
   }
 
   my $cxv_closure_set = $ffi->function(cxv_closure_set => [ 'cxv_closure_t' ] => 'void' );

@@ -75,4 +75,6 @@ the public interface to Platypus records.
   $ffi->attach( DESTROY          => ['meta_t'] => 'void'       );
 }
 
+sub ptr { ${ shift() } }
+
 1;

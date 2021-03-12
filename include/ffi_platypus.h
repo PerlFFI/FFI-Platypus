@@ -159,15 +159,15 @@ typedef struct _ffi_pl_type_extra_object {
 } ffi_pl_type_extra_object;
 
 typedef struct _ffi_pl_record_meta_t {
-  ffi_type top;
-  int can_return_from_closure;
+  ffi_type ffi_type;
+  int  can_return_from_closure;
   ffi_type *elements[0];
 } ffi_pl_record_meta_t;
 
 typedef struct _ffi_pl_type_extra_record {
   size_t size;
   char *class; /* base class */
-  ffi_type *ffi_type;
+  ffi_pl_record_meta_t *meta;
 } ffi_pl_type_extra_record;
 
 typedef struct _ffi_pl_type_extra_custom_perl {
