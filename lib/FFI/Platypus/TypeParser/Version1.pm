@@ -167,7 +167,6 @@ sub parse
     }
     else
     {
-      $DB::single = 1;
       return $self->types->{$name} = $self->create_type_record(
         1,
         $class->$size_method,
