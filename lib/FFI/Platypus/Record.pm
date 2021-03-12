@@ -374,8 +374,6 @@ sub record_layout
       }
       else
       {
-        use YAML ();
-        warn YAML::Dump($meta);
         $ffi_type = $meta->{ffi_type};
         $count    = $meta->{element_count};
         $count    = 1 unless defined $count;
@@ -439,6 +437,7 @@ sub record_layout
     require FFI::Platypus::Record::Meta;
     my $ffi_meta = FFI::Platypus::Record::Meta->new(
       \@ffi_types,
+      !$has_string,
     );
     *{join '::', $caller, '_ffi_meta'} = sub { $ffi_meta };
   }
