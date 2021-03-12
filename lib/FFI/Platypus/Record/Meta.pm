@@ -37,8 +37,8 @@ the public interface to Platypus records.
 
   $ffi->attach( _find_symbol => ['string'] => 'ffi_type');
 
-  $ffi->attach( new => ['ffi_type[]'] => 'meta_t', sub {
-    my($xsub, $class, $elements) = @_;
+  $ffi->attach( new => ['ffi_type[]','int'] => 'meta_t', sub {
+    my($xsub, $class, $elements, $closure_safe) = @_;
 
     if(ref($elements) ne 'ARRAY')
     {
@@ -63,7 +63,7 @@ the public interface to Platypus records.
 
     push @element_type_pointers, undef;
 
-    my $ptr = $xsub->(\@element_type_pointers);
+    my $ptr = $xsub->(\@element_type_pointers, $closure_safe);
     bless \$ptr, $class;
   });
 
