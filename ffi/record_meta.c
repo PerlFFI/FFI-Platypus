@@ -10,6 +10,7 @@
 
 typedef struct meta_t {
   ffi_type top;
+  int can_return_from_closure;
   ffi_type *elements[0];
 } meta_t;
 
@@ -21,7 +22,7 @@ typedef struct meta_t {
 
 EXPORT
 meta_t *
-ffi_platypus_record_meta__new(ffi_type *list[])
+ffi_platypus_record_meta__new(ffi_type *list[], int safe_to_return_From_closure)
 {
   int size, i;
   meta_t *t;
@@ -37,6 +38,8 @@ ffi_platypus_record_meta__new(ffi_type *list[])
   t->top.alignment = 0;
   t->top.type      = FFI_TYPE_STRUCT;
   t->top.elements  = (ffi_type**) &t->elements;
+
+  t->can_return_from_closure = safe_to_return_From_closure;
 
 
   for(i=0; i<size+1; i++)
@@ -73,6 +76,13 @@ ffi_type **
 ffi_platypus_record_meta__element_pointers(meta_t *t)
 {
   return t->top.elements;
+}
+
+EXPORT
+int
+ffi_platypus_record_meta__can_return_from_closure(meta_t *t)
+{
+  return t->can_return_from_closure;
 }
 
 EXPORT

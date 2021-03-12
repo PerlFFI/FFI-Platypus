@@ -342,6 +342,7 @@ sub record_layout
 
   my @destroy;
   my @ffi_types;
+  my $has_string;
 
   while(@_)
   {
@@ -355,10 +356,10 @@ sub record_layout
     croak "accessor/method $name already exists"
       if $caller->can($name);
 
-    my $size  = $type->sizeof;
-    my $align = $type->alignof;
+    my $size      = $type->sizeof;
+    my $align     = $type->alignof;
     $record_align = $align if $align > $record_align;
-    my $meta  = $type->meta;
+    my $meta      = $type->meta;
 
     $offset++ while $offset % $align;
 
@@ -373,9 +374,13 @@ sub record_layout
       }
       else
       {
+        use YAML ();
+        warn YAML::Dump($meta);
         $ffi_type = $meta->{ffi_type};
         $count    = $meta->{element_count};
         $count    = 1 unless defined $count;
+
+        $has_string = 1 if $meta->{type} eq 'string';
       }
       push @ffi_types, $ffi_type for 1..$count;
     }
