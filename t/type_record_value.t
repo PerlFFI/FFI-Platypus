@@ -98,7 +98,7 @@ subtest 'is a reference' => sub {
 
 subtest 'closure' => sub {
 
-  { package Closture::Record::RW;
+  { package Closure::Record::RW;
 
     use FFI::Platypus::Record;
 
@@ -116,7 +116,7 @@ subtest 'closure' => sub {
 
   my $ffi = FFI::Platypus->new( lib => [@lib], api => 1 );
 
-  $ffi->type('record(Closture::Record::RW)' => 'cx_struct_rw_t');
+  $ffi->type('record(Closure::Record::RW)' => 'cx_struct_rw_t');
   {
     local $@ = '';
     eval { $ffi->type('(cx_struct_rw_t,int)->void' => 'cxv_closure_t') };
@@ -132,7 +132,7 @@ subtest 'closure' => sub {
   my $cxv_closure_set = $ffi->function(cxv_closure_set => [ 'cxv_closure_t' ] => 'void' );
   my $cxv_closure_call = $ffi->function(cxv_closure_call => [ 'cx_struct_rw_t', 'int' ] => 'void' );
 
-  my $r = Closture::Record::RW->new;
+  my $r = Closure::Record::RW->new;
   $r->one("one");
   $r->two("two");
   $r->three(3);
@@ -148,7 +148,7 @@ subtest 'closure' => sub {
   my $f = $ffi->closure(sub {
     my($r2,$num) = @_;
     note "first closure";
-    isa_ok $r2, 'Closture::Record::RW';
+    isa_ok $r2, 'Closure::Record::RW';
     is($r2->_ffi_record_ro, 1);
     is($r2->one, "one");
     is($r2->two, "two");
@@ -232,7 +232,7 @@ subtest 'closure' => sub {
 
 subtest 'closure ret' => sub {
 
-  { package Closture::Record::Simple;
+  { package Closure::Record::Simple;
 
     use FFI::Platypus::Record;
 
@@ -246,7 +246,7 @@ subtest 'closure ret' => sub {
 
   my $ffi = FFI::Platypus->new( lib => [@lib], api => 1 );
 
-  $ffi->type('record(Closture::Record::Simple)' => 'cx_struct_simple_t');
+  $ffi->type('record(Closure::Record::Simple)' => 'cx_struct_simple_t');
 
   {
     local $@ = '';
@@ -254,11 +254,23 @@ subtest 'closure ret' => sub {
     is "$@", '';
   }
 
-  {
+  my $cxv_closure_simple_call = do {
     local $@ = '';
-    my $cxv_closure_simple_call = eval { $ffi->function( cxv_closure_simple_call => ['cxv_closure_simple_t'] => 'cx_struct_simple_t') };
+    my $f = eval { $ffi->function( cxv_closure_simple_call => ['cxv_closure_simple_t'] => 'cx_struct_simple_t') };
     is "$@", '';
-  }
+    $f;
+  };
+
+  my $f = $ffi->closure(sub {
+    return Closure::Record::Simple->new( foo => 1, bar => 2, baz => 3 );
+  });
+
+  my $r = $cxv_closure_simple_call->call($f);
+
+  isa_ok $r, 'Closure::Record::Simple';
+  is $r->foo, 1;
+  is $r->bar, 2;
+  is $r->baz, 3;
 
 };
 
