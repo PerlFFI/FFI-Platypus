@@ -117,8 +117,17 @@ subtest 'closure' => sub {
   my $ffi = FFI::Platypus->new( lib => [@lib], api => 1 );
 
   $ffi->type('record(Closture::Record::RW)' => 'cx_struct_rw_t');
-  eval { $ffi->type('(cx_struct_rw_t,int)->void' => 'cxv_closure_t') };
-  is $@, '', 'allow record type as arg';
+  {
+    local $@ = '';
+    eval { $ffi->type('(cx_struct_rw_t,int)->void' => 'cxv_closure_t') };
+    is $@, '', 'do allow record type as arg';
+  }
+
+  {
+    local $@ = '';
+    eval { $ffi->type('()->cx_struct_rw_t' )  };
+    like "$@", qr/Only native types are supported as closure return types/, 'do not allow record type with pointer strings as ret type';
+  }
 
   my $cxv_closure_set = $ffi->function(cxv_closure_set => [ 'cxv_closure_t' ] => 'void' );
   my $cxv_closure_call = $ffi->function(cxv_closure_call => [ 'cx_struct_rw_t', 'int' ] => 'void' );
@@ -218,6 +227,38 @@ subtest 'closure' => sub {
   $cxv_closure_call->($r, 42);
 
   is($here, 1);
+
+};
+
+subtest 'closure ret' => sub {
+
+  { package Closture::Record::Simple;
+
+    use FFI::Platypus::Record;
+
+    record_layout_1(
+      char  => 'foo',
+      short => 'bar',
+      int   => 'baz',
+    );
+
+  }
+
+  my $ffi = FFI::Platypus->new( lib => [@lib], api => 1 );
+
+  $ffi->type('record(Closture::Record::Simple)' => 'cx_struct_simple_t');
+
+  {
+    local $@ = '';
+    eval { $ffi->type('()->cx_struct_simple_t' => 'cxv_closure_simple_t' )  };
+    is "$@", '';
+  }
+
+  {
+    local $@ = '';
+    my $cxv_closure_simple_call = eval { $ffi->function( cxv_closure_simple_call => ['cxv_closure_simple_t'] => 'cx_struct_simple_t') };
+    is "$@", '';
+  }
 
 };
 

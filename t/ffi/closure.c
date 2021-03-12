@@ -75,3 +75,17 @@ cxv_closure_call(cx_struct_t s, int i)
 {
   my_cxv_closure(s, i);
 }
+
+typedef struct {
+  char  foo;
+  short bar;
+  int   baz;
+} cx_struct_simple_t;
+
+typedef cx_struct_simple_t (*cxv_closure_simple_t)(void);
+
+EXTERN cx_struct_simple_t
+cxv_closure_simple_call(cxv_closure_simple_t closure)
+{
+  return closure();
+}

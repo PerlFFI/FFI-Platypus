@@ -233,6 +233,9 @@ create_type_closure(self, abi, return_type, ...)
       case FFI_PL_TYPE_OPAQUE:
         ffi_return_type = &ffi_type_pointer;
         break;
+      case FFI_PL_TYPE_RECORD_VALUE:
+        ffi_return_type = return_type->extra[0].record.ffi_type;
+        break;
       default:
         croak("Only native types are supported as closure return types (%d)", return_type->type_code);
         break;
