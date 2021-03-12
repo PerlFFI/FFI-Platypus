@@ -33,7 +33,7 @@ my $lib = FFI::Build->new(
   dir      => 'blib/lib/auto/share/dist/FFI-Platypus/lib',
   platform => $config->platform,
   alien    => [$config->alien],
-  cflags   => '-Iblib/lib/auto/share/dist/FFI-Platypus/include',
+  cflags   => '-Iblib/lib/auto/share/dist/FFI-Platypus/include -Iinclude',
 )->build;
 
 my $name = basename($lib->basename);

@@ -1,19 +1,10 @@
-#include <ffi.h>
-#include <stdlib.h>
-#include <string.h>
+#include <ffi_platypus.h>
 
 #ifdef _MSC_VER
 #define EXPORT __declspec(dllexport)
 #else
 #define EXPORT
 #endif
-
-/* TODO: tis is replicated in ffi_platypus.h, which is bad */
-typedef struct _ffi_pl_record_meta_t {
-  ffi_type ffi_type;
-  int can_return_from_closure;
-  ffi_type *elements[0];
-} ffi_pl_record_meta_t;
 
 /*
  * Question: this is the documented way of creating a struct type.
