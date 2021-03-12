@@ -266,6 +266,10 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
       case FFI_PL_TYPE_OPAQUE:
         *((void**)result) = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
         break;
+      case FFI_PL_TYPE_RECORD_VALUE:
+        /* TODO: type checking! */
+        memcpy(result, SvPV_nolen(SvRV(sv)), extra->return_type->extra[0].record.size);
+        break;
       default:
         warn("bad type");
         break;

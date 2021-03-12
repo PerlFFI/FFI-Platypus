@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Add support for closures returning records pass-by-value
+    if they do not include string pointers (gh#315)
 
 1.39_01   2021-03-09 17:38:37 -0700
   - Fix bug where closure ABI wasn't being used for non-default
