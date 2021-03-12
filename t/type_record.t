@@ -88,7 +88,7 @@ subtest 'is a reference' => sub {
 
 subtest 'closure' => sub {
 
-  { package Closture::Record::RW;
+  { package Closure::Record::RW;
 
     use FFI::Platypus::Record;
 
@@ -106,14 +106,14 @@ subtest 'closure' => sub {
 
   my $ffi = FFI::Platypus->new( lib => [@lib] );
 
-  $ffi->type('record(Closture::Record::RW)' => 'cx_struct_rw_t');
+  $ffi->type('record(Closure::Record::RW)' => 'cx_struct_rw_t');
   eval { $ffi->type('(cx_struct_rw_t,int)->void' => 'cx_closure_t') };
   is $@, '', 'allow record type as arg';
 
   my $cx_closure_set = $ffi->function(cx_closure_set => [ 'cx_closure_t' ] => 'void' );
   my $cx_closure_call = $ffi->function(cx_closure_call => [ 'cx_struct_rw_t', 'int' ] => 'void' );
 
-  my $r = Closture::Record::RW->new;
+  my $r = Closure::Record::RW->new;
   $r->one("one");
   $r->two("two");
   $r->three(3);
