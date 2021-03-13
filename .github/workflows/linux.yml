@@ -15,35 +15,42 @@ jobs:
 
     strategy:
       matrix:
-        cip_tag:
-          - static
-          - "5.33"
-          - "5.32"
-          - "5.32-buster32"
-          - "5.32-debug"
-          - "5.32-debug32"
-          - "5.32-ffimaster"
-          - "5.32-longdouble"
-          - "5.32-quadmath"
-          - "5.32-threads"
-          - "5.30"
-          - "5.28"
-          - "5.26"
-          - "5.24"
-          - "5.22"
-          - "5.20"
-          - "5.18"
-          - "5.16"
-          - "5.14"
-          - "5.14-longdouble"
-          - "5.12"
-          - "5.10"
-          - "5.8.9"
-          - "5.8.8"
-          - "5.8.4"
+        cip:
+          - tag: static
+          - tag: "5.33"
+          - tag: "5.32"
+          - tag: "5.32"
+            env: FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
+          - tag: "5.32"
+            env: CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
+          - tag: "5.32"
+            env: CIP_ENV=FFI_PLATYPUS_NO_EXTRA_TYPES=1
+          - tag: "5.32-buster32"
+          - tag: "5.32-debug"
+          - tag: "5.32-debug32"
+          - tag: "5.32-ffimaster"
+          - tag: "5.32-longdouble"
+          - tag: "5.32-quadmath"
+          - tag: "5.32-threads"
+          - tag: "5.30"
+          - tag: "5.28"
+          - tag: "5.26"
+          - tag: "5.24"
+          - tag: "5.22"
+          - tag: "5.20"
+          - tag: "5.18"
+          - tag: "5.16"
+          - tag: "5.14"
+          - tag: "5.14-longdouble"
+          - tag: "5.12"
+          - tag: "5.10"
+          - tag: "5.8.9"
+          - tag: "5.8.8"
+          - tag: "5.8.4"
 
     env:
-      CIP_TAG: ${{ matrix.cip_tag }}
+      CIP_TAG: ${{ matrix.cip.tag }}
+      CIP_ENV: ${{ matrix.cip.env }}
 
     steps:
       - uses: actions/checkout@v2
