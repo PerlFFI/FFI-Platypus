@@ -256,7 +256,7 @@ subtest 'closure ret' => sub {
 
   my $cxv_closure_simple_call = do {
     local $@ = '';
-    my $f = eval { $ffi->function( cxv_closure_simple_call => ['cxv_closure_simple_t'] => 'cx_struct_simple_t') };
+    my $f = eval { $ffi->function( cxv_closure_simple_call => ['cxv_closure_simple_t'] => 'cx_struct_simple_t*') };
     is "$@", '';
     $f;
   };
