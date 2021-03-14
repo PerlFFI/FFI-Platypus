@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.41_01   2021-03-14 12:49:38 -0600
+  - Adjusted test introduced in 1.40_01 to not rely on returning
+    a record-value for platforms that do not support that.  (gh#318, gh#319)
+
 1.40_01   2021-03-12 13:08:41 -0700
   - Add support for closures returning records pass-by-value
     if they do not include string pointers (gh#313, gh#315)
