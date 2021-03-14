@@ -84,8 +84,10 @@ typedef struct {
 
 typedef cx_struct_simple_t (*cxv_closure_simple_t)(void);
 
-EXTERN cx_struct_simple_t
+EXTERN cx_struct_simple_t*
 cxv_closure_simple_call(cxv_closure_simple_t closure)
 {
-  return closure();
+  static cx_struct_simple_t simple;
+  simple = closure();
+  return &simple;
 }
