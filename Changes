@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix test hang on cygwin (gh#320, gh#321)
 
 1.42      2021-03-15 05:42:23 -0600
   - Production release identical to 1.41_01
