@@ -153,6 +153,7 @@ subtest 'with a ffi dir' => sub {
   local @INC = @INC;
 
   my $root = FFI::Temp->newdir;
+  cleanup($root);
 
   spew("$root/lib/Foo/Bar4.pm", <<'EOF');
     package Foo::Bar4;
@@ -184,6 +185,7 @@ EOF
 subtest 'entry points' => sub {
 
   my $root = FFI::Temp->newdir;
+  cleanup($root);
 
   our @log;
   our $log_closure = do {
