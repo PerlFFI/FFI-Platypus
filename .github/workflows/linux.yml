@@ -89,3 +89,8 @@ jobs:
       - name: Build + Test
         run: |
           cip script
+
+      - name: CPAN log
+        if: ${{ failure() }}
+        run: |
+          cip exec bash -c 'cat $HOME/.cpanm/latest-build/build.log'
