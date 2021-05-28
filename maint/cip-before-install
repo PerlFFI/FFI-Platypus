@@ -10,10 +10,6 @@ if [ "$CIP_TAG" == "5.34" ]; then
   cip exec cpanm -n forks
 fi
 
-if [ "$CIP_TAG" == "5.32-debug" ]; then
-  cip exec cpanm -n Test::LeakTrace
-fi
-
-if [ "$CIP_TAG" == "5.32-debug32" ]; then
+if [[ "$CIP_TAG" =~ ^5\.[0-9]+-debug(32)?$ ]]; then
   cip exec cpanm -n Test::LeakTrace
 fi
