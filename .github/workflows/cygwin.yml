@@ -9,7 +9,7 @@ on:
   pull_request:
 
 env:
-  PERL5LIB: /cygdrive/c/cx/lib/perl5:/cygdrive/c/cx/lib/perl5/MSWin32-x64-multi-thread
+  PERL5LIB: /cygdrive/c/cx/lib/perl5
   PERL_LOCAL_LIB_ROOT: /cygdrive/cx
   PERL_MB_OPT: --install_base /cygdrive/c/cx
   PERL_MM_OPT: INSTALL_BASE=/cygdrive/c/cx

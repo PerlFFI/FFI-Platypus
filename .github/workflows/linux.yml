@@ -18,21 +18,22 @@ jobs:
       matrix:
         cip:
           - tag: static
-          - tag: "5.33"
-          - tag: "5.32"
-          - tag: "5.32"
+          - tag: "5.35"
+          - tag: "5.34"
+          - tag: "5.34"
             env: FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
-          - tag: "5.32"
+          - tag: "5.34"
             env: CIP_ENV=FFI_PLATYPUS_NO_ALLOCA=1
-          - tag: "5.32"
+          - tag: "5.34"
             env: CIP_ENV=FFI_PLATYPUS_NO_EXTRA_TYPES=1
-          - tag: "5.32-buster32"
-          - tag: "5.32-debug"
-          - tag: "5.32-debug32"
-          - tag: "5.32-ffimaster"
-          - tag: "5.32-longdouble"
-          - tag: "5.32-quadmath"
-          - tag: "5.32-threads"
+          - tag: "5.34-buster32"
+          - tag: "5.34-debug"
+          - tag: "5.34-debug32"
+          - tag: "5.34-ffimaster"
+          - tag: "5.34-longdouble"
+          - tag: "5.34-quadmath"
+          - tag: "5.34-threads"
+          - tag: "5.32"
           - tag: "5.30"
           - tag: "5.28"
           - tag: "5.26"

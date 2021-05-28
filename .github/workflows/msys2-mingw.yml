@@ -77,8 +77,3 @@ jobs:
         run: |
           export PATH="/c/cx/bin:$PATH"
           perl -S dzil test -v
-
-      - name: CPAN log
-        if: ${{ failure() }}
-        run: |
-          cat ~/.cpanm/latest-build/build.log
