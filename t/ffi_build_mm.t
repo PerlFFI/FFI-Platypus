@@ -1,7 +1,5 @@
-use strict;
-use warnings;
+use Test2::V0 -no_srand => 1;
 use 5.008004;
-use Test::More;
 use FFI::Build::MM;
 use Capture::Tiny qw( capture_merged );
 use File::Glob qw( bsd_glob );
@@ -51,7 +49,7 @@ subtest 'basic' => dont_save_prop {
   subtest 'build with fbx file' => sub {
     my $build = $mm->load_build('corpus/ffi_build_mm/lb1', undef, undef);
     isa_ok $build, 'FFI::Build';
-    is_deeply [sort map { $_->basename } $build->source], ['hello1.c','hello2.c']
+    is [sort map { $_->basename } $build->source], ['hello1.c','hello2.c']
   };
 
   subtest 'build with fbx file with errors' => sub {
@@ -63,7 +61,7 @@ subtest 'basic' => dont_save_prop {
   subtest 'build with default' => sub {
     my $build = $mm->load_build('corpus/ffi_build_mm/lb2', undef, undef);
     isa_ok $build, 'FFI::Build';
-    is_deeply [sort map { $_->basename } $build->source], ['hello1.c','hello2.c']
+    is [sort map { $_->basename } $build->source], ['hello1.c','hello2.c']
   };
 
   my $postamble = $mm->mm_postamble;
