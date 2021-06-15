@@ -2,7 +2,7 @@ package Test::Platypus;
 
 use strict;
 use warnings;
-use Test::More ();
+use Test2::API qw( context );
 use base qw( Exporter );
 
 our @EXPORT = qw( platypus );
@@ -12,14 +12,20 @@ sub platypus  {
 
   my $ffi = eval {
     require FFI::Platypus;
-    FFI::Platypus->VERSION(0.51);
     FFI::Platypus->new;
   };
 
-  SKIP: {
-    Test::More::skip "Test requires FFI::Platypus", $count unless $ffi;
+  if($ffi)
+  {
     $code->($ffi);
   }
+  else
+  {
+    my $ctx = context();
+    $ctx->skip('', "Test requires FFI::Platypus") for 1..$count;
+    $ctx->release;
+  }
+
 }
 
 1;
