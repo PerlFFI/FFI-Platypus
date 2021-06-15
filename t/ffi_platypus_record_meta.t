@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::Platypus::Record::Meta;
 use Data::Dumper qw( Dumper );
@@ -21,7 +19,7 @@ subtest 'basic' => sub {
   my $got = $meta->element_pointers;
   my $exp = [map { FFI::Platypus::Record::Meta::_find_symbol($_) } qw( uint8 uint8 pointer float double )];
 
-  is_deeply
+  is
     $got,
     $exp,
     'meta->element_pointers'

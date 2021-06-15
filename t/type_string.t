@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::CheckLib;
 
@@ -96,9 +94,9 @@ foreach my $api (0, 1, 2)
     $ffi->attach( string_test_pointer_ret => [ 'string' ] => 'string*' );
     $ffi->attach( [ pointer_null => 'string_test_pointer_ret_null' ] => [] => 'string*' );
 
-    is_deeply( string_test_pointer_ret("foo"), \"foo" );
-    is_deeply( string_test_pointer_ret(undef), \undef );
-    is_deeply( [string_test_pointer_ret_null()], [$api >= 2 ? (undef) : ()] );
+    is( string_test_pointer_ret("foo"), \"foo" );
+    is( string_test_pointer_ret(undef), \undef );
+    is( [string_test_pointer_ret_null()], [$api >= 2 ? (undef) : ()] );
 
     subtest 'fixed length input' => sub {
 
@@ -144,13 +142,13 @@ foreach my $api (0, 1, 2)
         'returns null',
       );
 
-      is_deeply(
+      is(
         $ffi->function(onetwothree3 => [] => 'sa3')->call,
         [ qw( one two three ) ],
         'returns with just strings',
       );
 
-      is_deeply(
+      is(
         $ffi->function(onenullthree3 => [] => 'sa3')->call,
         [ 'one', undef, 'three' ],
         'returns with NULL/undef in the middle',
@@ -166,17 +164,17 @@ foreach my $api (0, 1, 2)
         'returns null',
       );
 
-      is_deeply(
+      is(
         $ffi->function('onetwothree4', => [] => 'sa')->call,
         [ qw( one two three ) ],
       );
 
-      is_deeply(
+      is(
         $ffi->function('onenullthree3' => [] => 'sa')->call,
         [ qw( one ) ],
       );
 
-      is_deeply(
+      is(
         $ffi->function('ptrnull' => [] => 'sa')->call,
         [],
       );
@@ -187,7 +185,7 @@ foreach my $api (0, 1, 2)
 
       my @args = ( undef, 'six', 'xx' );
       $ffi->function( string_array_arg_update => [ 'string[3]' ] => 'void' )->call(\@args);
-      is_deeply(
+      is(
         \@args,
         [ "one", "two", "xx" ],
       );
@@ -203,7 +201,7 @@ foreach my $api (0, 1, 2)
 
     };
 
-    is_deeply(
+    is(
       [$ffi->function( pointer_null => [] => 'string' )->call],
       [$api >= 2 ? (undef) : ()],
     );

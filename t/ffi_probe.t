@@ -1,7 +1,5 @@
-use strict;
-use warnings;
+use Test2::V0 -no_srand => 1;
 use 5.008004;
-use Test::More;
 use FFI::Probe;
 use FFI::Probe::Runner;
 use Capture::Tiny qw( capture_merged );
@@ -124,7 +122,7 @@ subtest check_eval => sub {
   };
 
   ok $ret, 'foo.bar.baz';
-  is_deeply $probe->data, { foo => { bar => { baz => 3 } } };
+  is $probe->data, { foo => { bar => { baz => 3 } } };
 
   n {
     $ret = $probe->check_eval(
@@ -137,7 +135,7 @@ subtest check_eval => sub {
   };
 
   ok $ret, 'foo.bar.string';
-  is_deeply $probe->data, { foo => { bar => { baz => 3, string => 'hello world 7' } } };
+  is $probe->data, { foo => { bar => { baz => 3, string => 'hello world 7' } } };
 
   n {
     $ret = $probe->check_type_int('unsigned char');

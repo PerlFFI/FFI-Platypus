@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Migrate test suite to Test::V0 (gh#326)
 
 1.43      2021-03-17 09:46:40 -0600
   - Fix test hang on cygwin (gh#320, gh#321)

@@ -82,6 +82,7 @@ my %WriteMakefileArgs = (
   },
   "TEST_REQUIRES" => {
     "Capture::Tiny" => 0,
+    "Test2::V0"     => "0.000121",
     "Test::More"    => "0.98"
   },
   "VERSION" => "1.43",

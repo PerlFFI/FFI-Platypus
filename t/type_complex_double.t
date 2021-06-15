@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
@@ -81,7 +79,7 @@ foreach my $api (0, 1)
       subtest 'values set on out (array)' => sub {
         my @c;
         complex_set(\\@c, 1.0, 2.0);
-        is_deeply \@c, [ 1.0, 2.0 ];
+        is \@c, [ 1.0, 2.0 ];
       };
 
       subtest 'values set on out (object)' => sub {
@@ -89,13 +87,13 @@ foreach my $api (0, 1)
           unless eval q{ use Math::Complex (); 1 };
         my $c = Math::Complex->make(0.0, 0.0);
         complex_set(\$c, 1.0, 2.0);
-        is_deeply( [ $c->Re, $c->Im ], [1.0,2.0] );
+        is( [ $c->Re, $c->Im ], [1.0,2.0] );
       };
 
       subtest 'values set on out (other)' => sub {
         my $c;
         complex_set(\$c, 1.0, 2.0);
-        is_deeply( $c, [1.0, 2.0]);
+        is( $c, [1.0, 2.0]);
       };
 
     };
@@ -106,9 +104,9 @@ foreach my $api (0, 1)
 
     subtest 'return value' => sub {
 
-      is_deeply(complex_ret(1.0,2.0),       [1.0,2.0], 'standard');
-      is_deeply(complex_ptr_ret(1.0,2.0),  \[1.0,2.0], 'pointer');
-      is_deeply([complex_null()],             [],     'null');
+      is(complex_ret(1.0,2.0),       [1.0,2.0], 'standard');
+      is(complex_ptr_ret(1.0,2.0),  \[1.0,2.0], 'pointer');
+      is([complex_null()],             [],     'null');
 
     };
 
@@ -118,11 +116,11 @@ foreach my $api (0, 1)
 
       my @a = ([0.0,0.0], [1.0,2.0], [3.0,4.0]);
       my $ret;
-      is_deeply( $ret = $f->call(\@a, 0), [0.0,0.0] )
+      is( $ret = $f->call(\@a, 0), [0.0,0.0] )
         or diag Dumper($ret);
-      is_deeply( $ret = $f->call(\@a, 1), [1.0,2.0] )
+      is( $ret = $f->call(\@a, 1), [1.0,2.0] )
         or diag Dumper($ret);
-      is_deeply( $ret = $f->call(\@a, 2), [3.0,4.0] )
+      is( $ret = $f->call(\@a, 2), [3.0,4.0] )
         or diag Dumper($ret);
 
     };
@@ -133,7 +131,7 @@ foreach my $api (0, 1)
 
       my @a = ([0.0,0.0], [1.0,2.0], [3.0,4.0]);
       $f->call(\@a, 1, 5.0, 6.0);
-      is_deeply(\@a, [[0.0,0.0], [5.0,6.0], [3.0,4.0]]);
+      is(\@a, [[0.0,0.0], [5.0,6.0], [3.0,4.0]]);
 
     };
 
@@ -144,7 +142,7 @@ foreach my $api (0, 1)
       my @a = ([0.0,0.0], [1.0,2.0], [3.0,4.0]);
       my $ret;
 
-      is_deeply(
+      is(
         $ret = $f->call( \@a ),
         \@a,
       ) or diag Dumper($ret);

@@ -1,8 +1,6 @@
-use strict;
-use warnings;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::Platypus::Memory qw( malloc free );
-use Test::More;
 use Data::Dumper;
 
 do {
@@ -246,22 +244,22 @@ subtest 'array alignment' => sub {
       my $acc1 = "uint$bits";
       my $acc2 = "get_uint$bits";
       $foo->$acc1([1,2,3]);
-      is_deeply $foo->$acc1, [1,2,3], "$acc1 = 1,2,3";
-      is_deeply $foo->$acc2, [1,2,3], "$acc2 = 1,2,3";
+      is $foo->$acc1, [1,2,3], "$acc1 = 1,2,3";
+      is $foo->$acc2, [1,2,3], "$acc2 = 1,2,3";
       is $foo->$acc1(1), 2, "$acc1(1) = 2";
       $foo->$acc1(1,20);
-      is_deeply $foo->$acc1, [1,20,3], "$acc1 = 1,20,3";
+      is $foo->$acc1, [1,20,3], "$acc1 = 1,20,3";
     };
 
     subtest "signed $bits integer" => sub {
       my $acc1 = "sint$bits";
       my $acc2 = "get_sint$bits";
       $foo->$acc1([-1,2,-3]);
-      is_deeply $foo->$acc1, [-1,2,-3], "$acc1 = -1,2,-3";
-      is_deeply $foo->$acc2, [-1,2,-3], "$acc2 = -1,2,-3";
+      is $foo->$acc1, [-1,2,-3], "$acc1 = -1,2,-3";
+      is $foo->$acc2, [-1,2,-3], "$acc2 = -1,2,-3";
       is $foo->$acc1(2), -3, "$acc1(2) = -3";
       $foo->$acc1(1,-20);
-      is_deeply $foo->$acc1, [-1,-20,-3], "$acc1 = -1,-20,-3";
+      is $foo->$acc1, [-1,-20,-3], "$acc1 = -1,-20,-3";
     };
   }
 
@@ -269,12 +267,12 @@ subtest 'array alignment' => sub {
   {
     subtest $type => sub {
       $foo->$type([1.5,undef,-1.5]);
-      is_deeply $foo->$type, [1.5,0.0,-1.5], "$type = 1.5,0,-1.5";
+      is $foo->$type, [1.5,0.0,-1.5], "$type = 1.5,0,-1.5";
       is $foo->$type(0), 1.5;
       is $foo->$type(1), 0.0;
       is $foo->$type(2), -1.5;
       $foo->$type(1,20.0);
-      is_deeply $foo->$type, [1.5,20.0,-1.5], "$type = 1.5,20,-1.5";
+      is $foo->$type, [1.5,20.0,-1.5], "$type = 1.5,20,-1.5";
     };
   }
 
@@ -283,13 +281,13 @@ subtest 'array alignment' => sub {
     my $ptr2 = malloc 64;
 
     $foo->opaque([$ptr1,undef,$ptr2]);
-    is_deeply $foo->opaque, [$ptr1,undef,$ptr2], "opaque     = $ptr1,undef,$ptr2";
+    is $foo->opaque, [$ptr1,undef,$ptr2], "opaque     = $ptr1,undef,$ptr2";
 
     $foo->opaque(1,$ptr1);
-    is_deeply $foo->opaque, [$ptr1,$ptr1,$ptr2], "opaque     = $ptr1,$ptr1,$ptr2";
+    is $foo->opaque, [$ptr1,$ptr1,$ptr2], "opaque     = $ptr1,$ptr1,$ptr2";
 
     $foo->opaque(0,undef);
-    is_deeply $foo->opaque, [undef,$ptr1,$ptr2], "opaque     = undef,$ptr1,$ptr2";
+    is $foo->opaque, [undef,$ptr1,$ptr2], "opaque     = undef,$ptr1,$ptr2";
 
     is $foo->opaque(0), undef;
     is $foo->opaque(1), $ptr1;

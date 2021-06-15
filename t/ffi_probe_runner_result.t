@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::Probe::Runner::Result;
 
 my %std = ( stdout => "foo\n", stderr => "bar\n", rv => 0, signal => 0 );
