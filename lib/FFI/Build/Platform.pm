@@ -126,7 +126,7 @@ sub library_suffix
   {
     push @suffix, '.' . $self->{config}->{dlext};
   }
-  wantarray ? @suffix : $suffix[0];  ## no critic (Freenode::Wantarray)
+  wantarray ? @suffix : $suffix[0];  ## no critic (Community::Wantarray)
 }
 
 =head2 library_prefix
