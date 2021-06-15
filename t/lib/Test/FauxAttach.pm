@@ -2,7 +2,7 @@ package Test::FauxAttach;
 
 use strict;
 use warnings;
-use Test::More;
+use Test2::V0 ();
 
 my @funcs;
 
@@ -28,7 +28,7 @@ sub import
 
   *FFI::Platypus::Function::Function::_attach = sub {
     my($self, $perl_name, $location, $proto) = @_;
-    note "  attaching: $perl_name";
+    Test2::V0::note("  attaching: $perl_name");
     my $xsub = $self->_sub_ref($location);
     FFI::Platypus::Function::Wrapper::_set_prototype($proto, $xsub) if defined $proto;
     no strict 'refs';
@@ -37,7 +37,7 @@ sub import
 }
 
 END {
-  note "deleting @{[ scalar @funcs ]} attached functions";
+  Test2::V0::note("deleting @{[ scalar @funcs ]} attached functions");
   @funcs = ();
 }
 

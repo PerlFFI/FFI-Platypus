@@ -1,7 +1,5 @@
-use strict;
-use warnings;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
-use Test::More;
 use Math::Complex;
 use Test::LeakTrace qw( no_leaks_ok );
 

@@ -1,9 +1,7 @@
-use strict;
-use warnings;
+use Test2::V0 -no_srand => 1;
 use lib 't/lib';
 use Test::FauxAttach;
 use FFI::Platypus;
-use Test::More;
 use Test::LeakTrace qw( no_leaks_ok );
 use FFI::Platypus::Memory qw( malloc free memset strdup );
 

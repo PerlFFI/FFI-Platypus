@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0;
 use Foo;
 
 my $foo = Foo->new("platypus", 10);

@@ -22,8 +22,8 @@ $modules{$_} = $_ for qw(
   List::Util
   Math::LongDouble
   PkgConfig
+  Test2::API
   Test2::V0
-  Test::More
   constant
   forks
 );
