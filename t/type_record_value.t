@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
 use FFI::Platypus::Memory qw( malloc free );
@@ -161,21 +159,21 @@ subtest 'closure' => sub {
     }
     is($r2->three, 3);
     is($r2->four, "four");
-    is_deeply($r2->myarray1, [1,2]);
+    is($r2->myarray1, [1,2]);
     {
       local $@ = '';
       eval { $r2->myarray1([3,4]) };
       isnt $@, '';
       note "error = $@";
     }
-    is_deeply($r2->myarray1, [1,2]);
+    is($r2->myarray1, [1,2]);
     {
       local $@ = '';
       eval { $r2->myarray1(3,4) };
       isnt $@, '';
       note "error = $@";
     }
-    is_deeply($r2->myarray1, [1,2]);
+    is($r2->myarray1, [1,2]);
 
     is($r2->opaque1, $r->opaque1);
     {
@@ -186,21 +184,21 @@ subtest 'closure' => sub {
     }
     is($r2->opaque1, $r->opaque1);
 
-    is_deeply($r2->myarray2, $r->myarray2);
+    is($r2->myarray2, $r->myarray2);
     {
       local $@ = '';
       eval { $r2->myarray2([undef,undef]) };
       isnt $@, '';
       note "error = $@";
     }
-    is_deeply($r2->myarray2, $r->myarray2);
+    is($r2->myarray2, $r->myarray2);
     {
       local $@ = '';
       eval { $r2->myarray2(undef,undef) };
       isnt $@, '';
       note "error = $@";
     }
-    is_deeply($r2->myarray2, $r->myarray2);
+    is($r2->myarray2, $r->myarray2);
 
     {
       local $@ = '';

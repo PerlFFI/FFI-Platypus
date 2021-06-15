@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::CheckLib;
 use FFI::Platypus;
 use FFI::Platypus::Memory qw( malloc free );
@@ -26,7 +24,7 @@ foreach my $api (0, 1, 2)
     $ffi->attach( [pointer_get_my_pointer => 'getp'] => []          => 'opaque');
     $ffi->attach( [pointer_get_my_pointer_arg => 'geta'] => ['opaque*'] => 'void');
 
-    is_deeply [null()], [$api >= 2 ? (undef) : ()], 'null = ()/undef';
+    is [null()], [$api >= 2 ? (undef) : ()], 'null = ()/undef';
     is is_null(undef), 1, 'is_null(undef) == 1';
     is is_null(), 1, 'is_null() == 1';
 
@@ -69,14 +67,14 @@ foreach my $api (0, 1, 2)
     do {
       my @list = (undef,undef,undef);
       aa_out(\@list);
-      is_deeply [map { $ffi->cast('opaque' => 'string', $_) } @list], [qw( four five six )], 'aa_out()';
+      is [map { $ffi->cast('opaque' => 'string', $_) } @list], [qw( four five six )], 'aa_out()';
     };
 
     do {
       my @list1 = (malloc 32, malloc 32, malloc 32);
       my @list2 = @list1;
       aa_null_out(\@list2);
-      is_deeply [@list2], [undef,undef,undef], 'aa_null_out()';
+      is [@list2], [undef,undef,undef], 'aa_null_out()';
       free $_ for @list1;
     };
 
@@ -84,9 +82,9 @@ foreach my $api (0, 1, 2)
     $ffi->attach( [pointer_ret_array_out_null_terminated => 'ra_out_nt'] => [] => 'opaque[]');
     $ffi->attach( [pointer_ret_array_null_out => 'ra_null_out'] => [] => 'opaque[3]');
 
-    is_deeply [map { $ffi->cast('opaque' => 'string', $_) } @{ ra_out() } ], [qw( seven eight nine )], "ra_out()";
-    is_deeply [map { $ffi->cast('opaque' => 'string', $_) } @{ ra_out_nt() } ], [qw( seven eight nine )], "ra_out_nt()";
-    is_deeply ra_null_out(), [undef,undef,undef], 'ra_null_out';
+    is [map { $ffi->cast('opaque' => 'string', $_) } @{ ra_out() } ], [qw( seven eight nine )], "ra_out()";
+    is [map { $ffi->cast('opaque' => 'string', $_) } @{ ra_out_nt() } ], [qw( seven eight nine )], "ra_out_nt()";
+    is ra_null_out(), [undef,undef,undef], 'ra_null_out';
 
 
     $ffi->attach( [pointer_pointer_pointer_to_pointer => 'pp2p'] => ['opaque*'] => 'opaque');
@@ -195,7 +193,7 @@ foreach my $api (1,2) {
 
     };
 
-    is_deeply
+    is
       [$ffi->function( pointer_null => [] => 'roger_t' )->call],
       [$api >= 2 ? (undef) : ()],
     ;

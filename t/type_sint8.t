@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::CheckLib;
 
@@ -51,16 +49,16 @@ foreach my $api (0, 1, 2)
     array_inc(\@list);
     do { local $SIG{__WARN__} = sub {}; array_inc() };
 
-    is_deeply \@list, [-4,-3,-2,-1,0,1,2,3,4,5], 'array increment';
+    is \@list, [-4,-3,-2,-1,0,1,2,3,4,5], 'array increment';
 
-    is_deeply [null()], [$api >= 2 ? (undef) : ()], 'null() == undef';
+    is [null()], [$api >= 2 ? (undef) : ()], 'null() == undef';
     is is_null(undef), 1, 'is_null(undef) == 1';
     is is_null(), 1, 'is_null() == 1';
     is is_null(\22), 0, 'is_null(22) == 0';
 
-    is_deeply static_array(), [-1,2,-3,4,-5,6,-7,8,-9,10], 'static_array = [-1,2,-3,4,-5,6,-7,8,-9,10]';
+    is static_array(), [-1,2,-3,4,-5,6,-7,8,-9,10], 'static_array = [-1,2,-3,4,-5,6,-7,8,-9,10]';
 
-    is_deeply [null2()], [$api >= 2 ? (undef) : ()], 'null2() == undef';
+    is [null2()], [$api >= 2 ? (undef) : ()], 'null2() == undef';
 
     my $closure = $ffi->closure(sub { $_[0]-2 });
     $ffi->attach( [sint8_set_closure => 'set_closure'] => ['sint8_c'] => 'void');

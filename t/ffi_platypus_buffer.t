@@ -1,14 +1,11 @@
-use strict;
-use warnings;
-use utf8;
-use B;
-
 # see https://github.com/PerlFFI/FFI-Platypus/issues/85
 use if $^O ne 'MSWin32' || $] >= 5.018, 'open', ':std', ':encoding(utf8)';
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use Encode qw( decode );
 use FFI::Platypus::Buffer;
 use FFI::Platypus::Buffer qw( scalar_to_pointer grow set_used_length window );
+use utf8;
+use B;
 
 subtest simple => sub {
   my $orig = 'me grimlock king';
@@ -147,9 +144,9 @@ subtest set_used_length => sub {
     like ( $err, qr/must be a scalar/, "croaked" );
   };
 
-TODO : {
+{
 
-  local $TODO = "is set_used_length undef behavior correct?";
+  my $todo = todo "is set_used_length undef behavior correct?";
 
   subtest '$str = undef' => sub {
     my $str;
@@ -180,11 +177,11 @@ subtest 'hardwire' => sub {
     window $ro, $ptr, $len;
     is($ro, "my stuff");
     is(length($ro), 8);
-    is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
+    is([scalar_to_buffer $ro], [$ptr,$len]);
     local $@ = '';
     eval { $ro .= "foo" };
     like "$@", qr/Modification of a read-only value attempted/;
-    is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
+    is([scalar_to_buffer $ro], [$ptr,$len]);
   };
 
   subtest 'unicode' => sub {
@@ -194,11 +191,11 @@ subtest 'hardwire' => sub {
     window $ro, $ptr, $len, 1;
     is($ro, "привет");
     is(length($ro), 6);
-    is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
+    is([scalar_to_buffer $ro], [$ptr,$len]);
     local $@ = '';
     eval { $ro .= "foo" };
     like "$@", qr/Modification of a read-only value attempted/;
-    is_deeply([scalar_to_buffer $ro], [$ptr,$len]);
+    is([scalar_to_buffer $ro], [$ptr,$len]);
   };
 
   subtest 'strlen' => sub {
@@ -208,7 +205,7 @@ subtest 'hardwire' => sub {
     window $ro, $ptr;
     is($ro, "foo");
     is(length($ro), 3);
-    is_deeply([scalar_to_pointer $ro], [$ptr]);
+    is([scalar_to_pointer $ro], [$ptr]);
   };
 };
 

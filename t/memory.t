@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use Config;
 use Capture::Tiny qw( capture_merged );
 use FFI::Temp;
@@ -57,8 +55,8 @@ foreach my $name (@list)
     if($exfail{$name})
     {
       note "expected fail";
-      TODO: {
-        local $TODO = 'expected fail';
+      {
+        my $todo = todo 'expected fail';
         is($exit, 0, 'valgrind') or do {
           note "[output]\n$out";
           note "[log]\n", do { local $/; <$log> };

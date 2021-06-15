@@ -1,7 +1,5 @@
-use strict;
-use warnings;
+use Test2::V0 -no_srand => 1;
 use open ':std', ':encoding(utf8)';
-use Test::More;
 use FFI::CheckLib;
 use FFI::Platypus;
 use FFI::Platypus::Memory qw( free strdup );

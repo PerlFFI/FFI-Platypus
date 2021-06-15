@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use lib 't/lib';
 use Test::Cleanup;
 use FFI::Platypus;
@@ -276,7 +274,7 @@ EOF
 
   note "log:$_" for @log;
 
-  is_deeply(
+  is(
     \@log,
     [
       'ffi_pl_bundle_fini (enter)',

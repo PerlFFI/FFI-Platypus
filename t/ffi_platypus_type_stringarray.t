@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::CheckLib;
 use FFI::Platypus;
 
@@ -66,19 +64,19 @@ subtest 'fixed length return' => sub {
     'returns null',
   );
 
-  is_deeply(
+  is(
     $ffi->function(onetwothree3 => [] => 'sa3')->call,
     [ qw( one two three ) ],
     'returns with just strings',
   );
 
-  is_deeply(
+  is(
     $ffi->function(onenullthree3 => [] => 'sa3')->call,
     [ 'one', undef, 'three' ],
     'returns with NULL/undef in the middle',
   );
 
-  is_deeply(
+  is(
     $ffi->function(onenullthree3 => [] => 'sa3x')->call,
     [ 'one', 'x', 'three' ],
     'returns with NULL/undef in the middle with default',
@@ -96,17 +94,17 @@ subtest 'null terminated return' => sub {
     'returns null',
   );
 
-  is_deeply(
+  is(
     $ffi->function('onetwothree4', => [] => 'sa')->call,
     [ qw( one two three ) ],
   );
 
-  is_deeply(
+  is(
     $ffi->function('onenullthree3' => [] => 'sa')->call,
     [ qw( one ) ],
   );
 
-  is_deeply(
+  is(
     $ffi->function('ptrnull' => [] => 'sa')->call,
     [],
   );

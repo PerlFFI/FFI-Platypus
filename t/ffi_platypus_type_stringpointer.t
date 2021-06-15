@@ -1,6 +1,4 @@
-use strict;
-use warnings;
-use Test::More;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::CheckLib;
 
@@ -35,8 +33,8 @@ subtest 'arg pass out' => sub {
 subtest 'return value' => sub {
   my $string = "once more onto";
 
-  is_deeply string_pointer_pointer_return($string), \"once more onto", "not null string = $string";
-  is_deeply string_pointer_pointer_return(undef), \undef, "\\null";
+  is string_pointer_pointer_return($string), \"once more onto", "not null string = $string";
+  is string_pointer_pointer_return(undef), \undef, "\\null";
   my $value = pointer_null();
   is $value, undef, "null";
 
