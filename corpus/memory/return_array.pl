@@ -1,7 +1,5 @@
-use strict;
-use warnings;
+use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
-use Test::More;
 use Math::Complex;
 use Test::LeakTrace qw( no_leaks_ok );
 
@@ -34,7 +32,7 @@ foreach my $type (@types)
     }
     else
     {
-      is_deeply $ffi->cast( 'opaque' => $type, $ptr ), [1,2];
+      is $ffi->cast( 'opaque' => $type, $ptr ), [1,2];
     }
 
     $free->call($ptr);
@@ -58,13 +56,13 @@ subtest 'string/opaque' => sub {
     $ffi->cast( 'opaque' => 'string[2]', $ptr );
   };
 
-  is_deeply $ffi->cast( 'opaque' => 'string[2]', $ptr ), ["frooble",undef];
+  is $ffi->cast( 'opaque' => 'string[2]', $ptr ), ["frooble",undef];
 
   no_leaks_ok {
     $ffi->cast( 'opaque' => 'opaque[2]', $ptr );
   };
 
-  is_deeply $ffi->cast( 'opaque' => 'opaque[2]', $ptr ), [$frooble,undef];
+  is $ffi->cast( 'opaque' => 'opaque[2]', $ptr ), [$frooble,undef];
 
   $free->call($frooble);
   $free->call($ptr);
@@ -87,7 +85,7 @@ foreach my $type (qw( complex_float[2] complex_double[2] ))
       $ffi->cast( 'opaque' => $type, $ptr );
     };
 
-    is_deeply $ffi->cast( 'opaque' => $type, $ptr ), [[1.0,2.0],[3.0,4.0]];
+    is $ffi->cast( 'opaque' => $type, $ptr ), [[1.0,2.0],[3.0,4.0]];
 
     $free->call($ptr);
   };

@@ -150,9 +150,7 @@ the mangler.  If we hadn't done that then we could instead attach with the full 
 
 You're done!  You can now use this class.  Lets write a test to make sure it works,
 
- use strict;
- use warnings;
- use Test::More;
+ use Test2::V0;
  use Foo;
  
  my $foo = Foo->new("platypus", 10);

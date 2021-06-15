@@ -1,4 +1,4 @@
-use Test::More;
+use Test2::V0;
 use Bzip2;
 
 subtest 'compress' => sub {
