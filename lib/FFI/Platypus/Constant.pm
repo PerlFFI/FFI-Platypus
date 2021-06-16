@@ -32,7 +32,7 @@ C<lib/Foo.pm>:
  use base qw( Exporter );
  
  my $ffi = FFI::Platypus->new( api => 1 );
- # sets constatns Foo::FOO and ABC::DEF from C
+ # sets constants Foo::FOO and ABC::DEF from C
  $ffi->bundle;
  
  1;
