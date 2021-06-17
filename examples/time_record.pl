@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package My::UnixTime;
+package Unix::TimeStruct;
 
 use FFI::Platypus 1.00;
 use FFI::Platypus::Record;
@@ -22,8 +22,8 @@ record_layout_1(qw(
 
 my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
-# define a record class My::UnixTime and alias it to "tm"
-$ffi->type("record(My::UnixTime)*" => 'tm');
+# define a record class Unix::TimeStruct and alias it to "tm"
+$ffi->type("record(Unix::TimeStruct)*" => 'tm');
 
 # attach the C localtime function as a constructor
 $ffi->attach( localtime => ['time_t*'] => 'tm', sub {
@@ -34,8 +34,8 @@ $ffi->attach( localtime => ['time_t*'] => 'tm', sub {
 
 package main;
 
-# now we can actually use our My::UnixTime class
-my $time = My::UnixTime->localtime;
+# now we can actually use our Unix::TimeStruct class
+my $time = Unix::TimeStruct->localtime;
 printf "time is %d:%d:%d %s\n",
   $time->tm_hour,
   $time->tm_min,

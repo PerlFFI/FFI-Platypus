@@ -900,7 +900,7 @@ package Unix::TimeStruct {
   });
 }
 
-# now we can actually use our My::UnixTime class
+# now we can actually use our Unix::TimeStruct class
 my $time = Unix::TimeStruct->localtime;
 printf "time is %d:%d:%d %s\n",
   $time->tm_hour,

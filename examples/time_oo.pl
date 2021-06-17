@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package My::UnixTime;
+package Unix::TimeStruct;
 
 use FFI::Platypus 1.00;
 use FFI::TinyCC;
@@ -35,7 +35,7 @@ my $tm_size = tcc_eval qq{
   }
 };
 
-# To use My::UnixTime as a record class, we need to
+# To use Unix::TimeStruct as a record class, we need to
 # specify a size for the record, a function called
 # either ffi_record_size or _ffi_record_size should
 # return the size in bytes.  This function has to
@@ -44,9 +44,9 @@ sub _ffi_record_size { $tm_size };
 
 my $ffi = FFI::Platypus->new( api => 1 );
 $ffi->lib(undef);
-# define a record class My::UnixTime and alias it
+# define a record class Unix::TimeStruct and alias it
 # to "tm"
-$ffi->type("record(My::UnixTime)*" => 'tm');
+$ffi->type("record(Unix::TimeStruct)*" => 'tm');
 
 # attach the C localtime function as a constructor
 $ffi->attach( [ localtime => '_new' ] => ['time_t*'] => 'tm' );
@@ -84,6 +84,6 @@ foreach my $attr (qw( hour min sec ))
 
 package main;
 
-# now we can actually use our My::UnixTime class
-my $time = My::UnixTime->new;
+# now we can actually use our Unix::TimeStruct class
+my $time = Unix::TimeStruct->new;
 printf "time is %d:%d:%d\n", $time->get_hour, $time->get_min, $time->get_sec;
