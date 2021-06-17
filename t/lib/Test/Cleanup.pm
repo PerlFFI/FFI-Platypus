@@ -2,7 +2,7 @@ package Test::Cleanup;
 
 use strict;
 use warnings;
-use base qw( Exporter );
+use Exporter qw( import );
 use File::Path qw( rmtree );
 
 our @EXPORT = qw( cleanup );

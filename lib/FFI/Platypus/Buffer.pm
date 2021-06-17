@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008004;
 use FFI::Platypus;
-use base qw( Exporter );
+use Exporter qw( import );
 
 our @EXPORT = qw( scalar_to_buffer buffer_to_scalar );
 our @EXPORT_OK = qw ( scalar_to_pointer grow set_used_length window );

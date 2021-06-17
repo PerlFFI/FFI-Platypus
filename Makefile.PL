@@ -23,7 +23,8 @@ my %WriteMakefileArgs = (
     "ExtUtils::MakeMaker" => "7.12",
     "ExtUtils::ParseXS"   => "3.30",
     "IPC::Cmd"            => 0,
-    "JSON::PP"            => 0
+    "JSON::PP"            => 0,
+    "parent"              => 0
   },
   "DISTNAME"         => "FFI-Platypus",
   "LICENSE"          => "perl",
@@ -78,7 +79,8 @@ my %WriteMakefileArgs = (
     "IPC::Cmd"            => 0,
     "JSON::PP"            => 0,
     "List::Util"          => "1.45",
-    "constant"            => "1.32"
+    "constant"            => "1.32",
+    "parent"              => 0
   },
   "TEST_REQUIRES" => {
     "Capture::Tiny" => 0,

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008004;
 use Carp qw( croak );
-use base qw( FFI::Platypus::TypeParser );
+use parent qw( FFI::Platypus::TypeParser );
 
 # ABSTRACT: FFI Type Parser Version One
 # VERSION

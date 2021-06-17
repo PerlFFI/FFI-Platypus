@@ -3,7 +3,7 @@ package Test::Platypus;
 use strict;
 use warnings;
 use Test2::API qw( context );
-use base qw( Exporter );
+use Exporter qw( import );
 
 our @EXPORT = qw( platypus );
 

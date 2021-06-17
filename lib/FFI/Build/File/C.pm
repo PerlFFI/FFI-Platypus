@@ -3,7 +3,7 @@ package FFI::Build::File::C;
 use strict;
 use warnings;
 use 5.008004;
-use base qw( FFI::Build::File::Base );
+use parent qw( FFI::Build::File::Base );
 use constant default_suffix => '.c';
 use constant default_encoding => ':utf8';
 use Capture::Tiny ();

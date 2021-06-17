@@ -5,7 +5,7 @@ use warnings;
 use 5.008004;
 use Carp qw( croak );
 use FFI::Platypus;
-use base qw( Exporter );
+use Exporter qw( import );
 use constant 1.32 ();
 
 our @EXPORT = qw( record_layout record_layout_1 );

@@ -35,7 +35,7 @@ $ffi->custom_type(archive_entry => {
 
 package My::Platypus;
 
-use base qw( FFI::Platypus );
+use parent qw( FFI::Platypus );
 
 sub find_symbol
 {

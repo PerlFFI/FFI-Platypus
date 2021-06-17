@@ -30,13 +30,13 @@ subtest 'basic' => sub {
 subtest 'file classes' => sub {
   {
     package FFI::Build::File::Foo1;
-    use base qw( FFI::Build::File::Base );
+    use parent qw( FFI::Build::File::Base );
     $INC{'FFI/Build/File/Foo1.pm'} = __FILE__;
   }
 
   {
     package FFI::Build::File::Foo2;
-    use base qw( FFI::Build::File::Base );
+    use parent qw( FFI::Build::File::Base );
   }
 
   my @list = FFI::Build::_file_classes();

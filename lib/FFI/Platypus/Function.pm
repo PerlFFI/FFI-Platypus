@@ -64,7 +64,7 @@ use overload '&{}' => sub {
 
 package FFI::Platypus::Function::Function;
 
-use base qw( FFI::Platypus::Function );
+use parent qw( FFI::Platypus::Function );
 
 sub attach
 {
@@ -100,7 +100,7 @@ sub sub_ref
 
 package FFI::Platypus::Function::Wrapper;
 
-use base qw( FFI::Platypus::Function );
+use parent qw( FFI::Platypus::Function );
 
 sub new
 {

@@ -3,7 +3,7 @@ package FFI::Platypus::DL;
 use strict;
 use warnings;
 use 5.008004;
-use base qw( Exporter );
+use Exporter qw( import );
 
 require FFI::Platypus;
 our @EXPORT = qw( dlopen dlerror dlsym dlclose );

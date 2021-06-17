@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008004;
 use FFI::Platypus;
-use base qw( Exporter );
+use Exporter qw( import );
 
 our @EXPORT = grep /^arguments_/, keys %FFI::Platypus::API::;
 
@@ -14,9 +14,9 @@ our @EXPORT = grep /^arguments_/, keys %FFI::Platypus::API::;
 =head1 SYNOPSIS
 
  package FFI::Platypus::Type::MyCustomType;
- 
+
  use FFI::Platypus::API;
- 
+
  sub ffi_custom_type_api_1
  {
    {
