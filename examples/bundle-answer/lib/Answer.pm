@@ -3,7 +3,7 @@ package Answer;
 use strict;
 use warnings;
 use FFI::Platypus 1.00;
-use base qw( Exporter );
+use Exporter qw( import );
 
 our @EXPORT = qw( answer );
 

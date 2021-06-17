@@ -915,7 +915,7 @@ constants in your Perl module, like this:
  package Foo;
  
  use FFI::Platypus 1.00;
- use base qw( Exporter );
+ use Exporter qw( import );
  
  our @EXPORT_OK = qw( FOO_STATIC FOO_DYNAMIC FOO_OTHER foo get_foo );
  

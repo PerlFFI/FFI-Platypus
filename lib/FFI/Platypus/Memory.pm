@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.008004;
 use FFI::Platypus;
-use base qw( Exporter );
+use Exporter qw( import );
 
 # ABSTRACT: Memory functions for FFI
 # VERSION

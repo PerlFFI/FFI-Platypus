@@ -3,7 +3,7 @@ package FFI::Build::File::Library;
 use strict;
 use warnings;
 use 5.008004;
-use base qw( FFI::Build::File::Base );
+use parent qw( FFI::Build::File::Base );
 use constant default_encoding => ':raw';
 
 # ABSTRACT: Class to track object file in FFI::Build

@@ -26,6 +26,7 @@ $modules{$_} = $_ for qw(
   Test2::V0
   constant
   forks
+  parent
 );
 
 $post_diag = sub {

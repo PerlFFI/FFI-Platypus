@@ -4,7 +4,7 @@ use FFI::Build::File::Base;
 {
   package
     FFI::Build::File::Foo;
-  use base qw( FFI::Build::File::Base );
+  use parent qw( FFI::Build::File::Base );
   use constant default_suffix    => '.foo';
   use constant default_encoding  => ':utf8';
 }

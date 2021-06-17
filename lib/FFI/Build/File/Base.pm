@@ -17,7 +17,7 @@ use overload '""' => sub { $_[0]->path }, bool => sub { 1 }, fallback => 1;
 Create your own file class
 
  package FFI::Build::File::Foo;
- use base qw( FFI::Build::File::Base );
+ use parent qw( FFI::Build::File::Base );
  use constant default_suffix => '.foo';
  use constant default_encoding => ':utf8';
 
