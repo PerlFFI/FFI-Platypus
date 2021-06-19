@@ -14,9 +14,9 @@ our @EXPORT = grep /^arguments_/, keys %FFI::Platypus::API::;
 =head1 SYNOPSIS
 
  package FFI::Platypus::Type::MyCustomType;
-
+ 
  use FFI::Platypus::API;
-
+ 
  sub ffi_custom_type_api_1
  {
    {
