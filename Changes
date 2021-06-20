@@ -1,7 +1,11 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.44      2021-06-20 06:50:03 -0600
   - Migrate test suite to Test::V0 (gh#327)
+  - Use parent instead of base in documentation and in code (gh#239 jjatria++)
+  - Improved consistency of examples and documentation (gh#328, gh#330, jjatria++)
 
 1.43      2021-03-17 09:46:40 -0600
   - Fix test hang on cygwin (gh#320, gh#321)
