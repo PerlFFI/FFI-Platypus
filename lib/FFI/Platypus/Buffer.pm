@@ -73,7 +73,7 @@ copying the buffer instead.  For example:
  use FFI::Platypus::Memory qw( malloc memcpy free )
  
  my($ptr, $size) = scalar_to_buffer $string;
- c_function_thaat_does_not_keep_ptr( $ptr, $size); # okay
+ c_function_that_does_not_keep_ptr( $ptr, $size); # okay
  
  my($ptr, $size) = scalar_to_buffer $string;
  my $ptr_copy = malloc($size);
