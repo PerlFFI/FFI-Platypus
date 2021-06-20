@@ -144,6 +144,9 @@ pod_spelling_system:
     - sensical
     - eXtensions
     - szTheory
+    - JJATRIA
+    - Joaqu
+    - Jos
 
 pod_coverage:
   skip: 0
