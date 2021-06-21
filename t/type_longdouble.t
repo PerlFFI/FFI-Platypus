@@ -29,7 +29,7 @@ subtest 'Math::LongDouble is loaded when needed for return type' => sub {
   }
 };
 
-foreach my $api (0, 1)
+foreach my $api (0, 1, 2)
 {
 
   subtest "api = $api" => sub {
@@ -40,7 +40,7 @@ foreach my $api (0, 1)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api );
+    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api >=2 ? $api : undef)  );
     $ffi->lib(find_lib lib => 'test', libpath => 't/ffi');
 
     $ffi->type('longdouble*' => 'longdouble_p');
@@ -50,6 +50,7 @@ foreach my $api (0, 1)
     $ffi->attach( longdouble_pointer_test => ['longdouble_p', 'longdouble_p'] => 'int');
     $ffi->attach( longdouble_array_test => ['longdouble_a', 'int'] => 'int');
     $ffi->attach( [longdouble_array_test => 'longdouble_array_test3'] => ['longdouble_a3', 'int'] => 'int');
+    $ffi->attach( [longdouble_array_test => 'longdouble_array_test_ptr'] => ['longdouble*', 'int'] => 'int') if $api >= 2;
     $ffi->attach( longdouble_array_return_test => [] => 'longdouble_a3');
     $ffi->attach( pointer_is_null => ['longdouble_p'] => 'int');
     $ffi->attach( longdouble_pointer_return_test => ['longdouble'] => 'longdouble_p');
@@ -101,6 +102,17 @@ foreach my $api (0, 1)
         my $list = [ map { Math::LongDouble->new($_) } qw( 25.0 25.0 50.0 )];
 
         ok longdouble_array_test($list, 3);
+        note "[", join(',', map { "$_" } @$list), "]";
+        ok $list->[0] == $ld10;
+        ok $list->[1] == $ld20;
+        ok $list->[2] == $ld30;
+      };
+
+      subtest 'array var ptr' => sub {
+        skip_all 'for api = 2 and better only' unless $api >= 2;
+        my $list = [ map { Math::LongDouble->new($_) } qw( 25.0 25.0 50.0 )];
+
+        ok longdouble_array_test_ptr($list, 3);
         note "[", join(',', map { "$_" } @$list), "]";
         ok $list->[0] == $ld10;
         ok $list->[1] == $ld20;
