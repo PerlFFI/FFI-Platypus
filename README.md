@@ -155,7 +155,7 @@ the [lib](#lib) attribute.
 
         - Pointer functions that return `NULL` will return `undef` instead of empty list
 
-            This is a long standing design bug in Platypus.
+            This fixes a long standing design bug in Platypus.
 
         - Array references may be passed to pointer argument types
 
