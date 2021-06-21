@@ -438,6 +438,20 @@
                             ((int64_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
                           }
                           break;
+                        case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, float);
+                          for(n=0; n<count; n++)
+                          {
+                            ((float*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, double);
+                          for(n=0; n<count; n++)
+                          {
+                            ((double*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
+                          }
+                          break;
                         default:
                           ptr = NULL;
                           warn("argument type not supported (%d)", i);
