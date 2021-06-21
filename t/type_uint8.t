@@ -31,6 +31,11 @@ foreach my $api (0, 1, 2)
     $ffi->attach( [uint8_static_array => 'static_array'] => [] => 'uint8_a');
     $ffi->attach( [pointer_null => 'null2'] => [] => 'uint8_a');
 
+    if($api == 2)
+    {
+      $ffi->attach( [uint8_sum => 'sum3'] => ['uint8*'] => 'uint8' );
+    }
+
     is add(1,2), 3, 'add(1,2) = 3';
     is do { no warnings; add() }, 0, 'add() = 0';
 
@@ -45,6 +50,11 @@ foreach my $api (0, 1, 2)
 
     is sum(\@list), 55, 'sum([1..10]) = 55';
     is sum2(\@list, scalar @list), 55, 'sum2([1..10],10) = 55';
+
+    if($api == 2)
+    {
+      is(sum3(\@list), 55, 'sum([1..10]) = 55 (passed as pointer)');
+    }
 
     array_inc(\@list);
     do { local $SIG{__WARN__} = sub {}; array_inc() };

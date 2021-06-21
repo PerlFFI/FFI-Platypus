@@ -1,3 +1,4 @@
+
 /*
  * Philosophy: FFI dispatch should be as fast as possible considering
  * reasonable trade offs.
@@ -278,7 +279,7 @@
               {
                 void *ptr;
 
-                if(SvROK(arg)) /* TODO: and a scalar ref */
+                if(SvROK(arg))
                 {
                   SV *arg2 = SvRV(arg);
                   if(SvTYPE(arg2) < SVt_PVAV)
@@ -375,8 +376,81 @@
                   }
                   else
                   {
-                    warn("argument type not a reference to scalar (%d)", i);
-                    ptr = NULL;
+                    if(self->platypus_api >= 2 && SvTYPE(arg2) == SVt_PVAV )
+                    {
+                      AV *av = (AV*) arg2;
+                      SSize_t count = av_len(av)+1;
+                      switch(type_code)
+                      {
+                        case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, uint8_t);
+                          for(n=0; n<count; n++)
+                          {
+                            ((uint8_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, uint8_t);
+                          for(n=0; n<count; n++)
+                          {
+                            ((int8_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, uint16_t);
+                          for(n=0; n<count; n++)
+                          {
+                            ((uint16_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, uint16_t);
+                          for(n=0; n<count; n++)
+                          {
+                            ((int16_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, uint32_t);
+                          for(n=0; n<count; n++)
+                          {
+                            ((uint32_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, uint32_t);
+                          for(n=0; n<count; n++)
+                          {
+                            ((int32_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, uint64_t);
+                          for(n=0; n<count; n++)
+                          {
+                            ((uint64_t*)ptr)[n] = SvUV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, uint64_t);
+                          for(n=0; n<count; n++)
+                          {
+                            ((int64_t*)ptr)[n] = SvIV(*av_fetch(av, n, 1));
+                          }
+                          break;
+                        default:
+                          ptr = NULL;
+                          warn("argument type not supported (%d)", i);
+                          break;
+                      }
+                      if(ptr != NULL)
+                        ffi_pl_heap_add_ptr(ptr);
+                    }
+                    else
+                    {
+                      warn("argument type not a reference to scalar (%d)", i);
+                      ptr = NULL;
+                    }
                   }
                 }
                 else
@@ -711,7 +785,10 @@
                 if(ptr != NULL)
                 {
                   arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-                  if(!SvREADONLY(SvRV(arg)))
+                  if(SvTYPE(SvRV(arg)) == SVt_PVAV)
+                  {
+                  }
+                  else if(!SvREADONLY(SvRV(arg)))
                   {
                     switch(type_code)
                     {
