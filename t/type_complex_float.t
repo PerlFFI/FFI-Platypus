@@ -152,4 +152,3 @@ foreach my $api (0, 1)
 }
 
 done_testing;
-
