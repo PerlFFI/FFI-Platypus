@@ -193,7 +193,7 @@ API version 2 is identical to version 1, except:
 
 =item Pointer functions that return C<NULL> will return C<undef> instead of empty list
 
-This is a long standing design bug in Platypus.
+This fixes a long standing design bug in Platypus.
 
 =item Array references may be passed to pointer argument types
 
