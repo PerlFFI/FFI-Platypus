@@ -452,6 +452,24 @@
                             ((double*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
                           }
                           break;
+#ifdef FFI_PL_PROBE_LONGDOUBLE
+                        case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
+                          /* gh#236: lets hope the compiler is smart enough to opitmize this */
+                          if(sizeof(long double) >= 16)
+                          {
+                            Newx(ptr, count, long double);
+                          }
+                          else
+                          {
+                            Newx(ptr, count*16, char);
+                          }
+                          for(n=0; n<count; n++)
+                          {
+                            SV *sv = *av_fetch(av, n, 1);
+                            ffi_pl_perl_to_long_double(sv, &((long double*)ptr)[n]);
+                          }
+                          break;
+#endif
 #ifdef FFI_PL_PROBE_COMPLEX
                         case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
                           Newx(ptr, count, float complex);
