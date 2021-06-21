@@ -36,7 +36,7 @@ foreach my $api (0, 1, 2)
     $ffi->attach( [uint16_static_array => 'static_array'] => [] => 'uint16_a');
     $ffi->attach( [pointer_null => 'null2'] => [] => 'uint16_a');
 
-    if($api == 2)
+    if($api >= 2)
     {
       $ffi->attach( [uint16_sum => 'sum3'] => ['uint16*'] => 'uint16' );
       $ffi->attach( [uint16_array_inc => 'array_inc2'] => ['uint16*'] => 'void');
@@ -57,7 +57,7 @@ foreach my $api (0, 1, 2)
     is sum(\@list), 55, 'sum([1..10]) = 55';
     is sum2(\@list, scalar @list), 55, 'sum2([1..10],10) = 55';
 
-    if($api == 2)
+    if($api >= 2)
     {
       is(sum3(\@list), 55, 'sum([1..10]) = 55 (passed as pointer)');
     }
@@ -67,7 +67,7 @@ foreach my $api (0, 1, 2)
 
     is \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
 
-    if($api == 2)
+    if($api >= 2)
     {
       @list = (1,2,3,4,5,6,7,8,9,10);
       array_inc2(\@list);

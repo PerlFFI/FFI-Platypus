@@ -31,7 +31,7 @@ foreach my $api (0, 1, 2)
     $ffi->attach( [float_static_array => 'static_array'] => [] => 'float_a');
     $ffi->attach( [pointer_null => 'null2'] => [] => 'float_a');
 
-    if($api == 2)
+    if($api >= 2)
     {
       $ffi->attach( [float_sum => 'sum3'] => ['float*'] => 'float');
       $ffi->attach( [float_array_inc => 'array_inc2'] => ['float*'] => 'void');
@@ -52,7 +52,7 @@ foreach my $api (0, 1, 2)
     is sum(\@list), 55, 'sum([1..10]) = 55';
     is sum2(\@list,scalar @list), 55, 'sum2([1..10],10) = 55';
 
-    if($api == 2)
+    if($api >= 2)
     {
       is sum3(\@list), 55, 'sum([1..10]) = 55';
     }
@@ -62,7 +62,7 @@ foreach my $api (0, 1, 2)
 
     is \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
 
-    if($api == 2)
+    if($api >= 2)
     {
       array_inc2(\@list);
       is \@list, [3,4,5,6,7,8,9,10,11,12], 'array increment';

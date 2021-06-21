@@ -31,7 +31,7 @@ foreach my $api (0, 1, 2)
     $ffi->attach( [sint8_static_array => 'static_array'] => [] => 'sint8_a');
     $ffi->attach( [pointer_null => 'null2'] => [] => 'sint8_a');
 
-    if($api == 2)
+    if($api >= 2)
     {
       $ffi->attach( [sint8_sum => 'sum3'] => ['sint8*'] => 'sint8' );
       $ffi->attach( [sint8_array_inc => 'array_inc2'] => ['sint8*'] => 'void');
@@ -52,7 +52,7 @@ foreach my $api (0, 1, 2)
     is sum(\@list), -5, 'sum([-5..4]) = -5';
     is sum2(\@list,scalar @list), -5, 'sum([-5..4],10) = -5';
 
-    if($api == 2)
+    if($api >= 2)
     {
       is(sum3(\@list), -5, 'sum([-5..4]) = -5 (passed as pointer)');
     }
@@ -62,7 +62,7 @@ foreach my $api (0, 1, 2)
 
     is \@list, [-4,-3,-2,-1,0,1,2,3,4,5], 'array increment';
 
-    if($api == 2)
+    if($api >= 2)
     {
       @list = (-5,-4,-3,-2,-1,0,1,2,3,4);
       array_inc2(\@list);
