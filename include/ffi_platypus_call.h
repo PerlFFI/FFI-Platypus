@@ -452,6 +452,24 @@
                             ((double*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
                           }
                           break;
+#ifdef FFI_PL_PROBE_COMPLEX
+                        case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, float complex);
+                          for(n=0; n<count; n++)
+                          {
+                            SV *sv = *av_fetch(av, n, 1);
+                            ffi_pl_perl_to_complex_float(sv, &((float*)ptr)[n*2]);
+                          }
+                          break;
+                        case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, double complex);
+                          for(n=0; n<count; n++)
+                          {
+                            SV *sv = *av_fetch(av, n, 1);
+                            ffi_pl_perl_to_complex_double(sv, &((double*)ptr)[n*2]);
+                          }
+                          break;
+#endif
                         default:
                           ptr = NULL;
                           warn("argument type not supported (%d)", i);
