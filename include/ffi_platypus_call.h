@@ -777,68 +777,71 @@
           {
 
 /*
- * ARGUMENT OUT - POINTER TYPES
+ * ARGUMENT OUT - POINTER & ARRAY TYPES
  */
+
             case FFI_PL_SHAPE_POINTER:
+            /*case FFI_PL_SHAPE_ARRAY:*/
               {
                 void *ptr = ffi_pl_arguments_get_pointer(arguments, i);
                 if(ptr != NULL)
                 {
                   arg = perl_arg_index < items ? ST(perl_arg_index) : &PL_sv_undef;
-                  if(SvTYPE(SvRV(arg)) == SVt_PVAV)
+                  SV *arg2 = SvRV(arg);
+                  if(SvTYPE(arg2) == SVt_PVAV)
                   {
                   }
-                  else if(!SvREADONLY(SvRV(arg)))
+                  else if(SvTYPE(arg2) < SVt_PVAV && !SvREADONLY(arg2))
                   {
                     switch(type_code)
                     {
                       case FFI_PL_TYPE_UINT8 | FFI_PL_SHAPE_POINTER:
-                        sv_setuv(SvRV(arg), *((uint8_t*)ptr));
+                        sv_setuv(arg2, *((uint8_t*)ptr));
                         break;
                       case FFI_PL_TYPE_SINT8 | FFI_PL_SHAPE_POINTER:
-                        sv_setiv(SvRV(arg), *((int8_t*)ptr));
+                        sv_setiv(arg2, *((int8_t*)ptr));
                         break;
                       case FFI_PL_TYPE_UINT16 | FFI_PL_SHAPE_POINTER:
-                        sv_setuv(SvRV(arg), *((uint16_t*)ptr));
+                        sv_setuv(arg2, *((uint16_t*)ptr));
                         break;
                       case FFI_PL_TYPE_SINT16 | FFI_PL_SHAPE_POINTER:
-                        sv_setiv(SvRV(arg), *((int16_t*)ptr));
+                        sv_setiv(arg2, *((int16_t*)ptr));
                         break;
                       case FFI_PL_TYPE_UINT32 | FFI_PL_SHAPE_POINTER:
-                        sv_setuv(SvRV(arg), *((uint32_t*)ptr));
+                        sv_setuv(arg2, *((uint32_t*)ptr));
                         break;
                       case FFI_PL_TYPE_SINT32 | FFI_PL_SHAPE_POINTER:
-                        sv_setiv(SvRV(arg), *((int32_t*)ptr));
+                        sv_setiv(arg2, *((int32_t*)ptr));
                         break;
                       case FFI_PL_TYPE_UINT64 | FFI_PL_SHAPE_POINTER:
-                        sv_setu64(SvRV(arg), *((uint64_t*)ptr));
+                        sv_setu64(arg2, *((uint64_t*)ptr));
                         break;
                       case FFI_PL_TYPE_SINT64 | FFI_PL_SHAPE_POINTER:
-                        sv_seti64(SvRV(arg), *((int64_t*)ptr));
+                        sv_seti64(arg2, *((int64_t*)ptr));
                         break;
                       case FFI_PL_TYPE_FLOAT | FFI_PL_SHAPE_POINTER:
-                        sv_setnv(SvRV(arg), *((float*)ptr));
+                        sv_setnv(arg2, *((float*)ptr));
                         break;
                       case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
                         if( *((void**)ptr) == NULL)
-                          sv_setsv(SvRV(arg), &PL_sv_undef);
+                          sv_setsv(arg2, &PL_sv_undef);
                         else
-                          sv_setiv(SvRV(arg), PTR2IV(*((void**)ptr)));
+                          sv_setiv(arg2, PTR2IV(*((void**)ptr)));
                         break;
                       case FFI_PL_TYPE_DOUBLE | FFI_PL_SHAPE_POINTER:
-                        sv_setnv(SvRV(arg), *((double*)ptr));
+                        sv_setnv(arg2, *((double*)ptr));
                         break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
                       case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
-                        ffi_pl_long_double_to_perl(SvRV(arg),(long double*)ptr);
+                        ffi_pl_long_double_to_perl(arg2,(long double*)ptr);
                         break;
 #endif
 #ifdef FFI_PL_PROBE_COMPLEX
                       case FFI_PL_TYPE_COMPLEX_FLOAT | FFI_PL_SHAPE_POINTER:
-                        ffi_pl_complex_float_to_perl(SvRV(arg), (float *)ptr);
+                        ffi_pl_complex_float_to_perl(arg2, (float *)ptr);
                         break;
                       case FFI_PL_TYPE_COMPLEX_DOUBLE | FFI_PL_SHAPE_POINTER:
-                        ffi_pl_complex_double_to_perl(SvRV(arg), (double *)ptr);
+                        ffi_pl_complex_double_to_perl(arg2, (double *)ptr);
                         break;
 #endif
                       case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
@@ -846,11 +849,11 @@
                           char **pv = ptr;
                           if(*pv == NULL)
                           {
-                            sv_setsv(SvRV(arg), &PL_sv_undef);
+                            sv_setsv(arg2, &PL_sv_undef);
                           }
                           else
                           {
-                            sv_setpv(SvRV(arg), *pv);
+                            sv_setpv(arg2, *pv);
                           }
                         }
                         break;
