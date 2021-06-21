@@ -130,6 +130,8 @@ the [lib](#lib) attribute.
 
 - api
 
+    \[version 0.91\]
+
     Sets the API level.  Legal values are
 
     - `0`

@@ -164,6 +164,8 @@ the L<lib|/lib> attribute.
 
 =item api
 
+[version 0.91]
+
 Sets the API level.  Legal values are
 
 =over
