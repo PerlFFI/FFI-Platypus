@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Experimental: with api => 2, you can now pass an array reference to
+    a pointer argument, which is roughly equivalent to an array type with
+    no size, example: sint[] (gh#227, gh#332)
 
 1.44      2021-06-20 06:50:03 -0600
   - Migrate test suite to Test::V0 (gh#327)
