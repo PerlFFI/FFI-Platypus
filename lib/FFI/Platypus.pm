@@ -182,6 +182,27 @@ version 1.00 will trigger a (noisy) warning.
 All new code should be written with this set to 1!  The Platypus documentation
 assumes this api level is set.
 
+=item C<2>
+
+Enable version 2 API, which is currently experimental.  Using API level 2 prior
+to Platypus version 2.00 will trigger a (noisy) warning.
+
+API version 2 is identical to version 1, except:
+
+=over 4
+
+=item Pointer functions that return C<NULL> will return C<undef> instead of empty list
+
+This is a long standing design bug in Platypus.
+
+=item Array references may be passed to pointer argument types
+
+This replicates the behavior of array argument types with no size.  So the types C<sint8*> and C<sint8[]>
+behave identically when an array reference is passed in.  They differ in that, as before, you can
+pass a scalar reference into type C<sint8*>.
+
+=back
+
 =back
 
 =item lib

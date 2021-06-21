@@ -146,6 +146,23 @@ the [lib](#lib) attribute.
         All new code should be written with this set to 1!  The Platypus documentation
         assumes this api level is set.
 
+    - `2`
+
+        Enable version 2 API, which is currently experimental.  Using API level 2 prior
+        to Platypus version 2.00 will trigger a (noisy) warning.
+
+        API version 2 is identical to version 1, except:
+
+        - Pointer functions that return `NULL` will return `undef` instead of empty list
+
+            This is a long standing design bug in Platypus.
+
+        - Array references may be passed to pointer argument types
+
+            This replicates the behavior of array argument types with no size.  So the types `sint8*` and `sint8[]`
+            behave identically when an array reference is passed in.  They differ in that, as before, you can
+            pass a scalar reference into type `sint8*`.
+
 - lib
 
     Either a pathname (string) or a list of pathnames (array ref of strings)
