@@ -1,3 +1,8 @@
+#
+# DO NOT MODIFY THIS FILE.
+# This file generated from similar file t/type_complex_float.t
+# all instances of "float" have been changed to "double"
+#
 use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::Platypus::TypeParser;

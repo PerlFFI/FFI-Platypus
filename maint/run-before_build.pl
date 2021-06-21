@@ -32,8 +32,8 @@ foreach my $bits (qw( 16 32 64 ))
     my $new = $orig;
     $new =~ s/8/$bits/;
 
-    open my $in, '<', $orig;
-    open my $out, '>', $new;
+    open my $in, '<', $orig or die "unable to read $orig";
+    open my $out, '>', $new or die "unable to write $new";
 
     if($orig =~ /\.c$/)
     {
@@ -67,13 +67,13 @@ foreach my $bits (qw( 16 32 64 ))
 
 foreach my $type (qw( double ))
 {
-  foreach my $orig (qw( t/ffi/float.c t/type_float.t ))
+  foreach my $orig (qw( t/ffi/float.c t/type_float.t t/type_complex_float.t t/ffi/complex_float.c ))
   {
     my $new = $orig;
     $new =~ s/float/$type/;
 
-    open my $in, '<', $orig;
-    open my $out, '>', $new;
+    open my $in, '<', $orig or die "unable to read $orig $!";
+    open my $out, '>', $new or die "unable to write $new $!";
 
     if($orig =~ /\.c$/)
     {
@@ -97,6 +97,16 @@ foreach my $type (qw( double ))
     while(<$in>)
     {
       s/float/$type/eg;
+      s/SIZEOF_FLOAT_COMPLEX/"SIZEOF_@{[ uc $type ]}_COMPLEX"/eg;
+      if($type eq 'double')
+      {
+        s/crealf/creal/g;
+        s/cimagf/cimag/g;
+      }
+      else
+      {
+        die 'todo';
+      }
       print $out $_;
     }
 

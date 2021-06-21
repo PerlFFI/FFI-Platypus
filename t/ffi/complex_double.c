@@ -1,3 +1,8 @@
+/*
+ * DO NOT MODIFY THIS FILE.
+ * This file generated from similar file t/ffi/complex_float.c
+ * all instances of "float" have been changed to "double"
+ */
 #include "libtest.h"
 #if SIZEOF_DOUBLE_COMPLEX
 
@@ -24,13 +29,13 @@ complex_double_to_string(double complex f)
 EXTERN double
 complex_double_ptr_get_real(double complex *f)
 {
-  return crealf(*f);
+  return creal(*f);
 }
 
 EXTERN double
 complex_double_ptr_get_imag(double complex *f)
 {
-  return cimagf(*f);
+  return cimag(*f);
 }
 
 EXTERN void
