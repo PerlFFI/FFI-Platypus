@@ -39,6 +39,7 @@ foreach my $api (0, 1, 2)
     if($api == 2)
     {
       $ffi->attach( [sint16_sum => 'sum3'] => ['sint16*'] => 'sint16' );
+      $ffi->attach( [sint16_array_inc => 'array_inc2'] => ['sint16*'] => 'void');
     }
 
     is add(-1,2), 1, 'add(-1,2) = 1';
@@ -65,6 +66,13 @@ foreach my $api (0, 1, 2)
     do { local $SIG{__WARN__} = sub {}; array_inc() };
 
     is \@list, [-4,-3,-2,-1,0,1,2,3,4,5], 'array increment';
+
+    if($api == 2)
+    {
+      @list = (-5,-4,-3,-2,-1,0,1,2,3,4);
+      array_inc2(\@list);
+      is \@list, [-4,-3,-2,-1,0,1,2,3,4,5], 'array increment';
+    }
 
     is [null()], [$api >= 2 ? (undef) : ()], 'null() == undef';
     is is_null(undef), 1, 'is_null(undef) == 1';

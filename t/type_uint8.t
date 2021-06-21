@@ -34,6 +34,7 @@ foreach my $api (0, 1, 2)
     if($api == 2)
     {
       $ffi->attach( [uint8_sum => 'sum3'] => ['uint8*'] => 'uint8' );
+      $ffi->attach( [uint8_array_inc => 'array_inc2'] => ['uint8*'] => 'void');
     }
 
     is add(1,2), 3, 'add(1,2) = 3';
@@ -60,6 +61,13 @@ foreach my $api (0, 1, 2)
     do { local $SIG{__WARN__} = sub {}; array_inc() };
 
     is \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
+
+    if($api == 2)
+    {
+      @list = (1,2,3,4,5,6,7,8,9,10);
+      array_inc2(\@list);
+      is \@list, [2,3,4,5,6,7,8,9,10,11], 'array increment';
+   }
 
     is [null()], [$api >= 2 ? (undef) : ()], 'null() == undef';
     is is_null(undef), 1, 'is_null(undef) == 1';
