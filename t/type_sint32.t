@@ -36,6 +36,11 @@ foreach my $api (0, 1, 2)
     $ffi->attach( [sint32_static_array => 'static_array'] => [] => 'sint32_a');
     $ffi->attach( [pointer_null => 'null2'] => [] => 'sint32_a');
 
+    if($api == 2)
+    {
+      $ffi->attach( [sint32_sum => 'sum3'] => ['sint32*'] => 'sint32' );
+    }
+
     is add(-1,2), 1, 'add(-1,2) = 1';
     is do { no warnings; add() }, 0, 'add() = 0';
 
@@ -50,6 +55,11 @@ foreach my $api (0, 1, 2)
 
     is sum(\@list), -5, 'sum([-5..4]) = -5';
     is sum2(\@list,scalar @list), -5, 'sum([-5..4],10) = -5';
+
+    if($api == 2)
+    {
+      is(sum3(\@list), -5, 'sum([-5..4]) = -5 (passed as pointer)');
+    }
 
     array_inc(\@list);
     do { local $SIG{__WARN__} = sub {}; array_inc() };
