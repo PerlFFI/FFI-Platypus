@@ -52,8 +52,10 @@ foreach my $api (0, 1, 2)
     free $ptr;
 
     $ffi->attach( [pointer_arg_array_in  => 'aa_in']  => ['opaque[3]'] => 'int');
+    $ffi->attach( [pointer_arg_array_in  => 'aa_in_ptr']  => ['opaque*'] => 'int') if $api >= 2;
     $ffi->attach( [pointer_arg_array_null_in  => 'aa_null_in']  => ['opaque[3]'] => 'int');
     $ffi->attach( [pointer_arg_array_out => 'aa_out'] => ['opaque[3]'] => 'void');
+    $ffi->attach( [pointer_arg_array_out => 'aa_out_ptr'] => ['opaque*'] => 'void') if $api >= 2;
     $ffi->attach( [pointer_arg_array_null_out => 'aa_null_out'] => ['opaque[3]'] => 'void');
 
     do {
@@ -62,9 +64,23 @@ foreach my $api (0, 1, 2)
       free $_ for @stuff;
     };
 
+    if($api >= 2)
+    {
+      my @stuff = map { perl_to_c_string_copy($_) } qw( one two three );
+      is aa_in_ptr([@stuff]), 1, "aa_in([one two three])";
+      free $_ for @stuff;
+    };
+
     is aa_null_in([undef,undef,undef]), 1, "aa_null_in([undef,undef,undef])";
 
     do {
+      my @list = (undef,undef,undef);
+      aa_out(\@list);
+      is [map { $ffi->cast('opaque' => 'string', $_) } @list], [qw( four five six )], 'aa_out()';
+    };
+
+    if($api >= 2)
+    {
       my @list = (undef,undef,undef);
       aa_out(\@list);
       is [map { $ffi->cast('opaque' => 'string', $_) } @list], [qw( four five six )], 'aa_out()';
