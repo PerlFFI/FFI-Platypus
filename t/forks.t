@@ -31,6 +31,8 @@ sub otherthread
   $val;
 }
 
+ok 1;
+
 is(threads->create(\&otherthread)->join(), 22, 'works in a thread');
 
 is f0(24), 24, 'works in main thread';
