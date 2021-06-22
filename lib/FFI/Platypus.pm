@@ -763,10 +763,18 @@ sub function
     $fixed_args = [];
   }
 
-  my $args = [@$fixed_args, @{ $var_args || [] } ];
   my $fixed_arg_count = defined $var_args ? scalar(@$fixed_args) : -1;
 
-  my @args = map { $self->{tp}->parse($_) || croak "unknown type: $_" } @$args;
+  my @args = map { $self->{tp}->parse($_) || croak "unknown type: $_" } @$fixed_args;
+  if($var_args)
+  {
+    push @args, map {
+      my $type = $self->{tp}->parse($_);
+      # https://github.com/PerlFFI/FFI-Platypus/issues/323
+      $type->type_code == 67 ? $self->{tp}->parse('double') : $type
+    } @$var_args;
+  }
+
   $ret = $self->{tp}->parse($ret) || croak "unknown type: $ret";
   my $address = $name =~ /^-?[0-9]+$/ ? $name : $self->find_symbol($name);
   croak "unable to find $name" unless defined $address || $self->ignore_not_found;
