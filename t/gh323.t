@@ -9,6 +9,8 @@ foreach my $api (0,1,2)
 
     our $ffi = FFI::Platypus->new( api => $api, lib => [undef], experimental => ($api >=2 ? $api : undef));
 
+    $ffi->type('float' => 'my_float');
+
     sub callit
     {
       my($type) = @_;
@@ -25,6 +27,11 @@ foreach my $api (0,1,2)
     note "double = $double";
     note "float  = $float";
     is $float, $double;
+
+    $float  = callit('my_float');
+    note "my_float = $float";
+    is $float, $double;
+
   };
 }
 
