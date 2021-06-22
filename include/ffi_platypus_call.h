@@ -452,6 +452,14 @@
                             ((double*)ptr)[n] = SvNV(*av_fetch(av, n, 1));
                           }
                           break;
+                        case FFI_PL_TYPE_OPAQUE | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, void*);
+                          for(n=0; n<count; n++)
+                          {
+                            SV *sv = *av_fetch(av, n, 1);
+                            ((void**)ptr)[n] = SvOK(sv) ? INT2PTR(void*, SvIV(sv)) : NULL;
+                          }
+                          break;
 #ifdef FFI_PL_PROBE_LONGDOUBLE
                         case FFI_PL_TYPE_LONG_DOUBLE | FFI_PL_SHAPE_POINTER:
                           /* gh#236: lets hope the compiler is smart enough to opitmize this */
