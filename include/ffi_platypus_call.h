@@ -496,6 +496,28 @@
                           }
                           break;
 #endif
+                        case FFI_PL_TYPE_STRING | FFI_PL_SHAPE_POINTER:
+                          Newx(ptr, count, char *);
+                          for(n=0; n<count; n++)
+                          {
+                            SV *sv = *av_fetch(av, n, 1);
+                            if(SvOK(sv))
+                            {
+                              char *str;
+                              char *pv;
+                              STRLEN len;
+                              pv = SvPV(sv, len);
+                              /* TODO: this should probably be a malloc since it could be arbitrarily large */
+                              Newx_or_alloca(str, len+1, char);
+                              memcpy(str, pv, len+1);
+                              ((char**)ptr)[n] = str;
+                            }
+                            else
+                            {
+                              ((char**)ptr)[n] = NULL;
+                            }
+                          }
+                          break;
                         default:
                           ptr = NULL;
                           warn("argument type not supported (%d)", i);

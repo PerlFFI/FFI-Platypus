@@ -132,6 +132,23 @@ foreach my $api (0, 1, 2)
       is $get_string_from_array->(\@list, 3), undef, "get_string_from_array(\@list, 3) = undef";
     };
 
+    subtest 'variable length input' => sub {
+
+      skip_all 'test requires api >=2'
+        unless $api >= 2;
+
+      my $get_string_from_array = $ffi->function(get_string_from_array => ['string*','int'] => 'string');
+
+      my @list = ('foo', 'bar', 'baz', undef );
+
+      for(0..2)
+      {
+        is $get_string_from_array->(\@list, $_), $list[$_], "get_string_from_array(\@list, $_) = $list[$_]";
+      }
+
+      is $get_string_from_array->(\@list, 3), undef, "get_string_from_array(\@list, 3) = undef";
+    };
+
     subtest 'fixed length return' => sub {
 
       $ffi->type('string[3]' => 'sa3');
