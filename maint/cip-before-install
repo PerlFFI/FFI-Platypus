@@ -6,6 +6,10 @@ cip sudo apt-get update
 cip sudo apt-get install libffi-dev
 cip exec cpanm -n version
 
+if [ "$CIP_TAG" == "5.34" ]; then
+  cip exec cpanm -n forks
+fi
+
 if [ "$CIP_TAG" == "5.32-debug" ]; then
   cip exec cpanm -n Test::LeakTrace
 fi
