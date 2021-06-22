@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - Test forks in CI (gh#333, #334, #335)
+  - Internal refactor of pointer and array input arguments to reduce
+    duplication (gh#336)
 
 1.47_01   2021-06-21 22:24:40 -0600
   - Restore experimental code from 1.45_01
