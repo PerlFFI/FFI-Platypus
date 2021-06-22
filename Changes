@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.48_01   2021-06-22 00:32:02 -0600
   - Test forks in CI (gh#333, #334, #335)
   - Internal refactor of pointer and array input arguments to reduce
     duplication (gh#336)
