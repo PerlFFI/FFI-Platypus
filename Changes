@@ -2,6 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.47_01   2021-06-21 22:24:40 -0600
+  - Restore experimental code from 1.45_01
+
+1.46      2021-06-21 22:20:12 -0600
+  - Hotfix due to testing bug in 1.44 (gh#333)
+  - This version does not include experimental code from 1.45_01.
+
 1.45_01   2021-06-21 18:23:17 -0600
   - Experimental: with api => 2, you can now pass an array reference to
     a pointer argument, which is roughly equivalent to an array type with
