@@ -2,6 +2,15 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.46      2021-06-21 22:20:12 -0600
+  - Hotfix due to testing bug in 1.44 (gh#333)
+  - This version does not include experimental code from 1.45_01.
+
+1.45_01   2021-06-21 18:23:17 -0600
+  - Experimental: with api => 2, you can now pass an array reference to
+    a pointer argument, which is roughly equivalent to an array type with
+    no size, example: sint[] (gh#227, gh#332)
+
 1.44      2021-06-20 06:50:03 -0600
   - Migrate test suite to Test::V0 (gh#327)
   - Use parent instead of base in documentation and in code (gh#239 jjatria++)
