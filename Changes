@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - float gets promoted to double when used as a varadic argument
+    (gh#323, gh#338)
 
 1.48_01   2021-06-22 00:32:02 -0600
   - Test forks in CI (gh#333, #334, #335)
