@@ -1,0 +1,28 @@
+name: static
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  perl:
+
+    runs-on: ubuntu-latest
+
+    env:
+      CIP_TAG: static
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Bootstrap CIP
+        run: |
+          curl -L https://raw.githubusercontent.com/uperl/cip/main/bin/github-bootstrap | bash
+
+      - name: Build + Test
+        run: |
+          cip script

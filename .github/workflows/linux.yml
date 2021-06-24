@@ -17,7 +17,6 @@ jobs:
       fail-fast: false
       matrix:
         cip:
-          - tag: static
           - tag: "5.35"
           - tag: "5.34"
           - tag: "5.34"
