@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Probe for intmax_t uintmax_t types (gh#341)
 
 1.50      2021-06-30 08:34:17 -0600
   - Production release identical to 1.49_01
