@@ -55,6 +55,8 @@ uintptr_t
 intptr_t
 enum
 senum
+intmax_t
+uintmax_t
 EOF
 
 my @extra_probe_types = split /\n/, <<EOF;

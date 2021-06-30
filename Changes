@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Probe for intmax_t uintmax_t types (gh#341)
 
 1.51      2021-07-01 07:25:38 -0600
   - Fix testing bug that was failing on systems with libffi that does
