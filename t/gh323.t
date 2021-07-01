@@ -2,6 +2,10 @@ use Test2::V0 -no_srand => 1;
 use FFI::Platypus;
 use FFI::Platypus::Memory qw( malloc free );
 
+skip_all 'test requires variadic function support'
+  unless eval { FFI::Platypus->new( lib => [undef] )->function(
+    sprintf => ['opaque', 'string'] => ['float'] ) };
+
 foreach my $api (0,1,2)
 {
 
