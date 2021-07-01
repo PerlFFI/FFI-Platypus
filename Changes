@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.52      2021-07-01 07:33:44 -0600
   - Probe for intmax_t uintmax_t types (gh#341)
 
 1.51      2021-07-01 07:25:38 -0600
