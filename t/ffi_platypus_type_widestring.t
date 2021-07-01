@@ -10,7 +10,7 @@ my($encoding,$width) = eval { FFI::Platypus::Type::WideString->_compute_wide_str
 if(my $error = $@)
 {
   $error =~ s/ at .*$//;
-  plan skip_all => "Unable to detect wide string details: $error\n";
+  skip_all "Unable to detect wide string details: $error\n";
 }
 
 # This test assumes a wchar_t of at least 2 bytes, which is probably true
@@ -51,8 +51,8 @@ my $wcsdup = do {
 subtest 'wcschr' => sub {
 
   my $wcschr = $ffi->function( wcschr => ['opaque','wchar_t'] => 'wstring' );
-  plan skip_all => 'Test requires wcschr' unless defined $wcschr;
-  plan skip_all => 'Test requires wcsdup' unless defined $wcsdup;
+  skip_all 'Test requires wcschr' unless defined $wcschr;
+  skip_all 'Test requires wcsdup' unless defined $wcsdup;
 
   is( $ffi->cast( opaque => 'wstring', $wcsdup->call("I \x{2764} Platypus")), "I \x{2764} Platypus" );
 
@@ -73,7 +73,7 @@ my @strings = (
 subtest 'wide string as argument (in)' => sub {
 
   my $wcslen = $ffi->function( wcslen => ['wstring'] => 'size_t' );
-  plan skip_all => 'Test requires wcslen' unless defined $wcslen;
+  skip_all 'Test requires wcslen' unless defined $wcslen;
 
   foreach my $test (@strings)
   {
@@ -90,7 +90,7 @@ subtest 'wide string as argument (in)' => sub {
 subtest 'wide string as argument (out)' => sub {
 
   my $wcscpy = $ffi->function( wcscpy => ['wstring_w','wstring'] );
-  plan skip_all => 'Test requires wcscpy' unless defined $wcscpy;
+  skip_all 'Test requires wcscpy' unless defined $wcscpy;
 
   foreach my $test (@strings)
   {
@@ -111,7 +111,7 @@ subtest 'wide string as argument (out)' => sub {
 
 subtest 'wide string as a return value' => sub {
 
-  plan skip_all => 'Test requires wcsdup' unless defined $wcsdup;
+  skip_all 'Test requires wcsdup' unless defined $wcsdup;
 
   foreach my $test (@strings)
   {
@@ -127,7 +127,7 @@ subtest 'wide string as a return value' => sub {
 subtest 'wide string as in-out argument' => sub {
 
   my $wcscat = $ffi->function( wcscat => ['wstring_w','wstring'] );
-  plan skip_all => 'Test requires wcscat' unless defined $wcscat;
+  skip_all 'Test requires wcscat' unless defined $wcscat;
 
   foreach my $test (@strings)
   {

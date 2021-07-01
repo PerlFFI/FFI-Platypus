@@ -26,7 +26,7 @@ subtest basic => sub {
 
   subtest 'longdouble' => sub {
 
-    plan skip_all => 'test requires support for long double'
+    skip_all 'test requires support for long double'
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     is(
@@ -46,10 +46,10 @@ subtest basic => sub {
 
   subtest 'complex' => sub {
 
-    plan skip_all => 'test requires support for complex'
+    skip_all 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_float');
 
-    plan skip_all => 'test requires support for complex'
+    skip_all 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     is(
@@ -234,7 +234,7 @@ subtest array => sub {
 
   subtest 'longdouble' => sub {
 
-    plan skip_all => 'test requires support for long double'
+    skip_all 'test requires support for long double'
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     is(
@@ -255,10 +255,10 @@ subtest array => sub {
 
   subtest 'complex' => sub {
 
-    plan skip_all => 'test requires support for complex'
+    skip_all 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_float');
 
-    plan skip_all => 'test requires support for complex'
+    skip_all 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     is(
@@ -311,7 +311,7 @@ subtest pointer => sub {
 
   subtest 'longdouble' => sub {
 
-    plan skip_all => 'test requires support for long double'
+    skip_all 'test requires support for long double'
       unless FFI::Platypus::TypeParser->have_type('longdouble');
 
     is(
@@ -331,10 +331,10 @@ subtest pointer => sub {
 
   subtest 'complex' => sub {
 
-    plan skip_all => 'test requires support for complex'
+    skip_all 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_float');
 
-    plan skip_all => 'test requires support for complex'
+    skip_all 'test requires support for complex'
       unless FFI::Platypus::TypeParser->have_type('complex_double');
 
     is(

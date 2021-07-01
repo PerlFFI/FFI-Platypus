@@ -58,7 +58,7 @@ subtest 'is a reference' => sub {
 
   subtest 'return value' => sub {
 
-    plan skip_all => 'test requires working return records-by-value'
+    skip_all 'test requires working return records-by-value'
       unless $return_ok;
 
     subtest 'function object' => sub {

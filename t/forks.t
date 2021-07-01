@@ -12,7 +12,7 @@ BEGIN
     last if -f $path;
   }
 
-  plan skip_all => 'Test requires forks' unless defined $path && -f $path;
+  skip_all 'Test requires forks' unless defined $path && -f $path;
 }
 
 use forks;

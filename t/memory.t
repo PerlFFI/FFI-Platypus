@@ -5,8 +5,8 @@ use FFI::Temp;
 
 # libexpat1-dev
 
-plan skip_all => 'tested only in CI' if ($ENV{CIPSOMETHING}||'') ne 'true';
-plan skip_all => 'tested only in CI -debug' if $Config{ccflags} !~ /-DDEBUG_LEAKING_SCALARS/;
+skip_all 'tested only in CI' if ($ENV{CIPSOMETHING}||'') ne 'true';
+skip_all 'tested only in CI -debug' if $Config{ccflags} !~ /-DDEBUG_LEAKING_SCALARS/;
 
 my %exfail = map { $_ => 1 } qw( attach.pl );
 

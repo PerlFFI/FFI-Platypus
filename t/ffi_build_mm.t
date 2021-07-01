@@ -147,7 +147,7 @@ subtest 'with a build!' => sub {
 };
 
 subtest 'alien' => sub {
-  plan skip_all => 'todo';
+  skip_all 'todo';
 };
 
 done_testing;

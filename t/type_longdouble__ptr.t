@@ -5,7 +5,7 @@ use FFI::CheckLib;
 use Config;
 
 BEGIN {
-  plan skip_all => 'test requires support for long double'
+  skip_all 'test requires support for long double'
     unless FFI::Platypus::TypeParser->have_type('longdouble');
 }
 

@@ -7,7 +7,7 @@ use FFI::Platypus::Lang::Win32;
   if(my $error = $@)
   {
     $error =~ s/ at .*$//;
-    plan skip_all => "Unable to detect wide string details: $error\n";
+    skip_all "Unable to detect wide string details: $error\n";
   }
 
   note "encoding = $encoding";
@@ -43,7 +43,7 @@ my @strings = (
 );
 
 subtest 'LPCWSTR' => sub {
-  plan skip_all => 'Test only works on Windows' unless $^O eq 'MSWin32';
+  skip_all 'Test only works on Windows' unless $^O eq 'MSWin32';
 
   my $lstrlenW = $ffi->function( lstrlenW => [ 'LPCWSTR' ] => 'int' );
 
@@ -55,7 +55,7 @@ subtest 'LPCWSTR' => sub {
 };
 
 subtest 'LPWSTR' => sub {
-  plan skip_all => 'Test only works on Windows' unless $^O eq 'MSWin32';
+  skip_all 'Test only works on Windows' unless $^O eq 'MSWin32';
 
   my $GetCurrentDirectoryW = $ffi->function( GetCurrentDirectoryW => ['DWORD','LPWSTR'] => 'DWORD' );
 
