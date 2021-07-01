@@ -5,7 +5,7 @@ use FFI::CheckLib;
 use Data::Dumper qw( Dumper );
 
 BEGIN {
-  plan skip_all => 'Test requires support for float complex'
+  skip_all 'Test requires support for float complex'
     unless FFI::Platypus::TypeParser->have_type('complex_float');
 }
 
@@ -41,7 +41,7 @@ foreach my $api (0, 1, 2)
       };
 
       subtest 'with Math::Complex' => sub {
-        plan skip_all => 'test requires Math::Complex'
+        skip_all 'test requires Math::Complex'
           unless eval q{ use Math::Complex (); 1 };
         my $c = Math::Complex->make(10.5, 20.5);
         note "to_string(\$c) = ", to_string($c);
@@ -68,7 +68,7 @@ foreach my $api (0, 1, 2)
       };
 
       subtest 'with Math::Complex' => sub {
-        plan skip_all => 'test requires Math::Complex'
+        skip_all 'test requires Math::Complex'
           unless eval q{ use Math::Complex (); 1 };
         my $c = Math::Complex->make(10.5, 20.5);
         note "to_string(\$c) = ", to_string($c);
@@ -83,7 +83,7 @@ foreach my $api (0, 1, 2)
       };
 
       subtest 'values set on out (object)' => sub {
-        plan skip_all => 'test requires Math::Complex'
+        skip_all 'test requires Math::Complex'
           unless eval q{ use Math::Complex (); 1 };
         my $c = Math::Complex->make(0.0, 0.0);
         complex_set(\$c, 1.0, 2.0);

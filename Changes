@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix testing bug that was failing on systems with libffi that does
+    not support variadic functions (ppisar++ gh#323, gh#343, gh#345)
 
 1.50      2021-06-30 08:34:17 -0600
   - Production release identical to 1.49_01

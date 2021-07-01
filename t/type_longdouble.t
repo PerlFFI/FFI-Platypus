@@ -5,7 +5,7 @@ use FFI::CheckLib;
 use Config;
 
 BEGIN {
-  plan skip_all => 'test requires support for long double'
+  skip_all 'test requires support for long double'
     unless FFI::Platypus::TypeParser->have_type('longdouble');
 }
 
@@ -57,7 +57,7 @@ foreach my $api (0, 1, 2)
     $ffi->attach( pointer_null => [] => 'longdouble_p');
 
     subtest 'with Math::LongDouble' => sub {
-      plan skip_all => 'test requires Math::LongDouble'
+      skip_all 'test requires Math::LongDouble'
         if $Config{uselongdouble} || !eval q{ use Math::LongDouble; 1 };
 
       my $ld15 = Math::LongDouble->new(1.5);
@@ -129,7 +129,7 @@ foreach my $api (0, 1, 2)
     };
 
     subtest 'without Math::LongDouble' => sub {
-      plan skip_all => 'test requires Math::LongDouble'
+      skip_all 'test requires Math::LongDouble'
         if ! $Config{uselongdouble} || ! eval q{ use Math::LongDouble; 1 };
 
       subtest 'scalar' => sub {

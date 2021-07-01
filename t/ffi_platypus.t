@@ -381,7 +381,7 @@ subtest 'type' => sub {
     foreach my $name (map { "$_ *" } @list)
     {
       subtest $name => sub {
-        plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE POINTER' if $name eq 'string *';
+        skip_all 'ME GRIMLOCK SAY STRING CAN NO BE POINTER' if $name eq 'string *';
         my $ffi = FFI::Platypus->new;
         eval { $ffi->type($name) };
         is $@, '', "ffi.type($name)";
@@ -401,7 +401,7 @@ subtest 'type' => sub {
       my $name = "$basic [$size]";
 
       subtest $name => sub {
-        plan skip_all => 'ME GRIMLOCK SAY STRING CAN NO BE ARRAY' if $name =~ /^string \[[0-9]+\]$/; # TODO: actually this should be doable
+        skip_all 'ME GRIMLOCK SAY STRING CAN NO BE ARRAY' if $name =~ /^string \[[0-9]+\]$/; # TODO: actually this should be doable
         my $ffi = FFI::Platypus->new;
         eval { $ffi->type($name) };
         is $@, '', "ffi.type($name)";
@@ -531,7 +531,7 @@ subtest 'type' => sub {
     foreach my $name (@names)
     {
       subtest $name => sub {
-        plan skip_all => 'test requires longdouble support'
+        skip_all 'test requires longdouble support'
           unless FFI::Platypus::TypeParser->new->have_type($name);
         my $type = eval { FFI::Platypus::TypeParser::Version0->new->parse($name) };
         is $@, '', "type = FFI::Platypus::TypeParser::Version0->new->parse($name)";

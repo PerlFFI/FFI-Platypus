@@ -10,9 +10,9 @@ BEGIN {
     warn $message;
   };
 
-  plan skip_all => 'test requires support for long double'
+  skip_all 'test requires support for long double'
     unless FFI::Platypus::TypeParser->have_type('longdouble');
-  plan skip_all => 'test requires Devel::Hide 0.0010'
+  skip_all 'test requires Devel::Hide 0.0010'
     unless eval q{ use Devel::Hide 0.0010 qw( Math::LongDouble ); 1; };
 }
 
@@ -39,7 +39,7 @@ $ffi->attach( longdouble_pointer_return_test => ['longdouble'] => 'longdouble_p'
 $ffi->attach( pointer_null => [] => 'longdouble_p');
 
 subtest 'without Math::LongDouble' => sub {
-  plan skip_all => 'test requires Math::LongDouble'
+  skip_all 'test requires Math::LongDouble'
     if eval q{ use Math::LongDouble; 1 };
 
   subtest 'scalar' => sub {
