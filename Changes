@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.54_01   2021-07-12 17:05:37 -0600
+  - FFI::Temp will retry up to 10 times to avoid a race (gh#344, gh#348)
+
 1.53      2021-07-12 12:18:27 -0600
   - Documentation improvements (gh#307, gh#347)
 
