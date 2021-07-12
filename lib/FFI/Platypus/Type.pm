@@ -447,6 +447,32 @@ As a special case, when you pass C<undef> into a function that takes an
 opaque type it will be translated into C<NULL> for C.  When a C function
 returns a NULL pointer, it will be translated back to C<undef>.
 
+For functions that take a pointer to a void pointer (that is a C<void **>),
+you can use a pointer to an opaque type.  Consider the C code:
+
+ struct archive_entry;
+ int archive_read_next_header(struct archive *, struvct archive_entry **);
+
+Once again the internals of C<archive_entry> are not provided.  Perl code:
+
+ $ffi->type('opaque' => 'archive_entry');
+ $ffi->attach(archive_read_next_header => [ 'archive', 'archive_entry*' ] => 'int');
+
+Now we can call this function
+
+ my $archive = archive_read_new();
+ ...  # additional prep for $active is required
+ while(1) {
+   my $entry;
+   archive_read_next_header($archive, \$entry);
+   last unless defined $entry;
+   # can now use $entry for other archive_entry_ methods.
+ }
+
+The way C<archive_read_next_header> works, it will return a pointer to the next
+C<archive_entry> object until it gets to the end, when it will return a pointer
+to C<NULL> which will be represented in Perl by a C<undef>.
+
 There are a number of useful utility functions for dealing with opaque
 types in the L<FFI::Platypus::Memory> module.
 
