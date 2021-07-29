@@ -72,9 +72,9 @@ another language or Perl.  One goal of the Platypus Project is to reduce
 common interface specifications to a common format like JSON that could
 be shared between different languages.
 
-=item FFI / Platypus could be a bridge to Perl 6
+=item FFI / Platypus could be a bridge to Raku
 
-One of those "other" languages could be Perl 6 and Perl 6 already has an
+One of those "other" languages could be Raku and Raku already has an
 FFI interface I am told.
 
 =item FFI / Platypus can be reimplemented
@@ -1889,7 +1889,7 @@ the development package for C<libffi> as prereqs for this module.
 
 =item L<NativeCall>
 
-Promising interface to Platypus inspired by Perl 6.
+Promising interface to Platypus inspired by Raku.
 
 =item L<FFI::Platypus::Type>
 
