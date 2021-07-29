@@ -47,9 +47,9 @@ to write an extension with Platypus instead of XS:
     common interface specifications to a common format like JSON that could
     be shared between different languages.
 
-- FFI / Platypus could be a bridge to Perl 6
+- FFI / Platypus could be a bridge to Raku
 
-    One of those "other" languages could be Perl 6 and Perl 6 already has an
+    One of those "other" languages could be Raku and Raku already has an
     FFI interface I am told.
 
 - FFI / Platypus can be reimplemented
@@ -1851,7 +1851,7 @@ the development package for `libffi` as prereqs for this module.
 
 - [NativeCall](https://metacpan.org/pod/NativeCall)
 
-    Promising interface to Platypus inspired by Perl 6.
+    Promising interface to Platypus inspired by Raku.
 
 - [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type)
 
