@@ -147,6 +147,8 @@ pod_spelling_system:
     - JJATRIA
     - Joaqu
     - Jos
+    - openstrike
+    - Raku
 
 pod_coverage:
   skip: 0
