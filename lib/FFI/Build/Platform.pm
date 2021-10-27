@@ -371,7 +371,7 @@ sub ldflags
   elsif($self->osname eq 'darwin')
   {
     # we want to build a .dylib instead of a .bundle
-    @ldflags = map { $_ eq '-bundle' ? '-shared' : $_ } @ldflags;
+    @ldflags = map { $_ eq '-bundle' ? '-dynamiclib' : $_ } @ldflags;
   }
   \@ldflags;
 }
