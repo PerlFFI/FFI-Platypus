@@ -38,7 +38,12 @@ ffi_platypus_memory__strndup(const char *olds, size_t max)
   char *news;
   size_t size;
 
+#ifdef FFI_PL_PROBE_STRNLEN
   size = strnlen(olds, max);
+#else
+  for(size=0; size <max && olds[size] != '\0'; size++)
+    ;
+#endif
   news = malloc(size+1);
   if(news != NULL)
   {
