@@ -36,7 +36,7 @@ sub cc
 sub ld
 {
   my($self) = @_;
-  $self->platform->cxx;
+  $self->platform->cxxld;
 }
 
 1;

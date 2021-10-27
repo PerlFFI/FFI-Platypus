@@ -149,6 +149,7 @@ pod_spelling_system:
     - Jos
     - openstrike
     - Raku
+    - cxxld
 
 pod_coverage:
   skip: 0

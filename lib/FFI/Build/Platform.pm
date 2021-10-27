@@ -238,6 +238,34 @@ sub cxx
   Carp::croak("unable to detect corresponding C++ compiler");
 }
 
+=head2 cxxld
+
+ my @cxxld = @{ $platform->cxxld };
+
+The C++ linker that naturally goes with the C compiler.
+
+=cut
+
+sub cxxld
+{
+  my $self = _self(shift);
+
+  $DB::single = 1;
+
+  # This is definitely not exhaustive or complete or even
+  # particularlly good.  Patches welcome.
+
+  if($self->osname eq 'darwin')
+  {
+    my @cxx = @{ $self->cxx };
+    return [map { /^(cc|clang|gcc)$/ ? @cxx : $_ } @{ $self->ld }];
+  }
+  else
+  {
+    return $self->cxx;
+  }
+}
+
 =head2 for
 
  my @for = @{ $platform->for };
@@ -571,6 +599,7 @@ sub diag
   push @diag, "osname            : ". _c($self->osname);
   push @diag, "cc                : ". _l($self->cc);
   push @diag, "cxx               : ". (eval { _l($self->cxx) } || '---' );
+  push @diag, "cxxld             : ". (eval { _l($self->cxxld) } || '---' );
   push @diag, "for               : ". (eval { _l($self->for) } || '---' );
   push @diag, "ld                : ". _l($self->ld);
   push @diag, "ccflags           : ". _l($self->ccflags);

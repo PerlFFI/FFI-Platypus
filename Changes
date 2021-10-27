@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fixes for very old versions of Mac OS X / Xcode (gh#350)
 
 1.55      2021-07-29 10:41:02 -0600
   - Production release identical to 1.54_01
