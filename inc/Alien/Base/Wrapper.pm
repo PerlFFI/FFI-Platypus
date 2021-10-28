@@ -14,12 +14,17 @@ use Text::ParseWords qw( shellwords );
 # for this [AlienBase::Wrapper::Bundle]
 
 # ABSTRACT: Compiler and linker wrapper for Alien
-our $VERSION = '2.41'; # VERSION
+our $VERSION = '2.44'; # VERSION
 
 
 sub _join
 {
-  join ' ', map { s/(\s)/\\$1/g; $_ } map { "$_" } @_;  ## no critic (ControlStructures::ProhibitMutatingListFunctions)
+  join ' ',
+    map {
+      my $x = $_;
+      $x =~ s/(\s)/\\$1/g;
+      $x;
+    } @_;
 }
 
 sub new
@@ -317,7 +322,7 @@ Alien::Base::Wrapper - Compiler and linker wrapper for Alien
 
 =head1 VERSION
 
-version 2.41
+version 2.44
 
 =head1 SYNOPSIS
 
@@ -543,7 +548,7 @@ Juan Julián Merelo Guervós (JJ)
 
 Joel Berger (JBERGER)
 
-Petr Pisar (ppisar)
+Petr Písař (ppisar)
 
 Lance Wicks (LANCEW)
 
