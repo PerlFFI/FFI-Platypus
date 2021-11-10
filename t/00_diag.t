@@ -17,6 +17,7 @@ $modules{$_} = $_ for qw(
   ExtUtils::MakeMaker
   ExtUtils::ParseXS
   FFI::CheckLib
+  File::Spec::Functions
   IPC::Cmd
   JSON::PP
   List::Util
@@ -24,6 +25,7 @@ $modules{$_} = $_ for qw(
   PkgConfig
   Test2::API
   Test2::V0
+  autodie
   constant
   forks
   parent
