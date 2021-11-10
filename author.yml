@@ -186,5 +186,6 @@ pod_coverage:
     - FFI::Build::File::C#build_item
     - FFI::Build::File::Object#build_item
     - FFI::Build::MM
+    - FFI::Build::Plugin
     - FFI::Platypus::Function#new
     - FFI::Temp
