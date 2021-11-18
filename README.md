@@ -27,8 +27,8 @@ written in languages like C, [C++](https://metacpan.org/pod/FFI::Platypus::Lang:
 [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran),
 [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust),
 [Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal). Essentially anything that gets
-compiled into machine code.  This implementation uses `libffi` to
-accomplish this task.  `libffi` is battle tested by a number of other
+compiled into machine code.  This implementation uses [libffi](https://sourceware.org/libffi/) to
+accomplish this task.  [libffi](https://sourceware.org/libffi/) is battle tested by a number of other
 scripting and virtual machine languages, such as Python and Ruby to
 serve a similar role.  There are a number of reasons why you might want
 to write an extension with Platypus instead of XS:
@@ -1849,9 +1849,7 @@ the development package for `libffi` as prereqs for this module.
 
 # SEE ALSO
 
-- [NativeCall](https://metacpan.org/pod/NativeCall)
-
-    Promising interface to Platypus inspired by Raku.
+## Extending Platypus
 
 - [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type)
 
@@ -1878,13 +1876,11 @@ the development package for `libffi` as prereqs for this module.
 
     Memory functions for FFI.
 
-- [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib)
-
-    Find dynamic libraries in a portable way.
+## Languages
 
 - [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC)
 
-    JIT compiler for FFI.
+    JIT C compiler for FFI.
 
 - [FFI::Platypus::Lang::C](https://metacpan.org/pod/FFI::Platypus::Lang::C)
 
@@ -1927,6 +1923,12 @@ the development package for `libffi` as prereqs for this module.
     functions written in any language supported by WebAssembly.  These modules
     are also implemented using Platypus.
 
+## Other Tools Related Tools Useful for FFI
+
+- [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib)
+
+    Find dynamic libraries in a portable way.
+
 - [Convert::Binary::C](https://metacpan.org/pod/Convert::Binary::C)
 
     A great interface for decoding C data structures, including `struct`s,
@@ -1941,6 +1943,17 @@ the development package for `libffi` as prereqs for this module.
     This module can extract constants and other useful objects from C header
     files that may be relevant to an FFI application.  One downside is that
     its use may require development packages to be installed.
+
+## Other Foreign Function Interfaces
+
+- [Dyn](https://metacpan.org/pod/Dyn)
+
+    A wrapper around [dyncall](https://dyncall), which is itself an alternative to
+    [libffi](https://sourceware.org/libffi/).
+
+- [NativeCall](https://metacpan.org/pod/NativeCall)
+
+    Promising interface to Platypus inspired by Raku.
 
 - [Win32::API](https://metacpan.org/pod/Win32::API)
 
@@ -1966,14 +1979,16 @@ the development package for `libffi` as prereqs for this module.
 
     Embed a tiny C compiler into your Perl scripts.
 
-- [Alien::FFI](https://metacpan.org/pod/Alien::FFI)
-
-    Provides libffi for Platypus during its configuration and build stages.
-
 - [P5NCI](https://metacpan.org/pod/P5NCI)
 
     Yet another FFI like interface that does not appear to be supported or
     under development anymore.
+
+## Other
+
+- [Alien::FFI](https://metacpan.org/pod/Alien::FFI)
+
+    Provides libffi for Platypus during its configuration and build stages.
 
 # ACKNOWLEDGMENTS
 

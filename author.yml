@@ -150,6 +150,7 @@ pod_spelling_system:
     - openstrike
     - Raku
     - cxxld
+    - dyncall
 
 pod_coverage:
   skip: 0
