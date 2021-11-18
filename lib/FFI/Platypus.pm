@@ -1998,7 +1998,7 @@ its use may require development packages to be installed.
 
 =item L<Dyn>
 
-A wrapper around L<dyncall|https://dyncall>, which is itself an alternative to
+A wrapper around L<dyncall|https://dyncall.org>, which is itself an alternative to
 L<libffi|https://sourceware.org/libffi/>.
 
 =item L<NativeCall>
