@@ -50,8 +50,8 @@ L<Go|FFI::Platypus::Lang::Go>,
 L<Fortran|FFI::Platypus::Lang::Fortran>,
 L<Rust|FFI::Platypus::Lang::Rust>,
 L<Pascal|FFI::Platypus::Lang::Pascal>. Essentially anything that gets
-compiled into machine code.  This implementation uses C<libffi> to
-accomplish this task.  C<libffi> is battle tested by a number of other
+compiled into machine code.  This implementation uses L<libffi|https://sourceware.org/libffi/> to
+accomplish this task.  L<libffi|https://sourceware.org/libffi/> is battle tested by a number of other
 scripting and virtual machine languages, such as Python and Ruby to
 serve a similar role.  There are a number of reasons why you might want
 to write an extension with Platypus instead of XS:
@@ -1885,11 +1885,9 @@ the development package for C<libffi> as prereqs for this module.
 
 =head1 SEE ALSO
 
+=head2 Extending Platypus
+
 =over 4
-
-=item L<NativeCall>
-
-Promising interface to Platypus inspired by Raku.
 
 =item L<FFI::Platypus::Type>
 
@@ -1916,13 +1914,15 @@ The custom types API for Platypus.
 
 Memory functions for FFI.
 
-=item L<FFI::CheckLib>
+=back
 
-Find dynamic libraries in a portable way.
+=head2 Languages
+
+=over 4
 
 =item L<FFI::TinyCC>
 
-JIT compiler for FFI.
+JIT C compiler for FFI.
 
 =item L<FFI::Platypus::Lang::C>
 
@@ -1965,6 +1965,16 @@ Modules for writing WebAssembly bindings in Perl.  This allows you to call
 functions written in any language supported by WebAssembly.  These modules
 are also implemented using Platypus.
 
+=back
+
+=head2 Other Tools Related Tools Useful for FFI
+
+=over 4
+
+=item L<FFI::CheckLib>
+
+Find dynamic libraries in a portable way.
+
 =item L<Convert::Binary::C>
 
 A great interface for decoding C data structures, including C<struct>s,
@@ -1979,6 +1989,21 @@ Native to Perl functions that can be used to decode C C<struct> types.
 This module can extract constants and other useful objects from C header
 files that may be relevant to an FFI application.  One downside is that
 its use may require development packages to be installed.
+
+=back
+
+=head2 Other Foreign Function Interfaces
+
+=over 4
+
+=item L<Dyn>
+
+A wrapper around L<dyncall|https://dyncall>, which is itself an alternative to
+L<libffi|https://sourceware.org/libffi/>.
+
+=item L<NativeCall>
+
+Promising interface to Platypus inspired by Raku.
 
 =item L<Win32::API>
 
@@ -2004,14 +2029,20 @@ Another FFI for Perl that doesn't appear to have worked for a long time.
 
 Embed a tiny C compiler into your Perl scripts.
 
-=item L<Alien::FFI>
-
-Provides libffi for Platypus during its configuration and build stages.
-
 =item L<P5NCI>
 
 Yet another FFI like interface that does not appear to be supported or
 under development anymore.
+
+=back
+
+=head2 Other
+
+=over 4
+
+=item L<Alien::FFI>
+
+Provides libffi for Platypus during its configuration and build stages.
 
 =back
 
