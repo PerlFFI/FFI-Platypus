@@ -1948,7 +1948,7 @@ the development package for `libffi` as prereqs for this module.
 
 - [Dyn](https://metacpan.org/pod/Dyn)
 
-    A wrapper around [dyncall](https://dyncall), which is itself an alternative to
+    A wrapper around [dyncall](https://dyncall.org), which is itself an alternative to
     [libffi](https://sourceware.org/libffi/).
 
 - [NativeCall](https://metacpan.org/pod/NativeCall)
@@ -2050,7 +2050,7 @@ Pete Houston (openstrike, HOUSTON)
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2015,2016,2017,2018,2019,2020 by Graham Ollis.
+This software is copyright (c) 2015,2016,2017,2018,2019,2020,2021 by Graham Ollis.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
