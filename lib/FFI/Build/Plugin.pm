@@ -49,7 +49,15 @@ sub new
       next if defined $plugins{$name};
       my $pm = catfile('FFI', 'Build', 'Plugin', "$name.pm");
       require $pm;
-      $plugins{$name} = "FFI::Build::Plugin::$name"->new;
+      my $class = "FFI::Build::Plugin::$name";
+      if($class->can("api_version") && $class->api_version == 0)
+      {
+        $plugins{$name} = $class->new;
+      }
+      else
+      {
+        warn "$class is not the correct api version.  You may need to upgrade the plugin, platypus or uninstall the plugin";
+      }
     }
   }
 
