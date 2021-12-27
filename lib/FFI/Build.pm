@@ -3,6 +3,7 @@ package FFI::Build;
 use strict;
 use warnings;
 use 5.008004;
+use FFI::Build::Plugin;
 use FFI::Build::File::Library;
 use Carp ();
 use File::Glob ();
@@ -138,6 +139,22 @@ Output the complete commands run verbatim.
 
 =cut
 
+{
+  my $plugins = FFI::Build::Plugin->new;
+  # PLUGIN: require
+  # ARGS: NONE
+  $plugins->call('build-require');
+  sub _plugins { $plugins ||= FFI::Build::Plugin->new };
+}
+
+sub import
+{
+  my @caller = caller;
+  # PLUGIN: import
+  # ARGS: @caller, \@args
+  _plugins->call('build-import', \@caller, \@_);
+}
+
 sub _native_name
 {
   my($self, $name) = @_;
@@ -149,6 +166,10 @@ sub new
   my($class, $name, %args) = @_;
 
   Carp::croak "name is required" unless defined $name;
+
+  # PLUGIN: new-pre
+  # ARGS: $name, \%args
+  _plugins->call('build-new-pre', $name, \%args);
 
   my $self = bless {
     source   => [],
@@ -199,6 +220,10 @@ sub new
   }
 
   $self->source(ref $args{source} ? @{ $args{source} } : ($args{source})) if $args{source};
+
+  # PLUGIN: new-post
+  # ARGS: $self
+  _plugins->call('build-new-post', $self);
 
   $self;
 }
@@ -409,12 +434,20 @@ sub build
 {
   my($self) = @_;
 
+  # PLUGIN: build
+  # ARGS: $self
+  _plugins->call('build-build', $self);
+
   my @objects;
 
   my $ld = $self->platform->ld;
 
   foreach my $source ($self->source)
   {
+    # PLUGIN: build-item
+    # ARGS: $self, $source
+    _plugins->call('build-build-item', $self, $source);
+
     if($source->can('build_all'))
     {
       my $count = scalar $self->source;
@@ -464,6 +497,10 @@ sub build
     $self->platform->flag_library_output($self->file->path),
   );
 
+  # PLUGIN: build-link
+  # ARGS: $self, \@cmd
+  _plugins->call('build-build-link', $self, \@cmd);
+
   my($out, $exit) = Capture::Tiny::capture_merged(sub {
     $self->platform->run(@cmd);
   });
@@ -482,6 +519,10 @@ sub build
     print "LD @{[ $self->file->path ]}\n";
   }
 
+  # PLUGIN: link-postlink
+  # ARGS: $self, \@cmd
+  _plugins->call('build-build-postlink', $self);
+
   $self->file;
 }
 
@@ -497,13 +538,24 @@ sub clean
 {
   my($self) = @_;
   my $dll = $self->file->path;
-  unlink $dll if -f $dll;
+  if(-f $dll)
+  {
+    # PLUGIN: clean
+    # ARGS: $self, $path
+    _plugins->call('build-clean', $self, $dll);
+    unlink $dll;
+  }
   foreach my $source ($self->source)
   {
     my $dir = File::Spec->catdir($source->dirname, $self->buildname);
     if(-d $dir)
     {
-      unlink $_ for File::Glob::bsd_glob("$dir/*");
+      foreach my $path (File::Glob::bsd_glob("$dir/*"))
+      {
+        _plugins->call('build-clean', $self, $path);
+        unlink $path;
+      }
+      _plugins->call('build-clean', $self, $dir);
       rmdir $dir;
     }
   }
