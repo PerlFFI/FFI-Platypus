@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use 5.008004;
 use FFI::Build::Plugin;
+use FFI::Build::PluginData qw( plugin_data );
 use FFI::Build::File::Library;
 use Carp ();
 use File::Glob ();
