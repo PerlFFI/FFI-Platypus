@@ -7,6 +7,7 @@ use Carp ();
 use FFI::Temp;
 use File::Basename ();
 use FFI::Build::Platform;
+use FFI::Build::PluginData;
 use overload '""' => sub { $_[0]->path }, bool => sub { 1 }, fallback => 1;
 
 # ABSTRACT: Base class for File::Build files
