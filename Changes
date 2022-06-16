@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+1.57      2022-06-15 18:30:29 -0600
+  - Documentation improvements
+
 1.56      2021-10-27 19:44:37 -0600
   - Fixes for very old versions of Mac OS X / Xcode (gh#350)
   - Added cxxld method to FFI::Build::Platform (gh#350)
