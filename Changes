@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.59_01   2022-06-19 07:47:49 -0600
   - Internal refactor (gh#361)
 
 1.58      2022-06-19 06:19:42 -0600
