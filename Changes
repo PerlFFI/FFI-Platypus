@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - TypeParser version 2 accept string(10) as alias for string(10)* (gh#346, gh#359)
 
 1.57      2022-06-15 18:30:29 -0600
   - Documentation improvements

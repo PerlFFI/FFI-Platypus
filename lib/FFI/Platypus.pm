@@ -279,7 +279,7 @@ sub new
   }
   elsif($api == 2)
   {
-    $tp = 'Version1';
+    $tp = 'Version2';
   }
   else
   {
