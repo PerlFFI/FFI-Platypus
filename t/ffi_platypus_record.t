@@ -503,7 +503,7 @@ subtest 'api_1' => sub {
     };
 
     is "$@", '';
-    is( $api, 1 );
+    is( $api, 2 );
   };
 
   subtest 'args' => sub {
@@ -520,7 +520,7 @@ subtest 'api_1' => sub {
     };
 
     is "$@", '';
-    is( $api, 1 );
+    is( $api, 2 );
   };
 
   subtest '$ffi' => sub {

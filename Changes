@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Internal refactor (gh#361)
 
 1.58      2022-06-19 06:19:42 -0600
   - TypeParser version 2 accept string(10) as alias for string(10)* (gh#346, gh#359)

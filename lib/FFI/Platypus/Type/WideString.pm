@@ -288,7 +288,7 @@ sub _compute_wide_string_encoding
       unless FFI::Platypus::Memory->can("_$need");
   }
 
-  my $ffi = FFI::Platypus->new( api => 1, lib => [undef] );
+  my $ffi = FFI::Platypus->new( api => 2, experimental => 2, lib => [undef] );
 
   my $size = eval { $ffi->sizeof('wchar_t') };
   die 'no wchar_t' if $@;

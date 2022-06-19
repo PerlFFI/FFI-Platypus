@@ -275,14 +275,14 @@ sub record_layout_1
 {
   if(@_ % 2 == 0)
   {
-    my $ffi = FFI::Platypus->new( api => 1 );
+    my $ffi = FFI::Platypus->new( api => 2, experimental => 2 );
     unshift @_, $ffi;
     goto &record_layout;
   }
   elsif(defined $_[0] && ref($_[0]) eq 'ARRAY')
   {
     my @args = @{ shift @_ };
-    unshift @args, api => 1;
+    unshift @args, api => 2, experimental => 2;
     unshift @_, \@args;
     goto &record_layout;
   }
