@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added experimental modules FFI::Build::Plugin and FFI::Build::PluginData (gh#351)
 
 1.60_01   2022-06-23 15:49:42 -0500
   - Updated installer
