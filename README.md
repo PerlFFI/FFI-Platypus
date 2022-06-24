@@ -1855,18 +1855,21 @@ the development package for `libffi` as prereqs for this module.
 
     Type definitions for Platypus.
 
-- [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record)
-
-    Define structured data records (C "structs") for use with
-    Platypus.
-
 - [FFI::C](https://metacpan.org/pod/FFI::C)
 
-    Another interface for defining structured data records for use
-    with Platypus.  Its advantage over [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record) is
-    that it supports `union`s and nested data structures.  Its
-    disadvantage is that it doesn't support passing `struct`s
-    by-value.
+    Interface for defining structured data records for use with
+    Platypus.  It supports C `struct`, `union`, nested structures
+    and arrays of all of those.  It only supports passing these
+    types by reference or pointer, so if you need to pass structured
+    data by value see [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record) below.
+
+- [FFI::Platypus::Record](https://metacpan.org/pod/FFI::Platypus::Record)
+
+    Interface for defining structured data records for use with
+    Platypus.  Included in the Platypus core.  Supports pass by
+    value which is uncommon in C, but frequently used in languages
+    like Rust and Go.  Consider using [FFI::C](https://metacpan.org/pod/FFI::C) instead if you
+    don't need to pass by value.
 
 - [FFI::Platypus::API](https://metacpan.org/pod/FFI::Platypus::API)
 
