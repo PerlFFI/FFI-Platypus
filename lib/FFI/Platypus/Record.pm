@@ -77,6 +77,10 @@ Before you get to deep into using this class you should also consider
 the L<FFI::C>, which provides some overlapping functionality.  Briefly,
 it comes down to this:
 
+(The tl;dr is: use this class when you need to pass by value (since
+L<FFI::C> does not support pass by value) and use L<FFI::C> in all
+other circumstances).
+
 =over 4
 
 =item L<FFI::Platypus::Record>
