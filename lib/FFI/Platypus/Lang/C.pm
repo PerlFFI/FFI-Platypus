@@ -9,8 +9,8 @@ use 5.008004;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus 1.00;
- my $ffi = FFI::Platypus->new( api => 1 );
+ use FFI::Platypus 2.00;
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->lang('C'); # the default
 
 =head1 DESCRIPTION

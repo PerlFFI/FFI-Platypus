@@ -11,10 +11,10 @@ use Config;
 =head1 SYNOPSIS
 
  use utf8;
- use FFI::Platypus 1.35;
+ use FFI::Platypus 2.00;
  
  my $ffi = FFI::Platypus->new(
-   api  => 1,
+   api  => 2,
    lib  => [undef],
  );
  

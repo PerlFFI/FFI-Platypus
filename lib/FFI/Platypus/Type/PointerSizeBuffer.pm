@@ -27,9 +27,9 @@ In your C code:
 
 In your Platypus::FFI code:
 
- use FFI::Platypus;
+ use FFI::Platypus 2.00;
  
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->load_custom_type('::PointerSizeBuffer' => 'buffer');
  
  $ffi->attach(function_with_buffer => ['buffer'] => 'void');
@@ -49,7 +49,7 @@ pass in a string scalar as a pointer / size buffer pair.
 my @stack;
 
 *arguments_set_size_t
-  = FFI::Platypus->new( api => 1 )->sizeof('size_t') == 4
+  = FFI::Platypus->new( api => 2 )->sizeof('size_t') == 4
   ? \&arguments_set_uint32
   : \&arguments_set_uint64;
 

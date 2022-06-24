@@ -3,7 +3,7 @@ use warnings;
 
 package Unix::TimeStruct;
 
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::Platypus::Record;
 
 record_layout_1(qw(
@@ -20,7 +20,7 @@ record_layout_1(qw(
     string tm_zone
 ));
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 # define a record class Unix::TimeStruct and alias it to "tm"
 $ffi->type("record(Unix::TimeStruct)*" => 'tm');

@@ -29,10 +29,10 @@ use FFI::Platypus::Type;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus 1.00;
+ use FFI::Platypus 2.00;
  
- # for all new code you should use api => 1
- my $ffi = FFI::Platypus->new( api => 1 );
+ # for all new code you should use api => 2
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->lib(undef); # search libc
  
  # call dynamically
@@ -129,7 +129,7 @@ for free.  You should even consider updating existing modules to
 use API level 1 where feasible.  How do I do that you might ask?
 Simply pass in the API level to the platypus constructor.
 
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
 
 The Platypus documentation has already been updated to assume API
 level 1.
@@ -147,7 +147,7 @@ XSLoader::load(
 
 =head2 new
 
- my $ffi = FFI::Platypus->new( api => 1, %options);
+ my $ffi = FFI::Platypus->new( api => 2, %options);
 
 Create a new instance of L<FFI::Platypus>.
 

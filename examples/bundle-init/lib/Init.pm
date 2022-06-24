@@ -2,12 +2,12 @@ package Init;
 
 use strict;
 use warnings;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
 our $VERSION = '1.00';
 
 {
-  my $ffi = FFI::Platypus->new( api => 1 );
+  my $ffi = FFI::Platypus->new( api => 2 );
 
   my $say = $ffi->closure(sub {
     my $string = shift;

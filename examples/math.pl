@@ -1,9 +1,9 @@
 use strict;
 use warnings;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::CheckLib;
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 $ffi->attach(puts => ['string'] => 'int');
 $ffi->attach(fdim => ['double','double'] => 'double');

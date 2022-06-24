@@ -27,7 +27,7 @@ use File::Path ();
 
 =head1 SYNOPSIS
 
- use FFI::Platypus 1.00;
+ use FFI::Platypus 2.00;
  use FFI::Build;
  
  my $build = FFI::Build->new(
@@ -38,7 +38,7 @@ use File::Path ();
  # $lib is an instance of FFI::Build::File::Library
  my $lib = $build->build;
  
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  # The filename will be platform dependant, but something like libfrooble.so or frooble.dll
  $ffi->lib($lib->path);
  

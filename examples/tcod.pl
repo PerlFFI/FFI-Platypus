@@ -1,10 +1,10 @@
 use strict;
 use warnings;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::CheckLib qw( find_lib_or_die );
 
 my $ffi = FFI::Platypus->new(
-  api => 1,
+  api => 2,
   lib => [find_lib_or_die lib => 'tcod'],
 );
 

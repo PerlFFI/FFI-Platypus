@@ -94,7 +94,7 @@ This might start to look a little like a Perl module, and when we look at the Pe
 code that binds to this code, you will see why.  First lets prepare the
 L<FFI::Platypus> instance and specify the correct api version:
 
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
 
 The bundle interface is only supported with api version 1, so if you try to use
 version 0 it will not work.  Next we define an object type for C<foo_t> which will
@@ -129,8 +129,8 @@ dist is named C<Foo-Bar> but your specific class is named C<Foo::Bar::Baz>, you'
 want something like this:
 
  package Foo::Bar::Baz;
- use FFI::Platypus 1.00;
- my $ffi = FFI::Platypus->new( api => 1 );
+ use FFI::Platypus 2.00;
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->bundle('Foo::Bar');
  ...
 

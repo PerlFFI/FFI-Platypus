@@ -56,8 +56,8 @@ tm
 
 OO Interface:
 
- use FFI::Platypus 1.00;
- my $ffi = FFI::Platypus->new( api => 1 );
+ use FFI::Platypus 2.00;
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->type('int' => 'my_int');
 
 =head1 DESCRIPTION
@@ -70,8 +70,8 @@ Types may be "defined" ahead of time, or simply used when defining or
 attaching functions.
 
  # Example of defining types
- use FFI::Platypus 1.00;
- my $ffi = FFI::Platypus->new( api => 1 );
+ use FFI::Platypus 2.00;
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->type('int');
  $ffi->type('string');
  
@@ -126,8 +126,8 @@ second argument to the L<FFI::Platypus#type> method can be used to
 define a type alias that can later be used by function declaration
 and attachment.
 
- use FFI::Platypus 1.00;
- my $ffi = FFI::Platypus->new( api => 1 );
+ use FFI::Platypus 2.00;
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->type('int'    => 'myint');
  $ffi->type('string' => 'mystring');
  my $f = $ffi->function( puts => ['mystring'] => 'myint' );
@@ -660,8 +660,8 @@ code.
  }
  
  # foo.pl
- use FFI::Platypus 1.00;
- my $ffi = FFI::Platypus->new( api => 1 );
+ use FFI::Platypus 2.00;
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->lib('libfoo.so'); # change to reflect the dynamic lib
                          # that contains foo.c
  $ffi->type('int*' => 'int_p');
@@ -940,7 +940,7 @@ constants in your Perl module, like this:
 
  package Foo;
  
- use FFI::Platypus 1.00;
+ use FFI::Platypus 2.00;
  use Exporter qw( import );
  
  our @EXPORT_OK = qw( FOO_STATIC FOO_DYNAMIC FOO_OTHER foo get_foo );
@@ -949,7 +949,7 @@ constants in your Perl module, like this:
  use constant FOO_DYNAMIC => 2;
  use constant FOO_OTHER   => 3;
  
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->attach(foo     => ['int'] => 'void');
  $ffi->attach(get_foo => []      => 'int');
 
@@ -964,7 +964,7 @@ function, like this:
 
  package Foo;
  
- use FFI::Platypus 1.00;
+ use FFI::Platypus 2.00;
  
  our @EXPORT_OK = qw( foo get_foo );
  
@@ -975,7 +975,7 @@ function, like this:
  );
  my %foo_types_reverse = reverse %foo_types;
  
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->custom_type(foo_t => {
    native_type    => 'int',
    native_to_perl => sub {
@@ -1017,10 +1017,10 @@ interface like this:
 
  package Foo;
  
- use FFI::Platypus 1.00;
+ use FFI::Platypus 2.00;
  use FFI::Platypus::API qw( arguments_get_string );
  
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->custom_type(foo_t => {
    native_type    => 'opaque',
    native_to_perl => sub {

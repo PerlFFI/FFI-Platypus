@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Convert::Binary::C;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use Data::Dumper qw( Dumper );
 
 my $c = Convert::Binary::C->new;
@@ -35,7 +35,7 @@ my $tm_size = $c->sizeof("tm");
 
 # create the Platypus instance and create the appropriate
 # types and functions
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 $ffi->type("record($tm_size)*" => 'tm');
 $ffi->attach( [ localtime => 'my_localtime' ] => ['time_t*'] => 'tm'     );

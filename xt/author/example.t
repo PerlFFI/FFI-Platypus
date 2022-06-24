@@ -1,5 +1,7 @@
 use Test2::V0 -no_srand => 1;
 
+skip_all 'until 2.00';
+
 eval { require FFI::Platypus; FFI::Platypus->VERSION('1.00') };
 skip_all 'Test requires FFI::Platypus 1.00' if $@;
 eval { require Test::Script; Test::Script->import('script_compiles') };

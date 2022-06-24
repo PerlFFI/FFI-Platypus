@@ -26,9 +26,9 @@ In your C code:
 
 In your L<Platypus::FFI> code:
 
- use FFI::Platypus;
+ use FFI::Platypus 2.00;
  
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->load_custom_type('::StringArray' => 'string_array');
  $ffi->load_custom_type('::StringArray' => 'string_5' => 5);
  
