@@ -57,7 +57,7 @@ use constant _incantation =>
   $^O eq 'MSWin32' && do { require Config; $Config::Config{archname} =~ /MSWin32-x64/ }
   ? 'Q'
   : 'L!';
-use constant _pointer_buffer => "P" . FFI::Platypus->new( api => 2, experimental => 2 )->sizeof('opaque');
+use constant _pointer_buffer => "P" . FFI::Platypus->new( api => 2 )->sizeof('opaque');
 
 my @stack;
 

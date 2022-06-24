@@ -20,7 +20,7 @@ foreach my $api (0, 1, 2)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api >=2 ? $api : undef) );
+    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api > 2 ? $api : undef) );
     $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
 
     $ffi->attach(['complex_float_get_real' => 'creal'] => ['complex_float'] => 'float');

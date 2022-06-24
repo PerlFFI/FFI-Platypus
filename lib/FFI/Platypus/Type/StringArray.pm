@@ -63,7 +63,7 @@ use constant _incantation =>
   $^O eq 'MSWin32' && do { require Config; $Config::Config{archname} =~ /MSWin32-x64/ }
   ? 'Q'
   : 'L!';
-use constant _size_of_pointer => FFI::Platypus->new( api => 2, experimental => 2 )->sizeof('opaque');
+use constant _size_of_pointer => FFI::Platypus->new( api => 2 )->sizeof('opaque');
 use constant _pointer_buffer => "P" . _size_of_pointer;
 
 my @stack;
@@ -147,7 +147,7 @@ sub ffi_custom_type_api_1
       $array_pointer;
     };
 
-    my $pointer_buffer = "P@{[ FFI::Platypus->new( api => 2, experimental => 2 )->sizeof('opaque') * $count ]}";
+    my $pointer_buffer = "P@{[ FFI::Platypus->new( api => 2 )->sizeof('opaque') * $count ]}";
     my $incantation_count = _incantation.$count;
 
     $config->{native_to_perl} = sub {

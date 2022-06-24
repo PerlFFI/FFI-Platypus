@@ -107,7 +107,7 @@ copied in the new string.
 
 our @EXPORT = qw( malloc free calloc realloc memcpy memset strdup strndup strcpy );
 
-my $ffi = FFI::Platypus->new( api => 2, experimental => 2 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 $ffi->bundle;
 sub _ffi { $ffi }

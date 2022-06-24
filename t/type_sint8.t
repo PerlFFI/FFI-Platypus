@@ -15,7 +15,7 @@ foreach my $api (0, 1, 2)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api >=2 ? $api : undef) );
+    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api > 2 ? $api : undef) );
     $ffi->type('sint8 *' => 'sint8_p');
     $ffi->type('sint8 [10]' => 'sint8_a');
     $ffi->type('sint8 []' => 'sint8_a2');
@@ -112,7 +112,7 @@ foreach my $api (1,2)
 
     { package Roger }
 
-    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api >=2 ? $api : undef) );
+    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api > 2 ? $api : undef) );
     $ffi->type('object(Roger,sint8)', 'roger_t');
 
     my $int = -22;

@@ -16,7 +16,7 @@ foreach my $api (0, 1, 2)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api >= 2 ? $api : undef), lib => [@lib] );
+    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api > 2 ? $api : undef), lib => [@lib] );
 
     $ffi->attach( [pointer_null => 'null']           => []          => 'opaque');
     $ffi->attach( [pointer_is_null => 'is_null']     => ['opaque']    => 'int');
@@ -182,7 +182,7 @@ foreach my $api (1,2) {
 
     { package Roger }
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api >= 2 ? $api : undef), lib => [@lib] );
+    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api > 2 ? $api : undef), lib => [@lib] );
     $ffi->type('object(Roger)', 'roger_t');
     $ffi->type('object(Roger,opaque)', 'roger2_t');
 

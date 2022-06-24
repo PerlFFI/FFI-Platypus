@@ -15,7 +15,7 @@ foreach my $api (0, 1, 2)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api >= 2 ? $api : undef) );
+    my $ffi = FFI::Platypus->new( api => $api, lib => [@lib], experimental => ($api > 2 ? $api : undef) );
     $ffi->type('float *' => 'float_p');
     $ffi->type('float [10]' => 'float_a');
     $ffi->type('float []' => 'float_a2');
