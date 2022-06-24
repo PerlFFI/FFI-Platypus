@@ -1,14 +1,14 @@
 use strict;
 use warnings;
 use FFI::CheckLib;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
 # NOTE: I ported this from anoter Perl FFI library and it seems to work most
 # of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior
 # in the old version, and am not really familiar with the libnotify API to
 # say what is the cause.  Patches welcome to fix it.
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(find_lib_or_exit lib => 'notify');
 
 $ffi->attach(notify_init   => ['string'] => 'void');

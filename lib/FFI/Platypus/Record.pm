@@ -42,9 +42,9 @@ Perl:
  
  package main;
  
- use FFI::Platypus 1.00;
+ use FFI::Platypus 2.00;
  
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->lib("myperson.so");
  $ffi->type("record(MyPerson)" => 'MyPerson');
  
@@ -143,14 +143,14 @@ of L<FFI::Platypus> as the first argument in order to use its type
 aliases.  Alternatively you may provide constructor arguments that will
 be passed to the internal platypus instance.  Thus this is the same:
 
- my $ffi = FFI::Platypus->new( lang => 'Rust', api => 1 );
+ my $ffi = FFI::Platypus->new( lang => 'Rust', api => 2 );
  record_layout_1( $ffi, ... );
  # same as:
  record_layout_1( [ lang => 'Rust' ], ... );
 
 and this is the same:
 
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  record_layout_1( $ffi, ... );
  # same as:
  record_layout_1( ... );

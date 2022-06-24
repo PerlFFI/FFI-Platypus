@@ -3,7 +3,7 @@ use warnings;
 
 package Unix::TimeStruct;
 
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::TinyCC;
 use FFI::TinyCC::Inline 'tcc_eval';
 
@@ -42,7 +42,7 @@ my $tm_size = tcc_eval qq{
 # be defined before you try to define it as a type.
 sub _ffi_record_size { $tm_size };
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 # define a record class Unix::TimeStruct and alias it
 # to "tm"

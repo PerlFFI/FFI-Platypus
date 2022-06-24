@@ -1,10 +1,10 @@
 use strict;
 use warnings;
 use FFI::CheckLib;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::Platypus::Memory qw( malloc free );
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(find_lib_or_exit lib => 'uuid');
 $ffi->type('string(37)*' => 'uuid_string');
 $ffi->type('record(16)*' => 'uuid_t');

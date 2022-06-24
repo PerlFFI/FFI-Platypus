@@ -1,9 +1,9 @@
 use strict;
 use warnings;
 use FFI::TinyCC;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 my $tcc = FFI::TinyCC->new;
 
 $tcc->compile_string(q{

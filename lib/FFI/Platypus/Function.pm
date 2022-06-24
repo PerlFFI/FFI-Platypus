@@ -10,10 +10,10 @@ use FFI::Platypus;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus 1.00;
+ use FFI::Platypus 2.00;
  
  # call directly
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  my $f = $ffi->function(puts => ['string'] => 'int');
  $f->call("hello there");
  

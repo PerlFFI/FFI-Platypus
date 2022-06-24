@@ -14,12 +14,12 @@ push @EXPORT, grep /RTLD_/, keys %FFI::Platypus::DL::;
 
 =head1 SYNOPSIS
 
- use FFI::Platypus 1.00;
+ use FFI::Platypus 2.00;
  use FFI::Platypus::DL;
  
  my $handle = dlopen("./libfoo.so", RTLD_PLATYPUS_DEFAULT);
  my $address = dlsym($handle, "my_function_named_foo");
- my $ffi = FFI::Platypus->new( api => 1 );
+ my $ffi = FFI::Platypus->new( api => 2 );
  $ffi->function($address => [] => 'void')->call;
  dlclose($handle);
 

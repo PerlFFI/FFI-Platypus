@@ -5,10 +5,10 @@ Write Perl bindings to non-Perl libraries with FFI. No XS required.
 # SYNOPSIS
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
-# for all new code you should use api => 1
-my $ffi = FFI::Platypus->new( api => 1 );
+# for all new code you should use api => 2
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef); # search libc
 
 # call dynamically
@@ -103,7 +103,7 @@ use API level 1 where feasible.  How do I do that you might ask?
 Simply pass in the API level to the platypus constructor.
 
 ```perl
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 ```
 
 The Platypus documentation has already been updated to assume API
@@ -114,7 +114,7 @@ level 1.
 ## new
 
 ```perl
-my $ffi = FFI::Platypus->new( api => 1, %options);
+my $ffi = FFI::Platypus->new( api => 2, %options);
 ```
 
 Create a new instance of [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus).
@@ -773,9 +773,9 @@ that are related to types.
 ## Integer conversions
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 
 $ffi->attach(puts => ['string'] => 'int');
@@ -794,14 +794,14 @@ includes the standard c library.
 
 ```perl
 use FFI::CheckLib;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
 # NOTE: I ported this from anoter Perl FFI library and it seems to work most
 # of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior
 # in the old version, and am not really familiar with the libnotify API to
 # say what is the cause.  Patches welcome to fix it.
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(find_lib_or_exit lib => 'notify');
 
 $ffi->attach(notify_init   => ['string'] => 'void');
@@ -857,10 +857,10 @@ We are really calling the C function `notify_notification_new`.
 ## Allocating and freeing memory
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::Platypus::Memory qw( malloc free memcpy );
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 my $buffer = malloc 12;
 
 memcpy $buffer, $ffi->cast('string' => 'opaque', "hello there"), length "hello there\0";
@@ -878,11 +878,11 @@ these and other memory related functions are provided by the
 ## structured data records
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::C;
 
 my $ffi = FFI::Platypus->new(
-  api => 1,
+  api => 2,
   lib => [undef],
 );
 FFI::C->ffi($ffi);
@@ -950,10 +950,10 @@ using it as a return type!
 
 ```perl
 use FFI::CheckLib;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::Platypus::Memory qw( malloc free );
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(find_lib_or_exit lib => 'uuid');
 $ffi->type('string(37)*' => 'uuid_string');
 $ffi->type('record(16)*' => 'uuid_t');
@@ -982,9 +982,9 @@ this case it is simply 16 bytes).  We also know that the strings
 ## puts and getpid
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 
 $ffi->attach(puts => ['string'] => 'int');
@@ -999,10 +999,10 @@ puts(getpid());
 ## Math library
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::CheckLib;
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 $ffi->attach(puts => ['string'] => 'int');
 $ffi->attach(fdim => ['double','double'] => 'double');
@@ -1028,9 +1028,9 @@ use `undef` as the library to find them.
 ## Strings
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef);
 $ffi->attach(puts => ['string'] => 'int');
 $ffi->attach(strlen => ['string'] => 'int');
@@ -1062,9 +1062,9 @@ the [Encode](https://metacpan.org/pod/Encode) module.
 
 ```perl
 use FFI::TinyCC;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 my $tcc = FFI::TinyCC->new;
 
 $tcc->compile_string(q{
@@ -1101,12 +1101,12 @@ use constant ZMQ_MAX_SOCKETS => 2;
 use constant ZMQ_REQ => 3;
 use constant ZMQ_REP => 4;
 use FFI::CheckLib qw( find_lib_or_exit );
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::Platypus::Memory qw( malloc );
 use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
 
 my $endpoint = "ipc://zmq-ffi-$$";
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 
 $ffi->lib(undef); # for puts
 $ffi->attach(puts => ['string'] => 'int');
@@ -1192,7 +1192,7 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
 ## libarchive
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::CheckLib qw( find_lib_or_exit );
 
 # This example uses FreeBSD's libarchive to list the contents of any
@@ -1200,7 +1200,7 @@ use FFI::CheckLib qw( find_lib_or_exit );
 # the ArchiveWrite class that could be used for writing archive formats
 # supported by libarchive
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(find_lib_or_exit lib => 'archive');
 $ffi->type('object(Archive)'      => 'archive_t');
 $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
@@ -1323,7 +1323,7 @@ $ffi->attach(
 ## unix open
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
 {
   package FD;
@@ -1336,7 +1336,7 @@ use FFI::Platypus 1.00;
   use constant OUT => bless \do { my $out=1 }, __PACKAGE__;
   use constant ERR => bless \do { my $err=2 }, __PACKAGE__;
 
-  my $ffi = FFI::Platypus->new( api => 1, lib => [undef]);
+  my $ffi = FFI::Platypus->new( api => 2, lib => [undef]);
 
   $ffi->type('object(FD,int)' => 'fd');
 
@@ -1375,12 +1375,12 @@ functions.
 ## bzip2
 
 ```perl
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 use FFI::CheckLib qw( find_lib_or_die );
 use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
 use FFI::Platypus::Memory qw( malloc free );
 
-my $ffi = FFI::Platypus->new( api => 1 );
+my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(find_lib_or_die lib => 'bz2');
 
 $ffi->attach(
@@ -1460,10 +1460,10 @@ wrapper function will be returned back to the original caller.
 
 ```perl
 use utf8;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
 my $ffi = FFI::Platypus->new(
-  api  => 1,
+  api  => 2,
   lib  => [undef],
 );
 
@@ -1537,10 +1537,10 @@ package Foo;
 
 use strict;
 use warnings;
-use FFI::Platypus 1.00;
+use FFI::Platypus 2.00;
 
 {
-  my $ffi = FFI::Platypus->new( api => 1 );
+  my $ffi = FFI::Platypus->new( api => 2 );
 
   $ffi->type('object(Foo)' => 'foo_t');
   $ffi->mangler(sub {
