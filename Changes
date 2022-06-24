@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - api = 1 is no longer experimental (gh#365)
 
 1.61_01   2022-06-23 16:16:43 -0500
   - Added experimental modules FFI::Build::Plugin and FFI::Build::PluginData (gh#351)

@@ -11,7 +11,7 @@ foreach my $api (0,1,2)
 
   subtest "api => $api" => sub {
 
-    our $ffi = FFI::Platypus->new( api => $api, lib => [undef], experimental => ($api >=2 ? $api : undef));
+    our $ffi = FFI::Platypus->new( api => $api, lib => [undef], experimental => ($api > 2 ? $api : undef));
 
     $ffi->type('float' => 'my_float');
 

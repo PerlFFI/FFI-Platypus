@@ -40,7 +40,7 @@ foreach my $api (0, 1, 2)
       warn $message;
     };
 
-    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api >=2 ? $api : undef)  );
+    my $ffi = FFI::Platypus->new( api => $api, experimental => ($api > 2 ? $api : undef)  );
     $ffi->lib(find_lib lib => 'test', libpath => 't/ffi');
 
     $ffi->type('longdouble*' => 'longdouble_p');

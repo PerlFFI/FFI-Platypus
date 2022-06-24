@@ -63,7 +63,7 @@ subtest 'records' => sub {
 
   subtest 'pointer' => sub {
 
-    my $ffi = FFI::Platypus->new( api => 2, experimental => 2, lib => [@lib] );
+    my $ffi = FFI::Platypus->new( api => 2, lib => [@lib] );
     local $@ = '';
     eval {
       $ffi->custom_type(

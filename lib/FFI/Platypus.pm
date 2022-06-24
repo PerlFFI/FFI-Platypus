@@ -261,8 +261,12 @@ sub new
   {
     Carp::croak("Please do not use the experimental version of api = 1, instead require FFI::Platypus 1.00 or better");
   }
+  elsif($experimental == 2)
+  {
+    Carp::croak("Please do not use the experimental version of api = 2, instead require FFI::Platypus 2.00 or better");
+  }
 
-  if(defined $api && $api > 1 && $experimental != $api)
+  if(defined $api && $api > 2 && $experimental != $api)
   {
     Carp::cluck("Enabling development API version $api prior to FFI::Platypus $api.00");
   }
