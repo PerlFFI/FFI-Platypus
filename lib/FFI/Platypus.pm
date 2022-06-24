@@ -177,17 +177,13 @@ on the differences.
 
 =item C<1>
 
-Enable the next generation type parser which allows pass-by-value records
-and type decoration on basic types.  Using API level 1 prior to Platypus
-version 1.00 will trigger a (noisy) warning.
-
-All new code should be written with this set to 1!  The Platypus documentation
-assumes this api level is set.
+Enable version 1 API type parser which allows pass-by-value records
+and type decoration on basic types.
 
 =item C<2>
 
-Enable version 2 API, which is currently experimental.  Using API level 2 prior
-to Platypus version 2.00 will trigger a (noisy) warning.
+Enable version 2 API. All new code should be written with this set to 1!
+The Platypus documentation assumes this api level is set.
 
 API version 2 is identical to version 1, except:
 
@@ -202,6 +198,11 @@ This fixes a long standing design bug in Platypus.
 This replicates the behavior of array argument types with no size.  So the types C<sint8*> and C<sint8[]>
 behave identically when an array reference is passed in.  They differ in that, as before, you can
 pass a scalar reference into type C<sint8*>.
+
+=item The fixed string type can be specified without pointer modifier
+
+That is you can use C<string(10)> instead of C<string(10)*> as you were previously able to
+in API 0.
 
 =back
 

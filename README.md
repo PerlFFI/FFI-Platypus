@@ -141,17 +141,13 @@ the [lib](#lib) attribute.
 
     - `1`
 
-        Enable the next generation type parser which allows pass-by-value records
-        and type decoration on basic types.  Using API level 1 prior to Platypus
-        version 1.00 will trigger a (noisy) warning.
-
-        All new code should be written with this set to 1!  The Platypus documentation
-        assumes this api level is set.
+        Enable version 1 API type parser which allows pass-by-value records
+        and type decoration on basic types.
 
     - `2`
 
-        Enable version 2 API, which is currently experimental.  Using API level 2 prior
-        to Platypus version 2.00 will trigger a (noisy) warning.
+        Enable version 2 API. All new code should be written with this set to 1!
+        The Platypus documentation assumes this api level is set.
 
         API version 2 is identical to version 1, except:
 
@@ -164,6 +160,11 @@ the [lib](#lib) attribute.
             This replicates the behavior of array argument types with no size.  So the types `sint8*` and `sint8[]`
             behave identically when an array reference is passed in.  They differ in that, as before, you can
             pass a scalar reference into type `sint8*`.
+
+        - The fixed string type can be specified without pointer modifier
+
+            That is you can use `string(10)` instead of `string(10)*` as you were previously able to
+            in API 0.
 
 - lib
 
