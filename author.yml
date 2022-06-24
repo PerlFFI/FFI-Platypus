@@ -151,6 +151,8 @@ pod_spelling_system:
     - Raku
     - cxxld
     - dyncall
+    # for tl;dr
+    - tl
 
 pod_coverage:
   skip: 0
