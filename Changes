@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Documentation updates for API = 2 (gh#340, gh#368)
 
 1.90_01   2022-06-24 11:03:35 -0500
   - api = 2 is no longer experimental (gh#365)

@@ -497,14 +497,31 @@ in the main Platypus documentation using libarchive and unix open:
 
 =head2 Strings
 
-From the CPU's perspective, strings are just pointers.  From Perl and
-C's perspective, those pointers point to a series of characters.  For C
-they are null terminates ("\0").  L<FFI::Platypus> handles the details
-where they differ.  Basically when you see C<char *> or C<const char *>
-used in a C header file you can expect to be able to use the C<string>
-type.
-
+ # used when you need a char * or const char *
  $ffi->attach( puts => [ 'string' ] => 'int' );
+
+The C<string> type is a series of bytes that usually represent a
+series of characters.  They will be NULL terminated for C and passed
+in as a pointer.  This will typically work for APIs that take ASCII
+or UTF-8 strings which are common in Unix environments.
+
+(Note if you need to handle the native "wide" string for example
+if you need to talk UTF-16 on Windows see L<FFI::Platypus::Type::WideString>).
+
+(Note if you need to pass in a fixed length string by value (not as
+a pointer) then you can do so using L<FFI::Platypus::Record>).
+
+(Note that languages like L<Go|FFI::Platypus::Lang::Go> and L<Rust|FFI::Platypus::Lang::Rust> do not use NULL terminated strings
+and need their own string types; see the appropriate language plugins for details)
+
+ # can also be used when you need a void * or const void *
+ $ffi->attach( write => ['int', 'string', 'size_t' ] => 'ssizet' );
+
+The C<string> type can also be used to pass in the start of a buffer
+of arbitrary bytes stored in a Perl scalar.  Because a C<string> is
+passed just as a pointer you will typically need to also pass the
+length of the buffer as a separate argument.  This is necessary because
+buffers could potentially have a NULL in them.
 
 The pointer passed into C (or other language) is to the content of the
 actual scalar, which means it can modify the content of a scalar.
@@ -632,6 +649,31 @@ either L<FFI::Platypus::Type::WideString> or
 L<FFI::Platypus::Lang::Win32>, which handle the memory allocation
 and conversion for you.
 
+String types can be defined to have a fixed length using a trailing
+parenthetical like so C<string(10)>.  For arguments this has little
+practical effect since the strings are passed as pointers anyway,
+but does impact return values.  If a function that returns a C<string(10)>
+type returns a string that is not NULL terminated, only the first ten bytes
+will be returned in the result.
+
+Internally fixed length strings are implemented the same as
+classless record types (that is to say C<string(10)> is identically
+internally to C<record(10)*>).
+
+For the 1.00 Platypus API, the C<string(10)> type was specified as
+a pointer (that is C<string(10)*>).  This was a mistake, but you
+can still use the latter as an alias for the correct form in the
+2.00 API.
+
+=head2 Pointers and Arrays of Strings
+
+As of the 1.00 Platypus API, you can specify pointers to strings
+(C<string*>) and arrays of strings (C<string[10]>).  Since strings
+themselves are passed as pointers, this means these types are
+passed in as pointers to pointers.  If the pointer to the string
+is changed then when the function returns the scalar or array
+will be updated as well.
+
 =head2 Pointer / References
 
 In C you can pass a pointer to a variable to a function in order
@@ -679,14 +721,11 @@ Older versions of Platypus did not support pointers to strings or records.
 Records are structured data of a fixed length.  In C they are called
 C<struct>s.
 
-The Platypus native way of working with structured data is via the C<record>
-type. There is also L<FFI::C> which has some overlapping functionality.
-Briefly, L<FFI::C> supports C<union> and arrays of structured types, but
-not passing structured data by-value, while the C<record> type doesn't
-support C<union> or arrays of structured data, but does support passing
-structured data by-value.  The remainder of this section will discuss
-the native Platypus C<record> type, but you should remember that for
-some applications L<FFI::C> might be more appropriate.
+For most C structured data, as long as you do not need to a record
+by value, L<FFI::C> is the better choice.  Briefly, L<FFI::C> supports
+C<struct>, C<union>, and arrays of C<struct> and C<unions>.  L<FFI::C>
+does not support passing by value.  The reminder of this section will
+discuss only the C<record> type.
 
 To declare a record type, use C<record>:
 
@@ -798,6 +837,11 @@ including C<string rw> members.  Although you can pass a "pointer"
 to a record into a closure, because of limitations of the
 implementation you actually have a copy, so all records passed
 into closures are passed by-value.
+
+Note that a record that does not have a class (classless) and is
+defined instead using a length is internally identical to fixed
+strings.  That is to say C<string(10)> and C<record(10)*> are
+identical.
 
 =head2 Fixed length arrays
 
