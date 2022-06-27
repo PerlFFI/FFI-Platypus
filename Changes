@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+1.90_02   2022-06-27 08:33:31 -0600
   - Documentation updates for API = 2 (gh#340, gh#368)
 
 1.90_01   2022-06-24 11:03:35 -0500
