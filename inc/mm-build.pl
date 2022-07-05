@@ -29,7 +29,7 @@ foreach my $h (qw( ffi_platypus_config.h ffi_platypus_bundle.h ))
 my $lib = FFI::Build->new(
   'plfill',
   source   => ['ffi/*.c'],
-  verbose  => (!!$ENV{V} ? 2 : 1),
+  verbose  => 1,
   dir      => 'blib/lib/auto/share/dist/FFI-Platypus/lib',
   platform => $config->platform,
   alien    => [$config->alien],

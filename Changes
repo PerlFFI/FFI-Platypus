@@ -1,6 +1,10 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Setting the env environment variable now will override the verbose option on
+    FFI::Build.  This allows modules that use it to display verbose output without
+    having to change the .fbx files.  This mirrors the behavior of how FFI-Platypus
+    itself works. (gh#369)
 
 1.90_02   2022-06-27 08:33:31 -0600
   - Documentation updates for API = 2 (gh#340, gh#368)

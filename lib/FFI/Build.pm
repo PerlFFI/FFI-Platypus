@@ -136,6 +136,9 @@ Output the complete commands run verbatim.
 
 =back
 
+If the environment variable C<V> is set to a true value then the verbosity will be set to C<2> regardless
+of what is passed in.
+
 =back
 
 =cut
@@ -186,6 +189,8 @@ sub new
   my $buildname = $self->{buildname} = $args{buildname} || '_build';
   my $verbose   = $self->{verbose}   = $args{verbose}   || 0;
   my $export    = $self->{export}    = $args{export}    || [];
+
+  $self->{verbose} = $verbose = 2 if $ENV{V};
 
   if(defined $args{cflags})
   {
