@@ -1712,7 +1712,8 @@ Like OpenVMS
 
 =item Languages that do not support using dynamic libraries from other languages
 
-Like older versions of Google's Go. This is a problem for C / XS code as well.
+This used to be the case with Google's Go, but is no longer the case.  This is
+a problem for C / XS code as well.
 
 =item Languages that do not compile to machine code
 
