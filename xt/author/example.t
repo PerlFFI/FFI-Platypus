@@ -12,6 +12,10 @@ opendir my $dir, 'examples';
 my @examples = sort grep /\.pl$/, readdir $dir;
 closedir $dir;
 
-script_compiles("examples/$_") for @examples;
+foreach my $script (@examples)
+{
+  next if $script eq 'attach_from_pointer.pl';
+  script_compiles("examples/$script")
+}
 
 done_testing;
