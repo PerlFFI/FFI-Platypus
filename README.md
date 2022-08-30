@@ -1838,7 +1838,7 @@ be helpful to compare the runtime performance of Platypus if you are
 making significant changes to the Platypus Core.  For that I use
 \`FFI-Performance\`, which can be found in my GitHub repository here:
 
-- [https://github.com/PerlFFI/FFI-Performance](https://github.com/PerlFFI/FFI-Performance)
+- [https://github.com/Perl5-FFI/FFI-Performance](https://github.com/Perl5-FFI/FFI-Performance)
 
 ## System integrators
 
@@ -1963,12 +1963,6 @@ the development package for `libffi` as prereqs for this module.
 - [Win32::API](https://metacpan.org/pod/Win32::API)
 
     Microsoft Windows specific FFI style interface.
-
-- [Ctypes](https://gitorious.org/perl-ctypes)
-
-    Ctypes was intended as a FFI style interface for Perl, but was never
-    part of CPAN, and at least the last time I tried it did not work with
-    recent versions of Perl.
 
 - [FFI](https://metacpan.org/pod/FFI)
 

@@ -1876,7 +1876,7 @@ making significant changes to the Platypus Core.  For that I use
 
 =over 4
 
-=item L<https://github.com/PerlFFI/FFI-Performance>
+=item L<https://github.com/Perl5-FFI/FFI-Performance>
 
 =back
 
@@ -2017,12 +2017,6 @@ Promising interface to Platypus inspired by Raku.
 =item L<Win32::API>
 
 Microsoft Windows specific FFI style interface.
-
-=item L<Ctypes|https://gitorious.org/perl-ctypes>
-
-Ctypes was intended as a FFI style interface for Perl, but was never
-part of CPAN, and at least the last time I tried it did not work with
-recent versions of Perl.
 
 =item L<FFI>
 

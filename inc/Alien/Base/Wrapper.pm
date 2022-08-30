@@ -14,7 +14,8 @@ use Text::ParseWords qw( shellwords );
 # for this [AlienBase::Wrapper::Bundle]
 
 # ABSTRACT: Compiler and linker wrapper for Alien
-our $VERSION = '2.64'; # VERSION
+our $VERSION = '2.63_01'; # TRIAL VERSION
+$VERSION = eval $VERSION; ## no critic (BuiltinFunctions::ProhibitStringyEval)
 
 
 sub _join
@@ -325,7 +326,7 @@ Alien::Base::Wrapper - Compiler and linker wrapper for Alien
 
 =head1 VERSION
 
-version 2.64
+version 2.63_01
 
 =head1 SYNOPSIS
 
