@@ -244,7 +244,7 @@ may depend on the platform.
 Somewhat confusingly, C<char> is an integer type!  This is really an
 alias for either C<sint8_t> or C<uint8_t> depending on your platform.
 If you want to pass a character (not integer) in to a C function that
-takes a character you want to use the perl L<ord|perlfunc#ord> function.
+takes a character you want to use the perl L<ord|perlfunc/ord> function.
 Here is an example that uses the standard libc C<isalpha>, C<isdigit>
 type functions:
 

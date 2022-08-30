@@ -34,7 +34,7 @@ Use it:
 
 =head1 DESCRIPTION
 
-This class is the base class for other L<FFI::Build::File> classes.
+This class is the base class for other C<FFI::Build::File::*> classes.
 
 =head1 CONSTRUCTOR
 

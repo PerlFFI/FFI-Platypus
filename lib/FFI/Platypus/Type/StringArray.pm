@@ -24,7 +24,7 @@ In your C code:
    ...
  }
 
-In your L<Platypus::FFI> code:
+In your L<FFI::Platypus> code:
 
  use FFI::Platypus 2.00;
  

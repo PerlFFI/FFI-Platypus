@@ -345,7 +345,7 @@ L<Alien> namespace is reserved for providing external non-Perl dependencies
 for CPAN modules.  The nominal L<Alien> module when installed looks
 for the library locally, and if it can't be found it fetches it from
 the internet, builds it, and installs it in a private directory so that
-it can be used by other CPAN modules.  For L<Aliens> that provide
+it can be used by other CPAN modules.  For L<Alien>s that provide
 shared libraries, and that have simple interfaces that do not require
 additional C code you can easily just pass the shared libraries
 to Platypus directly.  For modules that require some bundled C code
