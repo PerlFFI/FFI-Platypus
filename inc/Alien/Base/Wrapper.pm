@@ -14,7 +14,7 @@ use Text::ParseWords qw( shellwords );
 # for this [AlienBase::Wrapper::Bundle]
 
 # ABSTRACT: Compiler and linker wrapper for Alien
-our $VERSION = '2.66'; # VERSION
+our $VERSION = '2.71'; # VERSION
 
 
 sub _join
@@ -325,7 +325,7 @@ Alien::Base::Wrapper - Compiler and linker wrapper for Alien
 
 =head1 VERSION
 
-version 2.66
+version 2.71
 
 =head1 SYNOPSIS
 
@@ -473,8 +473,8 @@ Returns arguments that you can pass into the constructor to L<Module::Build>.
 =head2 WriteMakefile
 
  use Alien::Base::Wrapper qw( WriteMakefile );
- WriteMakefile(%args, alien_requires => %aliens);
- WriteMakefile(%args, alien_requires => @aliens);
+ WriteMakefile(%args, alien_requires => \%aliens);
+ WriteMakefile(%args, alien_requires => \@aliens);
 
 This is a thin wrapper around C<WriteMakefile> from L<ExtUtils::MakeMaker>, which adds the
 given aliens to the configure requirements and sets the appropriate compiler and linker
