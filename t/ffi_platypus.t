@@ -1059,4 +1059,12 @@ subtest 'unitof' => sub {
   );
 };
 
+subtest 'pass undef into closure method should just return undef' => sub {
+
+  my $ret = eval { FFI::Platypus->closure(undef) };
+  is "$@", '', 'no error';
+  is $ret, U(), 'returns undef';
+
+};
+
 done_testing;

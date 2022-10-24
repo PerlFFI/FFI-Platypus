@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - The closure method now accepts undef as an argument.  It just returns undef
+    which should be accepted by any function that takes a closure. (gh#376, gh#377)
 
 2.01      2022-08-30 15:37:22 -0600
   - Documentation fixes (gh#373)
