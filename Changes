@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Documentation improvements (gh#381, gh#383, gh#384)
 
 2.03      2022-10-27 21:19:06 -0600
   - Add hook for detecting bundled Zig project. You will need to install
