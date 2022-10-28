@@ -822,21 +822,27 @@ notify_notification_show($n, undef);
 notify_uninit();
 ```
 
-### Discussion
+### Execute
 
-The libnotify library is a desktop GUI notification system for the
-GNOME Desktop environment. This script sends a notification event that
-should show up as a balloon, for me it did so in the upper right hand
-corner of my screen.
+```
+$ perl notify.pl
+```
 
 <div>
-    <p>This is what it will look like:</p>
+    <p>And this is what it will look like:</p>
     <div style="display: flex">
     <div style="margin: 3px; flex: 1 1 50%">
     <img alt="Test" src="/examples//notify.png">
     </div>
     </div>
 </div>
+
+### Discussion
+
+The libnotify library is a desktop GUI notification system for the
+GNOME Desktop environment. This script sends a notification event that
+should show up as a balloon, for me it did so in the upper right hand
+corner of my screen.
 
 ## Allocating and freeing memory
 

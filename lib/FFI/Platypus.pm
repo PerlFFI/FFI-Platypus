@@ -1346,16 +1346,13 @@ L<Libnotify Reference Manual|https://developer-old.gnome.org/libnotify/unstable>
 
 # EXAMPLE: examples/notify.pl
 
-=head3 Discussion
+=head3 Execute
 
-The libnotify library is a desktop GUI notification system for the
-GNOME Desktop environment. This script sends a notification event that
-should show up as a balloon, for me it did so in the upper right hand
-corner of my screen.
+ $ perl notify.pl
 
 =begin html
 
-<p>This is what it will look like:</p>
+<p>And this is what it will look like:</p>
 <div style="display: flex">
 <div style="margin: 3px; flex: 1 1 50%">
 <img alt="Test" src="/examples//notify.png">
@@ -1363,6 +1360,13 @@ corner of my screen.
 </div>
 
 =end html
+
+=head3 Discussion
+
+The libnotify library is a desktop GUI notification system for the
+GNOME Desktop environment. This script sends a notification event that
+should show up as a balloon, for me it did so in the upper right hand
+corner of my screen.
 
 =head2 Allocating and freeing memory
 
