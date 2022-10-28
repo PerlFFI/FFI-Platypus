@@ -791,69 +791,52 @@ and `atoi` converts a string to integer.  Specifying `undef` as a
 library tells Platypus to search the current process for symbols, which
 includes the standard c library.
 
-## libnotify
+## Sending Strings to GUI on Unix with libnotify
+
+### C API
+
+[Libnotify Reference Manual](https://developer-old.gnome.org/libnotify/unstable)
+
+### Perl Source
 
 ```perl
 use FFI::CheckLib;
 use FFI::Platypus 2.00;
 
-# NOTE: I ported this from anoter Perl FFI library and it seems to work most
-# of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior
-# in the old version, and am not really familiar with the libnotify API to
-# say what is the cause.  Patches welcome to fix it.
-
 my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(find_lib_or_exit lib => 'notify');
 
-$ffi->attach(notify_init   => ['string'] => 'void');
-$ffi->attach(notify_uninit => []       => 'void');
-$ffi->attach([notify_notification_new    => 'notify_new']    => ['string', 'string', 'string']           => 'opaque');
-$ffi->attach([notify_notification_update => 'notify_update'] => ['opaque', 'string', 'string', 'string'] => 'void');
-$ffi->attach([notify_notification_show   => 'notify_show']   => ['opaque', 'opaque']                     => 'void');
+$ffi->attach( notify_init              => ['string']                                  );
+$ffi->attach( notify_uninit            => []                                          );
+$ffi->attach( notify_notification_new  => ['string', 'string', 'string']  => 'opaque' );
+$ffi->attach( notify_notification_show => ['opaque', 'opaque']                        );
 
-notify_init('FFI::Platypus');
-my $n = notify_new('','','');
-notify_update($n, 'FFI::Platypus', 'It works!!!', 'media-playback-start');
-notify_show($n, undef);
+my $message = join "\n",
+  "Hello from Platypus!",
+  "Welcome to the fun",
+  "world of FFI";
+
+notify_init('Platypus Hello');
+my $n = notify_notification_new('Platypus Hello World', $message, 'dialog-information');
+notify_notification_show($n, undef);
 notify_uninit();
 ```
 
-**Discussion**: libnotify is a desktop GUI notification library for the
+### Discussion
+
+The libnotify library is a desktop GUI notification system for the
 GNOME Desktop environment. This script sends a notification event that
 should show up as a balloon, for me it did so in the upper right hand
 corner of my screen.
 
-The most portable way to find the correct name and location of a dynamic
-library is via the [FFI::CheckLib#find\_lib](https://metacpan.org/pod/FFI::CheckLib#find_lib) family of functions.  If
-you are putting together a CPAN distribution, you should also consider
-using [FFI::CheckLib#check\_lib\_or\_exit](https://metacpan.org/pod/FFI::CheckLib#check_lib_or_exit) function in your `Build.PL` or
-`Makefile.PL` file (If you are using [Dist::Zilla](https://metacpan.org/pod/Dist::Zilla), check out the
-[Dist::Zilla::Plugin::FFI::CheckLib](https://metacpan.org/pod/Dist::Zilla::Plugin::FFI::CheckLib) plugin). This will provide a user
-friendly diagnostic letting the user know that the required library is
-missing, and reduce the number of bogus CPAN testers results that you
-will get.
-
-Also in this example, we rename some of the functions when they are
-placed into Perl space to save typing:
-
-```perl
-$ffi->attach( [notify_notification_new => 'notify_new']
-  => ['string','string','string']
-  => 'opaque'
-);
-```
-
-When you specify a list reference as the "name" of the function the
-first element is the symbol name as understood by the dynamic library.
-The second element is the name as it will be placed in Perl space.
-
-Later, when we call `notify_new`:
-
-```perl
-my $n = notify_new('','','');
-```
-
-We are really calling the C function `notify_notification_new`.
+<div>
+    <p>This is what it will look like:</p>
+    <div style="display: flex">
+    <div style="margin: 3px; flex: 1 1 50%">
+    <img alt="Test" src="/examples//notify.png">
+    </div>
+    </div>
+</div>
 
 ## Allocating and freeing memory
 

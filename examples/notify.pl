@@ -3,22 +3,20 @@ use warnings;
 use FFI::CheckLib;
 use FFI::Platypus 2.00;
 
-# NOTE: I ported this from anoter Perl FFI library and it seems to work most
-# of the time, but also seems to SIGSEGV sometimes.  I saw the same behavior
-# in the old version, and am not really familiar with the libnotify API to
-# say what is the cause.  Patches welcome to fix it.
-
 my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(find_lib_or_exit lib => 'notify');
 
-$ffi->attach(notify_init   => ['string'] => 'void');
-$ffi->attach(notify_uninit => []       => 'void');
-$ffi->attach([notify_notification_new    => 'notify_new']    => ['string', 'string', 'string']           => 'opaque');
-$ffi->attach([notify_notification_update => 'notify_update'] => ['opaque', 'string', 'string', 'string'] => 'void');
-$ffi->attach([notify_notification_show   => 'notify_show']   => ['opaque', 'opaque']                     => 'void');
+$ffi->attach( notify_init              => ['string']                                  );
+$ffi->attach( notify_uninit            => []                                          );
+$ffi->attach( notify_notification_new  => ['string', 'string', 'string']  => 'opaque' );
+$ffi->attach( notify_notification_show => ['opaque', 'opaque']                        );
 
-notify_init('FFI::Platypus');
-my $n = notify_new('','','');
-notify_update($n, 'FFI::Platypus', 'It works!!!', 'media-playback-start');
-notify_show($n, undef);
+my $message = join "\n",
+  "Hello from Platypus!",
+  "Welcome to the fun",
+  "world of FFI";
+
+notify_init('Platypus Hello');
+my $n = notify_notification_new('Platypus Hello World', $message, 'dialog-information');
+notify_notification_show($n, undef);
 notify_uninit();

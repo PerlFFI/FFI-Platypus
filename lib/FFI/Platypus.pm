@@ -1336,42 +1336,33 @@ and C<atoi> converts a string to integer.  Specifying C<undef> as a
 library tells Platypus to search the current process for symbols, which
 includes the standard c library.
 
-=head2 libnotify
+=head2 Sending Strings to GUI on Unix with libnotify
+
+=head3 C API
+
+L<Libnotify Reference Manual|https://developer-old.gnome.org/libnotify/unstable>
+
+=head3 Perl Source
 
 # EXAMPLE: examples/notify.pl
 
-B<Discussion>: libnotify is a desktop GUI notification library for the
+=head3 Discussion
+
+The libnotify library is a desktop GUI notification system for the
 GNOME Desktop environment. This script sends a notification event that
 should show up as a balloon, for me it did so in the upper right hand
 corner of my screen.
 
-The most portable way to find the correct name and location of a dynamic
-library is via the L<FFI::CheckLib#find_lib> family of functions.  If
-you are putting together a CPAN distribution, you should also consider
-using L<FFI::CheckLib#check_lib_or_exit> function in your C<Build.PL> or
-C<Makefile.PL> file (If you are using L<Dist::Zilla>, check out the
-L<Dist::Zilla::Plugin::FFI::CheckLib> plugin). This will provide a user
-friendly diagnostic letting the user know that the required library is
-missing, and reduce the number of bogus CPAN testers results that you
-will get.
+=begin html
 
-Also in this example, we rename some of the functions when they are
-placed into Perl space to save typing:
+<p>This is what it will look like:</p>
+<div style="display: flex">
+<div style="margin: 3px; flex: 1 1 50%">
+<img alt="Test" src="/examples//notify.png">
+</div>
+</div>
 
- $ffi->attach( [notify_notification_new => 'notify_new']
-   => ['string','string','string']
-   => 'opaque'
- );
-
-When you specify a list reference as the "name" of the function the
-first element is the symbol name as understood by the dynamic library.
-The second element is the name as it will be placed in Perl space.
-
-Later, when we call C<notify_new>:
-
- my $n = notify_new('','','');
-
-We are really calling the C function C<notify_notification_new>.
+=end html
 
 =head2 Allocating and freeing memory
 
