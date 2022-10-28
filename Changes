@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.03      2022-10-27 21:19:06 -0600
   - Add hook for detecting bundled Zig project. You will need to install
     FFI::Build::File::Zig to use it.  (gh#379)
 
