@@ -153,6 +153,8 @@ pod_spelling_system:
     - dyncall
     # for tl;dr
     - tl
+    - winuser
+    - MessageBoxW
 
 pod_coverage:
   skip: 0

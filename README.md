@@ -1446,7 +1446,13 @@ will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the
 wrapper function will be returned back to the original caller.
 
-## The Win32 API
+## The Win32 API with MessageBoxW
+
+### Win32 API
+
+[MessageBoxW function (winuser.h)](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-messageboxw)
+
+### Perl Source
 
 ```perl
 use utf8;
@@ -1467,15 +1473,32 @@ $ffi->attach( [MessageBoxW => 'MessageBox'] => [ 'HWND', 'LPCWSTR', 'LPCWSTR', '
 MessageBox(undef, "I ❤️ Platypus", "Confession", MB_OK|MB_DEFAULT_DESKTOP_ONLY);
 ```
 
-**Discussion**: The API used by Microsoft Windows present some unique
-challenges.  On 32 bit systems a different ABI is used than what is
-used by the standard C library.  It also provides a rats nest of
+### Execute
+
+```
+$ perl win32_messagebox.pl
+```
+
+<div>
+    <p>And this is what it will look like:</p>
+    <div style="display: flex">
+    <div style="margin: 3px; flex: 1 1 50%">
+    <img alt="Test" src="/examples/win32_messagebox.png">
+    </div>
+    </div>
+</div>
+
+### Discussion
+
+The API used by Microsoft Windows presents some unique
+challenges.  On 32 bit systems a different ABI is used than what
+is used by the standard C library.  It also provides a rats nest of
 type aliases.  Finally if you want to talk Unicode to any of the
-Windows API you will need to use `UTF-16LE` instead of `utf-8`
+Windows API you will need to use `UTF-16LE` instead of `UTF-8`
 which is native to Perl.  (The Win32 API refers to these as
 `LPWSTR` and `LPCWSTR` types).  As much as possible the Win32
-"language" plugin attempts to handle this transparently.  For more
-details see [FFI::Platypus::Lang::Win32](https://metacpan.org/pod/FFI::Platypus::Lang::Win32).
+"language" plugin attempts to handle these challenges transparently.
+For more details see [FFI::Platypus::Lang::Win32](https://metacpan.org/pod/FFI::Platypus::Lang::Win32).
 
 ## bundle your own code
 
