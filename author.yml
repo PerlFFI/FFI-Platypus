@@ -156,6 +156,7 @@ pod_spelling_system:
     - winuser
     - MessageBoxW
     - Zig
+    - cppreference
 
 pod_coverage:
   skip: 0

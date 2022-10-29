@@ -827,6 +827,44 @@ If you are working with another language like
 you will find similar examples where you can use the Platypus language
 plugin for that language and use the native types.
 
+## String Arguments (with puts)
+
+### C API
+
+[cppreference - puts](https://en.cppreference.com/w/c/io/puts)
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+
+my $ffi = FFI::Platypus->new( api => 2, lib => undef );
+$ffi->attach( puts => ['string'] => 'int' );
+
+puts("hello world");
+```
+
+### Execute
+
+```
+$ perl puts.pl
+hello world
+```
+
+### Discussion
+
+Passing strings into a C function as an argument is also pretty easy
+using Platypus.  Just use the `string` type, which is equivalent to
+the C &lt;char \*> or `const char *` types.
+
+In this example we are using the C Standard Library's `puts` function,
+so we don't need to build our own C code.  We do still need to tell
+Platypus where to look for the `puts` symbol though, which is why
+we set `lib` to `undef`.  This is a special value which tells
+Platypus to search the Perl runtime executable itself (including any
+dynamic libraries) for symbols.  That helpfully includes the C Standard
+Library.
+
 ## Integer conversions
 
 ```perl

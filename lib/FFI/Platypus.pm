@@ -1367,6 +1367,35 @@ L<Zig|FFI::Platypus::Lang::Zig/"Passing and Returning Integers">,
 you will find similar examples where you can use the Platypus language
 plugin for that language and use the native types.
 
+=head2 String Arguments (with puts)
+
+=head3 C API
+
+L<cppreference - puts|https://en.cppreference.com/w/c/io/puts>
+
+=head3 Perl Source
+
+# EXAMPLE: examples/puts.pl
+
+=head3 Execute
+
+ $ perl puts.pl
+ hello world
+
+=head3 Discussion
+
+Passing strings into a C function as an argument is also pretty easy
+using Platypus.  Just use the C<string> type, which is equivalent to
+the C <char *> or C<const char *> types.
+
+In this example we are using the C Standard Library's C<puts> function,
+so we don't need to build our own C code.  We do still need to tell
+Platypus where to look for the C<puts> symbol though, which is why
+we set C<lib> to C<undef>.  This is a special value which tells
+Platypus to search the Perl runtime executable itself (including any
+dynamic libraries) for symbols.  That helpfully includes the C Standard
+Library.
+
 =head2 Integer conversions
 
 # EXAMPLE: examples/integer.pl
