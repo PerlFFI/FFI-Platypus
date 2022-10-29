@@ -1321,10 +1321,51 @@ __END__
 
 =head1 EXAMPLES
 
-Here are some examples.  These examples
-are provided in full with the Platypus distribution in the "examples"
-directory.  There are also some more examples in L<FFI::Platypus::Type>
-that are related to types.
+Here are some examples.  These examples are provided in full with the
+Platypus distribution in the "examples" directory.  There are also some
+more examples in L<FFI::Platypus::Type> that are related to types.
+
+=head2 Passing and Returning Integers
+
+=head3 C Source
+
+# EXAMPLE: examples/add.c
+
+=head3 Perl Source
+
+# EXAMPLE: examples/add.pl
+
+=head3 Execute
+
+ $ cc -shared -o add.so add.c
+ $ perl add.pl
+ 3
+
+=head3 Discussion
+
+Basic types like integers and floating points are the easiest to pass
+across the FFI boundary.  Because they are values that are passed on
+the stack (or through registers) you don't need to worry about memory
+allocations or ownership.
+
+Here we are building our own C dynamic library using the native C
+compiler on a Unix like platform.  The exact incantation that you
+will use to do this would unfortunately depend on your platform and
+C compiler.
+
+By default, Platypus uses the
+L<Platypus C language plugin|FFI::Platypus::Lang::C>, which gives you
+easy access to many of the basic types used by C APIs.  (for example
+C<int>, C<unsigned long>, C<double>, C<size_t> and others).
+
+If you are working with another language like
+L<Fortran|FFI::Platypus::Lang::Fortran/"Passing and Returning Integers">,
+L<Go|FFI::Platypus::Lang::Go/"Passing and Returning Integers">,
+L<Pascal|FFI::Platypus::Lang::Pascal/"Passing and Returning Integers">,
+L<Rust|FFI::Platypus::Lang::Rust/"Passing and Returning Integers"> or
+L<Zig|FFI::Platypus::Lang::Zig/"Passing and Returning Integers">,
+you will find similar examples where you can use the Platypus language
+plugin for that language and use the native types.
 
 =head2 Integer conversions
 

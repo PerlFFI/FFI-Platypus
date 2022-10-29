@@ -155,6 +155,7 @@ pod_spelling_system:
     - tl
     - winuser
     - MessageBoxW
+    - Zig
 
 pod_coverage:
   skip: 0

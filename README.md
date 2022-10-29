@@ -766,10 +766,66 @@ value from the ["abis"](#abis) method above.
 
 # EXAMPLES
 
-Here are some examples.  These examples
-are provided in full with the Platypus distribution in the "examples"
-directory.  There are also some more examples in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type)
-that are related to types.
+Here are some examples.  These examples are provided in full with the
+Platypus distribution in the "examples" directory.  There are also some
+more examples in [FFI::Platypus::Type](https://metacpan.org/pod/FFI::Platypus::Type) that are related to types.
+
+## Passing and Returning Integers
+
+### C Source
+
+```
+int add(int a, int b) {
+  return a+b;
+}
+```
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+use FFI::CheckLib qw( find_lib_or_die );
+use File::Basename qw( dirname );
+
+my $ffi = FFI::Platypus->new( api => 2, lib => './add.so' );
+$ffi->attach( add => ['int', 'int'] => 'int' );
+
+print add(1,2), "\n";  # prints 3
+```
+
+### Execute
+
+```
+$ cc -shared -o add.so add.c
+$ perl add.pl
+3
+```
+
+### Discussion
+
+Basic types like integers and floating points are the easiest to pass
+across the FFI boundary.  Because they are values that are passed on
+the stack (or through registers) you don't need to worry about memory
+allocations or ownership.
+
+Here we are building our own C dynamic library using the native C
+compiler on a Unix like platform.  The exact incantation that you
+will use to do this would unfortunately depend on your platform and
+C compiler.
+
+By default, Platypus uses the
+[Platypus C language plugin](https://metacpan.org/pod/FFI::Platypus::Lang::C), which gives you
+easy access to many of the basic types used by C APIs.  (for example
+`int`, `unsigned long`, `double`, `size_t` and others).
+
+If you are working with another language like
+[Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran#Passing-and-Returning-Integers),
+[Go](https://metacpan.org/pod/FFI::Platypus::Lang::Go#Passing-and-Returning-Integers),
+[Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal#Passing-and-Returning-Integers),
+[Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust#Passing-and-Returning-Integers) or
+[Zig](https://metacpan.org/pod/FFI::Platypus::Lang::Zig#Passing-and-Returning-Integers),
+you will find similar examples where you can use the Platypus language
+plugin for that language and use the native types.
 
 ## Integer conversions
 
