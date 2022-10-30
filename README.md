@@ -2028,6 +2028,11 @@ the development package for `libffi` as prereqs for this module.
 
     Documentation and tools for using Platypus with the Win32 API.
 
+- [FFI::Platypus::Lang::Zig](https://metacpan.org/pod/FFI::Platypus::Lang::Zig)
+
+    Documentation and tools for using Platypus with the Zig programming
+    language
+
 - [Wasm](https://metacpan.org/pod/Wasm) and [Wasm::Wasmtime](https://metacpan.org/pod/Wasm::Wasmtime)
 
     Modules for writing WebAssembly bindings in Perl.  This allows you to call
