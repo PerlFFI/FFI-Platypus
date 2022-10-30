@@ -2057,6 +2057,11 @@ Documentation and tools for using Platypus with the Assembly
 
 Documentation and tools for using Platypus with the Win32 API.
 
+=item L<FFI::Platypus::Lang::Zig>
+
+Documentation and tools for using Platypus with the Zig programming
+language
+
 =item L<Wasm> and L<Wasm::Wasmtime>
 
 Modules for writing WebAssembly bindings in Perl.  This allows you to call

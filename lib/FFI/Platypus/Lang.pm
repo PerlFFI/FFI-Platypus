@@ -61,6 +61,10 @@ Non-core language plugin for the Rust programming language.
 
 Language plugin for use with the Win32 API.
 
+=item L<FFI::Platypus::Lang::Zig>
+
+Non-core language plugin for the Zig programming language.
+
 =back
 
 =cut
