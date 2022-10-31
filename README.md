@@ -865,6 +865,77 @@ Platypus to search the Perl runtime executable itself (including any
 dynamic libraries) for symbols.  That helpfully includes the C Standard
 Library.
 
+## Returning Strings (with strtok)
+
+### C API
+
+[cppreference - strtok](https://en.cppreference.com/w/cpp/string/byte/strtok)
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => undef,
+);
+
+$ffi->attach( strtok => ['string','string'] => 'string' );
+
+my $orig = "foo:bar:baz";
+
+my @tokens;
+my $token = strtok($orig, ":");
+while(defined $token) {
+  push @tokens, $token;
+  $token = strtok(undef, ":");
+}
+
+my $escaped = $orig;
+$escaped =~ s/([^[:print:]])/"\\".ord($1)/eg;
+
+print "token: $_\n" for @tokens;
+print "orig:  $escaped\n";
+```
+
+### Execute
+
+```
+$ perl strtok.pl 
+token: foo
+token: bar
+token: baz
+orig:  foo\0bar\0baz
+```
+
+### Discussion
+
+(**Aside**: you should never use `strtok` in a modern program, and
+it is especially pointless from Perl which has much more powerful
+string manipulation tools, but it demonstrates nicely some
+characteristics of dealing with strings and FFI).
+
+The `strtok` function is part of the standard C library.  It splits
+the input string by the set of characters in the second argument. The
+first time you call it you pass the original string in.  The next
+time you call it you pass `NULL` / `undef`, and it knows to keep
+operating on the string from the first call.  Each time you call it
+it returns the next token.  It also modifies the original string by
+inserting the NULL character `"\0"` where the delimiter used to be.
+The token returned is actually inside the original string!
+
+When you attach a function that returns a `string` you get a string
+scalar back, just as you would expect.  However, what is not always
+obvious is that you get a _copy_ of the string, not the string at
+the address that the function returned.
+
+When can see also in this example that the original string is modified,
+because there are `NULL`s in the original string!  This is clearly
+inconsistent behavior, but it is _usually_ what you actually want,
+unless the API we are calling expects us to free the string after we
+are done with it.  (We will see this in the next example).
+
 ## Integer conversions
 
 ```perl
