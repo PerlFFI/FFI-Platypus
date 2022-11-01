@@ -1514,6 +1514,45 @@ returned to Perl as a reference to a scalar.  Platypus also supports string
 pointers (C<string*>).  (Though the C equivalent to a C<string*> is a double
 pointer to char C<char**>).
 
+=head2 Opaque Pointers (objects)
+
+=head3 C Source
+
+# EXAMPLE: examples/person.c
+
+=head3 Perl Source
+
+# EXAMPLE: examples/person.pl
+
+=head3 Execute
+
+ $ gcc -shared -o person.so person.c
+ $ perl person.pl
+ name = Roger Frooble Bits
+ age  = 35
+
+=head3 Discussion
+
+An opaque pointer is a pointer (memory address) that is pointing to I<something>
+but you do not know the structure of that something.  In C this is usually a
+C<void*>, but it could also be a pointer to a C<struct> without a defined body.
+
+This is often used to as an abstraction around objects in C.  Here in the C
+code we have a C<person_t> struct with functions to create (a constructor), free
+(a destructor) and query it (methods).
+
+The Perl code can then use the constructor, methods and destructors without having
+to understand the internals.  The C<person_t> internals can also be changed
+without having to modify the calling code.
+
+We use the Platypus L<type method|/type> to create an alias of C<opaque> called
+C<person_t>.  While this is not necessary, it does make the Perl code easier
+to understand.
+
+In later examples we will see how to hide the use of C<opaque> types further
+using the C<object> type, but for some code direct use of C<opaque> is
+appropriate.
+
 =head2 Arrays
 
 =head3 C Source
