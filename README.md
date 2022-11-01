@@ -1112,6 +1112,99 @@ returned to Perl as a reference to a scalar.  Platypus also supports string
 pointers (`string*`).  (Though the C equivalent to a `string*` is a double
 pointer to char `char**`).
 
+## Opaque Pointers (objects)
+
+### C Source
+
+```
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct person_t {
+  char *name;
+  unsigned int age;
+} person_t;
+
+person_t *
+person_new(const char *name, unsigned int age) {
+  person_t *self = malloc(sizeof(person_t));
+  self->name = strdup(name);
+  self->age  = age;
+}
+
+const char *
+person_name(person_t *self) {
+  return self->name;
+}
+
+unsigned int
+person_age(person_t *self) {
+  return self->age;
+}
+
+void
+person_free(person_t *self) {
+  free(self->name);
+  free(self);
+}
+```
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => './person.so',
+);
+
+$ffi->type( 'opaque' => 'person_t' );
+
+$ffi->attach( person_new =>  ['string','unsigned int'] => 'person_t'       );
+$ffi->attach( person_name => ['person_t']              => 'string'       );
+$ffi->attach( person_age =>  ['person_t']              => 'unsigned int' );
+$ffi->attach( person_free => ['person_t']                                  );
+
+my $person = person_new( 'Roger Frooble Bits', 35 );
+
+print "name = ", person_name($person), "\n";
+print "age  = ", person_age($person),  "\n";
+
+person_free($person);
+```
+
+### Execute
+
+```
+$ gcc -shared -o person.so person.c
+$ perl person.pl
+name = Roger Frooble Bits
+age  = 35
+```
+
+### Discussion
+
+An opaque pointer is a pointer (memory address) that is pointing to _something_
+but you do not know the structure of that something.  In C this is usually a
+`void*`, but it could also be a pointer to a `struct` without a defined body.
+
+This is often used to as an abstraction around objects in C.  Here in the C
+code we have a `person_t` struct with functions to create (a constructor), free
+(a destructor) and query it (methods).
+
+The Perl code can then use the constructor, methods and destructors without having
+to understand the internals.  The `person_t` internals can also be changed
+without having to modify the calling code.
+
+We use the Platypus [type method](#type) to create an alias of `opaque` called
+`person_t`.  While this is not necessary, it does make the Perl code easier
+to understand.
+
+In later examples we will see how to hide the use of `opaque` types further
+using the `object` type, but for some code direct use of `opaque` is
+appropriate.
+
 ## Arrays
 
 ### C Source
