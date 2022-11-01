@@ -1581,12 +1581,12 @@ appropriate.
 =head3 Discussion
 
 Another useful application of the C<opaque> type is for dealing with buffers,
-and C strings.  This example is completely contrived, but we are using
-C<malloc> to create a buffer of 14 bytes.  We create a C string using
-C<strdup>, and then copy it into the buffer using C<memcpy>.  When we are
-done with the C<opaque> pointers we can free them using C<free> since they.
-(This is generally only okay when freeing memory that was allocated by
-C<malloc>, which is the case for C<strdup>).
+and C strings that you do not immediately need to convert into Perl strings.
+This example is completely contrived, but we are using C<malloc> to create a
+buffer of 14 bytes.  We create a C string using C<strdup>, and then copy it
+into the buffer using C<memcpy>.  When we are done with the C<opaque> pointers
+we can free them using C<free> since they. (This is generally only okay when
+freeing memory that was allocated by C<malloc>, which is the case for C<strdup>).
 
 These memory tools, along with others are provided by the L<FFI::Platypus::Memory>
 module, which is worth reviewing when you need to manipulate memory from

@@ -1242,12 +1242,12 @@ hello there!!
 ### Discussion
 
 Another useful application of the `opaque` type is for dealing with buffers,
-and C strings.  This example is completely contrived, but we are using
-`malloc` to create a buffer of 14 bytes.  We create a C string using
-`strdup`, and then copy it into the buffer using `memcpy`.  When we are
-done with the `opaque` pointers we can free them using `free` since they.
-(This is generally only okay when freeing memory that was allocated by
-`malloc`, which is the case for `strdup`).
+and C strings that you do not immediately need to convert into Perl strings.
+This example is completely contrived, but we are using `malloc` to create a
+buffer of 14 bytes.  We create a C string using `strdup`, and then copy it
+into the buffer using `memcpy`.  When we are done with the `opaque` pointers
+we can free them using `free` since they. (This is generally only okay when
+freeing memory that was allocated by `malloc`, which is the case for `strdup`).
 
 These memory tools, along with others are provided by the [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory)
 module, which is worth reviewing when you need to manipulate memory from
