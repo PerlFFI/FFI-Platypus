@@ -1472,9 +1472,10 @@ we are done.  Since we are getting the pointer back from the C code instead
 of copying the string that is easy to do.
 
 Finally, we are using a wrapper to hide a lot of this complexity from our
-caller.  The last argument to the C<attach> call is a subroutine which will
-wrap around the C function, which is passed in as the first argument.  This
-is a good practice when writing modules.
+caller.  The last argument to the C<attach> call is a code reference which will
+wrap around the C function, which is passed in as the first argument of
+the wrapper.  This is a good practice when writing modules, to hide the
+complexity of C.
 
 =head2 Sending Strings to GUI on Unix with libnotify
 
