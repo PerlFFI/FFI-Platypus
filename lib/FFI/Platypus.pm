@@ -1540,6 +1540,43 @@ L<Libnotify Reference Manual|https://developer-old.gnome.org/libnotify/unstable>
 
 =end html
 
+=head2 The Win32 API with MessageBoxW
+
+=head3 Win32 API
+
+L<MessageBoxW function (winuser.h)|https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-messageboxw>
+
+=head3 Perl Source
+
+# EXAMPLE: examples/win32_messagebox.pl
+
+=head3 Execute
+
+ $ perl win32_messagebox.pl
+
+=begin html
+
+<p>And this is what it will look like:</p>
+<div style="display: flex">
+<div style="margin: 3px; flex: 1 1 50%">
+<img alt="Test" src="/examples/win32_messagebox.png">
+</div>
+</div>
+
+=end html
+
+=head3 Discussion
+
+The API used by Microsoft Windows presents some unique
+challenges.  On 32 bit systems a different ABI is used than what
+is used by the standard C library.  It also provides a rats nest of
+type aliases.  Finally if you want to talk Unicode to any of the
+Windows API you will need to use C<UTF-16LE> instead of C<UTF-8>
+which is native to Perl.  (The Win32 API refers to these as
+C<LPWSTR> and C<LPCWSTR> types).  As much as possible the Win32
+"language" plugin attempts to handle these challenges transparently.
+For more details see L<FFI::Platypus::Lang::Win32>.
+
 =head3 Discussion
 
 The libnotify library is a desktop GUI notification system for the
@@ -1735,43 +1772,6 @@ wrapper will be a code reference to the C function.  The Perl arguments
 will come in after that.  This allows you to modify / convert the
 arguments to conform to the C API.  What ever value you return from the
 wrapper function will be returned back to the original caller.
-
-=head2 The Win32 API with MessageBoxW
-
-=head3 Win32 API
-
-L<MessageBoxW function (winuser.h)|https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-messageboxw>
-
-=head3 Perl Source
-
-# EXAMPLE: examples/win32_messagebox.pl
-
-=head3 Execute
-
- $ perl win32_messagebox.pl
-
-=begin html
-
-<p>And this is what it will look like:</p>
-<div style="display: flex">
-<div style="margin: 3px; flex: 1 1 50%">
-<img alt="Test" src="/examples/win32_messagebox.png">
-</div>
-</div>
-
-=end html
-
-=head3 Discussion
-
-The API used by Microsoft Windows presents some unique
-challenges.  On 32 bit systems a different ABI is used than what
-is used by the standard C library.  It also provides a rats nest of
-type aliases.  Finally if you want to talk Unicode to any of the
-Windows API you will need to use C<UTF-16LE> instead of C<UTF-8>
-which is native to Perl.  (The Win32 API refers to these as
-C<LPWSTR> and C<LPCWSTR> types).  As much as possible the Win32
-"language" plugin attempts to handle these challenges transparently.
-For more details see L<FFI::Platypus::Lang::Win32>.
 
 =head2 bundle your own code
 
