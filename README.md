@@ -1234,15 +1234,17 @@ corner of my screen.
 
 ```perl
 use FFI::Platypus 2.00;
-use FFI::Platypus::Memory qw( malloc free memcpy );
+use FFI::Platypus::Memory qw( malloc free memcpy strdup );
 
 my $ffi = FFI::Platypus->new( api => 2 );
-my $buffer = malloc 12;
+my $buffer = malloc 14;
+my $ptr_string = strdup("hello there!!\n");
 
-memcpy $buffer, $ffi->cast('string' => 'opaque', "hello there"), length "hello there\0";
+memcpy $buffer, $ptr_string, 15;
 
-print $ffi->cast('opaque' => 'string', $buffer), "\n";
+print $ffi->cast('opaque' => 'string', $buffer);
 
+free $ptr_string;
 free $buffer;
 ```
 
