@@ -157,6 +157,9 @@ pod_spelling_system:
     - MessageBoxW
     - Zig
     - cppreference
+    - NULLs
+    - XORd
+    - decrypted
 
 pod_coverage:
   skip: 0

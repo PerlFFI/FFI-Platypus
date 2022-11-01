@@ -865,11 +865,36 @@ Platypus to search the Perl runtime executable itself (including any
 dynamic libraries) for symbols.  That helpfully includes the C Standard
 Library.
 
-## Returning Strings (with strtok)
+## Returning Strings
 
-### C API
+### C Code
 
-[cppreference - strtok](https://en.cppreference.com/w/cpp/string/byte/strtok)
+```
+#include <string.h>
+#include <stdlib.h>
+
+const char *
+string_reverse(const char *input)
+{
+  static char *output = NULL;
+  int i, len;
+
+  if(output != NULL)
+    free(output);
+
+  if(input == NULL)
+    return NULL;
+
+  len = strlen(input);
+  output = malloc(len+1);
+
+  for(i=0; input[i]; i++)
+    output[len-i-1] = input[i];
+  output[len] = '\0';
+
+  return output;
+}
+```
 
 ### Perl Source
 
@@ -878,83 +903,148 @@ use FFI::Platypus 2.00;
 
 my $ffi = FFI::Platypus->new(
   api => 2,
-  lib => undef,
+  lib => './string_reverse.so',
 );
 
-$ffi->attach( strtok => ['string','string'] => 'string' );
+$ffi->attach( string_reverse => ['string'] => 'string' );
 
-my $orig = "foo:bar:baz";
+print string_reverse("\nHello world");
 
-my @tokens;
-my $token = strtok($orig, ":");
-while(defined $token) {
-  push @tokens, $token;
-  $token = strtok(undef, ":");
-}
-
-my $escaped = $orig;
-$escaped =~ s/([^[:print:]])/"\\".ord($1)/eg;
-
-print "token: $_\n" for @tokens;
-print "orig:  $escaped\n";
+string_reverse(undef);
 ```
 
 ### Execute
 
 ```
-$ perl strtok.pl 
-token: foo
-token: bar
-token: baz
-orig:  foo\0bar\0baz
+$ gcc -shared -o string_reverse.so string_reverse.c
+$ perl string_reverse.pl
+dlrow olleH
 ```
 
 ### Discussion
 
-(**Aside**: you should never use `strtok` in a modern program, and
-it is especially pointless from Perl which has much more powerful
-string manipulation tools, but it demonstrates nicely some
-characteristics of dealing with strings and FFI).
+The C code here takes an input ASCII string and reverses it, returning
+the result.  Note that it retains ownership of the string, the caller
+is expected to use it before the next call to `reverse_string`, or
+copy it.
 
-The `strtok` function is part of the standard C library.  It splits
-the input string by the set of characters in the second argument. The
-first time you call it you pass the original string in.  The next
-time you call it you pass `NULL` / `undef`, and it knows to keep
-operating on the string from the first call.  Each time you call it
-it returns the next token.  It also modifies the original string by
-inserting the NULL character `"\0"` where the delimiter used to be.
-The token returned is actually inside the original string!
+The Perl code simply declares the return value as `string` and is very
+simple.  This does bring up an inconsistency though, strings passed in
+to a function as arguments are passed by reference, whereas the return
+value is copied!  This is usually what you want because C APIs usually
+follow this pattern where you are expected to make your own copy of
+the string.
 
-When you attach a function that returns a `string` you get a string
-scalar back, just as you would expect.  However, what is not always
-obvious is that you get a _copy_ of the string, not the string at
-the address that the function returned.
+At the end of the program we call `reverse_string` with `undef`, which
+gets translated to C as `NULL`.  This allows it to free the output buffer
+so that the memory will not leak.
 
-When can see also in this example that the original string is modified,
-because there are `NULL`s in the original string!  This is clearly
-inconsistent behavior, but it is _usually_ what you actually want,
-unless the API we are calling expects us to free the string after we
-are done with it.  (We will see this in the next example).
+## Returning and Freeing Strings with Embedded NULLs
 
-## Integer conversions
+### C Code
+
+```
+#include <string.h>
+#include <stdlib.h>
+
+char *
+string_crypt(const char *input, int len, const char *key)
+{
+  char *output;
+  int i, n;
+
+  if(input == NULL)
+    return NULL;
+
+  output = malloc(len+1);
+  output[len] = '\0';
+
+  for(i=0, n=0; i<len; i++, n++) {
+    if(key[n] == '\0')
+      n = 0;
+    output[i] = input[i] ^ key[n];
+  }
+
+  return output;
+}
+
+void
+string_crypt_free(char *output)
+{
+  if(output != NULL)
+    free(output);
+}
+```
+
+### Perl Source
 
 ```perl
 use FFI::Platypus 2.00;
+use FFI::Platypus::Buffer qw( buffer_to_scalar );
+use YAML ();
 
-my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(undef);
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => './xor_cipher.so',
+);
 
-$ffi->attach(puts => ['string'] => 'int');
-$ffi->attach(atoi => ['string'] => 'int');
+$ffi->attach( string_crypt_free => ['opaque'] );
 
-puts(atoi('56'));
+$ffi->attach( string_crypt => ['string','int','string'] => 'opaque' => sub{
+  my($xsub, $input, $key) = @_;
+  my $ptr = $xsub->($input, length($input), $key);
+  my $output = buffer_to_scalar $ptr, length($input);
+  string_crypt_free($ptr);
+  return $output;
+});
+
+my $orig = "hello world";
+my $key  = "foobar";
+
+print YAML::Dump($orig);
+my $encrypted = string_crypt($orig, $key);
+print YAML::Dump($encrypted);
+my $decrypted = string_crypt($encrypted, $key);
+print YAML::Dump($decrypted);
 ```
 
-**Discussion**: `puts` and `atoi` should be part of the standard C
-library on all platforms.  `puts` prints a string to standard output,
-and `atoi` converts a string to integer.  Specifying `undef` as a
-library tells Platypus to search the current process for symbols, which
-includes the standard c library.
+### Execute
+
+```
+$ gcc -shared -o xor_cipher.so xor_cipher.c
+$ perl xor_cipher.pl
+--- hello world
+--- "\x0e\n\x03\x0e\x0eR\x11\0\x1d\x0e\x05"
+--- hello world
+```
+
+### Discussion
+
+The C code here also returns a string, but it has some different expectations,
+so we can't just use the `string` type like we did in the previous example
+and copy the string.
+
+This C code implements a simple XOR cipher.  Given an input string and a key
+it returns an encrypted or decrypted output string where the characters are
+XORd with the key.  There are some challenges here though.  First the input
+and output strings can have embedded `NULL`s in them.  For the string passed
+in, we can provide the length of the input string.  For the output, the
+`string` type expects a `NULL` terminated string, so we can't use that.  So
+instead we get a pointer to the output using the `opaque` type.  Because we
+know that the output string is the same length as the input string we can
+convert the pointer to a regular Perl string using the `buffer_to_scalar`
+function.  (For more details about working with buffers and strings see
+[FFI::Platypus::Buffer](https://metacpan.org/pod/FFI::Platypus::Buffer)).
+
+Next, the C code here does not keep the pointer to the output string, as in
+the previous example.  We are expected to call `string_encrypt_free` when
+we are done.  Since we are getting the pointer back from the C code instead
+of copying the string that is easy to do.
+
+Finally, we are using a wrapper to hide a lot of this complexity from our
+caller.  The last argument to the `attach` call is a subroutine which will
+wrap around the C function, which is passed in as the first argument.  This
+is a good practice when writing modules.
 
 ## Sending Strings to GUI on Unix with libnotify
 
