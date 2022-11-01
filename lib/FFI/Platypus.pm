@@ -1396,60 +1396,85 @@ Platypus to search the Perl runtime executable itself (including any
 dynamic libraries) for symbols.  That helpfully includes the C Standard
 Library.
 
-=head2 Returning Strings (with strtok)
+=head2 Returning Strings
 
-=head3 C API
+=head3 C Code
 
-L<cppreference - strtok|https://en.cppreference.com/w/cpp/string/byte/strtok>
+# EXAMPLE: examples/string_reverse.c
 
 =head3 Perl Source
 
-# EXAMPLE: examples/strtok.pl
+# EXAMPLE: examples/string_reverse.pl
 
 =head3 Execute
 
- $ perl strtok.pl 
- token: foo
- token: bar
- token: baz
- orig:  foo\0bar\0baz
+ $ gcc -shared -o string_reverse.so string_reverse.c
+ $ perl string_reverse.pl
+ dlrow olleH
 
 =head3 Discussion
 
-(B<Aside>: you should never use C<strtok> in a modern program, and
-it is especially pointless from Perl which has much more powerful
-string manipulation tools, but it demonstrates nicely some
-characteristics of dealing with strings and FFI).
+The C code here takes an input ASCII string and reverses it, returning
+the result.  Note that it retains ownership of the string, the caller
+is expected to use it before the next call to C<reverse_string>, or
+copy it.
 
-The C<strtok> function is part of the standard C library.  It splits
-the input string by the set of characters in the second argument. The
-first time you call it you pass the original string in.  The next
-time you call it you pass C<NULL> / C<undef>, and it knows to keep
-operating on the string from the first call.  Each time you call it
-it returns the next token.  It also modifies the original string by
-inserting the NULL character C<"\0"> where the delimiter used to be.
-The token returned is actually inside the original string!
+The Perl code simply declares the return value as C<string> and is very
+simple.  This does bring up an inconsistency though, strings passed in
+to a function as arguments are passed by reference, whereas the return
+value is copied!  This is usually what you want because C APIs usually
+follow this pattern where you are expected to make your own copy of
+the string.
 
-When you attach a function that returns a C<string> you get a string
-scalar back, just as you would expect.  However, what is not always
-obvious is that you get a I<copy> of the string, not the string at
-the address that the function returned.
+At the end of the program we call C<reverse_string> with C<undef>, which
+gets translated to C as C<NULL>.  This allows it to free the output buffer
+so that the memory will not leak.
 
-When can see also in this example that the original string is modified,
-because there are C<NULL>s in the original string!  This is clearly
-inconsistent behavior, but it is I<usually> what you actually want,
-unless the API we are calling expects us to free the string after we
-are done with it.  (We will see this in the next example).
+=head2 Returning and Freeing Strings with Embedded NULLs
 
-=head2 Integer conversions
+=head3 C Code
 
-# EXAMPLE: examples/integer.pl
+# EXAMPLE: examples/xor_cipher.c
 
-B<Discussion>: C<puts> and C<atoi> should be part of the standard C
-library on all platforms.  C<puts> prints a string to standard output,
-and C<atoi> converts a string to integer.  Specifying C<undef> as a
-library tells Platypus to search the current process for symbols, which
-includes the standard c library.
+=head3 Perl Source
+
+# EXAMPLE: examples/xor_cipher.pl
+
+=head3 Execute
+
+ $ gcc -shared -o xor_cipher.so xor_cipher.c
+ $ perl xor_cipher.pl
+ --- hello world
+ --- "\x0e\n\x03\x0e\x0eR\x11\0\x1d\x0e\x05"
+ --- hello world
+
+=head3 Discussion
+
+The C code here also returns a string, but it has some different expectations,
+so we can't just use the C<string> type like we did in the previous example
+and copy the string.
+
+This C code implements a simple XOR cipher.  Given an input string and a key
+it returns an encrypted or decrypted output string where the characters are
+XORd with the key.  There are some challenges here though.  First the input
+and output strings can have embedded C<NULL>s in them.  For the string passed
+in, we can provide the length of the input string.  For the output, the
+C<string> type expects a C<NULL> terminated string, so we can't use that.  So
+instead we get a pointer to the output using the C<opaque> type.  Because we
+know that the output string is the same length as the input string we can
+convert the pointer to a regular Perl string using the C<buffer_to_scalar>
+function.  (For more details about working with buffers and strings see
+L<FFI::Platypus::Buffer>).
+
+Next, the C code here does not keep the pointer to the output string, as in
+the previous example.  We are expected to call C<string_encrypt_free> when
+we are done.  Since we are getting the pointer back from the C code instead
+of copying the string that is easy to do.
+
+Finally, we are using a wrapper to hide a lot of this complexity from our
+caller.  The last argument to the C<attach> call is a subroutine which will
+wrap around the C function, which is passed in as the first argument.  This
+is a good practice when writing modules.
 
 =head2 Sending Strings to GUI on Unix with libnotify
 
