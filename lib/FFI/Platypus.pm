@@ -1477,6 +1477,44 @@ wrap around the C function, which is passed in as the first argument of
 the wrapper.  This is a good practice when writing modules, to hide the
 complexity of C.
 
+=head2 Arrays
+
+=head3 C Source
+
+# EXAMPLE: examples/array_reverse.c
+
+=head3 Perl Source
+
+# EXAMPLE: examples/array_reverse.pl
+
+=head3 Execute
+
+ $ gcc -shared -o array_reverse.so array_reverse.c
+ $ perl array_reverse.pl
+ 10 9 8 7 6 5 4 3 2 1
+ 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+
+=head3 Discussion
+
+Arrays in C are passed as pointers, so the C code here reverses the array
+in place, rather than returning it.  Arrays can also be fixed or variable
+length.  If the array is variable length the length of the array must be
+provided in some way.  In this case we explicitly pass in a length.  Another
+way might be to end the array with C<0>, if you don't otherwise expect any
+C<0> to appear in your data.  For this reason, Platypus adds a zero (or
+C<NULL> in the case of pointers) element at the end of the array when passing
+it into a variable length array type, although we do not use it here.
+
+With Platypus you can declare an array type as being either fixed or variable
+length.  Because Perl stores arrays in completely differently than C, a
+temporary array is created by Platypus, passed into the C function as a pointer.
+When the function returns the array is re-read by Platypus and the Perl array
+is updated with the new values.  The temporary array is then freed.
+
+You can use any primitive type for arrays, even C<string>.  You can also
+return an array from a function.  As in our discussion about strings, when
+you return an array the value is copied, which is usually what you want.
+
 =head2 Sending Strings to GUI on Unix with libnotify
 
 =head3 C API
