@@ -1205,6 +1205,57 @@ In later examples we will see how to hide the use of `opaque` types further
 using the `object` type, but for some code direct use of `opaque` is
 appropriate.
 
+## Opaque Pointers (buffers and strings)
+
+### C API
+
+- [cppreference - free](https://en.cppreference.com/w/c/memory/free)
+- [cppreference - malloc](https://en.cppreference.com/w/c/memory/malloc)
+- [cppreference - memcpy](https://en.cppreference.com/w/c/string/byte/memcpy)
+- [cppreference - strdup](https://en.cppreference.com/w/c/string/byte/strdup)
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+use FFI::Platypus::Memory qw( malloc free memcpy strdup );
+
+my $ffi = FFI::Platypus->new( api => 2 );
+my $buffer = malloc 14;
+my $ptr_string = strdup("hello there!!\n");
+
+memcpy $buffer, $ptr_string, 15;
+
+print $ffi->cast('opaque' => 'string', $buffer);
+
+free $ptr_string;
+free $buffer;
+```
+
+### Execute
+
+```
+$ perl malloc.pl
+hello there!!
+```
+
+### Discussion
+
+Another useful application of the `opaque` type is for dealing with buffers,
+and C strings.  This example is completely contrived, but we are using
+`malloc` to create a buffer of 14 bytes.  We create a C string using
+`strdup`, and then copy it into the buffer using `memcpy`.  When we are
+done with the `opaque` pointers we can free them using `free` since they.
+(This is generally only okay when freeing memory that was allocated by
+`malloc`, which is the case for `strdup`).
+
+These memory tools, along with others are provided by the [FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory)
+module, which is worth reviewing when you need to manipulate memory from
+Perl when writing your FFI code.
+
+Just to verify that the `memcpy` did the right thing we convert the
+buffer into a Perl string and print it out using the Platypus [cast method](#cast).
+
 ## Arrays
 
 ### C Source
@@ -1387,29 +1438,6 @@ The libnotify library is a desktop GUI notification system for the
 GNOME Desktop environment. This script sends a notification event that
 should show up as a balloon, for me it did so in the upper right hand
 corner of my screen.
-
-## Allocating and freeing memory
-
-```perl
-use FFI::Platypus 2.00;
-use FFI::Platypus::Memory qw( malloc free memcpy strdup );
-
-my $ffi = FFI::Platypus->new( api => 2 );
-my $buffer = malloc 14;
-my $ptr_string = strdup("hello there!!\n");
-
-memcpy $buffer, $ptr_string, 15;
-
-print $ffi->cast('opaque' => 'string', $buffer);
-
-free $ptr_string;
-free $buffer;
-```
-
-**Discussion**: `malloc` and `free` are standard memory allocation
-functions available from the standard c library and.  Interfaces to
-these and other memory related functions are provided by the
-[FFI::Platypus::Memory](https://metacpan.org/pod/FFI::Platypus::Memory) module.
 
 ## structured data records
 
