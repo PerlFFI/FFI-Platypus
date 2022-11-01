@@ -1553,6 +1553,48 @@ In later examples we will see how to hide the use of C<opaque> types further
 using the C<object> type, but for some code direct use of C<opaque> is
 appropriate.
 
+=head2 Opaque Pointers (buffers and strings)
+
+=head3 C API
+
+=over 4
+
+=item L<cppreference - free|https://en.cppreference.com/w/c/memory/free>
+
+=item L<cppreference - malloc|https://en.cppreference.com/w/c/memory/malloc>
+
+=item L<cppreference - memcpy|https://en.cppreference.com/w/c/string/byte/memcpy>
+
+=item L<cppreference - strdup|https://en.cppreference.com/w/c/string/byte/strdup>
+
+=back
+
+=head3 Perl Source
+
+# EXAMPLE: examples/malloc.pl
+
+=head3 Execute
+
+ $ perl malloc.pl
+ hello there!!
+
+=head3 Discussion
+
+Another useful application of the C<opaque> type is for dealing with buffers,
+and C strings.  This example is completely contrived, but we are using
+C<malloc> to create a buffer of 14 bytes.  We create a C string using
+C<strdup>, and then copy it into the buffer using C<memcpy>.  When we are
+done with the C<opaque> pointers we can free them using C<free> since they.
+(This is generally only okay when freeing memory that was allocated by
+C<malloc>, which is the case for C<strdup>).
+
+These memory tools, along with others are provided by the L<FFI::Platypus::Memory>
+module, which is worth reviewing when you need to manipulate memory from
+Perl when writing your FFI code.
+
+Just to verify that the C<memcpy> did the right thing we convert the
+buffer into a Perl string and print it out using the Platypus L<cast method|/cast>.
+
 =head2 Arrays
 
 =head3 C Source
@@ -1659,15 +1701,6 @@ The libnotify library is a desktop GUI notification system for the
 GNOME Desktop environment. This script sends a notification event that
 should show up as a balloon, for me it did so in the upper right hand
 corner of my screen.
-
-=head2 Allocating and freeing memory
-
-# EXAMPLE: examples/malloc.pl
-
-B<Discussion>: C<malloc> and C<free> are standard memory allocation
-functions available from the standard c library and.  Interfaces to
-these and other memory related functions are provided by the
-L<FFI::Platypus::Memory> module.
 
 =head2 structured data records
 
