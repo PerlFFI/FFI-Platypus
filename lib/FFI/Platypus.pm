@@ -1398,7 +1398,7 @@ Library.
 
 =head2 Returning Strings
 
-=head3 C Code
+=head3 C Source
 
 # EXAMPLE: examples/string_reverse.c
 
@@ -1432,7 +1432,7 @@ so that the memory will not leak.
 
 =head2 Returning and Freeing Strings with Embedded NULLs
 
-=head3 C Code
+=head3 C Source
 
 # EXAMPLE: examples/xor_cipher.c
 

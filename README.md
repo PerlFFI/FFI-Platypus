@@ -867,7 +867,7 @@ Library.
 
 ## Returning Strings
 
-### C Code
+### C Source
 
 ```
 #include <string.h>
@@ -941,7 +941,7 @@ so that the memory will not leak.
 
 ## Returning and Freeing Strings with Embedded NULLs
 
-### C Code
+### C Source
 
 ```
 #include <string.h>
