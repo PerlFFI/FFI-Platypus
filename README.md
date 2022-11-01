@@ -1047,6 +1047,71 @@ wrap around the C function, which is passed in as the first argument of
 the wrapper.  This is a good practice when writing modules, to hide the
 complexity of C.
 
+## Pointers
+
+### C Source
+
+```
+void
+swap(int *a, int *b)
+{
+  int tmp = *b;
+  *b = *a;
+  *a = tmp;
+}
+```
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+
+my $ffi = FFI::Platypus->new(
+  api => 1,
+  lib => './swap.so',
+);
+
+$ffi->attach( swap => ['int*','int*'] );
+
+my $a = 1;
+my $b = 2;
+
+print "[a,b] = [$a,$b]\n";
+
+swap( \$a, \$b );
+
+print "[a,b] = [$a,$b]\n";
+```
+
+### Execute
+
+```
+$ gcc -shared -o swap.so swap.c
+$ perl swap.pl
+[a,b] = [1,2]
+[a,b] = [2,1]
+```
+
+### Discussion
+
+Pointers are often use in C APIs to return simple values like this.  Platypus
+provides access to pointers to primitive types by appending `*` to the
+primitive type.  Here for example we are using `int*` to create a function
+that takes two pointers to integers and swaps their values.
+
+When calling the function from Perl we pass in a reference to a scalar.
+Strictly speaking Perl allows modifying the argument values to subroutines, so
+we could have allowed just passing in a scalar, but in the design of Platypus
+we decided that forcing the use of a reference here emphasizes that you are
+passing a reference to the variable, not just the value.
+
+Not pictured in this example, but you can also pass in `undef` for a pointer
+value and that will be translated into `NULL` on the C side.  You can also
+return a pointer to a primitive type from a function, again this will be
+returned to Perl as a reference to a scalar.  Platypus also supports string
+pointers (`string*`).  (Though the C equivalent to a `string*` is a double
+pointer to char `char**`).
+
 ## Arrays
 
 ### C Source
