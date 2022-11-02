@@ -1,5 +1,3 @@
-#include <answer.h>
-
 int
 answer(void)
 {
