@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use FFI::Platypus 2.00;
-use FFI::CheckLib qw( find_lib_or_exit );
+use FFI::CheckLib qw( find_lib_or_die );
 
 # This example uses FreeBSD's libarchive to list the contents of any
 # archive format that it suppors.  We've also filled out a part of
@@ -9,7 +9,7 @@ use FFI::CheckLib qw( find_lib_or_exit );
 # supported by libarchive
 
 my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(find_lib_or_exit lib => 'archive');
+$ffi->lib(find_lib_or_die lib => 'archive');
 $ffi->type('object(Archive)'      => 'archive_t');
 $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
 $ffi->type('object(ArchiveWrite)' => 'archive_write_t');

@@ -10,7 +10,7 @@ use FFI::CheckLib      ();
 # supported by libarchive
 
 my $ffi = My::Platypus->new;
-$ffi->lib(FFI::CheckLib::find_lib_or_exit lib => 'archive');
+$ffi->lib(FFI::CheckLib::find_lib_or_die lib => 'archive');
 
 $ffi->custom_type(archive => {
   native_type    => 'opaque',
