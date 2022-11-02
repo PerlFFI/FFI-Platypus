@@ -1370,7 +1370,7 @@ print array_sum([1,2,3,0]), "\n"; # 6
 
 ```
 $ gcc -shared -o array_sum.so array_sum.c
-$ perl array_sum.pl 
+$ perl array_sum.pl
 -1
 0
 6

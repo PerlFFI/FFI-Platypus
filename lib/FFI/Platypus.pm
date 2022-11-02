@@ -1645,7 +1645,7 @@ you return an array the value is copied, which is usually what you want.
 =head3 Execute
 
  $ gcc -shared -o array_sum.so array_sum.c
- $ perl array_sum.pl 
+ $ perl array_sum.pl
  -1
  0
  6
