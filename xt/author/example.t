@@ -108,6 +108,29 @@ foreach my $dir (qw( examples ))
 
 }
 
+foreach my $bundle (grep { -d $_ && $_->basename =~ /^bundle-/ } path('examples')->children)
+{
+  subtest $bundle->basename => sub {
+
+    local $CWD = $bundle;
+
+    my @cmd = ('prove', '-lvm');
+    my($out, $ret) = capture_merged {
+      system @cmd;
+    };
+
+    ok $ret == 0, "@cmd";
+    if($ret == 0)
+    {
+      note $out if $out ne '';
+    }
+    else
+    {
+      diag $out if $out ne '';
+    }
+  };
+}
+
 if(@skipped)
 {
   diag '';
