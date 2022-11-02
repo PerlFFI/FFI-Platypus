@@ -700,8 +700,7 @@ Under the covers, L<function|/function> uses L<find_symbol|/find_symbol>
 when you provide it with a name, but it is useful to keep this in mind
 as there are alternative ways of obtaining a functions address.
 Example: a C function could return the address of another C function
-that you might want to call, or modules such as L<FFI::TinyCC> produce
-machine code at runtime that you can call from Platypus.
+that you might want to call.
 
 [version 0.76]
 
@@ -2271,10 +2270,6 @@ Memory functions for FFI.
 =head2 Languages
 
 =over 4
-
-=item L<FFI::TinyCC>
-
-JIT C compiler for FFI.
 
 =item L<FFI::Platypus::Lang::C>
 
