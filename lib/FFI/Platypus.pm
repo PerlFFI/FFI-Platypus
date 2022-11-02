@@ -1361,7 +1361,6 @@ C<int>, C<unsigned long>, C<double>, C<size_t> and others).
 If you are working with another language like
 L<Fortran|FFI::Platypus::Lang::Fortran/"Passing and Returning Integers">,
 L<Go|FFI::Platypus::Lang::Go/"Passing and Returning Integers">,
-L<Pascal|FFI::Platypus::Lang::Pascal/"Passing and Returning Integers">,
 L<Rust|FFI::Platypus::Lang::Rust/"Passing and Returning Integers"> or
 L<Zig|FFI::Platypus::Lang::Zig/"Passing and Returning Integers">,
 you will find similar examples where you can use the Platypus language
@@ -1700,7 +1699,7 @@ When using a third party library you have to know the name or location of it, wh
 is not typically portable, so here we use L<FFI::CheckLib>'s
 L<find_lib_or_die function|FFI::CheckLib/find_lib_or_die>.  If the library is not
 found the script will die with a useful diagnostic.  L<FFI::CheckLib> has a number
-of useful features and will integrate nicely with L<Alien::Build> based L<Aliens>.
+of useful features and will integrate nicely with L<Alien::Build> based L<Alien>s.
 
 =head2 The Win32 API with MessageBoxW
 
