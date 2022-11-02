@@ -1588,7 +1588,7 @@ use FFI::Platypus 2.00;
 use FFI::Platypus::Memory qw( malloc free );
 
 my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(find_lib_or_exit lib => 'uuid');
+$ffi->lib(find_lib_or_die lib => 'uuid');
 $ffi->type('string(37)*' => 'uuid_string');
 $ffi->type('record(16)*' => 'uuid_t');
 
@@ -1734,7 +1734,7 @@ use constant ZMQ_IO_THREADS  => 1;
 use constant ZMQ_MAX_SOCKETS => 2;
 use constant ZMQ_REQ => 3;
 use constant ZMQ_REP => 4;
-use FFI::CheckLib qw( find_lib_or_exit );
+use FFI::CheckLib qw( find_lib_or_die );
 use FFI::Platypus 2.00;
 use FFI::Platypus::Memory qw( malloc );
 use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
@@ -1745,7 +1745,7 @@ my $ffi = FFI::Platypus->new( api => 2 );
 $ffi->lib(undef); # for puts
 $ffi->attach(puts => ['string'] => 'int');
 
-$ffi->lib(find_lib_or_exit lib => 'zmq');
+$ffi->lib(find_lib_or_die lib => 'zmq');
 $ffi->attach(zmq_version => ['int*', 'int*', 'int*'] => 'void');
 
 my($major,$minor,$patch);
@@ -1827,7 +1827,7 @@ implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
 
 ```perl
 use FFI::Platypus 2.00;
-use FFI::CheckLib qw( find_lib_or_exit );
+use FFI::CheckLib qw( find_lib_or_die );
 
 # This example uses FreeBSD's libarchive to list the contents of any
 # archive format that it suppors.  We've also filled out a part of
@@ -1835,7 +1835,7 @@ use FFI::CheckLib qw( find_lib_or_exit );
 # supported by libarchive
 
 my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(find_lib_or_exit lib => 'archive');
+$ffi->lib(find_lib_or_die lib => 'archive');
 $ffi->type('object(Archive)'      => 'archive_t');
 $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
 $ffi->type('object(ArchiveWrite)' => 'archive_write_t');
