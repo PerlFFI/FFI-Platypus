@@ -767,10 +767,6 @@ The only thing that your class MUST provide is either a
 C<ffi_record_size> or C<_ffi_record_size> class method that returns the
 size of the record in bytes.
 
-Here is a longer practical example, once again using the tm struct:
-
-# EXAMPLE: examples/time_oo.pl
-
 Contrast a record type which is stored as a scalar string of bytes in
 Perl to an opaque pointer which is stored as an integer in Perl.  Both
 are treated as pointers in C functions.  The situations when you usually
