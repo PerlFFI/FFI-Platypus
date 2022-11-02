@@ -1633,6 +1633,37 @@ You can use any primitive type for arrays, even C<string>.  You can also
 return an array from a function.  As in our discussion about strings, when
 you return an array the value is copied, which is usually what you want.
 
+=head2 Pointers as Arrays
+
+=head3 C Source
+
+# EXAMPLE: examples/array_sum.c
+
+=head3 Perl Source
+
+# EXAMPLE: examples/array_sum.pl
+
+=head3 Execute
+
+ $ gcc -shared -o array_sum.so array_sum.c
+ $ perl array_sum.pl 
+ -1
+ 0
+ 6
+
+=head3 Discussion
+
+Starting with the Platypus version 2 API, you can also pass an array reference
+in to a pointer argument.
+
+In C pointer and array arguments are often used somewhat interchangeably.  In
+this example we have an C<array_sum> function that takes a zero terminated
+array of integers and computes the sum.  If the pointer to the array is zero
+(C<0>) then we return C<-1> to indicate an error.
+
+This is the main advantage from Perl for using pointer argument rather than
+an array one: the array argument will not let you pass in C<undef> / C<NULL>.
+
 =head2 Sending Strings to GUI on Unix with libnotify
 
 =head3 C API
@@ -1657,6 +1688,19 @@ L<Libnotify Reference Manual|https://developer-old.gnome.org/libnotify/unstable>
 </div>
 
 =end html
+
+=head3 Discussion
+
+The GNOME project provides an API to send notifications to its desktop environment.
+Nothing here is particularly new: all of the types and techniques are ones that we
+have seen before, except we are using a third party library, instead of using our
+own C code or the standard C library functions.
+
+When using a third party library you have to know the name or location of it, which
+is not typically portable, so here we use L<FFI::CheckLib>'s
+L<find_lib_or_die function|FFI::CheckLib/find_lib_or_die>.  If the library is not
+found the script will die with a useful diagnostic.  L<FFI::CheckLib> has a number
+of useful features and will integrate nicely with L<Alien::Build> based L<Aliens>.
 
 =head2 The Win32 API with MessageBoxW
 
