@@ -1332,6 +1332,64 @@ You can use any primitive type for arrays, even `string`.  You can also
 return an array from a function.  As in our discussion about strings, when
 you return an array the value is copied, which is usually what you want.
 
+## Pointers as Arrays
+
+### C Source
+
+```
+#include <stdlib.h>
+
+int
+array_sum(const int *a) {
+  int i, sum;
+  if(a == NULL)
+    return -1;
+  for(i=0, sum=0; a[i] != 0; i++)
+    sum += a[i];
+  return sum;
+}
+```
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => './array_sum.so',
+);
+
+$ffi->attach( array_sum => ['int*'] => 'int' );
+
+print array_sum(undef), "\n";     # -1
+print array_sum([0]), "\n";       # 0
+print array_sum([1,2,3,0]), "\n"; # 6
+```
+
+### Execute
+
+```
+$ gcc -shared -o array_sum.so array_sum.c
+$ perl array_sum.pl 
+-1
+0
+6
+```
+
+### Discussion
+
+Starting with the Platypus version 2 API, you can also pass an array reference
+in to a pointer argument.
+
+In C pointer and array arguments are often used somewhat interchangeably.  In
+this example we have an `array_sum` function that takes a zero terminated
+array of integers and computes the sum.  If the pointer to the array is zero
+(`0`) then we return `-1` to indicate an error.
+
+This is the main advantage from Perl for using pointer argument rather than
+an array one: the array argument will not let you pass in `undef` / `NULL`.
+
 ## Sending Strings to GUI on Unix with libnotify
 
 ### C API
@@ -1345,7 +1403,7 @@ use FFI::CheckLib;
 use FFI::Platypus 2.00;
 
 my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(find_lib_or_exit lib => 'notify');
+$ffi->lib(find_lib_or_die lib => 'notify');
 
 $ffi->attach( notify_init              => ['string']                                  );
 $ffi->attach( notify_uninit            => []                                          );
@@ -1377,6 +1435,19 @@ $ perl notify.pl
     </div>
     </div>
 </div>
+
+### Discussion
+
+The GNOME project provides an API to send notifications to its desktop environment.
+Nothing here is particularly new: all of the types and techniques are ones that we
+have seen before, except we are using a third party library, instead of using our
+own C code or the standard C library functions.
+
+When using a third party library you have to know the name or location of it, which
+is not typically portable, so here we use [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib)'s
+[find\_lib\_or\_die function](https://metacpan.org/pod/FFI::CheckLib#find_lib_or_die).  If the library is not
+found the script will die with a useful diagnostic.  [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib) has a number
+of useful features and will integrate nicely with [Alien::Build](https://metacpan.org/pod/Alien::Build) based [Aliens](https://metacpan.org/pod/Aliens).
 
 ## The Win32 API with MessageBoxW
 
