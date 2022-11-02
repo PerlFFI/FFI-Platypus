@@ -821,7 +821,6 @@ easy access to many of the basic types used by C APIs.  (for example
 If you are working with another language like
 [Fortran](https://metacpan.org/pod/FFI::Platypus::Lang::Fortran#Passing-and-Returning-Integers),
 [Go](https://metacpan.org/pod/FFI::Platypus::Lang::Go#Passing-and-Returning-Integers),
-[Pascal](https://metacpan.org/pod/FFI::Platypus::Lang::Pascal#Passing-and-Returning-Integers),
 [Rust](https://metacpan.org/pod/FFI::Platypus::Lang::Rust#Passing-and-Returning-Integers) or
 [Zig](https://metacpan.org/pod/FFI::Platypus::Lang::Zig#Passing-and-Returning-Integers),
 you will find similar examples where you can use the Platypus language
@@ -1447,7 +1446,7 @@ When using a third party library you have to know the name or location of it, wh
 is not typically portable, so here we use [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib)'s
 [find\_lib\_or\_die function](https://metacpan.org/pod/FFI::CheckLib#find_lib_or_die).  If the library is not
 found the script will die with a useful diagnostic.  [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib) has a number
-of useful features and will integrate nicely with [Alien::Build](https://metacpan.org/pod/Alien::Build) based [Aliens](https://metacpan.org/pod/Aliens).
+of useful features and will integrate nicely with [Alien::Build](https://metacpan.org/pod/Alien::Build) based [Alien](https://metacpan.org/pod/Alien)s.
 
 ## The Win32 API with MessageBoxW
 
