@@ -1691,41 +1691,6 @@ or `wchar_t*`), then you will want to use the wide string type plugin
 encodings can be accessed by converting your Perl strings manually with
 the [Encode](https://metacpan.org/pod/Encode) module.
 
-## Attach function from pointer
-
-```perl
-use FFI::TinyCC;
-use FFI::Platypus 2.00;
-
-my $ffi = FFI::Platypus->new( api => 2 );
-my $tcc = FFI::TinyCC->new;
-
-$tcc->compile_string(q{
-  int
-  add(int a, int b)
-  {
-    return a+b;
-  }
-});
-
-my $address = $tcc->get_symbol('add');
-
-$ffi->attach( [ $address => 'add' ] => ['int','int'] => 'int' );
-
-print add(1,2), "\n";
-```
-
-**Discussion**: Sometimes you will have a pointer to a function from a
-source other than Platypus that you want to call.  You can use that
-address instead of a function name for either of the
-[function](#function) or [attach](#attach) methods.  In this example we
-use [FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) to compile a short piece of C code and to give us the
-address of one of its functions, which we then use to create a perl xsub
-to call it.
-
-[FFI::TinyCC](https://metacpan.org/pod/FFI::TinyCC) embeds the Tiny C Compiler (tcc) to provide a
-just-in-time (JIT) compilation service for FFI.
-
 ## libzmq
 
 ```perl
