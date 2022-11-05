@@ -1818,60 +1818,60 @@ $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
 $ffi->type('object(ArchiveWrite)' => 'archive_write_t');
 $ffi->type('object(ArchiveEntry)' => 'archive_entry_t');
 
-package Archive;
+package Archive {
+  # base class is "abstract" having no constructor or destructor
 
-# base class is "abstract" having no constructor or destructor
+  $ffi->mangler(sub {
+    my($name) = @_;
+    "archive_$name";
+  });
+  $ffi->attach( error_string => ['archive_t'] => 'string' );
+}
 
-$ffi->mangler(sub {
-  my($name) = @_;
-  "archive_$name";
-});
-$ffi->attach( error_string => ['archive_t'] => 'string' );
+package ArchiveRead {
+  our @ISA = qw( Archive );
 
-package ArchiveRead;
+  $ffi->mangler(sub {
+    my($name) = @_;
+    "archive_read_$name";
+  });
 
-our @ISA = qw( Archive );
+  $ffi->attach( new                   => ['string']                        => 'archive_read_t' );
+  $ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                                         );
+  $ffi->attach( support_filter_all    => ['archive_t']                     => 'int'            );
+  $ffi->attach( support_format_all    => ['archive_t']                     => 'int'            );
+  $ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int'            );
+  $ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int'            );
+  $ffi->attach( data_skip             => ['archive_t']                     => 'int'            );
+  # ... define additional read methods
+}
 
-$ffi->mangler(sub {
-  my($name) = @_;
-  "archive_read_$name";
-});
+package ArchiveWrite {
 
-$ffi->attach( new                   => ['string']                        => 'archive_read_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                                         );
-$ffi->attach( support_filter_all    => ['archive_t']                     => 'int'            );
-$ffi->attach( support_format_all    => ['archive_t']                     => 'int'            );
-$ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int'            );
-$ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int'            );
-$ffi->attach( data_skip             => ['archive_t']                     => 'int'            );
-# ... define additional read methods
+  our @ISA = qw( Archive );
 
-package ArchiveWrite;
+  $ffi->mangler(sub {
+    my($name) = @_;
+    "archive_write_$name";
+  });
 
-our @ISA = qw( Archive );
+  $ffi->attach( new                   => ['string'] => 'archive_write_t' );
+  $ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] );
+  # ... define additional write methods
+}
 
-$ffi->mangler(sub {
-  my($name) = @_;
-  "archive_write_$name";
-});
+package ArchiveEntry {
 
-$ffi->attach( new                   => ['string'] => 'archive_write_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] );
-# ... define additional write methods
+  $ffi->mangler(sub {
+    my($name) = @_;
+    "archive_entry_$name";
+  });
 
-package ArchiveEntry;
-
-$ffi->mangler(sub {
-  my($name) = @_;
-  "archive_entry_$name";
-});
-
-$ffi->attach( new => ['string']     => 'archive_entry_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] );
-$ffi->attach( pathname              => ['archive_entry_t'] => 'string' );
-# ... define additional entry methods
-
-package main;
+  $ffi->attach( new => ['string']     => 'archive_entry_t' );
+  $ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] );
+  $ffi->attach( pathname              => ['archive_entry_t'] => 'string' );
+  # ... define additional entry methods
+}
 
 use constant ARCHIVE_OK => 0;
 
@@ -1949,6 +1949,9 @@ one function with:
 ```perl
 $ffi->attach( [ free => 'DESTROY' ] => ['archive_t'] );
 ```
+
+The `libarchive` is a large library with hundreds of methods.
+For comprehensive FFI bindings for `libarchive` see [Archive::Libarchive](https://metacpan.org/pod/Archive::Libarchive).
 
 ## unix open
 

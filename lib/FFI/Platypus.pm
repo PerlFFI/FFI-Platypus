@@ -1899,6 +1899,9 @@ one function with:
 
  $ffi->attach( [ free => 'DESTROY' ] => ['archive_t'] );
 
+The C<libarchive> is a large library with hundreds of methods.
+For comprehensive FFI bindings for C<libarchive> see L<Archive::Libarchive>.
+
 =head2 unix open
 
 =head3 C API
