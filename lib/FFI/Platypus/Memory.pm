@@ -30,6 +30,32 @@ the standard C library.  They may be useful when constructing interfaces
 to C libraries with FFI.  It works mostly with the C<opaque> type and it
 is worth reviewing the section on opaque pointers in L<FFI::Platypus::Type>.
 
+Allocating memory and forgetting to free it is a common source of memory
+leaks in C and when using this module.  Very recent Perls have a C<defer>
+keyword that lets you automatically call functions like C<free> when a
+block ends.  This can be especially handy when you have multiple code
+paths or possible exceptions to keep track of.
+
+ use feature 'defer';
+ use FFI::Platypus::Memory qw( malloc free );
+
+ sub run {
+   my $ptr = malloc 66;
+   defer { free $ptr };
+
+   my $data = do_something($ptr);
+
+   # do not need to remember to place free $ptr here, as it will
+   # run through defer.
+
+   return $data;
+ }
+
+If you are not lucky enough to have the C<defer> feature in your version
+of Perl you may be able to use L<Feature::Compat::Defer>, which will use
+the feature if available, and provides its own mostly compatible version
+if not.
+
 =head1 FUNCTIONS
 
 =head2 calloc
