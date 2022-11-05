@@ -1,42 +1,10 @@
-#!/usr/bin/env perl
+#!/bin/sh
 
-# i've disabled this for now as it is a little broken.
+if echo $CIP_ENV | grep -q FFI_PLATYPUS_TEST_EXAMPLES ; then 
 
-use strict;
-use warnings;
-use File::chdir;
-use File::Glob qw( bsd_glob );
-use File::Temp qw( tempdir );
+  dir=$(ls -1d FFI-Platypus-* | grep -v tar.gz)
+  cip sudo apt-get install libtcod1 libnotify4 libzmq5
+  cip exec cpanm -n Capture::Tiny Test::Script Path::Tiny Convert::Binary::C YAML File::chdir Alien::Libbz2 FFI::Platypus FFI::C
+  cip exec bash -c "cd $dir && prove -vm xt/author/example.t"
 
-my $lib = tempdir( CLEANUP => 1 );
-
-my @cmd = ( 'cpanm', '-n', '-l' => $lib, 'FFI::Platypus::Type::StringArray', );
-print "+ @cmd\n";
-system @cmd;
-exit 2 if $?;
-
-do {
-
-  local $CWD = 'examples';
-
-  foreach my $cfile (bsd_glob '*.c')
-  {
-    my $sofile = $cfile;
-    $sofile =~ s{\.c$}{.so};
-
-    my @cmd = ('cc', '-fPIC', '-shared', -o => $sofile, $cfile);
-    print "+ @cmd\n";
-    system @cmd;
-    exit 2 if $?;
-  }
-
-  foreach my $plfile (bsd_glob '*.pl')
-  {
-    next if $plfile =~ /^win32_/;
-    my @cmd = ( $^X, "-Mlocal::lib=$lib", $plfile );
-    print "+ @cmd\n";
-    system @cmd;
-    exit 2 if $?;
-  }
-
-};
+fi
