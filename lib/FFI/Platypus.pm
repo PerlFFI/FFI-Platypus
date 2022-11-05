@@ -1962,7 +1962,7 @@ but now we have an OO interface to the Unix IO functions.
 
 =head3 Discussion
 
-The C<libcurl> library makes extensive use of "varadic" functions.
+The L<libcurl|https://curl.se/> library makes extensive use of "varadic" functions.
 
 The C programming language and ABI have the concept of "varadic" functions
 that can take a variable number and variable type of arguments.  Assuming
@@ -1979,7 +1979,7 @@ L<function method|/function> and call it immediately.  This is not as
 performant either when you create or call as using the L<attach method|/attach>,
 but in some cases the performance penalty may be worth it or unavoidable.
 
-=head2 Callbacks (with libcurl>
+=head2 Callbacks (with libcurl)
 
 =head3 C API
 
