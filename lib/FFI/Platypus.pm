@@ -1406,7 +1406,7 @@ Library.
 
 =head3 Execute
 
- $ gcc -shared -o string_reverse.so string_reverse.c
+ $ cc -shared -o string_reverse.so string_reverse.c
  $ perl string_reverse.pl
  dlrow olleH
 
@@ -1440,7 +1440,7 @@ so that the memory will not leak.
 
 =head3 Execute
 
- $ gcc -shared -o xor_cipher.so xor_cipher.c
+ $ cc -shared -o xor_cipher.so xor_cipher.c
  $ perl xor_cipher.pl
  --- hello world
  --- "\x0e\n\x03\x0e\x0eR\x11\0\x1d\x0e\x05"
@@ -1487,7 +1487,7 @@ complexity of C.
 
 =head3 Execute
 
- $ gcc -shared -o swap.so swap.c
+ $ cc -shared -o swap.so swap.c
  $ perl swap.pl
  [a,b] = [1,2]
  [a,b] = [2,1]
@@ -1524,7 +1524,7 @@ pointer to char C<char**>).
 
 =head3 Execute
 
- $ gcc -shared -o person.so person.c
+ $ cc -shared -o person.so person.c
  $ perl person.pl
  name = Roger Frooble Bits
  age  = 35
@@ -1605,7 +1605,7 @@ buffer into a Perl string and print it out using the Platypus L<cast method|/cas
 
 =head3 Execute
 
- $ gcc -shared -o array_reverse.so array_reverse.c
+ $ cc -shared -o array_reverse.so array_reverse.c
  $ perl array_reverse.pl
  10 9 8 7 6 5 4 3 2 1
  20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
@@ -1643,7 +1643,7 @@ you return an array the value is copied, which is usually what you want.
 
 =head3 Execute
 
- $ gcc -shared -o array_sum.so array_sum.c
+ $ cc -shared -o array_sum.so array_sum.c
  $ perl array_sum.pl
  -1
  0
@@ -1744,19 +1744,33 @@ GNOME Desktop environment. This script sends a notification event that
 should show up as a balloon, for me it did so in the upper right hand
 corner of my screen.
 
-=head2 structured data records
+=head2 Structured Data Records (by pointer or by reference)
+
+=head3 C API
+
+L<cppreference - localtime|https://en.cppreference.com/w/c/chrono/localtime>
+
+=head3 Perl Source
 
 # EXAMPLE: examples/time_struct.pl
 
-B<Discussion>: C and other machine code languages frequently provide
-interfaces that include structured data records (known as "structs" in
-C).  They sometimes provide an API in which you are expected to
-manipulate these records before and/or after passing them along to C
-functions.  For C pointers to structs, unions and arrays of structs and
-unions, the easiest interface to use is via L<FFI::C>.  If you are
-working with structs that must be passed as values (not pointers),
-then you want to use the L<FFI::Platypus::Record> class instead.
-We will discuss this class later.
+=head3 Execute
+
+ $ perl time_struct.pl 
+ time is 3:48:19 MDT
+
+=head3 Discussion
+
+C and other machine code languages frequently provide interfaces that
+include structured data records (defined using the C<struct> keyword
+in C).  Some libraries will provide an API which you are expected to read
+or write before and/or after passing them along to the library.
+
+For C pointers to C<strict>, C<union>, nested C<struct> and nested
+C<union> structures, the easiest interface to use is via L<FFI::C>.
+If you are working with a C<struct> that must be passed by value
+(not pointers), then you will want to use L<FFI::Platypus::Record>
+class instead.  We will discuss an example of that next.
 
 The C C<localtime> function takes a pointer to a C struct.  We simply define
 the members of the struct using the L<FFI::C> C<struct> method.  Because
@@ -1764,50 +1778,33 @@ we used the C<ffi> method to tell L<FFI::C> to use our local instance of
 L<FFI::Platypus> it registers the C<tm> type for us, and we can just start
 using it as a return type!
 
-=head2 structured data records by-value
+=head2 Structured Data Records (on stack or by value)
 
-=head2 libuuid
+=head3 C Source
 
-# EXAMPLE: examples/uuid.pl
+# EXAMPLE: examples/color.c
 
-B<Discussion>: libuuid is a library used to generate unique identifiers
-(UUID) for objects that may be accessible beyond the local system.  The
-library is or was part of the Linux e2fsprogs package.
+=head3 Perl Source
 
-Knowing the size of objects is sometimes important.  In this example, we
-use the L<sizeof|/sizeof> function to get the size of 16 characters (in
-this case it is simply 16 bytes).  We also know that the strings
-"deparsed" by C<uuid_unparse> are exactly 37 bytes.
+# EXAMPLE: examples/color.pl
 
-=head2 puts and getpid
+=head3 Execute
 
-# EXAMPLE: examples/getpid.pl
+ $ cc -shared -o color.so color.c
+ $ perl color.pl
+ gray: [red:dc green:dc blue:dc]
+ reddish: [red:f0 green:dc blue:dc]
 
-B<Discussion>: C<puts> is part of standard C library on all platforms.
-C<getpid> is available on Unix type platforms.
+=head3 Discussion
 
-=head2 Math library
+In the C source of this example, we pass a C C<struct> by value by
+copying it onto the stack.  On the Perl side we create a C<Color> class
+using L<FFI::Platypus::Record>, which allows us to pass the structure
+the way the C source wants us to.
 
-# EXAMPLE: examples/math.pl
-
-B<Discussion>: On UNIX the standard c library math functions are
-frequently provided in a separate library C<libm>, so you could search
-for those symbols in "libm.so", but that won't work on non-UNIX
-platforms like Microsoft Windows.  Fortunately Perl uses the math
-library so these symbols are already in the current process so you can
-use C<undef> as the library to find them.
-
-=head2 Strings
-
-# EXAMPLE: examples/string.pl
-
-B<Discussion>: ASCII and UTF-8 Strings are not a native type to C<libffi>
-but the are handled seamlessly by Platypus.  If you need to talk to an
-API that uses so called "wide" strings (APIs which use C<const wchar_t*>
-or C<wchar_t*>), then you will want to use the wide string type plugin
-L<FFI::Platypus::Type::WideString>.  APIs which use other arbitrary
-encodings can be accessed by converting your Perl strings manually with
-the L<Encode> module.
+Generally you should only reach for L<FFI::Platypus::Record> if you
+need to pass small records on the stack like this.  For more complicated
+(including nested) data you want to use L<FFI::C> using pointers.
 
 =head2 libzmq
 
