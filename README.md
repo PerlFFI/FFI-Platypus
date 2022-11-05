@@ -2091,6 +2091,8 @@ but in some cases the performance penalty may be worth it or unavoidable.
 
 ## bundle your own code
 
+### C Source
+
 `ffi/foo.c`:
 
 ```
@@ -2103,8 +2105,7 @@ typedef struct {
 } foo_t;
 
 foo_t*
-foo__new(const char *class_name, const char *name, int value)
-{
+foo__new(const char *class_name, const char *name, int value) {
   (void)class_name;
   foo_t *self = malloc( sizeof( foo_t ) );
   self->name = strdup(name);
@@ -2113,24 +2114,23 @@ foo__new(const char *class_name, const char *name, int value)
 }
 
 const char *
-foo__name(foo_t *self)
-{
+foo__name(foo_t *self) {
   return self->name;
 }
 
 int
-foo__value(foo_t *self)
-{
+foo__value(foo_t *self) {
   return self->value;
 }
 
 void
-foo__DESTROY(foo_t *self)
-{
+foo__DESTROY(foo_t *self) {
   free(self->name);
   free(self);
 }
 ```
+
+### Perl Source
 
 `lib/Foo.pm`:
 
@@ -2141,37 +2141,115 @@ use strict;
 use warnings;
 use FFI::Platypus 2.00;
 
-{
-  my $ffi = FFI::Platypus->new( api => 2 );
+my $ffi = FFI::Platypus->new( api => 2 );
 
-  $ffi->type('object(Foo)' => 'foo_t');
-  $ffi->mangler(sub {
-    my $name = shift;
-    $name =~ s/^/foo__/;
-    $name;
-  });
+$ffi->type('object(Foo)' => 'foo_t');
+$ffi->mangler(sub {
+  my $name = shift;
+  $name =~ s/^/foo__/;
+  $name;
+});
 
-  $ffi->bundle;
+$ffi->bundle;
 
-  $ffi->attach( new =>     [ 'string', 'string', 'int' ] => 'foo_t'  );
-  $ffi->attach( name =>    [ 'foo_t' ]                   => 'string' );
-  $ffi->attach( value =>   [ 'foo_t' ]                   => 'int'    );
-  $ffi->attach( DESTROY => [ 'foo_t' ]                   => 'void'   );
-}
+$ffi->attach( new =>     [ 'string', 'string', 'int' ] => 'foo_t'  );
+$ffi->attach( name =>    [ 'foo_t' ]                   => 'string' );
+$ffi->attach( value =>   [ 'foo_t' ]                   => 'int'    );
+$ffi->attach( DESTROY => [ 'foo_t' ]                   => 'void'   );
 
 1;
 ```
 
-You can bundle your own C (or other compiled language) code with your
-Perl extension.  Sometimes this is helpful for smoothing over the
-interface of a C library which is not very FFI friendly.  Sometimes
-you may want to write some code in C for a tight loop.  Either way,
-you can do this with the Platypus bundle interface.  See
-[FFI::Platypus::Bundle](https://metacpan.org/pod/FFI::Platypus::Bundle) for more details.
+`t/foo.t`:
 
-Also related is the bundle constant interface, which allows you to
-define Perl constants in C space.  See [FFI::Platypus::Constant](https://metacpan.org/pod/FFI::Platypus::Constant)
-for details.
+```perl
+use Test2::V0;
+use Foo;
+
+my $foo = Foo->new("platypus", 10);
+isa_ok $foo, 'Foo';
+is $foo->name, "platypus";
+is $foo->value, 10;
+
+done_testing;
+```
+
+`Makefile.PL`:
+
+```perl
+use ExtUtils::MakeMaker;
+use FFI::Build::MM;
+my $fbmm = FFI::Build::MM->new;
+WriteMakefile(
+  $fbmm->mm_args(
+    NAME     => 'Foo',
+    DISTNAME => 'Foo',
+    VERSION  => '1.00',
+    # ...
+  )
+);
+
+sub MY::postamble
+{
+  $fbmm->mm_postamble;
+}
+```
+
+### Execute
+
+With prove:
+
+```
+$ prove -lvm
+t/foo.t ..
+# Seeded srand with seed '20221105' from local date.
+ok 1 - Foo=SCALAR->isa('Foo')
+ok 2
+ok 3
+1..3
+ok
+All tests successful.
+Files=1, Tests=3,  0 wallclock secs ( 0.00 usr  0.00 sys +  0.10 cusr  0.00 csys =  0.10 CPU)
+Result: PASS
+```
+
+With [ExtUtils::MakeMaker](https://metacpan.org/pod/ExtUtils::MakeMaker):
+
+```
+$ perl Makefile.PL
+Generating a Unix-style Makefile
+Writing Makefile for Foo
+Writing MYMETA.yml and MYMETA.json
+$ make
+cp lib/Foo.pm blib/lib/Foo.pm
+"/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_build
+CC ffi/foo.c
+LD blib/lib/auto/share/dist/Foo/lib/libFoo.so
+$ make test
+"/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_build
+"/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_test
+PERL_DL_NONLAZY=1 "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+t/foo.t .. ok
+All tests successful.
+Files=1, Tests=3,  1 wallclock secs ( 0.00 usr  0.00 sys +  0.03 cusr  0.00 csys =  0.03 CPU)
+Result: PASS
+```
+
+### Discussion
+
+You can bundle your own C code with your Perl extension.  There are a number
+of reasons you might want to do this  Sometimes you need to optimize a
+tight loop for speed.  Or you might need a little bit of glue code for your
+bindings to a library that isn't inherently FFI friendly.  Either way
+what you want is the [FFI::Build](https://metacpan.org/pod/FFI::Build) system on the install step and the
+[FFI::Platypus::Bundle](https://metacpan.org/pod/FFI::Platypus::Bundle) interface on the runtime step.  If you are using
+[Dist::Zilla](https://metacpan.org/pod/Dist::Zilla) for your distribution, you will also want to check out the
+[Dist::Zilla::Plugin::FFI::Build](https://metacpan.org/pod/Dist::Zilla::Plugin::FFI::Build) plugin to make this as painless as possible.
+
+One of the nice things about the bundle interface is that it is smart enough to
+work with either [App::prove](https://metacpan.org/pod/App::prove) or [ExtUtils::MakeMaker](https://metacpan.org/pod/ExtUtils::MakeMaker).  This means, unlike
+XS, you do not need to explicitly compile your C code in development mode, that
+will be done for you when you call `$ffi->bundle`
 
 # FAQ
 

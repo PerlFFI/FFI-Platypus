@@ -1977,24 +1977,77 @@ but in some cases the performance penalty may be worth it or unavoidable.
 
 =head2 bundle your own code
 
+=head3 C Source
+
 C<ffi/foo.c>:
 
 # EXAMPLE: examples/bundle-foo/ffi/foo.c
+
+=head3 Perl Source
 
 C<lib/Foo.pm>:
 
 # EXAMPLE: examples/bundle-foo/lib/Foo.pm
 
-You can bundle your own C (or other compiled language) code with your
-Perl extension.  Sometimes this is helpful for smoothing over the
-interface of a C library which is not very FFI friendly.  Sometimes
-you may want to write some code in C for a tight loop.  Either way,
-you can do this with the Platypus bundle interface.  See
-L<FFI::Platypus::Bundle> for more details.
+C<t/foo.t>:
 
-Also related is the bundle constant interface, which allows you to
-define Perl constants in C space.  See L<FFI::Platypus::Constant>
-for details.
+# EXAMPLE: examples/bundle-foo/t/foo.t
+
+C<Makefile.PL>:
+
+# EXAMPLE: examples/bundle-foo/Makefile.PL
+
+=head3 Execute
+
+With prove:
+
+ $ prove -lvm
+ t/foo.t ..
+ # Seeded srand with seed '20221105' from local date.
+ ok 1 - Foo=SCALAR->isa('Foo')
+ ok 2
+ ok 3
+ 1..3
+ ok
+ All tests successful.
+ Files=1, Tests=3,  0 wallclock secs ( 0.00 usr  0.00 sys +  0.10 cusr  0.00 csys =  0.10 CPU)
+ Result: PASS
+
+With L<ExtUtils::MakeMaker>:
+
+ $ perl Makefile.PL
+ Generating a Unix-style Makefile
+ Writing Makefile for Foo
+ Writing MYMETA.yml and MYMETA.json
+ $ make
+ cp lib/Foo.pm blib/lib/Foo.pm
+ "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_build
+ CC ffi/foo.c
+ LD blib/lib/auto/share/dist/Foo/lib/libFoo.so
+ $ make test
+ "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_build
+ "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_test
+ PERL_DL_NONLAZY=1 "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+ t/foo.t .. ok
+ All tests successful.
+ Files=1, Tests=3,  1 wallclock secs ( 0.00 usr  0.00 sys +  0.03 cusr  0.00 csys =  0.03 CPU)
+ Result: PASS
+
+=head3 Discussion
+
+You can bundle your own C code with your Perl extension.  There are a number
+of reasons you might want to do this  Sometimes you need to optimize a
+tight loop for speed.  Or you might need a little bit of glue code for your
+bindings to a library that isn't inherently FFI friendly.  Either way
+what you want is the L<FFI::Build> system on the install step and the
+L<FFI::Platypus::Bundle> interface on the runtime step.  If you are using
+L<Dist::Zilla> for your distribution, you will also want to check out the
+L<Dist::Zilla::Plugin::FFI::Build> plugin to make this as painless as possible.
+
+One of the nice things about the bundle interface is that it is smart enough to
+work with either L<App::prove> or L<ExtUtils::MakeMaker>.  This means, unlike
+XS, you do not need to explicitly compile your C code in development mode, that
+will be done for you when you call C<< $ffi->bundle >>
 
 =head1 FAQ
 
