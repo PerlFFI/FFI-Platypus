@@ -2032,6 +2032,7 @@ but now we have an OO interface to the Unix IO functions.
 - [curl\_easy\_setopt](https://curl.se/libcurl/c/curl_easy_setopt.html)
 - [curl\_easy\_perform](https://curl.se/libcurl/c/curl_easy_perform.html)
 - [curl\_easy\_cleanup](https://curl.se/libcurl/c/curl_easy_cleanup.html)
+- [CURLOPT\_URL](https://curl.se/libcurl/c/CURLOPT_URL.html)
 
 ### Perl Source
 
@@ -2045,19 +2046,15 @@ my $ffi = FFI::Platypus->new(
   lib => find_lib_or_die(lib => 'curl'),
 );
 
-# https://curl.se/libcurl/c/curl_easy_init.html
 my $curl_handle = $ffi->function( 'curl_easy_init' => [] => 'opaque' )
                       ->call;
 
-# https://curl.se/libcurl/c/curl_easy_setopt.html
 $ffi->function( 'curl_easy_setopt' => ['opaque', 'enum' ] => ['string'] )
     ->call($curl_handle, CURLOPT_URL, "https://pl.atypus.org" );
 
-# https://curl.se/libcurl/c/curl_easy_perform.html
 $ffi->function( 'curl_easy_perform' => ['opaque' ] => 'enum' )
     ->call($curl_handle);
 
-# https://curl.se/libcurl/c/curl_easy_cleanup.html
 $ffi->function( 'curl_easy_cleanup' => ['opaque' ] )
     ->call($curl_handle);
 ```
@@ -2092,6 +2089,82 @@ do as we did in this example, create a function object using the
 [function method](#function) and call it immediately.  This is not as
 performant either when you create or call as using the [attach method](#attach),
 but in some cases the performance penalty may be worth it or unavoidable.
+
+## Callbacks (with libcurl>
+
+### C API
+
+- [curl\_easy\_init](https://curl.se/libcurl/c/curl_easy_init.html)
+- [curl\_easy\_setopt](https://curl.se/libcurl/c/curl_easy_setopt.html)
+- [curl\_easy\_perform](https://curl.se/libcurl/c/curl_easy_perform.html)
+- [curl\_easy\_cleanup](https://curl.se/libcurl/c/curl_easy_cleanup.html)
+- [CURLOPT\_URL](https://curl.se/libcurl/c/CURLOPT_URL.html)
+- [CURLOPT\_WRITEFUNCTION](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html)
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+use FFI::CheckLib qw( find_lib_or_die );
+use FFI::Platypus::Buffer qw( window );
+use constant CURLOPT_URL           => 10002;
+use constant CURLOPT_WRITEFUNCTION => 20011;
+
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => find_lib_or_die(lib => 'curl'),
+);
+
+my $curl_handle = $ffi->function( 'curl_easy_init' => [] => 'opaque' )
+                      ->call;
+
+$ffi->function( 'curl_easy_setopt' => [ 'opaque', 'enum' ] => ['string'] )
+    ->call($curl_handle, CURLOPT_URL, "https://pl.atypus.org" );
+
+my $html;
+
+my $closure = $ffi->closure(sub {
+  my($ptr, $len, $num, $user) = @_;
+  window(my $buf, $ptr, $len*$num);
+  $html .= $buf;
+  return $len*$num;
+});
+
+$ffi->function( 'curl_easy_setopt' => [ 'opaque', 'enum' ] => ['(opaque,size_t,size_t,opaque)->size_t'] => 'enum' )
+    ->call($curl_handle, CURLOPT_WRITEFUNCTION, $closure);
+
+$ffi->function( 'curl_easy_perform' => [ 'opaque' ] => 'enum' )
+    ->call($curl_handle);
+
+$ffi->function( 'curl_easy_cleanup' => [ 'opaque' ] )
+    ->call($curl_handle);
+
+if($html =~ /<title>(.*?)<\/title>/) {
+  print "$1\n";
+}
+```
+
+### Execute
+
+```
+$ perl curl_callback.pl
+pl.atypus.org - Home for the Perl Platypus Project
+```
+
+### Discussion
+
+This example is similar to the previous one, except instead of letting
+[libcurl](https://curl.se) write the content body to `STDOUT`, we give
+it a callback to send the data to instead.  The [closure method](#closure)
+can be used to create a callback function pointer that can be called from
+C.  The type for the callback is in the form `(arg_type,arg_type,etc)->return_type`
+where the argument types are in parentheticals with an arrow between the
+argument types and the return type.
+
+Inside the closure or callback we use the [window function](https://metacpan.org/pod/FFI::Platypus::Buffer#window)
+from [FFI::Platypus::Buffer](https://metacpan.org/pod/FFI::Platypus::Buffer) again to avoid an _extra_ copy.  We still
+have to copy the buffer to append it to `$hmtl` but it is at least one
+less copy.
 
 ## bundle your own code
 
@@ -2251,7 +2324,7 @@ what you want is the [FFI::Build](https://metacpan.org/pod/FFI::Build) system on
 [Dist::Zilla::Plugin::FFI::Build](https://metacpan.org/pod/Dist::Zilla::Plugin::FFI::Build) plugin to make this as painless as possible.
 
 One of the nice things about the bundle interface is that it is smart enough to
-work with either [App::prove](https://metacpan.org/pod/App::prove) or [ExtUtils::MakeMaker](https://metacpan.org/pod/ExtUtils::MakeMaker).  This means, unlike
+work with either [App::Prove](https://metacpan.org/pod/App::Prove) or [ExtUtils::MakeMaker](https://metacpan.org/pod/ExtUtils::MakeMaker).  This means, unlike
 XS, you do not need to explicitly compile your C code in development mode, that
 will be done for you when you call `$ffi->bundle`
 

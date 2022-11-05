@@ -1942,6 +1942,8 @@ but now we have an OO interface to the Unix IO functions.
 
 =item L<curl_easy_cleanup|https://curl.se/libcurl/c/curl_easy_cleanup.html>
 
+=item L<CURLOPT_URL|https://curl.se/libcurl/c/CURLOPT_URL.html>
+
 =back
 
 =head3 Perl Source
@@ -1976,6 +1978,50 @@ do as we did in this example, create a function object using the
 L<function method|/function> and call it immediately.  This is not as
 performant either when you create or call as using the L<attach method|/attach>,
 but in some cases the performance penalty may be worth it or unavoidable.
+
+=head2 Callbacks (with libcurl>
+
+=head3 C API
+
+=over 4
+
+=item L<curl_easy_init|https://curl.se/libcurl/c/curl_easy_init.html>
+
+=item L<curl_easy_setopt|https://curl.se/libcurl/c/curl_easy_setopt.html>
+
+=item L<curl_easy_perform|https://curl.se/libcurl/c/curl_easy_perform.html>
+
+=item L<curl_easy_cleanup|https://curl.se/libcurl/c/curl_easy_cleanup.html>
+
+=item L<CURLOPT_URL|https://curl.se/libcurl/c/CURLOPT_URL.html>
+
+=item L<CURLOPT_WRITEFUNCTION|https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html>
+
+=back
+
+=head3 Perl Source
+
+# EXAMPLE: examples/curl_callback.pl
+
+=head3 Execute
+
+ $ perl curl_callback.pl
+ pl.atypus.org - Home for the Perl Platypus Project
+
+=head3 Discussion
+
+This example is similar to the previous one, except instead of letting
+L<libcurl|https://curl.se> write the content body to C<STDOUT>, we give
+it a callback to send the data to instead.  The L<closure method|/closure>
+can be used to create a callback function pointer that can be called from
+C.  The type for the callback is in the form C<< (arg_type,arg_type,etc)->return_type >>
+where the argument types are in parentheticals with an arrow between the
+argument types and the return type.
+
+Inside the closure or callback we use the L<window function|FFI::Platypus::Buffer/window>
+from L<FFI::Platypus::Buffer> again to avoid an I<extra> copy.  We still
+have to copy the buffer to append it to C<$hmtl> but it is at least one
+less copy.
 
 =head2 bundle your own code
 
@@ -2047,7 +2093,7 @@ L<Dist::Zilla> for your distribution, you will also want to check out the
 L<Dist::Zilla::Plugin::FFI::Build> plugin to make this as painless as possible.
 
 One of the nice things about the bundle interface is that it is smart enough to
-work with either L<App::prove> or L<ExtUtils::MakeMaker>.  This means, unlike
+work with either L<App::Prove> or L<ExtUtils::MakeMaker>.  This means, unlike
 XS, you do not need to explicitly compile your C code in development mode, that
 will be done for you when you call C<< $ffi->bundle >>
 
