@@ -160,6 +160,9 @@ pod_spelling_system:
     - NULLs
     - XORd
     - decrypted
+    - varadic
+    - libcurl
+    - performant
 
 pod_coverage:
   skip: 0

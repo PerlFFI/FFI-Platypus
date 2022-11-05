@@ -1926,6 +1926,55 @@ of C<opaque> (the latter being the default for the C<object> type).
 Mainly just for demonstration since Perl has much better IO libraries,
 but now we have an OO interface to the Unix IO functions.
 
+=head2 Varadic Functions (with libcurl)
+
+=head3 C API
+
+=over 4
+
+=item L<curl_easy_init|https://curl.se/libcurl/c/curl_easy_init.html>
+
+=item L<curl_easy_setopt|https://curl.se/libcurl/c/curl_easy_setopt.html>
+
+=item L<curl_easy_perform|https://curl.se/libcurl/c/curl_easy_perform.html>
+
+=item L<curl_easy_cleanup|https://curl.se/libcurl/c/curl_easy_cleanup.html>
+
+=back
+
+=head3 Perl Source
+
+# EXAMPLE: examples/curl.pl
+
+=head3 Execute
+
+ $ perl curl.pl
+ <!doctype html>
+ <html lang="en">
+   <head>
+     <meta charset="utf-8" />
+     <title>pl.atypus.org - Home for the Perl Platypus Project</title>
+ ...
+
+=head3 Discussion
+
+The C<libcurl> library makes extensive use of "varadic" functions.
+
+The C programming language and ABI have the concept of "varadic" functions
+that can take a variable number and variable type of arguments.  Assuming
+you have a C<libffi> that supports it (and most modern systems should),
+then you can create bindings to a varadic function by providing two sets
+of array references, one for the fixed arguments (for reasons, C varadic
+functions must have at least one) and one for variable arguments.  In
+this example we call C<curl_easy_setopt> as a varadic function.
+
+For functions that have a large or infinite number of possible signatures
+it may be impracticable or impossible to attach them all.  You can instead
+do as we did in this example, create a function object using the
+L<function method|/function> and call it immediately.  This is not as
+performant either when you create or call as using the L<attach method|/attach>,
+but in some cases the performance penalty may be worth it or unavoidable.
+
 =head2 bundle your own code
 
 C<ffi/foo.c>:

@@ -10,17 +10,16 @@ use FFI::Platypus::Memory qw( malloc );
 use FFI::Platypus::Buffer qw( scalar_to_buffer window );
 
 my $endpoint = "ipc://zmq-ffi-$$";
-my $ffi = FFI::Platypus->new( api => 2 );
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => find_lib_or_die lib => 'zmq',
+);
 
-$ffi->lib(undef); # for puts
-$ffi->attach(puts => ['string'] => 'int');
-
-$ffi->lib(find_lib_or_die lib => 'zmq');
 $ffi->attach(zmq_version => ['int*', 'int*', 'int*'] => 'void');
 
 my($major,$minor,$patch);
 zmq_version(\$major, \$minor, \$patch);
-puts("libzmq version $major.$minor.$patch");
+print "libzmq version $major.$minor.$patch\n";
 die "this script only works with libzmq 3 or better" unless $major >= 3;
 
 $ffi->type('opaque'       => 'zmq_context');

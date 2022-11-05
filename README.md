@@ -1704,17 +1704,16 @@ use FFI::Platypus::Memory qw( malloc );
 use FFI::Platypus::Buffer qw( scalar_to_buffer window );
 
 my $endpoint = "ipc://zmq-ffi-$$";
-my $ffi = FFI::Platypus->new( api => 2 );
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => find_lib_or_die lib => 'zmq',
+);
 
-$ffi->lib(undef); # for puts
-$ffi->attach(puts => ['string'] => 'int');
-
-$ffi->lib(find_lib_or_die lib => 'zmq');
 $ffi->attach(zmq_version => ['int*', 'int*', 'int*'] => 'void');
 
 my($major,$minor,$patch);
 zmq_version(\$major, \$minor, \$patch);
-puts("libzmq version $major.$minor.$patch");
+print "libzmq version $major.$minor.$patch\n";
 die "this script only works with libzmq 3 or better" unless $major >= 3;
 
 $ffi->type('opaque'       => 'zmq_context');
@@ -1811,8 +1810,10 @@ use FFI::CheckLib qw( find_lib_or_die );
 # the ArchiveWrite class that could be used for writing archive formats
 # supported by libarchive
 
-my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(find_lib_or_die lib => 'archive');
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => find_lib_or_die(lib => 'archive'),
+);
 $ffi->type('object(Archive)'      => 'archive_t');
 $ffi->type('object(ArchiveRead)'  => 'archive_read_t');
 $ffi->type('object(ArchiveWrite)' => 'archive_write_t');
@@ -2018,6 +2019,75 @@ except we let platypus know that the underlying type is `int` instead
 of `opaque` (the latter being the default for the `object` type).
 Mainly just for demonstration since Perl has much better IO libraries,
 but now we have an OO interface to the Unix IO functions.
+
+## Varadic Functions (with libcurl)
+
+### C API
+
+- [curl\_easy\_init](https://curl.se/libcurl/c/curl_easy_init.html)
+- [curl\_easy\_setopt](https://curl.se/libcurl/c/curl_easy_setopt.html)
+- [curl\_easy\_perform](https://curl.se/libcurl/c/curl_easy_perform.html)
+- [curl\_easy\_cleanup](https://curl.se/libcurl/c/curl_easy_cleanup.html)
+
+### Perl Source
+
+```perl
+use FFI::Platypus 2.00;
+use FFI::CheckLib qw( find_lib_or_die );
+use constant CURLOPT_URL => 10002;
+
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => find_lib_or_die(lib => 'curl'),
+);
+
+# https://curl.se/libcurl/c/curl_easy_init.html
+my $curl_handle = $ffi->function( 'curl_easy_init' => [] => 'opaque' )
+                      ->call;
+
+# https://curl.se/libcurl/c/curl_easy_setopt.html
+$ffi->function( 'curl_easy_setopt' => ['opaque', 'enum' ] => ['string'] )
+    ->call($curl_handle, CURLOPT_URL, "https://pl.atypus.org" );
+
+# https://curl.se/libcurl/c/curl_easy_perform.html
+$ffi->function( 'curl_easy_perform' => ['opaque' ] => 'enum' )
+    ->call($curl_handle);
+
+# https://curl.se/libcurl/c/curl_easy_cleanup.html
+$ffi->function( 'curl_easy_cleanup' => ['opaque' ] )
+    ->call($curl_handle);
+```
+
+### Execute
+
+```
+$ perl curl.pl
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>pl.atypus.org - Home for the Perl Platypus Project</title>
+...
+```
+
+### Discussion
+
+The `libcurl` library makes extensive use of "varadic" functions.
+
+The C programming language and ABI have the concept of "varadic" functions
+that can take a variable number and variable type of arguments.  Assuming
+you have a `libffi` that supports it (and most modern systems should),
+then you can create bindings to a varadic function by providing two sets
+of array references, one for the fixed arguments (for reasons, C varadic
+functions must have at least one) and one for variable arguments.  In
+this example we call `curl_easy_setopt` as a varadic function.
+
+For functions that have a large or infinite number of possible signatures
+it may be impracticable or impossible to attach them all.  You can instead
+do as we did in this example, create a function object using the
+[function method](#function) and call it immediately.  This is not as
+performant either when you create or call as using the [attach method](#attach),
+but in some cases the performance penalty may be worth it or unavoidable.
 
 ## bundle your own code
 
