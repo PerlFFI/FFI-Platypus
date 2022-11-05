@@ -3,8 +3,10 @@ use warnings;
 use FFI::CheckLib;
 use FFI::Platypus 2.00;
 
-my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(find_lib_or_die lib => 'notify');
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => find_lib_or_die(lib => 'notify'),
+);
 
 $ffi->attach( notify_init              => ['string']                                  );
 $ffi->attach( notify_uninit            => []                                          );

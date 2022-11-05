@@ -8,8 +8,10 @@ Write Perl bindings to non-Perl libraries with FFI. No XS required.
 use FFI::Platypus 2.00;
 
 # for all new code you should use api => 2
-my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(undef); # search libc
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => undef, # search libc
+);
 
 # call dynamically
 $ffi->function( puts => ['string'] => 'int' )->call("hello world");
@@ -1400,8 +1402,10 @@ an array one: the array argument will not let you pass in `undef` / `NULL`.
 use FFI::CheckLib;
 use FFI::Platypus 2.00;
 
-my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(find_lib_or_die lib => 'notify');
+my $ffi = FFI::Platypus->new(
+  api => 2,
+  lib => find_lib_or_die(lib => 'notify'),
+);
 
 $ffi->attach( notify_init              => ['string']                                  );
 $ffi->attach( notify_uninit            => []                                          );

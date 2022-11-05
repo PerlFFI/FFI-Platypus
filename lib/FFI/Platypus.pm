@@ -32,8 +32,10 @@ use FFI::Platypus::Type;
  use FFI::Platypus 2.00;
  
  # for all new code you should use api => 2
- my $ffi = FFI::Platypus->new( api => 2 );
- $ffi->lib(undef); # search libc
+ my $ffi = FFI::Platypus->new(
+   api => 2,
+   lib => undef, # search libc
+ );
  
  # call dynamically
  $ffi->function( puts => ['string'] => 'int' )->call("hello world");
