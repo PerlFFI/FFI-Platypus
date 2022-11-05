@@ -2073,7 +2073,7 @@ $ perl curl.pl
 
 ### Discussion
 
-The `libcurl` library makes extensive use of "varadic" functions.
+The [libcurl](https://curl.se/) library makes extensive use of "varadic" functions.
 
 The C programming language and ABI have the concept of "varadic" functions
 that can take a variable number and variable type of arguments.  Assuming
@@ -2090,7 +2090,7 @@ do as we did in this example, create a function object using the
 performant either when you create or call as using the [attach method](#attach),
 but in some cases the performance penalty may be worth it or unavoidable.
 
-## Callbacks (with libcurl>
+## Callbacks (with libcurl)
 
 ### C API
 
