@@ -15,12 +15,13 @@ BEGIN {
     File::chdir->import();
     require Test::Script;
     Test::Script->import('script_compiles');
+    require FFI::C;
   };
 
   if($@)
   {
     note "error = $@";
-    skip_all 'Test requires FFI::Platypus 2.00, Capture::Tiny, Test::Script, Path::Tiny, Convert::Binary::C and YAML';
+    skip_all 'Test requires FFI::Platypus 2.00, Capture::Tiny, Test::Script, Path::Tiny, Convert::Binary::C, File::chdir, FFI:C and YAML';
   }
 }
 

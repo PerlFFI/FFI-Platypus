@@ -22,6 +22,8 @@ jobs:
           - tag: "5.36"
             env: FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
           - tag: "5.36"
+            env: FFI_PLATYPUS_TEST_EXAMPLES=1
+          - tag: "5.36"
             env: FFI_PLATYPUS_NO_ALLOCA=1
           - tag: "5.36"
             env: FFI_PLATYPUS_NO_EXTRA_TYPES=1
@@ -92,6 +94,10 @@ jobs:
       - name: Build + Test
         run: |
           cip script
+
+      - name: Test Examples
+        run: |
+          ./maint/cip-test-examples
 
       - name: CPAN log
         if: ${{ failure() }}
