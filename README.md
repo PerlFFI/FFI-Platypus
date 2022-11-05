@@ -1570,7 +1570,7 @@ printf "time is %d:%d:%d %s\n",
 ### Execute
 
 ```
-$ perl time_struct.pl 
+$ perl time_struct.pl
 time is 3:48:19 MDT
 ```
 
@@ -1685,7 +1685,13 @@ Generally you should only reach for [FFI::Platypus::Record](https://metacpan.org
 need to pass small records on the stack like this.  For more complicated
 (including nested) data you want to use [FFI::C](https://metacpan.org/pod/FFI::C) using pointers.
 
-## libzmq
+## Avoiding Copy Using Memory Windows (with libzmq3)
+
+### C API
+
+[ØMQ/3.2.6 API Reference](http://api.zeromq.org/3-2:_start)
+
+### Perl Source
 
 ```perl
 use constant ZMQ_IO_THREADS  => 1;
@@ -1695,7 +1701,7 @@ use constant ZMQ_REP => 4;
 use FFI::CheckLib qw( find_lib_or_die );
 use FFI::Platypus 2.00;
 use FFI::Platypus::Memory qw( malloc );
-use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
+use FFI::Platypus::Buffer qw( scalar_to_buffer window );
 
 my $endpoint = "ipc://zmq-ffi-$$";
 my $ffi = FFI::Platypus->new( api => 2 );
@@ -1735,26 +1741,36 @@ zmq_connect($socket1, $endpoint);
 my $socket2 = zmq_socket($context, ZMQ_REP);
 zmq_bind($socket2, $endpoint);
 
-do { # send
+{ # send
   our $sent_message = "hello there";
   my($pointer, $size) = scalar_to_buffer $sent_message;
   my $r = zmq_send($socket1, $pointer, $size, 0);
   die zmq_strerror(zmq_errno()) if $r == -1;
-};
+}
 
-do { # recv
+{ # recv
   my $msg_ptr  = malloc 100;
   zmq_msg_init($msg_ptr);
   my $size     = zmq_msg_recv($msg_ptr, $socket2, 0);
   die zmq_strerror(zmq_errno()) if $size == -1;
   my $data_ptr = zmq_msg_data($msg_ptr);
-  my $recv_message = buffer_to_scalar $data_ptr, $size;
+  window(my $recv_message, $data_ptr, $size);
   print "recv_message = $recv_message\n";
-};
+}
 ```
 
-**Discussion**: ØMQ is a high-performance asynchronous messaging library.
-There are a few things to note here.
+### Execute
+
+```
+$ perl zmq3.pl
+libzmq version 4.3.4
+recv_message = hello there
+```
+
+### Discussion
+
+ØMQ is a high-performance asynchronous messaging library. There are a
+few things to note here.
 
 Firstly, sometimes there may be multiple versions of a library in the
 wild and you may need to verify that the library on a system meets your
@@ -1771,17 +1787,20 @@ floating point values and opaque pointer types.  When the function
 returns the `$major` variable (and the others) has been updated and we
 can use it to verify that it supports the API that we require.
 
-Notice that we define three aliases for the `opaque` type:
-`zmq_context`, `zmq_socket` and `zmq_msg_t`.  While this isn't
-strictly necessary, since Platypus and C treat all three of these types
-the same, it is useful form of documentation that helps describe the
-functionality of the interface.
-
 Finally we attach the necessary functions, send and receive a message.
-If you are interested, there is a fully fleshed out ØMQ Perl interface
-implemented using FFI called [ZMQ::FFI](https://metacpan.org/pod/ZMQ::FFI).
+When we receive we use the [FFI::Platypus::Buffer](https://metacpan.org/pod/FFI::Platypus::Buffer) function `window`
+instead of `buffer_to_scalar`.  They have a similar effect in that
+the provide a scalar from a region of memory, but `window` doesn't
+have to copy any data, so it is cheaper to call.  The only downside
+is that a windowed scalar like this is read-only.
 
 ## libarchive
+
+### C Documentation
+
+[https://www.libarchive.org/](https://www.libarchive.org/)
+
+### Perl Source
 
 ```perl
 use FFI::Platypus 2.00;
@@ -1819,12 +1838,12 @@ $ffi->mangler(sub {
 });
 
 $ffi->attach( new                   => ['string']                        => 'archive_read_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                     => 'void' );
-$ffi->attach( support_filter_all    => ['archive_t']                     => 'int' );
-$ffi->attach( support_format_all    => ['archive_t']                     => 'int' );
-$ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int' );
-$ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int' );
-$ffi->attach( data_skip             => ['archive_t']                     => 'int' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                                         );
+$ffi->attach( support_filter_all    => ['archive_t']                     => 'int'            );
+$ffi->attach( support_format_all    => ['archive_t']                     => 'int'            );
+$ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int'            );
+$ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int'            );
+$ffi->attach( data_skip             => ['archive_t']                     => 'int'            );
 # ... define additional read methods
 
 package ArchiveWrite;
@@ -1837,7 +1856,7 @@ $ffi->mangler(sub {
 });
 
 $ffi->attach( new                   => ['string'] => 'archive_write_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] => 'void' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] );
 # ... define additional write methods
 
 package ArchiveEntry;
@@ -1848,7 +1867,7 @@ $ffi->mangler(sub {
 });
 
 $ffi->attach( new => ['string']     => 'archive_entry_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] => 'void' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] );
 $ffi->attach( pathname              => ['archive_entry_t'] => 'string' );
 # ... define additional entry methods
 
@@ -1883,8 +1902,18 @@ while($archive->next_header2($entry) == ARCHIVE_OK)
 }
 ```
 
-**Discussion**: libarchive is the implementation of `tar` for FreeBSD
-provided as a library and available on a number of platforms.
+### Execute
+
+```
+$ perl archive_object.pl archive.tar
+archive.pl
+archive_object.pl
+```
+
+### Discussion
+
+libarchive is the implementation of `tar` for FreeBSD provided as a
+library and available on a number of platforms.
 
 One interesting thing about libarchive is that it provides a kind of
 object oriented interface via opaque pointers.  This example creates an
@@ -1912,7 +1941,22 @@ $ffi->attach(
 );
 ```
 
+As nice as `libarchive` is, note that we have to shoehorn then
+`archive_free` function name into the Perl convention of using
+`DESTROY` as the destructor.  We can easily do that for just this
+one function with:
+
+```perl
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_t'] );
+```
+
 ## unix open
+
+### C API
+
+[Input-output system calls in C](https://www.geeksforgeeks.org/input-output-system-calls-c-create-open-close-read-write/)
+
+### Perl Source
 
 ```perl
 use FFI::Platypus 2.00;
@@ -1944,7 +1988,7 @@ use FFI::Platypus 2.00;
   $ffi->attach( close => ['fd'] => 'int' );
 }
 
-my $fd = FD->new("$0", FD::O_RDONLY);
+my $fd = FD->new("file_handle.txt", FD::O_RDONLY);
 
 my $buffer = "\0" x 10;
 
@@ -1956,97 +2000,21 @@ while(my $br = $fd->read($buffer, 10))
 $fd->close;
 ```
 
-**Discussion**: The Unix file system calls use an integer handle for
-each open file.  We can use the same `object` type that we used
-for libarchive above, except we let platypus know that the underlying
-type is `int` instead of `opaque` (the latter being the default for
-the `object` type).  Mainly just for demonstration since Perl has much
-better IO libraries, but now we have an OO interface to the Unix IO
-functions.
+### Execute
 
-## bzip2
-
-```perl
-use FFI::Platypus 2.00;
-use FFI::CheckLib qw( find_lib_or_die );
-use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
-use FFI::Platypus::Memory qw( malloc free );
-
-my $ffi = FFI::Platypus->new( api => 2 );
-$ffi->lib(find_lib_or_die lib => 'bz2');
-
-$ffi->attach(
-  [ BZ2_bzBuffToBuffCompress => 'compress' ] => [
-    'opaque',                           # dest
-    'unsigned int *',                   # dest length
-    'opaque',                           # source
-    'unsigned int',                     # source length
-    'int',                              # blockSize100k
-    'int',                              # verbosity
-    'int',                              # workFactor
-  ] => 'int',
-  sub {
-    my $sub = shift;
-    my($source,$source_length) = scalar_to_buffer $_[0];
-    my $dest_length = int(length($source)*1.01) + 1 + 600;
-    my $dest = malloc $dest_length;
-    my $r = $sub->($dest, \$dest_length, $source, $source_length, 9, 0, 30);
-    die "bzip2 error $r" unless $r == 0;
-    my $compressed = buffer_to_scalar($dest, $dest_length);
-    free $dest;
-    $compressed;
-  },
-);
-
-$ffi->attach(
-  [ BZ2_bzBuffToBuffDecompress => 'decompress' ] => [
-    'opaque',                           # dest
-    'unsigned int *',                   # dest length
-    'opaque',                           # source
-    'unsigned int',                     # source length
-    'int',                              # small
-    'int',                              # verbosity
-  ] => 'int',
-  sub {
-    my $sub = shift;
-    my($source, $source_length) = scalar_to_buffer $_[0];
-    my $dest_length = $_[1];
-    my $dest = malloc $dest_length;
-    my $r = $sub->($dest, \$dest_length, $source, $source_length, 0, 0);
-    die "bzip2 error $r" unless $r == 0;
-    my $decompressed = buffer_to_scalar($dest, $dest_length);
-    free $dest;
-    $decompressed;
-  },
-);
-
-my $original = "hello compression world\n";
-my $compressed = compress($original);
-print decompress($compressed, length $original);
+```
+$ perl file_handle.pl
+Hello World
 ```
 
-**Discussion**: bzip2 is a compression library.  For simple one shot
-attempts at compression/decompression when you expect the original and
-the result to fit within memory it provides two convenience functions
-`BZ2_bzBuffToBuffCompress` and `BZ2_bzBuffToBuffDecompress`.
+### Discussion
 
-The first four arguments of both of these C functions are identical, and
-represent two buffers.  One buffer is the source, the second is the
-destination.  For the destination, the length is passed in as a pointer
-to an integer.  On input this integer is the size of the destination
-buffer, and thus the maximum size of the compressed or decompressed
-data.  When the function returns the actual size of compressed or
-compressed data is stored in this integer.
-
-This is normal stuff for C, but in Perl our buffers are scalars and they
-already know how large they are.  In this sort of situation, wrapping
-the C function in some Perl code can make your interface a little more
-Perl like.  In order to do this, just provide a code reference as the
-last argument to the ["attach"](#attach) method.  The first argument to this
-wrapper will be a code reference to the C function.  The Perl arguments
-will come in after that.  This allows you to modify / convert the
-arguments to conform to the C API.  What ever value you return from the
-wrapper function will be returned back to the original caller.
+The Unix file system calls use an integer handle for each open file.
+We can use the same `object` type that we used for libarchive above,
+except we let platypus know that the underlying type is `int` instead
+of `opaque` (the latter being the default for the `object` type).
+Mainly just for demonstration since Perl has much better IO libraries,
+but now we have an OO interface to the Unix IO functions.
 
 ## bundle your own code
 

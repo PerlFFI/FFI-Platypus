@@ -29,7 +29,7 @@ use FFI::Platypus 2.00;
   $ffi->attach( close => ['fd'] => 'int' );
 }
 
-my $fd = FD->new("$0", FD::O_RDONLY);
+my $fd = FD->new("file_handle.txt", FD::O_RDONLY);
 
 my $buffer = "\0" x 10;
 

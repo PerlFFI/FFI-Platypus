@@ -1756,7 +1756,7 @@ L<cppreference - localtime|https://en.cppreference.com/w/c/chrono/localtime>
 
 =head3 Execute
 
- $ perl time_struct.pl 
+ $ perl time_struct.pl
  time is 3:48:19 MDT
 
 =head3 Discussion
@@ -1806,12 +1806,26 @@ Generally you should only reach for L<FFI::Platypus::Record> if you
 need to pass small records on the stack like this.  For more complicated
 (including nested) data you want to use L<FFI::C> using pointers.
 
-=head2 libzmq
+=head2 Avoiding Copy Using Memory Windows (with libzmq3)
+
+=head3 C API
+
+L<ØMQ/3.2.6 API Reference|http://api.zeromq.org/3-2:_start>
+
+=head3 Perl Source
 
 # EXAMPLE: examples/zmq3.pl
 
-B<Discussion>: ØMQ is a high-performance asynchronous messaging library.
-There are a few things to note here.
+=head3 Execute
+
+ $ perl zmq3.pl
+ libzmq version 4.3.4
+ recv_message = hello there
+
+=head3 Discussion
+
+ØMQ is a high-performance asynchronous messaging library. There are a
+few things to note here.
 
 Firstly, sometimes there may be multiple versions of a library in the
 wild and you may need to verify that the library on a system meets your
@@ -1828,22 +1842,33 @@ floating point values and opaque pointer types.  When the function
 returns the C<$major> variable (and the others) has been updated and we
 can use it to verify that it supports the API that we require.
 
-Notice that we define three aliases for the C<opaque> type:
-C<zmq_context>, C<zmq_socket> and C<zmq_msg_t>.  While this isn't
-strictly necessary, since Platypus and C treat all three of these types
-the same, it is useful form of documentation that helps describe the
-functionality of the interface.
-
 Finally we attach the necessary functions, send and receive a message.
-If you are interested, there is a fully fleshed out ØMQ Perl interface
-implemented using FFI called L<ZMQ::FFI>.
+When we receive we use the L<FFI::Platypus::Buffer> function C<window>
+instead of C<buffer_to_scalar>.  They have a similar effect in that
+the provide a scalar from a region of memory, but C<window> doesn't
+have to copy any data, so it is cheaper to call.  The only downside
+is that a windowed scalar like this is read-only.
 
 =head2 libarchive
 
+=head3 C Documentation
+
+L<https://www.libarchive.org/>
+
+=head3 Perl Source
+
 # EXAMPLE: examples/archive_object.pl
 
-B<Discussion>: libarchive is the implementation of C<tar> for FreeBSD
-provided as a library and available on a number of platforms.
+=head3 Execute
+
+ $ perl archive_object.pl archive.tar
+ archive.pl
+ archive_object.pl
+
+=head3 Discussion
+
+libarchive is the implementation of C<tar> for FreeBSD provided as a
+library and available on a number of platforms.
 
 One interesting thing about libarchive is that it provides a kind of
 object oriented interface via opaque pointers.  This example creates an
@@ -1867,44 +1892,36 @@ Rather than this:
    ['archive_t'] => 'int' );
  );
 
+As nice as C<libarchive> is, note that we have to shoehorn then
+C<archive_free> function name into the Perl convention of using
+C<DESTROY> as the destructor.  We can easily do that for just this
+one function with:
+
+ $ffi->attach( [ free => 'DESTROY' ] => ['archive_t'] );
+
 =head2 unix open
+
+=head3 C API
+
+L<Input-output system calls in C|https://www.geeksforgeeks.org/input-output-system-calls-c-create-open-close-read-write/>
+
+=head3 Perl Source
 
 # EXAMPLE: examples/file_handle.pl
 
-B<Discussion>: The Unix file system calls use an integer handle for
-each open file.  We can use the same C<object> type that we used
-for libarchive above, except we let platypus know that the underlying
-type is C<int> instead of C<opaque> (the latter being the default for
-the C<object> type).  Mainly just for demonstration since Perl has much
-better IO libraries, but now we have an OO interface to the Unix IO
-functions.
+=head3 Execute
 
-=head2 bzip2
+ $ perl file_handle.pl
+ Hello World
 
-# EXAMPLE: examples/bzip2.pl
+=head3 Discussion
 
-B<Discussion>: bzip2 is a compression library.  For simple one shot
-attempts at compression/decompression when you expect the original and
-the result to fit within memory it provides two convenience functions
-C<BZ2_bzBuffToBuffCompress> and C<BZ2_bzBuffToBuffDecompress>.
-
-The first four arguments of both of these C functions are identical, and
-represent two buffers.  One buffer is the source, the second is the
-destination.  For the destination, the length is passed in as a pointer
-to an integer.  On input this integer is the size of the destination
-buffer, and thus the maximum size of the compressed or decompressed
-data.  When the function returns the actual size of compressed or
-compressed data is stored in this integer.
-
-This is normal stuff for C, but in Perl our buffers are scalars and they
-already know how large they are.  In this sort of situation, wrapping
-the C function in some Perl code can make your interface a little more
-Perl like.  In order to do this, just provide a code reference as the
-last argument to the L</attach> method.  The first argument to this
-wrapper will be a code reference to the C function.  The Perl arguments
-will come in after that.  This allows you to modify / convert the
-arguments to conform to the C API.  What ever value you return from the
-wrapper function will be returned back to the original caller.
+The Unix file system calls use an integer handle for each open file.
+We can use the same C<object> type that we used for libarchive above,
+except we let platypus know that the underlying type is C<int> instead
+of C<opaque> (the latter being the default for the C<object> type).
+Mainly just for demonstration since Perl has much better IO libraries,
+but now we have an OO interface to the Unix IO functions.
 
 =head2 bundle your own code
 
