@@ -35,12 +35,12 @@ $ffi->mangler(sub {
 });
 
 $ffi->attach( new                   => ['string']                        => 'archive_read_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                     => 'void' );
-$ffi->attach( support_filter_all    => ['archive_t']                     => 'int' );
-$ffi->attach( support_format_all    => ['archive_t']                     => 'int' );
-$ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int' );
-$ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int' );
-$ffi->attach( data_skip             => ['archive_t']                     => 'int' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_t']                                         );
+$ffi->attach( support_filter_all    => ['archive_t']                     => 'int'            );
+$ffi->attach( support_format_all    => ['archive_t']                     => 'int'            );
+$ffi->attach( open_filename         => ['archive_t','string','size_t']   => 'int'            );
+$ffi->attach( next_header2          => ['archive_t', 'archive_entry_t' ] => 'int'            );
+$ffi->attach( data_skip             => ['archive_t']                     => 'int'            );
 # ... define additional read methods
 
 package ArchiveWrite;
@@ -53,7 +53,7 @@ $ffi->mangler(sub {
 });
 
 $ffi->attach( new                   => ['string'] => 'archive_write_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] => 'void' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_write_t'] );
 # ... define additional write methods
 
 package ArchiveEntry;
@@ -64,7 +64,7 @@ $ffi->mangler(sub {
 });
 
 $ffi->attach( new => ['string']     => 'archive_entry_t' );
-$ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] => 'void' );
+$ffi->attach( [ free => 'DESTROY' ] => ['archive_entry_t'] );
 $ffi->attach( pathname              => ['archive_entry_t'] => 'string' );
 # ... define additional entry methods
 

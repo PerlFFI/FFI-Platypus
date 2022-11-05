@@ -7,7 +7,7 @@ use constant ZMQ_REP => 4;
 use FFI::CheckLib qw( find_lib_or_die );
 use FFI::Platypus 2.00;
 use FFI::Platypus::Memory qw( malloc );
-use FFI::Platypus::Buffer qw( scalar_to_buffer buffer_to_scalar );
+use FFI::Platypus::Buffer qw( scalar_to_buffer window );
 
 my $endpoint = "ipc://zmq-ffi-$$";
 my $ffi = FFI::Platypus->new( api => 2 );
@@ -47,19 +47,19 @@ zmq_connect($socket1, $endpoint);
 my $socket2 = zmq_socket($context, ZMQ_REP);
 zmq_bind($socket2, $endpoint);
 
-do { # send
+{ # send
   our $sent_message = "hello there";
   my($pointer, $size) = scalar_to_buffer $sent_message;
   my $r = zmq_send($socket1, $pointer, $size, 0);
   die zmq_strerror(zmq_errno()) if $r == -1;
-};
+}
 
-do { # recv
+{ # recv
   my $msg_ptr  = malloc 100;
   zmq_msg_init($msg_ptr);
   my $size     = zmq_msg_recv($msg_ptr, $socket2, 0);
   die zmq_strerror(zmq_errno()) if $size == -1;
   my $data_ptr = zmq_msg_data($msg_ptr);
-  my $recv_message = buffer_to_scalar $data_ptr, $size;
+  window(my $recv_message, $data_ptr, $size);
   print "recv_message = $recv_message\n";
-};
+}
