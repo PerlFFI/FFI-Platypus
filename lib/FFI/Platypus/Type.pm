@@ -62,7 +62,7 @@ OO Interface:
 
 =head1 DESCRIPTION
 
-B<Note>: This document assumes that you are using C<api =E<gt> 1>,
+B<Note>: This document assumes that you are using C<api =E<gt> 2>,
 which you should be using for all new code.
 
 This document describes how to define types using L<FFI::Platypus>.

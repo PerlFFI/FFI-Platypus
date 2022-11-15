@@ -1067,7 +1067,7 @@ swap(int *a, int *b)
 use FFI::Platypus 2.00;
 
 my $ffi = FFI::Platypus->new(
-  api => 1,
+  api => 2,
   lib => './swap.so',
 );
 
@@ -1284,7 +1284,7 @@ array_reverse10(int a[10]) {
 use FFI::Platypus 2.00;
 
 my $ffi = FFI::Platypus->new(
-  api => 1,
+  api => 2,
   lib => './array_reverse.so',
 );
 
