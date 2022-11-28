@@ -2443,7 +2443,7 @@ dynamic libraries.  Things not supported include:
     Like .NET based languages and Java.
 
 The documentation has a bias toward using FFI / Platypus with C.  This
-is my fault, as my background in mainly in C/C++ programmer (when I am
+is my fault, as my background mainly in C/C++ programmer (when I am
 not writing Perl).  In many places I use "C" as a short form for "any
 language that can generate machine code and is callable from C".  I
 welcome pull requests to the Platypus core to address this issue.  In an
