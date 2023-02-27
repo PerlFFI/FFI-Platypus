@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.06_01   2023-02-27 10:13:25 -0700
   - Refactor Alien::FFI fallback mode to delete it as a prereq when it is not
     needed instead of adding it when it is.  This way the CPAN river rating
     for Alien::FFI more closely reflects reality (gh#391)

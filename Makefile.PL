@@ -16,6 +16,7 @@ my %WriteMakefileArgs = (
   "ABSTRACT"       => "Write Perl bindings to non-Perl libraries with FFI. No XS required.",
   "AUTHOR"         => "Graham Ollis <plicease\@cpan.org>",
   "BUILD_REQUIRES" => {
+    "Alien::FFI"         => "0.20",
     "ExtUtils::CBuilder" => 0
   },
   "CONFIGURE_REQUIRES" => {
@@ -92,7 +93,7 @@ my %WriteMakefileArgs = (
     "Test2::API"    => "1.302015",
     "Test2::V0"     => "0.000121"
   },
-  "VERSION" => "2.05",
+  "VERSION" => "2.06_01",
   "test"    => {
     "TESTS" => "t/*.t"
   }
