@@ -61,6 +61,7 @@ sub myWriteMakefile
     require Alien::Base::Wrapper;
     Alien::Base::Wrapper->import( 'Alien::FFI::Vcpkg', '!export');
     %alien = Alien::Base::Wrapper->mm_args;
+    delete $args{BUILD_REQUIRES}->{'Alien::FFI'};
   }
   else
   {
@@ -76,6 +77,7 @@ sub myWriteMakefile
       require Alien::Base::Wrapper;
       Alien::Base::Wrapper->import( 'Alien::FFI::PkgConfigPP', 'Alien::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
+      delete $args{BUILD_REQUIRES}->{'Alien::FFI'};
     }
     elsif($alien_install_type_unset && $^O ne 'MSWin32' && Alien::FFI::pkgconfig->exists)
     {
@@ -84,6 +86,7 @@ sub myWriteMakefile
       require Alien::Base::Wrapper;
       Alien::Base::Wrapper->import( 'Alien::FFI::pkgconfig', 'Alien::psapi', '!export' );
       %alien = Alien::Base::Wrapper->mm_args;
+      delete $args{BUILD_REQUIRES}->{'Alien::FFI'};
     }
     else
     {
@@ -93,7 +96,6 @@ sub myWriteMakefile
         CC => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e cc --',
         LD => '$(FULLPERL) -Iinc -MAlien::Base::Wrapper=Alien::FFI,Alien::psapi -e ld --',
       );
-      $args{BUILD_REQUIRES}->{'Alien::FFI'} = '0.20';
     }
   }
   $alien{INC} = defined $alien{INC} ? "-Iinclude $alien{INC}" : "-Iinclude";
