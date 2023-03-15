@@ -168,7 +168,10 @@ the L<lib|/lib> attribute.
 
 [version 0.91]
 
-Sets the API level.  Legal values are
+Sets the API level.  The recommended value for all new code is C<2>.
+You should only use a lower value for a legacy code base that cannot
+be migrated to a newer API level.
+Legal values are
 
 =over
 
@@ -184,7 +187,7 @@ and type decoration on basic types.
 
 =item C<2>
 
-Enable version 2 API. All new code should be written with this set to 1!
+Enable version 2 API.
 The Platypus documentation assumes this api level is set.
 
 API version 2 is identical to version 1, except:
