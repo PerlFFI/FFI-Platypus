@@ -125,10 +125,10 @@ L<EXAMPLES|/EXAMPLES> to get a taste of what you can do with Platypus.
 Platypus has extensive documentation of types at L<FFI::Platypus::Type>
 and its custom types API at L<FFI::Platypus::API>.
 
-You are B<strongly> encouraged to use API level 1 for all new code.
+You are B<strongly> encouraged to use API level 2 for all new code.
 There are a number of improvements and design fixes that you get
 for free.  You should even consider updating existing modules to
-use API level 1 where feasible.  How do I do that you might ask?
+use API level 2 where feasible.  How do I do that you might ask?
 Simply pass in the API level to the platypus constructor.
 
  my $ffi = FFI::Platypus->new( api => 2 );
@@ -169,9 +169,10 @@ the L<lib|/lib> attribute.
 [version 0.91]
 
 Sets the API level.  The recommended value for all new code is C<2>.
-You should only use a lower value for a legacy code base that cannot
-be migrated to a newer API level.
-Legal values are
+The Platypus documentation assumes API level C<2> except for a few
+places that specifically document older versions.  You should
+only use a lower value for a legacy code base that cannot be migrated to
+a newer API level. Legal values are:
 
 =over
 
