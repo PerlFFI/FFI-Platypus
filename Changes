@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Documentation improvements (gh#392)
 
 2.07      2023-03-14 06:59:09 -0600
   - Production release identical to 2.06_01
