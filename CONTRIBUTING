@@ -73,7 +73,7 @@ CONTRIBUTING
       despite these precautions, then you can turn its use off by setting
       this environment variable when you run Makefile.PL:
 
-       helix% env FFI_PLATYPUS_NO_ALLOCA=1 perl Makefile.PL 
+       helix% env FFI_PLATYPUS_NO_ALLOCA=1 perl Makefile.PL
        NO_ALLOCA:
          + alloca() will not be used, even if your platform supports it.
        Generating a Unix-style Makefile
@@ -98,9 +98,10 @@ CONTRIBUTING
       * Please make an effort to follow existing coding style when making
       pull requests.
 
-      * Platypus supports all production Perl releases since 5.8.1. For
-      that reason, please do not introduce any code that requires a newer
-      version of Perl.
+      * The intent of the FFI-Platypus team is to support the same versions
+      of Perl that are supported by the Perl toolchain. As of this writing
+      that means 5.16 and better. As such, please do not include any
+      codethat requires a newer version of Perl.
 
  Performance Testing
 
@@ -110,7 +111,7 @@ CONTRIBUTING
     making significant changes to the Platypus Core. For that I use
     `FFI-Performance`, which can be found in my GitHub repository here:
 
-    https://github.com/PerlFFI/FFI-Performance
+    https://github.com/Perl5-FFI/FFI-Performance
 
  System integrators
 

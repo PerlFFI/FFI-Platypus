@@ -1,5 +1,9 @@
 SUPPORT
 
+    The intent of the FFI-Platypus team is to support the same versions of
+    Perl that are supported by the Perl toolchain. As of this writing that
+    means 5.16 and better.
+
     IRC: #native on irc.perl.org
 
     (click for instant chat room login)
@@ -9,5 +13,5 @@ SUPPORT
     a feature request, please open an issue on this project's GitHub Issue
     tracker:
 
-    https://github.com/perl5-FFI/FFI-Platypus/issues
+    https://github.com/perlFFI/FFI-Platypus/issues
 

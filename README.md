@@ -2462,6 +2462,10 @@ written it yet.
 
 # SUPPORT
 
+The intent of the `FFI-Platypus` team is to support the same versions of
+Perl that are supported by the Perl toolchain.  As of this writing that
+means 5.16 and better.
+
 IRC: #native on irc.perl.org
 
 [(click for instant chat room login)](http://chat.mibbit.com/#native@irc.perl.org)
@@ -2579,9 +2583,10 @@ is more important than following byzantine bureaucratic coding
 regulations.  We can always tweak things later.
 - Please make an effort to follow existing coding style when making pull
 requests.
-- Platypus supports all production Perl releases since 5.8.1.  For that
-reason, please do not introduce any code that requires a newer version
-of Perl.
+- The intent of the `FFI-Platypus` team is to support the same versions of
+Perl that are supported by the Perl toolchain.  As of this writing that
+means 5.16 and better.  As such, please do not include any codethat
+requires a newer version of Perl.
 
 ## Performance Testing
 
