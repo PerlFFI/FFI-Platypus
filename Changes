@@ -1,6 +1,15 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.08      2023-05-05 15:48:53 -0600
+  - Updated non-binding support for Perls to match the policy
+    of the Perl toolchain (Perls older than 10 years old are
+    unsupported, with a one-time exception of Perl 5.16).  The
+    intent is not to suddenly drop support for older Perls, but
+    the FFI-Platypus team may take advantage of features in
+    supported Perls that will effectively remove compatability
+    with unsupported Perls.
   - Documentation improvements (gh#392)
 
 2.07      2023-03-14 06:59:09 -0600
