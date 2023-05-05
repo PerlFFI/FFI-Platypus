@@ -2585,7 +2585,7 @@ regulations.  We can always tweak things later.
 requests.
 - The intent of the `FFI-Platypus` team is to support the same versions of
 Perl that are supported by the Perl toolchain.  As of this writing that
-means 5.16 and better.  As such, please do not include any codethat
+means 5.16 and better.  As such, please do not include any code that
 requires a newer version of Perl.
 
 ## Performance Testing
