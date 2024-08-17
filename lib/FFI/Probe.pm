@@ -454,7 +454,7 @@ sub check_type_float
   return unless $ret;
 
   my $size    = $self->data->{type}->{$type}->{size};
-  my $complex = !!$type =~ /complex/;
+  my $complex = !!($type =~ /complex/);
 
   if($complex) {
     $size /= 2;
