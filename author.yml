@@ -163,6 +163,8 @@ pod_spelling_system:
     - varadic
     - libcurl
     - performant
+    - Lukas
+    - MAUKE
 
 pod_coverage:
   skip: 0
