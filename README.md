@@ -2806,6 +2806,8 @@ José Joaquín Atria (JJATRIA)
 
 Pete Houston (openstrike, HOUSTON)
 
+Lukas Mai (MAUKE)
+
 # COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2015-2022 by Graham Ollis.

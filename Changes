@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Fix bug in complex type detection (gh#396, mauke++)
 
 2.08      2023-05-05 15:48:53 -0600
   - Updated non-binding support for Perls to match the policy
