@@ -30,8 +30,8 @@ jobs:
           - tag: "5.40"
             env: FFI_PLATYPUS_PROBE_OVERRIDE=variadic=0
           - tag: "5.40-bullseye32"
-          - tag: "5.40-debug"
-          - tag: "5.40-debug32"
+          - tag: "5.36-debug"
+          - tag: "5.36-debug32"
           - tag: "5.40-ffimaster"
           - tag: "5.40-longdouble"
           - tag: "5.40-quadmath"
