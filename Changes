@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.09      2024-08-18 20:33:42 -0600
   - Fix bug in complex type detection (gh#396, mauke++)
 
 2.08      2023-05-05 15:48:53 -0600
