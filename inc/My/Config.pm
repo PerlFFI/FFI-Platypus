@@ -206,6 +206,16 @@ sub configure
     $ch->define_var( FFI_PL_VERSION_PATCH => int $patch );
   }
 
+  foreach my $header(qw( ffi xqd ))
+  {
+    unless($probe->check_header("$header.h"))
+    {
+      print "unable to find required header $header.h\n";
+      print "Please check config.log for detailed diagnostics.\n";
+      die "unable to configure Platypus";
+    }
+  }
+
   foreach my $header (qw( stdlib stdint sys/types sys/stat unistd alloca dlfcn limits stddef wchar signal inttypes windows sys/cygwin string psapi stdio stdbool complex ))
   {
     if($probe->check_header("$header.h"))
@@ -444,6 +454,7 @@ sub configure
     {
       $probe->log("[[[ fatal: unable to determine even the default ABI ]]]");
       print "Unable to determine even the default ABI\n";
+      print "Please check config.log for detailed diagnostics.\n";
       die "unable to configure Platypus";
     }
   }
