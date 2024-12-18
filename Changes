@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+2.10      2024-12-18 11:11:31 -0700
+  - Detect V modules according to v.mod files (gh#402)
+
 2.09      2024-08-18 20:33:42 -0600
   - Fix bug in complex type detection (gh#396, mauke++)
 
