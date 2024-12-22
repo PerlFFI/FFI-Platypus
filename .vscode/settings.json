@@ -1,0 +1,6 @@
+{
+    "pls.perlcritic.perlcriticrc": "perlcriticrc",
+    "pls.inc": [
+        "$ROOT_PATH/lib"
+    ]
+}
