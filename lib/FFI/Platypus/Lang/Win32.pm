@@ -8,6 +8,10 @@ use Config;
 # ABSTRACT: Documentation and tools for using Platypus with the Windows API
 # VERSION
 
+=encoding UTF-8
+
+=for stopwords abi
+
 =head1 SYNOPSIS
 
  use utf8;
@@ -40,7 +44,7 @@ use Config;
 
 =head1 DESCRIPTION
 
-This module provides the Windows datatypes used by the Windows API.
+This module provides the Windows data types used by the Windows API.
 This means that you can use things like C<DWORD> as an alias for
 C<uint32>.  The full list of type aliases is not documented here as
 it may change over time or be dynamic.  You can get the list for your
@@ -331,8 +335,8 @@ sub native_type_map
     }
 
     # stuff we are not yet dealing with
-    # LPCTSTR is unicode string, not currently supported
-    # LPWSTR 16 bit unicode string
+    # LPCTSTR is Unicode string, not currently supported
+    # LPWSTR 16 bit Unicode string
     # TBYTE TCHAR UNICODE_STRING WCHAR
     # Not supported: POINTER_32 POINTER_64 POINTER_SIGNED POINTER_UNSIGNED
   }

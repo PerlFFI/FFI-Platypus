@@ -12,6 +12,8 @@ our @EXPORT_OK = qw ( scalar_to_pointer grow set_used_length window );
 # ABSTRACT: Convert scalars to C buffers
 # VERSION
 
+=for stopwords num
+
 =head1 SYNOPSIS
 
  use FFI::Platypus::Buffer;
@@ -83,7 +85,7 @@ copying the buffer instead.  For example:
  ...
  
  # later when you know that the c code is no longer using the pointer
- # Since you allocated the copy, you are responsible for free'ing it.
+ # Since you allocated the copy, you are responsible for freeing it.
  free($ptr_copy);
 
 =cut
@@ -245,7 +247,7 @@ that the behavior of setting the UTF-8 flag on a buffer that does
 not contain UTF-8 as understood by the version of Perl that you are
 running is undefined.
 
-I<Hint>: If you have a buffer that needs to be free'd by C once the
+I<Hint>: If you have a buffer that needs to be freed by C once the
 scalar falls out of scope you can use L<Variable::Magic> to apply
 magic to the scalar and free the pointer once it falls out of scope.
 

@@ -98,7 +98,7 @@ sub call
 
  $closure->sticky;
 
-Mark the closure sticky, meaning that it won't be free'd even if
+Mark the closure sticky, meaning that it won't be freed even if
 all the reference of the object fall out of scope.
 
 =cut

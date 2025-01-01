@@ -4,7 +4,7 @@ use FFI::Platypus 2.00;
 use FFI::CheckLib qw( find_lib_or_die );
 
 # This example uses FreeBSD's libarchive to list the contents of any
-# archive format that it suppors.  We've also filled out a part of
+# archive format that it supports.  We've also filled out a part of
 # the ArchiveWrite class that could be used for writing archive formats
 # supported by libarchive
 

@@ -8,6 +8,8 @@ use Carp ();
 # ABSTRACT: Bundle foreign code with your Perl module
 # VERSION
 
+=for stopwords Ffi
+
 =head1 SYNOPSIS
 
 C<ffi/foo.c>:
@@ -318,7 +320,7 @@ not being able to find the header file.  Probably something like this:
  ffi/answer.c:1:10: fatal error: 'answer.h' file not found
 
 So we put a C<answer.fbx> file in the C<ffi> directory.  (In case you
-are wondering FBX stands for "Ffi Build and file eXtensions should
+are wondering FBX stands for "Ffi Build and file extensions should
 whenever possible be three characters long").  The name of the file
 can be anything so long as it ends in C<.fbx>, we just choose C<answer>
 here because that is the name of the project.

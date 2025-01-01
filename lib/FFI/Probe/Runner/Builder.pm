@@ -307,7 +307,7 @@ sub build
   $self->extract;
 
   # this should really be done in `new` but the build
-  # scripts for FFI-Platypus edit the ldfalgs from there
+  # scripts for FFI-Platypus edit the ldflags from there
   # so.  Also this may actually belong in FFI::Build::Platform
   # which would resolve the problem.
   if($^O eq 'MSWin32' && $Config{ccname} eq 'cl')

@@ -12,6 +12,10 @@ use Carp ();
 # ABSTRACT: Platypus custom type for Unicode "wide" strings
 # VERSION
 
+=encoding UTF-8
+
+=for stopwords str
+
 =head1 SYNOPSIS
 
  use FFI::Platypus 2.00;
@@ -235,7 +239,7 @@ Because of the order in which objects are freed you cannot return a wide
 string if it is also a wide string argument to a function.  For example
 C<wcscpy> may crash if you specify the return value as a wide string:
 
- # wchar_t *wcscpy(wchar_t *dest, const wchar_t *src);
+ # wchar_t *wcscpy(wchar_t *dst, const wchar_t *src);
  $ffi->attach( wcscpy => [ 'wstring_w', 'wstring' ] => 'wstring' ); # no
  my $str;
  wcscpy( \$str, "I ❤ perl + Platypus");  # may crash on memory error
@@ -344,7 +348,7 @@ sub ffi_custom_type_api_1
   # any Windows PATH (260*4)+2 = 1042
   #
   # (assuming all characters in the PATH are in the BMP, which is
-  #  admitedly unlikely, possilby impossible (?) and and a null
+  #  admittedly unlikely, possibly impossible (?) and and a null
   #  termination of two bytes).
   #
   # it is arbitrary and based on a platform specific windows

@@ -14,6 +14,8 @@ use FFI::Temp;
 # ABSTRACT: System detection and probing for FFI extensions.
 # VERSION
 
+=for stopwords stmt decl
+
 =head1 SYNOPSIS
 
  use FFI::Probe;

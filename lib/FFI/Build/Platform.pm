@@ -13,6 +13,8 @@ use FFI::Platypus::ShareConfig;
 # ABSTRACT: Platform specific configuration.
 # VERSION
 
+=for stopwords shellwords shellworded Wl
+
 =head1 SYNOPSIS
 
  use FFI::Build::Platform;
@@ -76,7 +78,7 @@ be used.
 
  my $osname = $platform->osname;
 
-The "os name" as understood by Perl.  This is the same as C<$^O>.
+The Operating System's name as understood by Perl.  This is the same as C<$^O>.
 
 =cut
 
@@ -219,7 +221,7 @@ sub cxx
       return \@maybe if $self->which($maybe[0]);
     }
 
-    # TODO: there are probably situations, eg solaris
+    # TODO: there are probably situations, example: Solaris
     # where we don't want to try c++ in the case of
     # a ccname = gcc ?
     my @maybe = qw( c++ g++ clang++ );
@@ -253,7 +255,7 @@ sub cxxld
   $DB::single = 1;
 
   # This is definitely not exhaustive or complete or even
-  # particularlly good.  Patches welcome.
+  # particularly good.  Patches welcome.
 
   if($self->osname eq 'darwin')
   {

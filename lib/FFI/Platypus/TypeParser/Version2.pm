@@ -22,7 +22,7 @@ This type parser was included with L<FFI::Platypus> starting with version
 C<1.58> in an experimental capability, and C<2.00> as a stable interface.
 Starting with version C<1.00> the main L<FFI::Platypus> documentation
 describes the version 2 API and you can refer to
-L<FFI::Platypus::TypeParser::Version1> for details on the version1 API.
+L<FFI::Platypus::TypeParser::Version1> for details on the version 1 API.
 
 =head1 SEE ALSO
 

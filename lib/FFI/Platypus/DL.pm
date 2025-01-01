@@ -12,6 +12,8 @@ push @EXPORT, grep /RTLD_/, keys %FFI::Platypus::DL::;
 # ABSTRACT: Slightly non-portable interface to libdl
 # VERSION
 
+=for stopwords dl
+
 =head1 SYNOPSIS
 
  use FFI::Platypus 2.00;
