@@ -25,6 +25,8 @@ use File::Path ();
 # Hey Man!
 # There Goes The Platypus-Man
 
+=for stopwords postlink ARGS
+
 =head1 SYNOPSIS
 
  use FFI::Platypus 2.00;
@@ -39,7 +41,7 @@ use File::Path ();
  my $lib = $build->build;
  
  my $ffi = FFI::Platypus->new( api => 2 );
- # The filename will be platform dependant, but something like libfrooble.so or frooble.dll
+ # The filename will be platform dependent, but something like libfrooble.so or frooble.dll
  $ffi->lib($lib->path);
  
  ... # use $ffi to attach functions in ffi/*.c
@@ -347,7 +349,7 @@ sub _file_classes
     }
 
     # also anything already loaded, that might not be in the
-    # @INC path (for testing ususally)
+    # @INC path (for testing usually)
     push @file_classes,
       map { my $f = $_; $f =~ s/::$//; "FFI::Build::File::$f" }
       grep !/Base::/,

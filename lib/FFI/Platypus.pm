@@ -21,11 +21,9 @@ use FFI::Platypus::Type;
 # From the original FFI::Platypus prototype:
 #  Kinda like gluing a duckbill to an adorable mammal
 
-=begin stopwords
+=encoding UTF-8
 
-ØMQ
-
-=end stopwords
+=for stopwords ØMQ centric html abi abis XORd HHGG Rubinius CURLOPT
 
 =head1 SYNOPSIS
 
@@ -727,7 +725,7 @@ Examples:
  my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types);
  my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => \&wrapper);
 
-Version 0.91 and later allows you to creat functions for c variadic functions
+Version 0.91 and later allows you to create functions for c variadic functions
 (such as printf, scanf, etc) which can take a variable number of arguments.
 The first set of arguments are the fixed set, the second set are the variable
 arguments to bind with.  The variable argument types must be specified in order
@@ -767,7 +765,7 @@ sub function
   $ret = 'void' unless defined $ret;
 
   # special case: treat a single void argument type as an empty list of
-  # arguments, a la olde timey C compilers.
+  # arguments, a la old-timey C compilers.
   if( (!defined $var_args) && @$fixed_args == 1 && $fixed_args->[0] eq 'void' )
   {
     $fixed_args = [];
@@ -1121,7 +1119,7 @@ sub def
  my $unittype = $ffi->unitof($type);
 
 For array and pointer types, returns the basic type without the array or pointer part.
-In other words, for C<sin16[]> or C<sint16*> it will return C<sint16>.
+In other words, for C<sint16[]> or C<sint16*> it will return C<sint16>.
 
 =cut
 
@@ -1908,7 +1906,7 @@ one function with:
 The C<libarchive> is a large library with hundreds of methods.
 For comprehensive FFI bindings for C<libarchive> see L<Archive::Libarchive>.
 
-=head2 unix open
+=head2 UNIX open
 
 =head3 C API
 
@@ -1932,7 +1930,7 @@ of C<opaque> (the latter being the default for the C<object> type).
 Mainly just for demonstration since Perl has much better IO libraries,
 but now we have an OO interface to the Unix IO functions.
 
-=head2 Varadic Functions (with libcurl)
+=head2 Variadic Functions (with libcurl)
 
 =head3 C API
 
@@ -1966,15 +1964,15 @@ but now we have an OO interface to the Unix IO functions.
 
 =head3 Discussion
 
-The L<libcurl|https://curl.se/> library makes extensive use of "varadic" functions.
+The L<libcurl|https://curl.se/> library makes extensive use of "variadic" functions.
 
-The C programming language and ABI have the concept of "varadic" functions
+The C programming language and ABI have the concept of "variadic" functions
 that can take a variable number and variable type of arguments.  Assuming
 you have a C<libffi> that supports it (and most modern systems should),
-then you can create bindings to a varadic function by providing two sets
-of array references, one for the fixed arguments (for reasons, C varadic
+then you can create bindings to a variadic function by providing two sets
+of array references, one for the fixed arguments (for reasons, C variadic
 functions must have at least one) and one for variable arguments.  In
-this example we call C<curl_easy_setopt> as a varadic function.
+this example we call C<curl_easy_setopt> as a variadic function.
 
 For functions that have a large or infinite number of possible signatures
 it may be impracticable or impossible to attach them all.  You can instead
@@ -2024,7 +2022,7 @@ argument types and the return type.
 
 Inside the closure or callback we use the L<window function|FFI::Platypus::Buffer/window>
 from L<FFI::Platypus::Buffer> again to avoid an I<extra> copy.  We still
-have to copy the buffer to append it to C<$hmtl> but it is at least one
+have to copy the buffer to append it to C<$html> but it is at least one
 less copy.
 
 =head2 bundle your own code
@@ -2150,7 +2148,7 @@ in writing interfaces that use enums.
 =head2 Memory leaks
 
 There are a couple places where memory is allocated, but never deallocated that may
-look like memory leaks by tools designed to find memory leaks like valgrind.  This
+look like memory leaks by tools designed to find memory leaks like Valgrind.  This
 memory is intended to be used for the lifetime of the perl process so there normally
 this isn't a problem unless you are embedding a Perl interpreter which doesn't closely
 match the lifetime of your overall application.
@@ -2176,7 +2174,7 @@ for use cases where Perl and Platypus are embedded in a larger application
 where the lifetime of the Perl process is significantly smaller than the
 overall lifetime of the whole process.
 
-=head2 I get seg faults on some platforms but not others with a library using pthreads.
+=head2 I get segfaults on some platforms but not others with a library using pthreads.
 
 On some platforms, Perl isn't linked with C<libpthreads> if Perl threads are not
 enabled.  On some platforms this doesn't seem to matter, C<libpthreads> can be
@@ -2236,7 +2234,7 @@ written it yet.
 =head1 SUPPORT
 
 The intent of the C<FFI-Platypus> team is to support the same versions of
-Perl that are supported by the Perl toolchain.  As of this writing that
+Perl that are supported by the Perl Toolchain.  As of this writing that
 means 5.16 and better.
 
 IRC: #native on irc.perl.org
@@ -2363,7 +2361,7 @@ requests.
 =item
 
 The intent of the C<FFI-Platypus> team is to support the same versions of
-Perl that are supported by the Perl toolchain.  As of this writing that
+Perl that are supported by the Perl Toolchain.  As of this writing that
 means 5.16 and better.  As such, please do not include any code that
 requires a newer version of Perl.
 
@@ -2390,7 +2388,7 @@ the system doesn't provide C<pkg-config> and C<libffi> it will attempt
 to download C<libffi> and build it from source.  If you are including
 Platypus in a larger system (for example a Linux distribution) you
 only need to make sure to declare C<pkg-config> or C<pkgconf> and
-the development package for C<libffi> as prereqs for this module.
+the development package for C<libffi> as prerequisites for this module.
 
 =head1 SEE ALSO
 
@@ -2552,6 +2550,8 @@ under development anymore.
 Provides libffi for Platypus during its configuration and build stages.
 
 =back
+
+=for stopwords Grinnz Ghedini MHOWARD Alessandro AWWAIID ALEXBIO
 
 =head1 ACKNOWLEDGMENTS
 

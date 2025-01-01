@@ -77,7 +77,7 @@ Before you get to deep into using this class you should also consider
 the L<FFI::C>, which provides some overlapping functionality.  Briefly,
 it comes down to this:
 
-(The tl;dr is: use this class when you need to pass by value (since
+(The TL;DR is: use this class when you need to pass by value (since
 L<FFI::C> does not support pass by value) and use L<FFI::C> in all
 other circumstances).
 
@@ -213,7 +213,7 @@ Fixed length strings are included inside the record itself and do not
 need to be allocated or deallocated separately from the record.
 Variable length strings must be allocated on the heap, and thus require
 a sense of "ownership", that is whomever allocates variable length
-strings should be responsible for also free'ing them.  To handle this,
+strings should be responsible for also freeing them.  To handle this,
 you can add a C<ro> or C<rw> trait to a string field.  The default is
 C<ro>, means that you can get, but not set its value:
 
@@ -245,15 +245,15 @@ If you specify a field is C<rw>, then you can set its value:
  my $string = $foo->bar;  # GOOD
  $foo->bar("starscream"); # GOOD
 
-Any string value that is pointed to by the record will be free'd when it
+Any string value that is pointed to by the record will be freed when it
 falls out of scope, so you must be very careful that any C<string rw>
 fields are not set or modified by C code.  You should also take care not
 to copy any record that has a C<rw> string in it because its values will
-be free'd twice!
+be freed twice!
 
  use Clone qw( clone );
  
- my $foo2 = clone $foo;  # BAD  bar will be free'd twice
+ my $foo2 = clone $foo;  # BAD  bar will be freed twice
 
 =head3 arrays
 
@@ -371,7 +371,7 @@ sub record_layout
       my $count;
       my $ffi_type;
 
-      if($meta->{type} eq 'record') # this means fixed string atm
+      if($meta->{type} eq 'record') # this means fixed string at the moment
       {
         $ffi_type = 'sint8';
         $count = $size;

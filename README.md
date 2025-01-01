@@ -457,7 +457,7 @@ my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument
 my $function = $ffi->function( $name => \@fixed_argument_types => \@var_argument_types => \&wrapper);
 ```
 
-Version 0.91 and later allows you to creat functions for c variadic functions
+Version 0.91 and later allows you to create functions for c variadic functions
 (such as printf, scanf, etc) which can take a variable number of arguments.
 The first set of arguments are the fixed set, the second set are the variable
 arguments to bind with.  The variable argument types must be specified in order
@@ -688,7 +688,7 @@ my $unittype = $ffi->unitof($type);
 ```
 
 For array and pointer types, returns the basic type without the array or pointer part.
-In other words, for `sin16[]` or `sint16*` it will return `sint16`.
+In other words, for `sint16[]` or `sint16*` it will return `sint16`.
 
 ## find\_lib
 
@@ -1814,7 +1814,7 @@ use FFI::Platypus 2.00;
 use FFI::CheckLib qw( find_lib_or_die );
 
 # This example uses FreeBSD's libarchive to list the contents of any
-# archive format that it suppors.  We've also filled out a part of
+# archive format that it supports.  We've also filled out a part of
 # the ArchiveWrite class that could be used for writing archive formats
 # supported by libarchive
 
@@ -1962,7 +1962,7 @@ $ffi->attach( [ free => 'DESTROY' ] => ['archive_t'] );
 The `libarchive` is a large library with hundreds of methods.
 For comprehensive FFI bindings for `libarchive` see [Archive::Libarchive](https://metacpan.org/pod/Archive::Libarchive).
 
-## unix open
+## UNIX open
 
 ### C API
 
@@ -2028,7 +2028,7 @@ of `opaque` (the latter being the default for the `object` type).
 Mainly just for demonstration since Perl has much better IO libraries,
 but now we have an OO interface to the Unix IO functions.
 
-## Varadic Functions (with libcurl)
+## Variadic Functions (with libcurl)
 
 ### C API
 
@@ -2077,15 +2077,15 @@ $ perl curl.pl
 
 ### Discussion
 
-The [libcurl](https://curl.se/) library makes extensive use of "varadic" functions.
+The [libcurl](https://curl.se/) library makes extensive use of "variadic" functions.
 
-The C programming language and ABI have the concept of "varadic" functions
+The C programming language and ABI have the concept of "variadic" functions
 that can take a variable number and variable type of arguments.  Assuming
 you have a `libffi` that supports it (and most modern systems should),
-then you can create bindings to a varadic function by providing two sets
-of array references, one for the fixed arguments (for reasons, C varadic
+then you can create bindings to a variadic function by providing two sets
+of array references, one for the fixed arguments (for reasons, C variadic
 functions must have at least one) and one for variable arguments.  In
-this example we call `curl_easy_setopt` as a varadic function.
+this example we call `curl_easy_setopt` as a variadic function.
 
 For functions that have a large or infinite number of possible signatures
 it may be impracticable or impossible to attach them all.  You can instead
@@ -2167,7 +2167,7 @@ argument types and the return type.
 
 Inside the closure or callback we use the [window function](https://metacpan.org/pod/FFI::Platypus::Buffer#window)
 from [FFI::Platypus::Buffer](https://metacpan.org/pod/FFI::Platypus::Buffer) again to avoid an _extra_ copy.  We still
-have to copy the buffer to append it to `$hmtl` but it is at least one
+have to copy the buffer to append it to `$html` but it is at least one
 less copy.
 
 ## bundle your own code
@@ -2385,7 +2385,7 @@ in writing interfaces that use enums.
 ## Memory leaks
 
 There are a couple places where memory is allocated, but never deallocated that may
-look like memory leaks by tools designed to find memory leaks like valgrind.  This
+look like memory leaks by tools designed to find memory leaks like Valgrind.  This
 memory is intended to be used for the lifetime of the perl process so there normally
 this isn't a problem unless you are embedding a Perl interpreter which doesn't closely
 match the lifetime of your overall application.
@@ -2407,7 +2407,7 @@ for use cases where Perl and Platypus are embedded in a larger application
 where the lifetime of the Perl process is significantly smaller than the
 overall lifetime of the whole process.
 
-## I get seg faults on some platforms but not others with a library using pthreads.
+## I get segfaults on some platforms but not others with a library using pthreads.
 
 On some platforms, Perl isn't linked with `libpthreads` if Perl threads are not
 enabled.  On some platforms this doesn't seem to matter, `libpthreads` can be
@@ -2463,7 +2463,7 @@ written it yet.
 # SUPPORT
 
 The intent of the `FFI-Platypus` team is to support the same versions of
-Perl that are supported by the Perl toolchain.  As of this writing that
+Perl that are supported by the Perl Toolchain.  As of this writing that
 means 5.16 and better.
 
 IRC: #native on irc.perl.org
@@ -2584,7 +2584,7 @@ regulations.  We can always tweak things later.
 - Please make an effort to follow existing coding style when making pull
 requests.
 - The intent of the `FFI-Platypus` team is to support the same versions of
-Perl that are supported by the Perl toolchain.  As of this writing that
+Perl that are supported by the Perl Toolchain.  As of this writing that
 means 5.16 and better.  As such, please do not include any code that
 requires a newer version of Perl.
 
@@ -2605,7 +2605,7 @@ the system doesn't provide `pkg-config` and `libffi` it will attempt
 to download `libffi` and build it from source.  If you are including
 Platypus in a larger system (for example a Linux distribution) you
 only need to make sure to declare `pkg-config` or `pkgconf` and
-the development package for `libffi` as prereqs for this module.
+the development package for `libffi` as prerequisites for this module.
 
 # SEE ALSO
 

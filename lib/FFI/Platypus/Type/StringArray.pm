@@ -8,6 +8,8 @@ use FFI::Platypus;
 # ABSTRACT: Platypus custom type for arrays of strings
 # VERSION
 
+=for stopwords arg0 arg1 arg2 arg3
+
 =head1 SYNOPSIS
 
 In your C code:

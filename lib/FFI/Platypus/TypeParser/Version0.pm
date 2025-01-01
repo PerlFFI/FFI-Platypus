@@ -9,6 +9,8 @@ use parent qw( FFI::Platypus::TypeParser );
 # ABSTRACT: FFI Type Parser Version Zero
 # VERSION
 
+=for stopwords Darmok Tanagra
+
 =head1 SYNOPSIS
 
  use FFI::Platypus;
@@ -103,7 +105,7 @@ sub parse
 
   return $self->types->{$name} if defined $self->types->{$name};
 
-  # Darmock and Legacy Code at Tanagra
+  # Darmok and Legacy Code at Tanagra
   unless($name =~ /-\>/ || $name =~ /^record\s*\([0-9A-Z:a-z_]+\)$/
   || $name =~ /^string(_rw|_ro|\s+rw|\s+ro|\s*\([0-9]+\))$/)
   {

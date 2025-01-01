@@ -28,7 +28,7 @@ Use it:
  my $file = FFI::Build::File::Foo->new('src/myfile.foo');
  
  # generate a temp file with provided content
- # file will be deletd when $file falls out of scope.
+ # file will be deleted when $file falls out of scope.
  my $file = FFI::Build::File::Foo->new(\'content for a temp foo');
 
 

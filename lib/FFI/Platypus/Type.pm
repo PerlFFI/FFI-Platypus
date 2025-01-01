@@ -108,7 +108,7 @@ supported.  Here are some useful ones:
 
 This converts a Perl string to a pointer address that can be used
 by functions that take an C<opaque> type.  Be carefully though that
-the Perl string is not resized or free'd while in use from C code.
+the Perl string is not resized or freed while in use from C code.
 
  my $string  = $ffi->cast('opaque' => 'string', $pointer);
 
@@ -485,13 +485,13 @@ get passed to a Platypus xsub they are converted into the native
 integer or C<opaque> types.  This type is most useful when a API
 provides an OO style interface with an integer or C<opaque> value
 acting as an instance of a class.  There are two detailed examples
-in the main Platypus documentation using libarchive and unix open:
+in the main Platypus documentation using libarchive and UNIX open:
 
 =over 4
 
 =item L<FFI::Platypus/libarchive>
 
-=item L<FFI::Platypus/"unix open">
+=item L<FFI::Platypus/"UNIX open">
 
 =back
 
@@ -630,7 +630,7 @@ and return an opaque pointer to the string using a cast.
  $ffi->attach( print_message => ['get_message_t'] => 'void' );
  my $get_message => $ffi->closure(sub {
    our $message = "my message";  # needs to be our so that it doesn't
-                                 # get free'd
+                                 # get freed
    my $ptr = $ffi->cast('string' => 'opaque', $message);
    return $ptr;
  });
@@ -778,7 +778,7 @@ okay to copy the record objects that you are dealing with if any of your
 functions will be returning one of them.
 
 Opaque pointers should be used when you do not know the size of the
-object that you are using, or if the objects are created and free'd
+object that you are using, or if the objects are created and freed
 through an API interface other than C<malloc> and C<free>.
 
 The examples in this section actually use pointers to records (note
@@ -923,19 +923,19 @@ Care needs to be taken with scoping and closures, because of the way
 Perl and C handle responsibility for allocating memory differently.
 Perl keeps reference counts and frees objects when nothing is
 referencing them.  In C the code that allocates the memory is considered
-responsible for explicitly free'ing the memory for objects it has
+responsible for explicitly freeing the memory for objects it has
 created when they are no longer needed.  When you pass a closure into a
 C function, the C code has a pointer or reference to that object, but it
 has no way up letting Perl know when it is no longer using it. As a
 result, if you do not keep a reference to your closure around it will be
-free'd by Perl and if the C code ever tries to call the closure it will
+freed by Perl and if the C code ever tries to call the closure it will
 probably SIGSEGV.  Thus supposing you have a C function C<set_closure>
 that takes a Perl closure, this is almost always wrong:
 
  set_closure($ffi->closure({ $_[0] * 2 }));  # BAD
 
 In some cases, you may want to create a closure shouldn't ever be
-free'd.  For example you are passing a closure into a C function that
+freed.  For example you are passing a closure into a C function that
 will retain it for the lifetime of your application.  You can use the
 sticky method to keep the closure, without the need to keep a reference
 of the closure:
@@ -945,7 +945,7 @@ of the closure:
    $closure->sticky;
    set_closure($closure); # OKAY
  }
- # closure still exists and is accesible from C, but
+ # closure still exists and is accessible from C, but
  # not from Perl land.
 
 =head2 Custom Types
