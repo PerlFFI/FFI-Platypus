@@ -106,9 +106,10 @@ all the reference of the object fall out of scope.
 sub sticky
 {
   my($self) = @_;
-  return if $self->{sticky};
+  return $self if $self->{sticky};
   $self->{sticky} = 1;
   $self->_sticky;
+  return $self;
 }
 
 =head2 unstick
