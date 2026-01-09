@@ -2509,10 +2509,10 @@ its use may require development packages to be installed.
 
 =over 4
 
-=item L<Dyn>
+=item L<Affix>
 
-A wrapper around L<dyncall|https://dyncall.org>, which is itself an alternative to
-L<libffi|https://sourceware.org/libffi/>.
+A wrapper around L<infix|https://github.com/sanko/infix>, an FFI-focused
+just-in-time (JIT) compiler.
 
 =item L<NativeCall>
 
