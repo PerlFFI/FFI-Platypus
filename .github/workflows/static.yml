@@ -17,7 +17,7 @@ jobs:
       CIP_TAG: static
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Bootstrap CIP
         run: |
