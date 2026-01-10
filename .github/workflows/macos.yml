@@ -20,7 +20,7 @@ jobs:
     runs-on: macOS-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Perl
         run: |
@@ -38,7 +38,7 @@ jobs:
           ls -l perlversion.txt
 
       - name: Cache CPAN modules
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/perl5
           key: ${{ runner.os }}-build-${{ hashFiles('perlversion.txt') }}
