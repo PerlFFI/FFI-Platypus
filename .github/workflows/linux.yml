@@ -61,7 +61,7 @@ jobs:
       CIP_ENV: ${{ matrix.cip.env }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Bootstrap CIP
         run: |
@@ -74,7 +74,7 @@ jobs:
           cip cache-key
 
       - name: Cache CPAN modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cip
           key: ${{ runner.os }}-build-${{ steps.cache-key.outputs.key }}
