@@ -2710,10 +2710,10 @@ the development package for `libffi` as prereqs for this module.
 
 ## Other Foreign Function Interfaces
 
-- [Dyn](https://metacpan.org/pod/Dyn)
+- [Affix](https://metacpan.org/pod/Affix)
 
-    A wrapper around [dyncall](https://dyncall.org), which is itself an alternative to
-    [libffi](https://sourceware.org/libffi/).
+    A wrapper around [infix](https://github.com/sanko/infix), an FFI-focused
+    just-in-time (JIT) compiler.
 
 - [NativeCall](https://metacpan.org/pod/NativeCall)
 
