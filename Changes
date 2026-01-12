@@ -2,6 +2,9 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+2.11      2026-01-12 03:30:38 -0700
+  - Documentation updates only
+
 2.10      2024-12-18 11:11:31 -0700
   - Detect V modules according to v.mod files (gh#402)
 
