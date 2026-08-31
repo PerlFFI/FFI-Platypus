@@ -2,6 +2,10 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
 
+  - Add tests that round trip minimum and maximum integer values
+    for all standard integer types as scalar, array and pointer
+    types (gh#260)
+
 2.11      2026-01-12 03:30:38 -0700
   - Documentation updates only
 
