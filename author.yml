@@ -169,6 +169,7 @@ pod_spelling_system:
     - Hægland
     - José
     - Joaquín
+    - CPANSec
 
 pod_coverage:
   skip: 0
