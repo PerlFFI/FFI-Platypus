@@ -3,7 +3,7 @@ use if $^O ne 'MSWin32' || $] >= 5.018, 'open', ':std', ':encoding(utf8)';
 use Test2::V0 -no_srand => 1;
 use Encode qw( decode );
 use FFI::Platypus::Buffer;
-use FFI::Platypus::Buffer qw( scalar_to_pointer grow set_used_length window );
+use FFI::Platypus::Buffer qw( scalar_to_pointer grow set_used_length window raw_scalar );
 use utf8;
 use B;
 
@@ -207,6 +207,28 @@ subtest 'hardwire' => sub {
     is(length($ro), 3);
     is([scalar_to_pointer $ro], [$ptr]);
   };
+};
+
+subtest 'raw_scalar' => sub {
+
+  subtest 'basic' => sub {
+    my $buffer = raw_scalar(100);
+    is length($buffer), 100, 'length is exactly as requested';
+    my $sv = B::svref_2object( \$buffer );
+    is $sv->CUR, 100, 'used length is as requested';
+    ok $sv->LEN > 100, 'allocated length has room for the trailing NUL';
+    ok scalar_to_pointer($buffer), 'has a pointer';
+    substr($buffer, 0, 5) = 'hello';
+    is substr($buffer, 0, 5), 'hello', 'writable';
+    is length($buffer), 100, 'length unchanged by writing to it';
+  };
+
+  subtest 'zero length' => sub {
+    my $buffer = raw_scalar(0);
+    is $buffer, '', 'is the empty string';
+    ok scalar_to_pointer($buffer), 'still has a pointer';
+  };
+
 };
 
 done_testing;
