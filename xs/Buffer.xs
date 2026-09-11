@@ -79,6 +79,25 @@ grow (sv, size, ... )
     mPUSHi (SvLEN (sv));
 
 
+void
+raw_scalar(size)
+    STRLEN size
+
+  PROTOTYPE: $
+  PREINIT:
+    SV *sv;
+
+  PPCODE:
+    /* newSV(0) doesn't allocate a buffer at all, so ask for at least one
+       byte so that the scalar always has a valid PV to point at */
+    sv = newSV(size ? size : 1);
+    SvPOK_only(sv);
+    SvCUR_set(sv, size);
+    SvPVX(sv)[size] = '\0';
+    EXTEND(SP, 1);
+    PUSHs(sv_2mortal(sv));
+
+
 STRLEN
 set_used_length( sv, size )
     SV     *sv

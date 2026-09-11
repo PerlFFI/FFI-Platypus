@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added FFI::Platypus::Buffer::raw_scalar which allocates an
+    uninitialized scalar of a fixed size for use as a buffer
 
 2.11      2026-01-12 03:30:38 -0700
   - Documentation updates only
