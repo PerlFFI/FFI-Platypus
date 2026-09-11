@@ -6,6 +6,7 @@
    fun:Perl_safesysmalloc
    fun:ffi_pl_type_new
    fun:XS_FFI__Platypus__TypeParser_create_type_*
+   ...
    fun:Perl_pp_entersub
    ...
 }
