@@ -46,6 +46,19 @@ subtest 'sticky' => sub {
   is($closure->_svrefcnt, $refcnt);
 };
 
+subtest 'sticky and unstick return $self' => sub {
+  my $closure = FFI::Platypus::Closure->new(sub { 'foo' });
+  isa_ok $closure, 'FFI::Platypus::Closure';
+
+  is($closure->sticky, $closure, '$closure->sticky returns $closure');
+  is($closure->unstick, $closure, '$closure->unstick returns $closure');
+
+  is(
+    $closure->sticky->unstick, $closure,
+    '$closure->sticky->unstick can be chained',
+  );
+};
+
 subtest 'private' => sub {
   my $closure = FFI::Platypus::Closure->new(sub { $_[0] + 1});
   isa_ok $closure, 'FFI::Platypus::Closure';
