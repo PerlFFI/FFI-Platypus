@@ -1,6 +1,6 @@
 #include "ffi_platypus.h"
 
-#if SIZEOF_VOIDP == 4
+#if SIZEOF_VOIDP == 4 && !defined(__hppa__)
 uint64_t
 cast0(void)
 {
@@ -14,7 +14,7 @@ cast0(void)
 }
 #endif
 
-#if SIZEOF_VOIDP == 4
+#if SIZEOF_VOIDP == 4 && !defined(__hppa__)
 uint64_t
 cast1(uint64_t value)
 {

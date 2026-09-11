@@ -9,6 +9,8 @@ Revision history for {{$dist->name}}
   - FFI::Platypus::Closure sticky and unstick methods now return
     $self so that they can be chained (gh#411, gh#405 JBARRETT++)
   - Added a SECURITY policy document (gh#406, gh#411)
+  - Fixed regression from 0.94 that broke the identity cast used
+    internally by attach_cast on hppa-linux (gh#394, gh#411)
 
 2.11      2026-01-12 03:30:38 -0700
   - Documentation updates only
