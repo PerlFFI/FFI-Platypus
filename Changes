@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.12      2026-09-11 15:02:01 -0600
   - Added FFI::Platypus::Buffer::raw_scalar which allocates an
     uninitialized scalar of a fixed size for use as a buffer
     (gh#411)
