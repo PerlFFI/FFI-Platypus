@@ -111,6 +111,12 @@ foreach my $dir (qw( examples ))
 
 foreach my $bundle (grep { -d $_ && $_->basename =~ /^bundle-/ } path('examples')->children)
 {
+  if($bundle->basename eq 'bundle-bzip2' && !eval { require Alien::Libbz2; 1 })
+  {
+    push @skipped, [$bundle->basename, 'Alien::Libbz2 is not installed'];
+    next;
+  }
+
   subtest $bundle->basename => sub {
 
     local $CWD = $bundle;

@@ -3,6 +3,9 @@ Revision history for {{$dist->name}}
 {{$NEXT}}
   - Added FFI::Platypus::Buffer::raw_scalar which allocates an
     uninitialized scalar of a fixed size for use as a buffer
+    (gh#411)
+  - Fixed intermittent segfault in the bundle-bzip2 example caused
+    by an uninitialized bz_stream struct (gh#411)
 
 2.11      2026-01-12 03:30:38 -0700
   - Documentation updates only

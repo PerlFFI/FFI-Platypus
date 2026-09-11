@@ -17,8 +17,9 @@ jobs:
       fail-fast: false
       matrix:
         cip:
-          - tag: "5.41"
-          - tag: "5.40"
+          - tag: "5.45"
+          - tag: "5.44"
+          - tag: "5.42"
           - tag: "5.40"
             env: FFI_PLATYPUS_MEMORY_STRDUP_IMPL=ffi
           - tag: "5.40"
