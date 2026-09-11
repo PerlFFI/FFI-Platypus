@@ -101,14 +101,19 @@ sub call
 Mark the closure sticky, meaning that it won't be free'd even if
 all the reference of the object fall out of scope.
 
+Returns C<$self>, so this method may be chained.  This behavior
+was added in 2.12.
+
 =cut
 
 sub sticky
 {
   my($self) = @_;
-  return if $self->{sticky};
-  $self->{sticky} = 1;
-  $self->_sticky;
+  unless( $self->{sticky}) {
+    $self->{sticky} = 1;
+    $self->_sticky;
+  }
+  return $self;
 }
 
 =head2 unstick
@@ -117,14 +122,19 @@ sub sticky
 
 Unmark the closure as sticky.
 
+Returns C<$self>, so this method may be chained.  This behavior
+was added in 2.12.
+
 =cut
 
 sub unstick
 {
   my($self) = @_;
-  return unless $self->{sticky};
-  $self->{sticky} = 0;
-  $self->_unstick;
+  if( $self->{sticky} ) {
+    $self->{sticky} = 0;
+    $self->_unstick;
+  }
+  return $self;
 }
 
 package FFI::Platypus::ClosureData;

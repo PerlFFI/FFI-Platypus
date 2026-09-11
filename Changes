@@ -6,6 +6,8 @@ Revision history for {{$dist->name}}
     (gh#411)
   - Fixed intermittent segfault in the bundle-bzip2 example caused
     by an uninitialized bz_stream struct (gh#411)
+  - FFI::Platypus::Closure sticky and unstick methods now return
+    $self so that they can be chained (gh#411, gh#405 JBARRETT++)
 
 2.11      2026-01-12 03:30:38 -0700
   - Documentation updates only
