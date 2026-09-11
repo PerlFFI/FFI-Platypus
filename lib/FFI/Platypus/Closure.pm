@@ -101,8 +101,9 @@ sub call
 Mark the closure sticky, meaning that it won't be free'd even if
 all the reference of the object fall out of scope.
 
-Returns C<$self>, so this method may be chained.  This behavior
-was added in 2.12.
+[version 2.12]
+
+Returns C<$self>, so this method may be chained.
 
 =cut
 
@@ -122,8 +123,9 @@ sub sticky
 
 Unmark the closure as sticky.
 
-Returns C<$self>, so this method may be chained.  This behavior
-was added in 2.12.
+[version 2.12]
+
+Returns C<$self>, so this method may be chained.
 
 =cut
 
