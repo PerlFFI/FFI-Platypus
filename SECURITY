@@ -1,0 +1,22 @@
+SECURITY
+
+    If you have identified a security vulnerability in the code, or the
+    possibility of one, please report it right away using GitHub's private
+    vulnerability reporting feature at
+    https://github.com/PerlFFI/FFI-Platypus/security/advisories/new, rather
+    than this project's public GitHub issue tracker, so that a fix can be
+    prepared before any public disclosure.
+
+    The maintainer will try to respond promptly, and will release a fix as
+    soon as reasonably possible. Please keep in mind, though, that
+    FFI-Platypus is maintained by volunteers in their spare time, and a
+    rapid response cannot be guaranteed.
+
+    Security fixes will normally only be made for the most recent
+    production release.
+
+    You may also report the issue to CPANSec
+    <https://security.metacpan.org/>, particularly if the issue is urgent
+    or you do not get a response from the maintainer in a reasonable amount
+    of time.
+

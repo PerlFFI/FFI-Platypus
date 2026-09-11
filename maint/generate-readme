@@ -7,7 +7,7 @@ use Pod::Simple::Text;
 
 my $root = Pod::Abstract->load_file("lib/FFI/Platypus.pm");
 
-foreach my $name (qw( SUPPORT CONTRIBUTING ))
+foreach my $name (qw( SUPPORT SECURITY CONTRIBUTING ))
 {
   my($pod) = $root->select("/head1[\@heading=~{$name}]");
   $_->detach for $pod->select('//#cut');
