@@ -165,6 +165,10 @@ pod_spelling_system:
     - performant
     - Lukas
     - MAUKE
+    - Håkon
+    - Hægland
+    - José
+    - Joaquín
 
 pod_coverage:
   skip: 0
