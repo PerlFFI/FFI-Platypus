@@ -170,6 +170,12 @@ pod_spelling_system:
     - José
     - Joaquín
     - CPANSec
+    - Ilya33
+    - Win32
+    - libzmq3
+    - version0
+    - version1
+    - irc
 
 pod_coverage:
   skip: 0

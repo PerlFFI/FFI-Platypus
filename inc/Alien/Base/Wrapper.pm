@@ -14,8 +14,56 @@ use Text::ParseWords qw( shellwords );
 # for this [AlienBase::Wrapper::Bundle]
 
 # ABSTRACT: Compiler and linker wrapper for Alien
-our $VERSION = '2.84'; # VERSION
+our $VERSION = '2.89_01'; # TRIAL VERSION
+$VERSION = eval $VERSION; ## no critic (BuiltinFunctions::ProhibitStringyEval)
 
+
+sub _version_parts
+{
+  my($version) = @_;
+  $version = '0' unless defined $version;
+
+  # dotted-decimal style, e.g. 1.2.3 or v1.2.3: compare each part
+  # separately, as integers.
+  if($version =~ /^v?[0-9]+(\.[0-9]+){2,}$/)
+  {
+    $version =~ s/^v//;
+    return [ split /\./, $version ];
+  }
+
+  # plain decimal style, e.g. 1.00 or 6.52: compare numerically as
+  # a single number, so that (say) 6.6 is newer than 6.52.
+  my($number) = $version =~ /^([0-9]+(?:\.[0-9]+)?)/;
+  $number = 0 unless defined $number;
+  return [ $number ];
+}
+
+sub _version_cmp
+{
+  my($v1, $v2) = @_;
+  my $p1 = _version_parts($v1);
+  my $p2 = _version_parts($v2);
+
+  for my $i (0 .. (@$p1 > @$p2 ? $#$p1 : $#$p2))
+  {
+    my $n1 = defined $p1->[$i] ? $p1->[$i] : 0;
+    my $n2 = defined $p2->[$i] ? $p2->[$i] : 0;
+    my $cmp = $n1 <=> $n2;
+    return $cmp if $cmp;
+  }
+
+  return 0;
+}
+
+# returns whichever of the two version numbers is newer (either may
+# be undef, in which case the other, possibly also undef, is returned).
+sub _version_max
+{
+  my($v1, $v2) = @_;
+  return $v2 unless defined $v1;
+  return $v1 unless defined $v2;
+  return _version_cmp($v1, $v2) >= 0 ? $v1 : $v2;
+}
 
 sub _join
 {
@@ -235,7 +283,50 @@ sub mm_args2
 
   foreach my $module (keys %{ $self->{requires} })
   {
-    $args{CONFIGURE_REQUIRES}->{$module} = $self->{requires}->{$module};
+    $args{CONFIGURE_REQUIRES}->{$module} = _version_max(
+      $args{CONFIGURE_REQUIRES}->{$module},
+      $self->{requires}->{$module},
+    );
+  }
+
+  %args;
+}
+
+
+sub checklib_args2
+{
+  my $self = shift;
+  $self = $default_abw unless ref $self;
+  my %args = @_;
+
+  if(defined $args{LIBS} || defined $args{INC})
+  {
+    require Carp;
+    Carp::croak("please do not specify your own LIBS or INC key with checklib_args2");
+  }
+
+  if(@{ $self->{cflags_I} })
+  {
+    my @old = defined $args{incpath} ? (ref $args{incpath} ? @{ $args{incpath} } : ($args{incpath})) : ();
+    my @new = map { (my $x = $_) =~ s/^-I//; $x } @{ $self->{cflags_I} };
+    $args{incpath} = [ @new, @old ];
+  }
+
+  if(@{ $self->{cflags_other} })
+  {
+    $args{ccflags} = join ' ', @{ $self->{cflags_other} }, (defined $args{ccflags} ? $args{ccflags} : ());
+  }
+
+  if(@{ $self->{ldflags_L} })
+  {
+    my @old = defined $args{libpath} ? (ref $args{libpath} ? @{ $args{libpath} } : ($args{libpath})) : ();
+    my @new = map { (my $x = $_) =~ s/^-L//; $x } @{ $self->{ldflags_L} };
+    $args{libpath} = [ @new, @old ];
+  }
+
+  if(@{ $self->{ldflags_l} } || @{ $self->{ldflags_other} })
+  {
+    $args{ldflags} = join ' ', @{ $self->{ldflags_l} }, @{ $self->{ldflags_other} }, (defined $args{ldflags} ? $args{ldflags} : ());
   }
 
   %args;
@@ -325,7 +416,7 @@ Alien::Base::Wrapper - Compiler and linker wrapper for Alien
 
 =head1 VERSION
 
-version 2.84
+version 2.89_01
 
 =head1 SYNOPSIS
 
@@ -463,6 +554,44 @@ Returns arguments that you can pass into C<WriteMakefile> to compile/link agains
 a little differently from C<mm_args> above in that you can pass in arguments.  It also adds
 the appropriate C<CONFIGURE_REQUIRES> for you so you do not have to do that explicitly.
 
+[version 2.87]
+
+If you pass in your own C<CONFIGURE_REQUIRES> with a version for a module that this class
+also requires (currently L<ExtUtils::MakeMaker> and C<Alien::Base::Wrapper> itself, plus any
+Alien that you specify a minimum version for), then the newer of the two version numbers
+will be used, so that neither requirement is weakened.  Version numbers may be given in
+either decimal (C<1.23>) or dotted-decimal (C<1.2.3>) form.
+
+=head2 checklib_args2
+
+ my %args = $abw->checklib_args2(%args);
+ my %args = Alien::Base::Wrapper->checklib_args2(%args);
+
+Returns arguments that you can pass into C<assert_lib>, C<check_lib> or C<check_lib_or_exit> from
+L<Devel::CheckLib> in order to compile/link against the Aliens specified.  It works a little like
+C<mm_args2> above, except that instead of being applied to a hash of L<ExtUtils::MakeMaker>
+arguments, it is applied to a hash of L<Devel::CheckLib> arguments.
+
+ use Devel::CheckLib qw( check_lib_or_exit );
+ use Alien::Base::Wrapper ();
+
+ check_lib_or_exit(
+   Alien::Base::Wrapper->new('Alien::Foo')->checklib_args2(
+     lib    => 'foo',
+     header => 'foo.h',
+   ),
+ );
+
+The Alien's include paths are merged into C<incpath>, its other compiler flags (such as
+C<-D> defines) are merged into C<ccflags>, its library paths are merged into C<libpath>, and
+its libraries and other linker flags are merged into C<ldflags>, so that the C<lib> and
+C<header> that you are checking for can be found using the environment provided by the Alien.
+
+Since L<Devel::CheckLib> also allows you to specify C<INC> and C<LIBS> in the
+L<ExtUtils::MakeMaker> style, and merging those styles with the Alien flags is ambiguous,
+C<checklib_args2> will throw an exception if you attempt to specify either of those.  Use
+C<incpath> / C<ccflags> and C<libpath> / C<ldflags> instead.
+
 =head2 mb_args
 
  my %args = $abw->mb_args;
@@ -572,6 +701,8 @@ Håkon Hægland (hakonhagland, HAKONH)
 nick nauwelaerts (INPHOBIA)
 
 Florian Weimer
+
+Marcel Telka (mtelka)
 
 =head1 COPYRIGHT AND LICENSE
 
