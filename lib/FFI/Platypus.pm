@@ -316,7 +316,7 @@ sub new
   $self;
 }
 
-sub _lang_class ($)
+sub _lang_class
 {
   my($lang) = @_;
   my $class = $lang =~ m/^=(.*)$/ ? $1 : "FFI::Platypus::Lang::$lang";
