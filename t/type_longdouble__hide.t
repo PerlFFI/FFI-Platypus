@@ -1,4 +1,5 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus;
 use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
@@ -17,7 +18,7 @@ BEGIN {
 }
 
 my $ffi = FFI::Platypus->new;
-$ffi->lib(find_lib lib => 'test', libpath => 't/ffi');
+$ffi->lib(find_lib lib => 'test', libpath => abs_path('t/ffi'));
 
 subtest 'Math::LongDouble is loaded when needed for return type' => sub {
   is($INC{'Math/LongDouble.pm'}, undef, 'not pre-loaded');

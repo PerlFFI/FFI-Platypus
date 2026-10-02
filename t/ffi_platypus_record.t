@@ -1,4 +1,5 @@
 use Test2::V0 -no_srand => 1;
+use Cwd ();
 use FFI::Platypus;
 use FFI::Platypus::Memory qw( malloc free );
 use Data::Dumper;
@@ -58,7 +59,7 @@ do {
   use FFI::Platypus::Record;
 
   my $ffi = FFI::Platypus->new;
-  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => Cwd::abs_path('t/ffi'));
 
   record_layout($ffi, qw(
     uint8 red
@@ -122,7 +123,7 @@ do {
   ));
 
   my $ffi = FFI::Platypus->new;
-  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => Cwd::abs_path('t/ffi'));
 
   $ffi->attach(["align_get_$_" => "get_$_"] => [ 'record(Foo2)' ] => $_)
     for qw( uint8 sint8 uint16 sint16 uint32 sint32 uint64 sint64 float double opaque );
@@ -228,7 +229,7 @@ do {
   ));
 
   my $ffi = FFI::Platypus->new;
-  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => Cwd::abs_path('t/ffi'));
 
   $ffi->attach(["align_array_get_$_" => "get_$_"] => [ 'record(Foo4)' ] => "${_}[3]" )
     for qw( uint8 sint8 uint16 sint16 uint32 sint32 uint64 sint64 float double opaque );
@@ -314,7 +315,7 @@ do {
   ));
 
   my $ffi = FFI::Platypus->new;
-  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => Cwd::abs_path('t/ffi'));
 
   $ffi->attach(
     [align_string_get_value => 'get_value'] => ['record(Foo5)'] => 'string',
@@ -359,7 +360,7 @@ do {
   ));
 
   my $ffi = FFI::Platypus->new;
-  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => Cwd::abs_path('t/ffi'));
 
   $ffi->attach([align_fixed_get_value=>'get_value'] => ['record(Foo6)'] => 'string');
 };
@@ -393,7 +394,7 @@ do {
   ));
 
   my $ffi = FFI::Platypus->new;
-  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
+  $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => Cwd::abs_path('t/ffi'));
 
   $ffi->attach(
     [align_string_get_value => 'get_value'] =>

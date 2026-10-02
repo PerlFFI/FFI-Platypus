@@ -1,5 +1,6 @@
 use Test2::V0 -no_srand => 1;
 use 5.008004;
+use Cwd qw( abs_path );
 use FFI::Build::MM;
 use Capture::Tiny qw( capture_merged );
 use File::Glob qw( bsd_glob );
@@ -118,7 +119,7 @@ subtest 'with a build!' => sub {
 
     platypus 1 => sub {
       my $ffi = shift;
-      $ffi->lib(grep !/\.pdb$/, bsd_glob 'blib/lib/auto/share/dist/Crock-O-Stimpy/lib/*');
+      $ffi->lib(grep !/\.pdb$/, map { abs_path $_ } bsd_glob 'blib/lib/auto/share/dist/Crock-O-Stimpy/lib/*');
       note "lib=$_" for $ffi->lib;
       is(
         $ffi->function('frooble_runtime' => [] => 'int')->call,

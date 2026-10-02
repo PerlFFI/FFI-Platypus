@@ -1,8 +1,9 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::CheckLib;
 use FFI::Platypus;
 
-my $libtest = find_lib lib => 'test', libpath => 't/ffi';
+my $libtest = find_lib lib => 'test', libpath => abs_path('t/ffi');
 
 my $ffi = FFI::Platypus->new;
 $ffi->lib($libtest);

@@ -1,4 +1,5 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
 use Config qw( %Config );
@@ -13,7 +14,7 @@ use Config qw( %Config );
 # tests only ever used small values that happen to fit into any
 # integer representation.
 
-my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');
 
 my %minmax = (
   sint8  => [ -128, 127 ],

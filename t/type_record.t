@@ -1,9 +1,10 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus;
 use FFI::CheckLib qw( find_lib );
 use FFI::Platypus::Memory qw( malloc free );
 
-my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');
 my $record_size = My::FooRecord->ffi_record_size;
 note "record size = $record_size";
 

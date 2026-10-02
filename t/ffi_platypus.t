@@ -1,11 +1,12 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus;
 use FFI::CheckLib;
 use Data::Dumper;
 use File::Spec;
 use FFI::Platypus::TypeParser;
 
-my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');
 
 sub xdump ($)
 {
@@ -168,7 +169,7 @@ subtest 'find lib' => sub {
 
   subtest 'find_lib' =>sub {
     my $ffi = FFI::Platypus->new;
-    $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi');
+    $ffi->find_lib(lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi'));
     my $address = $ffi->find_symbol('f0');
     ok $address, "found f0 = $address";
   };
@@ -221,7 +222,7 @@ subtest 'lib' => sub {
 
     my $ffi = FFI::Platypus->new;
 
-    my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+    my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');
     ok -e $lib, "exists $lib";
 
     eval { $ffi->lib($lib) };
@@ -254,7 +255,7 @@ subtest 'lib' => sub {
 
     my $ffi = FFI::Platypus->new;
 
-    my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+    my($lib) = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');
     ok -e $lib, "exists $lib";
 
     eval { $ffi->lib(sub{ $lib }) };
