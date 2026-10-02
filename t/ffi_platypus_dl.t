@@ -1,8 +1,9 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus::DL;
 use FFI::CheckLib qw( find_lib );
 
-my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');
 
 subtest 'flags' => sub {
 

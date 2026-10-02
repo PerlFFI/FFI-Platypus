@@ -1,9 +1,10 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus::Lang;
 use FFI::CheckLib;
 use FFI::Platypus;
 
-my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my $libtest = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');
 
 subtest 'Foo constructor' => sub {
   my $ffi = FFI::Platypus->new(lang => 'Foo');

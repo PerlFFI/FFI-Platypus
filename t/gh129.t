@@ -1,10 +1,11 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::CheckLib qw( find_lib );
 use FFI::Platypus;
 use Carp ();
 
 my $ffi = FFI::Platypus->new;
-$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi'));
 
 subtest 'attached function' => sub {
 

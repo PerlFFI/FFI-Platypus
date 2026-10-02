@@ -1,11 +1,12 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus;
 use FFI::CheckLib;
 
 my $ffi = FFI::Platypus->new;
 $ffi->load_custom_type('::StringPointer' => 'string_p');
 
-$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+$ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi'));
 $ffi->attach( string_pointer_pointer_get => ['string_p'] => 'string');
 $ffi->attach( string_pointer_pointer_set => ['string_p', 'string'] => 'void');
 $ffi->attach( pointer_pointer_is_null => ['string_p'] => 'int');

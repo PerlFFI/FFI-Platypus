@@ -1,4 +1,5 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use open ':std', ':encoding(utf8)';
 use FFI::CheckLib;
 use FFI::Platypus;
@@ -20,7 +21,7 @@ if(my $error = $@)
 note "encoding = $encoding";
 note "width    = $width";
 
-my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';  # need test lib for pointer_is_null
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');  # need test lib for pointer_is_null
 push @lib, undef;                                                      # for libc wcs* functions
 
 my $ffi = FFI::Platypus->new( api => 1, lib => \@lib );

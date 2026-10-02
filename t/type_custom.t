@@ -1,9 +1,10 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus;
 use FFI::CheckLib;
 use FFI::Platypus::ShareConfig;
 
-my @lib = find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi';
+my @lib = find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi');
 
 my @legal = qw( float double opaque );
 push @legal, map { ("sint$_","uint$_") } qw( 8 16 32 64 );
