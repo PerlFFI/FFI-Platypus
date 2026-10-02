@@ -1,10 +1,11 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 BEGIN { skip_all 'Test requires a threading Perl' unless eval q{ use threads; 1 } }
 use FFI::CheckLib;
 use FFI::Platypus;
 use Config;
 
-my $ffi = FFI::Platypus->new(lib => find_lib(lib => 'test', symbol => 'f0', libpath => 't/ffi' ));
+my $ffi = FFI::Platypus->new(lib => find_lib(lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi') ));
 
 sub f0
 {

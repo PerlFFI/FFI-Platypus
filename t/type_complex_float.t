@@ -1,4 +1,5 @@
 use Test2::V0 -no_srand => 1;
+use Cwd qw( abs_path );
 use FFI::Platypus;
 use FFI::Platypus::TypeParser;
 use FFI::CheckLib;
@@ -21,7 +22,7 @@ foreach my $api (0, 1, 2)
     };
 
     my $ffi = FFI::Platypus->new( api => $api, experimental => ($api > 2 ? $api : undef) );
-    $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => 't/ffi');
+    $ffi->lib(find_lib lib => 'test', symbol => 'f0', libpath => abs_path('t/ffi'));
 
     $ffi->attach(['complex_float_get_real' => 'creal'] => ['complex_float'] => 'float');
     $ffi->attach(['complex_float_get_imag' => 'cimag'] => ['complex_float'] => 'float');
