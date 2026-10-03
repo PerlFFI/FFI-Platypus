@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+  - Added FAQ entry about crashes when loading more than one
+    C++ library that statically links libstdc++ (gh#393)
   - Fixed test suite failures under a hardened-runtime Perl (such as
     Apple's system Perl on macOS) where dlopen refuses a relative
     path, by resolving the test library path to an absolute path

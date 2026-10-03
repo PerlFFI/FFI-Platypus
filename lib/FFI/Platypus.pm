@@ -2188,6 +2188,75 @@ C<libpthreads> even if it isn't a threaded Perl.
 This is not really an FFI issue, but a Perl issue, as you will have the same
 problem writing XS code for the such libraries.
 
+=head2 I get crashes or weird C++ exceptions when using more than one C++ library.
+
+Libraries written in C++ that statically link the C++ standard library
+(C<libstdc++>) can interfere with each other when they are loaded into
+the same process, even if they are never used at the same time, and even
+if one of them has already been unloaded with C<dlclose>.  This can show
+up as mysterious exceptions like C<std::bad_cast>, or seg faults when
+the libraries are used or when Perl exits.  Two different versions of
+the same library are a common way to run into this, but any two C++
+libraries that each carry their own copy of the standard library can
+trigger it.
+
+The cause is that some symbols in the C++ standard library are marked
+as "unique" global symbols (C<u> in the output of C<nm>), for example
+C<std::string::_Rep::_S_empty_rep_storage>.  The dynamic linker keeps
+only one copy of a unique symbol in the process, even for libraries
+opened with C<RTLD_LOCAL>, so the second library ends up using the
+first library's copy, which may be incompatible with its own copy of
+the standard library.  Libraries that use unique symbols are also
+marked as C<NODELETE>, so C<dlclose> does not actually unload them.
+Setting C<LD_DEBUG=bindings> in the environment can help confirm that
+this is what is happening.
+
+This is not really an FFI issue.  You would see the same problem from a
+C program (or XS) that loads both libraries with C<dlopen>.  It often
+does not happen in a C++ program, because there C<libstdc++.so> is
+already loaded and both libraries bind to it instead of to each other.
+Some options, in rough order of preference:
+
+=over 4
+
+=item Link the libraries against the shared C<libstdc++.so>
+
+If you control how the libraries are built, linking them dynamically
+against C<libstdc++.so> instead of statically avoids the problem.
+
+=item Load C<libstdc++.so> globally first
+
+Before loading the C++ libraries, load the shared C++ standard library
+with C<RTLD_GLOBAL>, so that the libraries bind to it, the same way
+they do in a C++ program:
+
+ use FFI::Platypus::DL;
+ dlopen('libstdc++.so.6', RTLD_PLATYPUS_DEFAULT | RTLD_GLOBAL)
+   or die "unable to load libstdc++: @{[ dlerror ]}";
+
+The exact filename of C<libstdc++> is platform dependent, and it may
+not be installed by default on some systems.
+
+=item Use C<LD_PRELOAD>
+
+Setting C<LD_PRELOAD> to the path of C<libstdc++.so> has the same effect
+as loading it globally, but has to be done outside of Perl, and affects
+every process that inherits the environment.
+
+=item Build Perl with a C++ compiler
+
+Newer versions of Perl can be built with a C++ compiler, which makes
+Perl itself a C++ application linked against C<libstdc++.so>.  This
+is only an option if you control how Perl is built.
+
+=back
+
+Using C<RTLD_DEEPBIND> does not help, because it does not apply to
+unique symbols.
+
+See L<https://github.com/PerlFFI/FFI-Platypus/issues/393> for more
+details.
+
 =head2 Doesn't work on Perl 5.10.0.
 
 The first point release of Perl 5.10 was buggy, and is not supported by Platypus.
