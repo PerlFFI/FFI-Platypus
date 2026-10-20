@@ -73,7 +73,9 @@ sub get_data
 {
   my($self, $type) = @_;
 
-  if (exists $self->{cbdata}->{$type}) {
+  # under ithreads the data from the parent thread is not cloned (see
+  # CLONE_SKIP below), so it will be undef in a child thread.
+  if (exists $self->{cbdata}->{$type} && defined ${$self->{cbdata}->{$type}}) {
       return ${$self->{cbdata}->{$type}};
   }
 
@@ -146,5 +148,9 @@ sub unstick
 package FFI::Platypus::ClosureData;
 
 # VERSION
+
+# The C closure belongs to the thread that created it, so don't let a
+# child thread use it, or free it when the child thread exits.
+sub CLONE_SKIP { 1 }
 
 1;
