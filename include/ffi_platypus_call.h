@@ -227,6 +227,9 @@
                 else
                 {
                   closure->type = self->argument_types[i];
+#ifdef FFI_PL_HAVE_THREAD_ID
+                  closure->thread = ffi_pl_thread_self();
+#endif
 
                   ffi_status = ffi_prep_closure_loc(
                     closure->ffi_closure,

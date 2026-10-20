@@ -2196,12 +2196,16 @@ their own threads and invoke callbacks from them.  Perl doesn't know
 anything about these threads, so there is no Perl interpreter available
 to run the closure.
 
-On a Perl built with threads or multiplicity (which includes Perl on
-Windows and the system Perl on most Linux distributions), Platypus will
-detect this and abort with a diagnostic message.  On other Perls the
-closure may seem to work, but it is still unsafe, because the
-interpreter is being used from two threads at the same time without any
-locking.
+Platypus remembers which native thread created a closure, and if the
+closure is called from any other thread, it will abort with a diagnostic
+message.  This works whether or not your Perl was built with threads, on
+any platform where Platypus can find a way to identify the current thread
+(thread local storage, or the Windows or POSIX threads API), which covers
+all common platforms.  Where none of these are available, Platypus can
+only detect this on a Perl built with threads or multiplicity, and on
+other Perls the closure may seem to work.  It is still unsafe though,
+because the interpreter is being used from two threads at the same time
+without any locking.
 
 There isn't a way around this from pure Perl.  The usual approach is to
 write a small callback in C (or another compiled language) that passes the

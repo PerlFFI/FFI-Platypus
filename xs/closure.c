@@ -62,9 +62,13 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
   int count;
   SV *sv,*ref;
 
-#ifdef MULTIPLICITY
+  /* this has to come before we touch the interpreter */
+#if defined FFI_PL_HAVE_THREAD_ID
+  if(!ffi_pl_thread_equal(closure->thread, ffi_pl_thread_self()))
+    ffi_pl_closure_wrong_thread();
+#elif defined MULTIPLICITY
   if(PERL_GET_CONTEXT == NULL)
-    ffi_pl_closure_no_context();
+    ffi_pl_closure_wrong_thread();
 #endif
 
   sp = PL_stack_sp;
