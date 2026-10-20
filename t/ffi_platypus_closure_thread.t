@@ -1,7 +1,9 @@
 use Test2::V0 -no_srand => 1;
 use Config;
 use File::Temp qw( tempdir );
+use List::Util qw( any );
 use File::Path qw( rmtree );
+use File::Spec;
 use Capture::Tiny qw( capture );
 use FFI::Build;
 use FFI::Platypus::ShareConfig;
@@ -12,15 +14,17 @@ use FFI::Platypus::ShareConfig;
 my $probe = FFI::Platypus::ShareConfig->get('probe');
 my $detect = $^O eq 'MSWin32'
   || $Config{usemultiplicity}
-  || grep { $probe->{$_} } qw( tls_c11 tls_gnu tls_msvc pthread );
+  || any { $probe->{$_} } qw( tls_c11 tls_gnu tls_msvc pthread );
 
 skip_all 'no way to detect the calling thread on this platform' unless $detect;
+
+my $tmp = tempdir( CLEANUP => 1 );
 
 my $lib = do {
   my $build = FFI::Build->new(
     'foreign',
     source  => ['corpus/ffi_platypus_closure_thread/foreign.c'],
-    dir     => tempdir( CLEANUP => 1 ),
+    dir     => $tmp,
     buildname => "_build_$$",
     libs    => $^O eq 'MSWin32' ? [] : ['-lpthread'],
     verbose => 1,
@@ -35,7 +39,11 @@ my $lib = do {
 sub run_child
 {
   my($func) = @_;
-  my $code = <<'PERL';
+  # write the child script to a file, since a multi-line -e does not
+  # survive the command line quoting on Windows.
+  my $script = File::Spec->catfile($tmp, 'child.pl');
+  open my $fh, '>', $script or die "unable to write $script: $!";
+  print $fh <<'PERL';
     use FFI::Platypus;
     my($lib, $func) = @ARGV;
     my $ffi = FFI::Platypus->new( api => 2, lib => $lib );
@@ -43,8 +51,9 @@ sub run_child
     my $ret = $ffi->function( $func => ['(int)->int', 'int'] => 'int' )->call($closure, 21);
     print "ret=$ret\n";
 PERL
+  close $fh;
   my($out, $err, $exit) = capture {
-    system $^X, (map { "-I$_" } grep { !ref } @INC), '-e', $code, $lib, $func;
+    system $^X, (map { "-I$_" } grep { !ref } @INC), $script, $lib, $func;
   };
   note "[$func] stdout: $out";
   note "[$func] stderr: $err";
