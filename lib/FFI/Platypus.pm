@@ -2188,6 +2188,30 @@ C<libpthreads> even if it isn't a threaded Perl.
 This is not really an FFI issue, but a Perl issue, as you will have the same
 problem writing XS code for the such libraries.
 
+=head2 Can I call a closure from a thread created by a C library?
+
+No.  A closure can only be called from the Perl thread that created it.
+Some libraries (for example for audio, MIDI, or GUI event loops) start
+their own threads and invoke callbacks from them.  Perl doesn't know
+anything about these threads, so there is no Perl interpreter available
+to run the closure.
+
+On a Perl built with threads or multiplicity (which includes Perl on
+Windows and the system Perl on most Linux distributions), Platypus will
+detect this and abort with a diagnostic message.  On other Perls the
+closure may seem to work, but it is still unsafe, because the
+interpreter is being used from two threads at the same time without any
+locking.
+
+There isn't a way around this from pure Perl.  The usual approach is to
+write a small callback in C (or another compiled language) that passes the
+data to the Perl thread through some other mechanism like a pipe, a queue
+protected by a mutex, or the library's own polling interface.  The Perl thread
+then calls your Perl code.  L<FFI::Platypus::Bundle> makes it fairly
+easy to ship that bit of C with your module.  See
+L<issue #399|https://github.com/PerlFFI/FFI-Platypus/issues/399> for some
+discussion and an example.
+
 =head2 I get crashes or weird C++ exceptions when using more than one C++ library.
 
 Libraries written in C++ that statically link the C++ standard library

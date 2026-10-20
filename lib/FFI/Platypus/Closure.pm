@@ -41,6 +41,10 @@ sure that if the compiled code is going to call a closure that the closure objec
 is still in scope somewhere, or has been made sticky, otherwise you may get a
 segment violation or other mysterious crash.
 
+Closures must be called from the same thread that created them.  If a library
+calls your callback from a thread that it created itself, see the FAQ entry
+L<FFI::Platypus/Can I call a closure from a thread created by a C library?>.
+
 =head1 CONSTRUCTOR
 
 =head2 new
