@@ -106,3 +106,12 @@ jobs:
         if: ${{ failure() }}
         run: |
           cip exec bash -c 'cat $HOME/.cpanm/latest-build/build.log'
+
+  # single stable check name for branch protection, independent of the matrix
+  linux:
+    needs: perl
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix result
+        run: test "${{ needs.perl.result }}" = success

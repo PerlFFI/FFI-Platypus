@@ -41,6 +41,15 @@ sure that if the compiled code is going to call a closure that the closure objec
 is still in scope somewhere, or has been made sticky, otherwise you may get a
 segment violation or other mysterious crash.
 
+The native function pointer for a closure must be called from the same thread
+where that function pointer was created.  This happens the first time the
+closure is passed to a C function, not when the closure object is constructed
+with L</new>.  With L<threads> a closure object cloned into a child thread gets
+its own function pointer, belonging to the child thread, the first time it is
+passed to C from that thread.  If a library calls your callback from a thread
+that it created itself, see the FAQ entry
+L<FFI::Platypus/Can I call a closure from a thread created by a C library?>.
+
 =head1 CONSTRUCTOR
 
 =head2 new
@@ -69,7 +78,9 @@ sub get_data
 {
   my($self, $type) = @_;
 
-  if (exists $self->{cbdata}->{$type}) {
+  # under ithreads the data from the parent thread is not cloned (see
+  # CLONE_SKIP below), so it will be undef in a child thread.
+  if (exists $self->{cbdata}->{$type} && defined ${$self->{cbdata}->{$type}}) {
       return ${$self->{cbdata}->{$type}};
   }
 
@@ -142,5 +153,9 @@ sub unstick
 package FFI::Platypus::ClosureData;
 
 # VERSION
+
+# The C closure belongs to the thread that created it, so don't let a
+# child thread use it, or free it when the child thread exits.
+sub CLONE_SKIP { 1 }
 
 1;

@@ -5,6 +5,7 @@ extern "C" {
 #endif
 
 void ffi_pl_closure_call(ffi_cif *, void *, void **, void *);
+void ffi_pl_closure_wrong_thread(void);
 void ffi_pl_closure_add_data(SV *closure, ffi_pl_closure *closure_data);
 ffi_pl_closure *ffi_pl_closure_get_data(SV *closure, ffi_pl_type *type);
 SV*  ffi_pl_custom_perl(SV*,SV*,int);

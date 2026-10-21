@@ -53,7 +53,7 @@ ffi_pl_closure_get_data(SV *closure, ffi_pl_type *type)
 void
 ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user)
 {
-  dSP;
+  SV **sp;
 
   ffi_pl_closure *closure = (ffi_pl_closure*) user;
   ffi_pl_type_extra_closure *extra = &closure->type->extra[0].closure;
@@ -61,6 +61,17 @@ ffi_pl_closure_call(ffi_cif *ffi_cif, void *result, void **arguments, void *user
   int i;
   int count;
   SV *sv,*ref;
+
+  /* this has to come before we touch the interpreter */
+#if defined FFI_PL_HAVE_THREAD_ID
+  if(!ffi_pl_thread_equal(closure->thread, ffi_pl_thread_self()))
+    ffi_pl_closure_wrong_thread();
+#elif defined MULTIPLICITY
+  if(PERL_GET_CONTEXT == NULL)
+    ffi_pl_closure_wrong_thread();
+#endif
+
+  sp = PL_stack_sp;
 
   if(!(flags & G_NOARGS))
   {

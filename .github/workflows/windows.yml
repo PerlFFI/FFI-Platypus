@@ -16,6 +16,7 @@ env:
 
 jobs:
   perl:
+    name: windows
 
     runs-on: windows-latest
 

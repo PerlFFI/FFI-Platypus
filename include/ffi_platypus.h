@@ -34,6 +34,28 @@
 #include <complex.h>
 #endif
 
+/*
+ * Identity of a native thread, used to make sure that a closure is only
+ * called from the thread that created it.  The address of a thread local
+ * variable is preferred, since it does not depend on the thread library
+ * in use.
+ */
+#if defined FFI_PL_PROBE_TLS_C11 || defined FFI_PL_PROBE_TLS_GNU || defined FFI_PL_PROBE_TLS_MSVC
+#define FFI_PL_THREAD_ID_TLS 1
+typedef const void *ffi_pl_thread_id;
+#elif defined _WIN32
+#define FFI_PL_THREAD_ID_WIN32 1
+typedef unsigned long ffi_pl_thread_id; /* DWORD */
+#elif defined FFI_PL_PROBE_PTHREAD
+#include <pthread.h>
+#define FFI_PL_THREAD_ID_PTHREAD 1
+typedef pthread_t ffi_pl_thread_id;
+#endif
+
+#if defined FFI_PL_THREAD_ID_TLS || defined FFI_PL_THREAD_ID_WIN32 || defined FFI_PL_THREAD_ID_PTHREAD
+#define FFI_PL_HAVE_THREAD_ID 1
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -221,7 +243,15 @@ typedef struct _ffi_pl_closure {
   void *function_pointer; /* C function pointer */
   void *coderef;          /* Perl HV* pointing to FFI::Platypus::Closure object */
   ffi_pl_type *type;
+#ifdef FFI_PL_HAVE_THREAD_ID
+  ffi_pl_thread_id thread; /* native thread that created the closure */
+#endif
 } ffi_pl_closure;
+
+#ifdef FFI_PL_HAVE_THREAD_ID
+ffi_pl_thread_id ffi_pl_thread_self(void);
+int ffi_pl_thread_equal(ffi_pl_thread_id, ffi_pl_thread_id);
+#endif
 
 typedef const char *ffi_pl_string;
 

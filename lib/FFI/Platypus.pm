@@ -2188,6 +2188,35 @@ C<libpthreads> even if it isn't a threaded Perl.
 This is not really an FFI issue, but a Perl issue, as you will have the same
 problem writing XS code for the such libraries.
 
+=head2 Can I call a closure from a thread created by a C library?
+
+No.  A closure's native function pointer can only be called from the thread
+where it was created, which is the thread that first passed the closure to C.
+Some libraries (for example for audio, MIDI, or GUI event loops) start
+their own threads and invoke callbacks from them.  Perl doesn't know
+anything about these threads, so there is no Perl interpreter available
+to run the closure.
+
+Platypus remembers which native thread created a closure's function pointer,
+and if it is called from any other thread, it will abort with a diagnostic
+message.  This works whether or not your Perl was built with threads, on
+any platform where Platypus can find a way to identify the current thread
+(thread local storage, or the Windows or POSIX threads API), which covers
+all common platforms.  Where none of these are available, Platypus can
+only detect this on a Perl built with threads or multiplicity, and on
+other Perls the closure may seem to work.  It is still unsafe though,
+because the interpreter is being used from two threads at the same time
+without any locking.
+
+There isn't a way around this from pure Perl.  The usual approach is to
+write a small callback in C (or another compiled language) that passes the
+data to the Perl thread through some other mechanism like a pipe, a queue
+protected by a mutex, or the library's own polling interface.  The Perl thread
+then calls your Perl code.  L<FFI::Platypus::Bundle> makes it fairly
+easy to ship that bit of C with your module.  See
+L<issue #399|https://github.com/PerlFFI/FFI-Platypus/issues/399> for some
+discussion and an example.
+
 =head2 I get crashes or weird C++ exceptions when using more than one C++ library.
 
 Libraries written in C++ that statically link the C++ standard library
@@ -2285,6 +2314,39 @@ a problem for C / XS code as well.
 =item Languages that do not compile to machine code
 
 Like .NET based languages and Java.
+
+=back
+
+Applications that embed a Perl interpreter and use Platypus closures are
+responsible for the lifetime and thread affinity of the interpreter and of
+any callbacks.  The check that a closure is called from the right thread
+(see L</Can I call a closure from a thread created by a C library?>) is
+intended to diagnose ordinary callbacks from foreign threads, and is not a
+general solution to these problems.  In particular:
+
+=over 4
+
+=item Thread identity reuse
+
+Thread identifiers (thread local storage addresses, POSIX thread
+identifiers and Windows thread IDs) can be reused by the operating system
+after a thread exits.  If an embedding application keeps an interpreter and
+its callbacks alive after the thread that created the callbacks has exited,
+a new thread may get the same identity and incorrectly pass the check.
+
+=item Interpreter migration
+
+An embedding application may, with appropriate Perl context management, use
+an interpreter from a different native thread than the one it was created on.
+Platypus callbacks are still tied to the native thread on which their
+function pointers were created.  Moving the interpreter does not move the
+callbacks.
+
+=item Interpreter destruction
+
+Native code must not call a callback after its closure or its Perl
+interpreter has been destroyed.  The thread check cannot protect against
+dangling function pointers or invalid interpreter state.
 
 =back
 
