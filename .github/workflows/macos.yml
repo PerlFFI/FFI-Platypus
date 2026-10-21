@@ -24,7 +24,10 @@ jobs:
 
       - name: Set up Perl
         run: |
-          brew install perl libffi libarchive jq
+          brew install perl libffi libarchive jq openssl@3
+          # Net::SSLeay does not yet build against OpenSSL 4
+          # https://github.com/PerlFFI/FFI-Platypus/pull/416
+          echo "OPENSSL_PREFIX=$(brew --prefix openssl@3)" >> $GITHUB_ENV
           curl https://cpanmin.us | perl - App::cpanminus -n
           echo "/Users/runner/perl5/bin" >> $GITHUB_PATH
 
