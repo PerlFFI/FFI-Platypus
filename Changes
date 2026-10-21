@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+2.14_01   2026-10-21 10:37:10 -0600
   - Added FAQ entry about crashes when loading more than one
     C++ library that statically links libstdc++ (gh#393)
   - Fixed test suite failures under a hardened-runtime Perl (such as

@@ -2419,6 +2419,102 @@ the only thing that you can do about it is to build Perl such that it links with
 This is not really an FFI issue, but a Perl issue, as you will have the same
 problem writing XS code for the such libraries.
 
+## Can I call a closure from a thread created by a C library?
+
+No.  A closure's native function pointer can only be called from the thread
+where it was created, which is the thread that first passed the closure to C.
+Some libraries (for example for audio, MIDI, or GUI event loops) start
+their own threads and invoke callbacks from them.  Perl doesn't know
+anything about these threads, so there is no Perl interpreter available
+to run the closure.
+
+Platypus remembers which native thread created a closure's function pointer,
+and if it is called from any other thread, it will abort with a diagnostic
+message.  This works whether or not your Perl was built with threads, on
+any platform where Platypus can find a way to identify the current thread
+(thread local storage, or the Windows or POSIX threads API), which covers
+all common platforms.  Where none of these are available, Platypus can
+only detect this on a Perl built with threads or multiplicity, and on
+other Perls the closure may seem to work.  It is still unsafe though,
+because the interpreter is being used from two threads at the same time
+without any locking.
+
+There isn't a way around this from pure Perl.  The usual approach is to
+write a small callback in C (or another compiled language) that passes the
+data to the Perl thread through some other mechanism like a pipe, a queue
+protected by a mutex, or the library's own polling interface.  The Perl thread
+then calls your Perl code.  [FFI::Platypus::Bundle](https://metacpan.org/pod/FFI::Platypus::Bundle) makes it fairly
+easy to ship that bit of C with your module.  See
+[issue #399](https://github.com/PerlFFI/FFI-Platypus/issues/399) for some
+discussion and an example.
+
+## I get crashes or weird C++ exceptions when using more than one C++ library.
+
+Libraries written in C++ that statically link the C++ standard library
+(`libstdc++`) can interfere with each other when they are loaded into
+the same process, even if they are never used at the same time, and even
+if one of them has already been unloaded with `dlclose`.  This can show
+up as mysterious exceptions like `std::bad_cast`, or seg faults when
+the libraries are used or when Perl exits.  Two different versions of
+the same library are a common way to run into this, but any two C++
+libraries that each carry their own copy of the standard library can
+trigger it.
+
+The cause is that some symbols in the C++ standard library are marked
+as "unique" global symbols (`u` in the output of `nm`), for example
+`std::string::_Rep::_S_empty_rep_storage`.  The dynamic linker keeps
+only one copy of a unique symbol in the process, even for libraries
+opened with `RTLD_LOCAL`, so the second library ends up using the
+first library's copy, which may be incompatible with its own copy of
+the standard library.  Libraries that use unique symbols are also
+marked as `NODELETE`, so `dlclose` does not actually unload them.
+Setting `LD_DEBUG=bindings` in the environment can help confirm that
+this is what is happening.
+
+This is not really an FFI issue.  You would see the same problem from a
+C program (or XS) that loads both libraries with `dlopen`.  It often
+does not happen in a C++ program, because there `libstdc++.so` is
+already loaded and both libraries bind to it instead of to each other.
+Some options, in rough order of preference:
+
+- Link the libraries against the shared `libstdc++.so`
+
+    If you control how the libraries are built, linking them dynamically
+    against `libstdc++.so` instead of statically avoids the problem.
+
+- Load `libstdc++.so` globally first
+
+    Before loading the C++ libraries, load the shared C++ standard library
+    with `RTLD_GLOBAL`, so that the libraries bind to it, the same way
+    they do in a C++ program:
+
+    ```perl
+    use FFI::Platypus::DL;
+    dlopen('libstdc++.so.6', RTLD_PLATYPUS_DEFAULT | RTLD_GLOBAL)
+      or die "unable to load libstdc++: @{[ dlerror ]}";
+    ```
+
+    The exact filename of `libstdc++` is platform dependent, and it may
+    not be installed by default on some systems.
+
+- Use `LD_PRELOAD`
+
+    Setting `LD_PRELOAD` to the path of `libstdc++.so` has the same effect
+    as loading it globally, but has to be done outside of Perl, and affects
+    every process that inherits the environment.
+
+- Build Perl with a C++ compiler
+
+    Newer versions of Perl can be built with a C++ compiler, which makes
+    Perl itself a C++ application linked against `libstdc++.so`.  This
+    is only an option if you control how Perl is built.
+
+Using `RTLD_DEEPBIND` does not help, because it does not apply to
+unique symbols.
+
+See [https://github.com/PerlFFI/FFI-Platypus/issues/393](https://github.com/PerlFFI/FFI-Platypus/issues/393) for more
+details.
+
 ## Doesn't work on Perl 5.10.0.
 
 The first point release of Perl 5.10 was buggy, and is not supported by Platypus.
@@ -2445,6 +2541,35 @@ dynamic libraries.  Things not supported include:
 - Languages that do not compile to machine code
 
     Like .NET based languages and Java.
+
+Applications that embed a Perl interpreter and use Platypus closures are
+responsible for the lifetime and thread affinity of the interpreter and of
+any callbacks.  The check that a closure is called from the right thread
+(see ["Can I call a closure from a thread created by a C library?"](#can-i-call-a-closure-from-a-thread-created-by-a-c-library)) is
+intended to diagnose ordinary callbacks from foreign threads, and is not a
+general solution to these problems.  In particular:
+
+- Thread identity reuse
+
+    Thread identifiers (thread local storage addresses, POSIX thread
+    identifiers and Windows thread IDs) can be reused by the operating system
+    after a thread exits.  If an embedding application keeps an interpreter and
+    its callbacks alive after the thread that created the callbacks has exited,
+    a new thread may get the same identity and incorrectly pass the check.
+
+- Interpreter migration
+
+    An embedding application may, with appropriate Perl context management, use
+    an interpreter from a different native thread than the one it was created on.
+    Platypus callbacks are still tied to the native thread on which their
+    function pointers were created.  Moving the interpreter does not move the
+    callbacks.
+
+- Interpreter destruction
+
+    Native code must not call a callback after its closure or its Perl
+    interpreter has been destroyed.  The thread check cannot protect against
+    dangling function pointers or invalid interpreter state.
 
 The documentation has a bias toward using FFI / Platypus with C.  This
 is my fault, as my background mainly in C/C++ programmer (when I am
