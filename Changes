@@ -7,6 +7,15 @@ Revision history for {{$dist->name}}
     Apple's system Perl on macOS) where dlopen refuses a relative
     path, by resolving the test library path to an absolute path
     (gh#409)
+  - Closures called from a thread that was not created by Perl
+    (for example a thread created by the C library) now abort with
+    a diagnostic pointing to the FAQ instead of crashing or silently
+    using the interpreter from two threads at once.  Added a FAQ
+    entry describing this limitation and the usual workaround
+    (gh#399, gh#416)
+  - Fixed double free during global destruction when a Perl thread
+    is created while a closure exists, since the closure's C data
+    was being cloned into the child thread (gh#416)
 
 2.12      2026-09-11 15:02:01 -0600
   - Added FFI::Platypus::Buffer::raw_scalar which allocates an
