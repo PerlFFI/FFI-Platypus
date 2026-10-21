@@ -44,7 +44,7 @@ segment violation or other mysterious crash.
 The native function pointer for a closure must be called from the same thread
 where that function pointer was created.  This happens the first time the
 closure is passed to a C function, not when the closure object is constructed
-with L</new>.  Under ithreads a closure object cloned into a child thread gets
+with L</new>.  With L<threads> a closure object cloned into a child thread gets
 its own function pointer, belonging to the child thread, the first time it is
 passed to C from that thread.  If a library calls your callback from a thread
 that it created itself, see the FAQ entry

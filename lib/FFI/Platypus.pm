@@ -2328,11 +2328,11 @@ general solution to these problems.  In particular:
 
 =item Thread identity reuse
 
-Thread identifiers (TLS addresses, POSIX thread identifiers and Windows
-thread IDs) can be reused by the operating system after a thread exits.  If
-an embedding application keeps an interpreter and its callbacks alive after
-the thread that created the callbacks has exited, a new thread may get the
-same identity and incorrectly pass the check.
+Thread identifiers (thread local storage addresses, POSIX thread
+identifiers and Windows thread IDs) can be reused by the operating system
+after a thread exits.  If an embedding application keeps an interpreter and
+its callbacks alive after the thread that created the callbacks has exited,
+a new thread may get the same identity and incorrectly pass the check.
 
 =item Interpreter migration
 
