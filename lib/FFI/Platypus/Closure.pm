@@ -41,8 +41,13 @@ sure that if the compiled code is going to call a closure that the closure objec
 is still in scope somewhere, or has been made sticky, otherwise you may get a
 segment violation or other mysterious crash.
 
-Closures must be called from the same thread that created them.  If a library
-calls your callback from a thread that it created itself, see the FAQ entry
+The native function pointer for a closure must be called from the same thread
+where that function pointer was created.  This happens the first time the
+closure is passed to a C function, not when the closure object is constructed
+with L</new>.  Under ithreads a closure object cloned into a child thread gets
+its own function pointer, belonging to the child thread, the first time it is
+passed to C from that thread.  If a library calls your callback from a thread
+that it created itself, see the FAQ entry
 L<FFI::Platypus/Can I call a closure from a thread created by a C library?>.
 
 =head1 CONSTRUCTOR
