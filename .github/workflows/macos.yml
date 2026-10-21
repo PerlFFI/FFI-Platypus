@@ -16,6 +16,7 @@ env:
 
 jobs:
   perl:
+    name: macos
 
     runs-on: macOS-latest
 

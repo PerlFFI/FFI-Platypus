@@ -17,6 +17,7 @@ env:
 
 jobs:
   perl:
+    name: msys2-mingw
 
     runs-on: windows-latest
 
